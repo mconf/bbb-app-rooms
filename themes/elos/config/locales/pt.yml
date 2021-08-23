@@ -38,6 +38,7 @@ pt:
         wait_moderator: "Aguardar moderador para entrar"
         welcome: "Mensagem de boas vindas (opcional)"
   recordings:
+    all_loaded: "Todas as gravações foram carregadas"
     confirm:
       destroy: "Você tem certeza que deseja remover esta gravação?"
       publish: "Você tem certeza que deseja publicar esta gravação?"
@@ -48,6 +49,7 @@ pt:
     empty_list: "Não há gravações para mostrar"
     index:
       return: "< voltar"
+    load: "Carregar mais gravações"
     playback_link: "Copiar link de reprodução"
     playbacks:
       presentation: "Reproduzir"

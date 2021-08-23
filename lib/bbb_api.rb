@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'tests_helper'
 module BbbApi
   def wait_for_mod?(scheduled_meeting, user)
     return unless scheduled_meeting and user
@@ -54,6 +55,11 @@ module BbbApi
   def get_recordings(room, options = {})
     res = bbb(room).get_recordings(options.merge(room.params_for_get_recordings))
 
+    # Use this for tests only
+    # res = TestsHelper.gen_fake_res(options)
+
+    no_more_recordings = res[:nextpage] == 'false'
+
     # Format playbacks in a more pleasant way.
     res[:recordings].each do |r|
       next if r.key?(:error)
@@ -69,7 +75,8 @@ module BbbApi
       r.delete(:playback)
     end
 
-    res[:recordings].sort_by { |rec| rec[:endTime] }.reverse
+    recordings = res[:recordings].sort_by { |rec| rec[:endTime] }.reverse
+    [recordings, no_more_recordings]
   end
 
   # Calls getRecodringToken and return the token

@@ -38,6 +38,7 @@ en:
         wait_moderator: "Wait for a moderator to join"
         welcome: "Welcome message (optional)"
   recordings:
+    all_loaded: "All recordings loaded"
     confirm:
       destroy: "Are you sure you want to remove this recording?"
       publish: "Are you sure you want to publish this recording?"
@@ -48,6 +49,7 @@ en:
     empty_list: "There are no recordings to show"
     index:
       return: "< go back"
+    load: "Load more recordings"
     playback_link: "Copy playback link"
     playbacks:
       presentation: "Playback"
