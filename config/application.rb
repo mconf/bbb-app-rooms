@@ -3,6 +3,7 @@
 require_relative 'boot'
 require 'rails/all'
 require_relative '../lib/simple_json_formatter'
+require_relative '../lib/mconf/env'
 
 # Load the app's custom environment variables here, so that they are loaded before environments/*.rb
 

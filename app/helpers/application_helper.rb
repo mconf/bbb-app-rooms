@@ -38,8 +38,9 @@ module ApplicationHelper
     Abilities.can?(user, :download_presentation_video, resource)
   end
 
-  def can_show_terms_use_message?(resource)
-    Abilities.can?(nil, :message_reference_terms_use, resource)
+  def show_terms_use_message?(resource)
+    config = ConsumerConfig.find_by(key: resource[:consumer_key])
+    config[:message_reference_terms_use]
   end
 
   def theme_defined?

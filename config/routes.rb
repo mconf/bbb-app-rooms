@@ -1,20 +1,25 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  if (ENV['SERVE_RAILS_ADMIN'] || false)
+
+  get '/health_check', to: 'health_check#all', default: { format: nil }
+  get '/healthz', to: 'health_check#all', default: { format: nil }
+
+  if Mconf::Env.fetch_boolean("SERVE_RAILS_ADMIN", false)
     mount RailsAdmin::Engine => '/dash', as: 'rails_admin'
+
+    unless mconf_env.fetch_boolean("SERVE_APPLICATION", true)
+      root to: redirect('/dash')
+    end
   end
 
   if Rails.configuration.cable_enabled
     mount ActionCable.server => Rails.configuration.action_cable.mount_path
   end
 
-  if (ENV['SERVE_APPLICATION'] || true)
+  if Mconf::Env.fetch_boolean("SERVE_APPLICATION", true)
     scope ENV['RELATIVE_URL_ROOT'] || '' do
       scope 'rooms' do
-        get '/health_check', to: 'health_check#all', default: { format: nil }
-        get '/healthz', to: 'health_check#all', default: { format: nil }
-
         get '/close', to: 'rooms#close', as: :autoclose
 
         # Handles recording management.
