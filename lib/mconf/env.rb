@@ -1,6 +1,5 @@
 module Mconf
   module Env
-    puts "\n dentro da classe env \n"
     TRUTHY_VALUES = %w(true yes 1).freeze
     FALSEY_VALUES = %w(false no 0).freeze
 
