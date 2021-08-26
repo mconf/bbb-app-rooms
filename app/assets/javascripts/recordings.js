@@ -79,7 +79,7 @@ let initElements = () => {
 };
 
 let handleToTopClick = () => {
-  $DOCUMENT.scrollTop(0);
+  $('html, body').animate({scrollTop:0}, '3000');
 };
 
 let handleScroll = () => {
