@@ -106,5 +106,8 @@ module BbbAppRooms
     config.browser_time_zone_same_site_cookie =
       ENV['COOKIES_SAME_SITE'].blank? ? 'None' : "#{ENV['COOKIES_SAME_SITE']}"
     config.browser_time_zone_default_tz = config.default_timezone
+
+    config.recordings_per_page =
+      ENV['RECORDINGS_PER_PAGE'].blank? ? 25 : ENV['RECORDINGS_PER_PAGE'].to_i
   end
 end

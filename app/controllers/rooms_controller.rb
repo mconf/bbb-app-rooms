@@ -39,10 +39,31 @@ class RoomsController < ApplicationController
   end
 
   def recordings
+    @fetch_recordings_endpoint = recordings_pagination_room_path
+    @per_page = Rails.application.config.recordings_per_page
     respond_to do |format|
-      @recordings = get_recordings(@room)
       format.html { render :recordings }
     end
+  end
+
+  def recordings_pagination
+    offset = params[:offset].to_i
+    limit = (params[:limit] || 1).to_i
+
+    options = {
+      limit: limit,
+      offset: offset
+    }
+    recordings, all_recordings_loaded = get_recordings(@room, options)
+
+    args = { recordings: recordings,
+             user: @user,
+             room: @room,
+             all_recordings_loaded: all_recordings_loaded }
+
+    render partial: 'shared/recordings_list',
+           layout: false,
+           locals: args
   end
 
   # GET /launch

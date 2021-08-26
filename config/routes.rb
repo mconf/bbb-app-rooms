@@ -50,6 +50,7 @@ Rails.application.routes.draw do
       resources :rooms, only: :show do
         member do
           get :recordings
+          get :recordings_pagination
           get '/error/:code', to: 'rooms#error'
         end
 
