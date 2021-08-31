@@ -1,5 +1,16 @@
 # Change Log
 
+## 0.6.1 - 2021-08-31
+
+
+* [LTI-79] The `/health` routes have been added to application root
+* [LTI-79] Fixed feature to show message reference to terms of use, for `ConsumerConfig` with
+  `message_reference_terms_use=true`
+* [LTI-79] Added default lib, to validate and test environment variables: `SERVE_APPLICATION`
+  and `SERVE_RAILS_ADMIN`
+* [LTI-79] If the application is only serving Rails Admin, the root route is `/dash`
+
+
 ## 0.6.0 Elos - 2021-07-28
 
 * [LTI-10] Added theme Conferência Web.
