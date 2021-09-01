@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   if Mconf::Env.fetch_boolean("SERVE_RAILS_ADMIN", false)
     mount RailsAdmin::Engine => '/dash', as: 'rails_admin'
 
-    unless mconf_env.fetch_boolean("SERVE_APPLICATION", true)
+    unless Mconf::Env.fetch_boolean("SERVE_APPLICATION", true)
       root to: redirect('/dash')
     end
   end
