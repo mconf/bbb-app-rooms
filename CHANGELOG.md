@@ -1,5 +1,15 @@
 # Change Log
 
+## 0.6.3 - 2021-09-07
+
+* [LTI-88] Added a new environment variable `APP_LAUNCH_REMOVE_OLD_ON_LAUNCH` to enable/disable
+  the removal of AppLaunches on launch. Set to `true` by default.
+* Fix typo in the environment variable `APP_LAUNCH_LIMIT_FOR_DELETE` (was called
+  `APP_lAUNCH_LIMIT_FOR_DELETE`, with a lowercase `l`).
+* Removed `.env.development.local` from the repo, it shouldn't be tracked (it's already included
+  in `.gitignore`).
+
+
 ## 0.6.2 - 2021-09-01
 
 * [LTI-79] Fixed function name, for if the application is only serving Rails Admin, the root route
