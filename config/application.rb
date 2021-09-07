@@ -71,6 +71,7 @@ module BbbAppRooms
     config.launch_duration_mins =
       ENV["APP_LAUNCH_DURATION_MINS"].try(:to_i).try(:minutes) || 30.minutes
 
+    config.launch_remove_old_on_launch = Mconf::Env.fetch_boolean("APP_LAUNCH_REMOVE_OLD_ON_LAUNCH", true)
     config.launch_days_to_delete = (ENV['APP_LAUNCH_DAYS_TO_DELETE'] || 15).to_i
     config.launch_limit_for_delete = (ENV['APP_LAUNCH_LIMIT_FOR_DELETE'] || 1000).to_i
 
