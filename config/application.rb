@@ -72,7 +72,7 @@ module BbbAppRooms
       ENV["APP_LAUNCH_DURATION_MINS"].try(:to_i).try(:minutes) || 30.minutes
 
     config.launch_days_to_delete = (ENV['APP_LAUNCH_DAYS_TO_DELETE'] || 15).to_i
-    config.launch_limit_for_delete = (ENV['APP_lAUNCH_LIMIT_FOR_DELETE'] || 1000).to_i
+    config.launch_limit_for_delete = (ENV['APP_LAUNCH_LIMIT_FOR_DELETE'] || 1000).to_i
 
     config.log_level = ENV['LOG_LEVEL'] || :debug
 
