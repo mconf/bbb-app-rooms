@@ -40,7 +40,7 @@ module ApplicationHelper
 
   def show_terms_use_message?(resource)
     config = ConsumerConfig.find_by(key: resource[:consumer_key])
-    config[:message_reference_terms_use]
+    config.present? && config[:message_reference_terms_use]
   end
 
   def theme_defined?
