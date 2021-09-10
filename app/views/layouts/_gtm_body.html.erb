@@ -1,0 +1,7 @@
+
+<% unless Rails.application.config.gtm_id.blank? %>
+  <% gtm_id = Rails.application.config.gtm_id %>
+  <% {:height => "0", :src => "https://www.googletagmanager.com/ns.html?id=#{gtm_id}",
+      :style => "display:none;visibility:hidden", :width => "0"}
+  %>
+<% end %>

@@ -47,5 +47,11 @@ RailsAdmin.config do |config|
     # history_show
   end
 
-  config.included_models = [ "ConsumerConfig", "ConsumerConfigServer", "ConsumerConfigBrightspaceOauth" ]
+  if Rails.env.production?
+    config.included_models = [
+      "ConsumerConfig",
+      "ConsumerConfigServer",
+      "ConsumerConfigBrightspaceOauth"
+    ]
+  end
 end
