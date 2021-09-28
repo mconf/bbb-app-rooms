@@ -1,0 +1,54 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mconf-lti-broker-migrate-job
+  namespace: app-lti
+spec:
+  ttlSecondsAfterFinished: 1200
+  template:
+    metadata:
+      labels:
+        app: mconf-lti-broker-migrate-job
+    spec:
+      restartPolicy: Never
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: mconf-lti-broker-migrate-job
+          image: mconf/bbb-lti-broker:v0.3.0-elos
+          args: ["scripts/migrate.sh"]
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: mconf-lti-broker-cm
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: mconf-lti-broker-secret
+                  key: DATABASE_URL
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: mconf-lti-broker-secret
+                  key: SECRET_KEY_BASE
+            - name: OMNIAUTH_BBBLTIBROKER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mconf-lti-broker-secret
+                  key: OMNIAUTH_BBBLTIBROKER_KEY
+            - name: OMNIAUTH_BBBLTIBROKER_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mconf-lti-broker-secret
+                  key: OMNIAUTH_BBBLTIBROKER_SECRET
+          volumeMounts:
+          - name: config-volume
+            mountPath: /usr/src/app/scripts/migrate.sh
+            subPath: migrate.sh
+      volumes:
+        - name: config-volume
+          configMap:
+            name: mconf-lti-broker-scripts-cm
+            defaultMode: 0777
