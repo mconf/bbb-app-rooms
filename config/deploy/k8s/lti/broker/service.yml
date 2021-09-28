@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mconf-lti-broker-svc
+  namespace: app-lti
+spec:
+  type: ClusterIP
+  selector:
+    app: mconf-lti-broker
+  ports:
+    - port: 3000
+      targetPort: 3000
