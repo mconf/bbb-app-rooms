@@ -234,7 +234,7 @@ class ApplicationController < ActionController::Base
     respond_to do |format|
       format.html { render 'shared/error', status: status }
       format.json { render json: { error: @error[:message] }, status: status }
-      format.all  { render 'shared/error', status: status, content_type: 'text/html' }
+      format.all  { render 'shared/error.html', status: status, content_type: 'text/html' }
     end
   end
 
