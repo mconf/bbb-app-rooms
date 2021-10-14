@@ -110,7 +110,7 @@ module BbbAppRooms
     config.recordings_per_page =
       ENV['RECORDINGS_PER_PAGE'].blank? ? 25 : ENV['RECORDINGS_PER_PAGE'].to_i
 
-    # Integration with Google Tag Manager
-    config.gtm_id = ENV['MCONF_GTM_ID'] || ''
+    # Integration with Analytics
+    config.gta_id = ENV['MCONF_GTA_ID'] || ''
   end
 end

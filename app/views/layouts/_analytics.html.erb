@@ -1,0 +1,11 @@
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<% unless Rails.application.config.gta_id.blank? %>
+  <% gta_id = Rails.application.config.gta_id %>
+  <script async src="https://www.googletagmanager.com/gtag/js?id='<%= gta_id %>'"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '<%= gta_id %>');
+  </script>
+<% end %>
