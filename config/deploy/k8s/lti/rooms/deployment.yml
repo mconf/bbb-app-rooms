@@ -1,0 +1,97 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mconf-lti-rooms
+  namespace: app-lti
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 20%
+      maxUnavailable: 20%
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: mconf-lti-rooms
+  template:
+    metadata:
+      labels:
+        app: mconf-lti-rooms
+        revision: "1"
+    spec:
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: mconf-lti-rooms
+          image: mconf/bbb-app-rooms:v0.6.0-elos
+          imagePullPolicy: Always
+          # To test with local image (docker build -t bbb-lti-rooms-local .)
+          # image: bbb-lti-rooms-local
+          # imagePullPolicy: Never
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: mconf-lti-rooms-cm
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: mconf-lti-rooms-secret
+                  key: DATABASE_URL
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: mconf-lti-rooms-secret
+                  key: SECRET_KEY_BASE
+            - name: OMNIAUTH_BBBLTIBROKER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mconf-lti-broker-secret
+                  key: OMNIAUTH_BBBLTIBROKER_KEY
+            - name: OMNIAUTH_BBBLTIBROKER_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mconf-lti-broker-secret
+                  key: OMNIAUTH_BBBLTIBROKER_SECRET
+          resources:
+            requests:
+              cpu: 50m
+              memory: 500Mi
+            limits:
+              cpu: 600m
+              memory: 600Mi
+          livenessProbe:
+            httpGet:
+              path: /rooms/healthz
+              port: 3000
+            initialDelaySeconds: 5
+            timeoutSeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /rooms/healthz
+              port: 3000
+            initialDelaySeconds: 5
+            timeoutSeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+          volumeMounts:
+            - name: config-volume
+              mountPath: /usr/src/app/scripts/start.sh
+              subPath: start.sh
+            - name: certs-volume
+              mountPath: /usr/src/app/tmp/ca-certificates/mconf-dev-ca.crt
+              subPath: mconf-dev-ca.crt
+      volumes:
+        - name: config-volume
+          configMap:
+            name: mconf-lti-rooms-scripts-cm
+            defaultMode: 0777
+        - name: certs-volume
+          configMap:
+            name: mconf-lti-certs-cm
+
