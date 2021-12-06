@@ -1,10 +1,19 @@
-<div class="row">
-  <div class="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3">
-    <h1><%= message %> (<%= code %>)</h1>
-    <% if suggestion %>
-      <div>
-        <%= suggestion %>
+<div id="error-wrapper">
+  <div class="error-description">
+    <div class="ops-text">
+      <%= t("error.ops") %>
+    </div>
+    <div class="description-text">
+      <%= suggestion %>
+    </div>
+    <% if explanation %>
+      <div class="explanation-text">
+        <%= explanation %>
       </div>
     <% end %>
+    <div class="error-logo-all" id="error<%= code %>-logo"></div>
+    <div class="title-text">
+      <%= "#{t('default.app.error').upcase} #{code} – #{message}" %>
+    </div>
   </div>
 </div>

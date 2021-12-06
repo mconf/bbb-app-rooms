@@ -140,28 +140,32 @@ en:
         time_js: "H:i"
         time_ruby: "%H:%M"
   error:
+    ops: "Oops!"
+    one: "Error"
     http:
       _401:
         code:       "Unauthorized"
-        message:    "Unauthorized access"
-        suggestion: "You don't have access to this page. If you believe this might be an error, try launching the app again by using the link or refreshing the browser."
+        message:    "Authentication failure."
+        suggestion: "It seems you're not allowed here."
+        explanation: "If you believe this might be an error, try launching the app again by using the link or refreshing the browser."
         status_code: "401"
       _404:
         code:       "NotFound"
-        message:    "Not found"
-        suggestion: "The page you tried to access does not exist."
+        message:    "This page does not exist."
+        suggestion: "It seems there isn't anything here."
         status_code: "404"
     bigbluebutton:
       invalid_request:
         code:       "BBBAPICallInvalid"
-        message:    "Invalid BigBlueButton API call"
-        suggestion: "Make sure the BigBlueButton server used is available and accesible from the server where the LTI application is installed."
+        message:    "Server failure."
+        suggestion:  "Invalid BigBlueButton API call"
+        explanation: "Make sure the BigBlueButton server used is available and accesible from the server where the LTI application is installed."
         status_code: "500"
     generic:
       404:
         code: "NotFound"
-        message: "Not found"
-        suggestion: "The page you tried to access does not exist."
+        message: "This page does not exist."
+        suggestion: "It seems there isn't anything here."
       406:
         code:       "NotAcceptable"
         message:    "Format not acceptable"
@@ -169,29 +173,34 @@ en:
         status_code: "406"
       500:
         code: "ServerError"
-        message: "Server error"
-        suggestion: "Please try again later or contact an administrator."
+        message: "Server failure."
+        suggestion: "It seems that something has broken."
+        explanation: "We are already working to fix it."
+        status_code: "500"
     room:
       forbidden:
         code:       "AccessForbidden"
-        message:    "The session has expired"
-        suggestion: "If you are using this room through LTI try launching the app again by using the link or refreshing the browser."
+        message:    "Forbidden"
+        suggestion: "The session has expired"
+        explanation: "If you are using this room through LTI try launching the app again by using the link or refreshing the browser."
         status_code: "403"
       not_found:
         code:       "NotFound"
-        message:    "The room was not found"
+        message:    "Room not found"
         suggestion: "The room you tried to access doesn't exist."
         status_code: "404"
       invalid_secret:
         code:       "InvalidSecret"
-        message:    "The token could not be validated"
-        suggestion: "This problem can be caused by using an invalid key when validating the request through the LTI Provider."
+        message:    "Forbidden"
+        suggestion: "The token could not be validated"
+        explanation: "This problem can be caused by using an invalid key when validating the request through the LTI Provider."
         status_code: "403"
     scheduled_meeting:
       not_found:
         code:       "NotFound"
-        message:    "The scheduled meeting was not found"
-        suggestion: "It might have been removed by the session creator."
+        message:    "Meeting not found"
+        suggestion:    "The scheduled meeting was not found"
+        explanation: "It might have been removed by the session creator."
         status_code: "404"
   views:
     pagination:
