@@ -1,5 +1,37 @@
 # Change Log
 
+## 0.6.4 - 2021-09-22
+
+* [LTI-89] Added validation to check if there is a `ConsumerConfig` to display the referring message
+  to the terms of use, so as not to break in the `/external` if it does not exist.
+
+
+## 0.6.3 - 2021-09-07
+
+* [LTI-88] Added a new environment variable `APP_LAUNCH_REMOVE_OLD_ON_LAUNCH` to enable/disable
+  the removal of AppLaunches on launch. Set to `true` by default.
+* [LTI-88] Fix typo in the environment variable `APP_LAUNCH_LIMIT_FOR_DELETE` (was called
+  `APP_lAUNCH_LIMIT_FOR_DELETE`, with a lowercase `l`).
+* [LTI-88] Removed `.env.development.local` from the repo, it shouldn't be tracked (it's already
+  included in `.gitignore`).
+
+
+## 0.6.2 - 2021-09-01
+
+* [LTI-79] Fixed function name, for if the application is only serving Rails Admin, the root route
+  is `/dash`.
+
+
+## 0.6.1 - 2021-08-31
+
+* [LTI-79] The `/health` routes have been added to application root.
+* [LTI-79] Fixed feature to show message reference to terms of use, for `ConsumerConfig` with
+  `message_reference_terms_use=true`.
+* [LTI-79] Added default lib, to validate and test environment variables: `SERVE_APPLICATION`
+  and `SERVE_RAILS_ADMIN`.
+* [LTI-79] If the application is only serving Rails Admin, the root route is `/dash`.
+
+
 ## 0.6.0 Elos - 2021-07-28
 
 * [LTI-10] Added theme Conferência Web.
