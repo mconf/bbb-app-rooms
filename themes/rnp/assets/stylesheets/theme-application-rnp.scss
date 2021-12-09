@@ -223,27 +223,27 @@ body.theme-rnp {
     }
 
     #error401-logo {
-      background: url(image-path('RNP_401.png')) no-repeat top;
+      background: url(image-path('errors/RNP_401.png')) no-repeat top;
       background-size: contain;
-      padding-top: 29.88%; /* (img-height / img-width * container-width) - scales div height to background image */
+      padding-top: 27.45%; /* (img-height / img-width * container-width) - scales div height to background image */
     }
 
     #error403-logo {
-      background: url(image-path('RNP_403.png')) no-repeat top;
+      background: url(image-path('errors/RNP_403.png')) no-repeat top;
       background-size: contain;
-      padding-top: 33.33%; /* (img-height / img-width * container-width) - scales div height to background image */
+      padding-top: 30.05%; /* (img-height / img-width * container-width) - scales div height to background image */
     }
 
     #error404-logo {
-      background: url(image-path('RNP_404.png')) no-repeat top;
+      background: url(image-path('errors/RNP_404.png')) no-repeat top;
       background-size: contain;
-      padding-top: 33.33%; /* (img-height / img-width * container-width) - scales div height to background image */
+      padding-top: 30%; /* (img-height / img-width * container-width) - scales div height to background image */
     }
 
     #error500-logo {
-      background: url(image-path('RNP_500.png')) no-repeat top;
+      background: url(image-path('errors/RNP_500.png')) no-repeat top;
       background-size: contain;
-      padding-top: 22.22%; /* (img-height / img-width * container-width) - scales div height to background image */
+      padding-top: 20.15%; /* (img-height / img-width * container-width) - scales div height to background image */
     }
   }
 
