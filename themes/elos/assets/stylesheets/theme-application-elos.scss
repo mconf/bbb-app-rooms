@@ -189,21 +189,22 @@ body.theme-elos {
 
   .error-description {
     text-align: center;
-    color: "#2B2D42";
+    color: #2B2D42;
     font-size: 22px;
     display: flex;
     flex-direction: column;
-    
+
     .ops-text {
       font-size: 34px;
-      font-weight: 700;
+      font-weight: var(--font-weight-bold);
     }
-    
+
     .description-text {
-      font-weight: 700;
+      font-weight: var(--font-weight-bold);
     }
-    
+
     .title-text {
+      font-weight: var(--font-weight-semibold);
       margin-top: 30px;
     }
 
@@ -217,25 +218,25 @@ body.theme-elos {
     }
 
     #error401-logo {
-      background: image-url('errors/401_Error.png') no-repeat top;
+      background: url(image-path('errors/401_Error.png')) no-repeat top;
       background-size: contain;
       padding-top: 29.88%; /* (img-height / img-width * container-width) - scales div height to background image */
     }
 
     #error403-logo {
-      background: image-url('errors/403_Error.png') no-repeat top;
+      background: url(image-path('errors/403_Error.png')) no-repeat top;
       background-size: contain;
       padding-top: 33.33%; /* (img-height / img-width * container-width) - scales div height to background image */
     }
 
     #error404-logo {
-      background: image-url('errors/404_Error.png') no-repeat top;
+      background: url(image-path('errors/404_Error.png')) no-repeat top;
       background-size: contain;
       padding-top: 33.33%; /* (img-height / img-width * container-width) - scales div height to background image */
     }
 
     #error500-logo {
-      background: image-url('errors/500_Error.png') no-repeat top;
+      background: url(image-path('errors/500_Error.png')) no-repeat top;
       background-size: contain;
       padding-top: 22.22%; /* (img-height / img-width * container-width) - scales div height to background image */
     }
