@@ -160,6 +160,7 @@ class ApplicationController < ActionController::Base
       key: t("error.#{model}.#{error}.code"),
       message: t("error.#{model}.#{error}.message"),
       suggestion: t("error.#{model}.#{error}.suggestion"),
+      explanation: t("error.#{model}.#{error}.status_code") == '404' ? nil : t("error.#{model}.#{error}.explanation"),
       code: t("error.#{model}.#{error}.status_code"),
       status: status
     }
@@ -229,6 +230,7 @@ class ApplicationController < ActionController::Base
       key: t("error.#{model}.#{status}.code"),
       message: t("error.#{model}.#{status}.message"),
       suggestion: t("error.#{model}.#{status}.suggestion"),
+      explanation: status == 404 ? nil : t("error.#{model}.#{status}.explanation"),
       code: status,
       status: status
     }
