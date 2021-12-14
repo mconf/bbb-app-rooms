@@ -27,7 +27,7 @@ on the Notion documentation, probably on `Getting Started` page. Remember to **n
 values to the repository. 
 
 * `BIGBLUEBUTTON_ENDPOINT`          -> url with format "https://your.api.domain/bigbluebutton/api"
-* `BIGBLUEBUTTON_ENDPOINT_INTERNAL` -> same value used above
+* `BIGBLUEBUTTON_ENDPOINT_INTERNAL` -> url for internal endpoint, might be same as above
 * `BIGBLUEBUTTON_SECRET`            -> string with format "1a2b3c"
 
 Login on dockerhub
