@@ -19,7 +19,7 @@ es:
       disable_note: "El profesor aún puede usar las notas compartidas, pero los estudiantes solo pueden ver el contenido, no editarlo. Esta función se puede reactivar dentro de la habitación a través de la opción \"Restringir participantes\"."
       repeat: "El enlace externo para una programación periódica siempre será el mismo. El nuevo horario aparecerá en la lista una vez finalizado el actual."
       time: "Estás usando la zona horaria: %{zone}"
-      custom_duration: "Elija la duración de la sesión: HH:MM"
+      custom_duration: "Informe la duración de la sesión: HH:MM"
     label:
       scheduled_meeting:
         all_moderators: "Todos entran como moderadores."
@@ -38,7 +38,7 @@ es:
         wait_moderator: "Espere a que ingrese el moderador para entrar"
         welcome: "Mensaje de bienvenida (opcional)"
   recordings:
-    all_loaded: "Todas las grabaciones cargadas"
+    all_loaded: "Se han cargado todas las grabaciones"
     confirm:
       destroy: "¿Estás seguro de que deseas eliminar esta grabación?"
       publish: "¿Estás seguro de que quieres publicar esta grabación?"
@@ -104,4 +104,4 @@ es:
         other: '%{count} hours'
   terms:
     message: "Al hacer clic en <em>%{enter_room}</em>, acepta nuestros <a href='%{link}' target='_blank'>términos y condiciones</a>."
-    enter_room: "Entrar"
+    enter_room: "Acceder"
