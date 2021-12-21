@@ -117,6 +117,6 @@ gem 'friendly_id', '~> 5.4.0'
 gem 'browser'
 
 # For queues
-gem 'resque', :require => 'resque/server'
-gem 'resque-scheduler', :require => 'resque/scheduler/server'
+gem 'resque', require: 'resque/server'
+gem 'resque-scheduler', require: 'resque/scheduler/server'
 gem 'active_scheduler'

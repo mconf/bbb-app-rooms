@@ -19,12 +19,12 @@ require 'active_scheduler'
   attrs[:password] = Rails.application.config.redis_password unless Rails.application.config.redis_password.blank?
   Resque.redis = Redis.new(attrs)
 
-  # The scheduler is configured:
-  yml_schedule    = YAML.load_file("config/jobs_schedule.yml")
+  # Scheduler configuration
+  yml_schedule     = YAML.load_file("config/jobs_schedule.yml")
   wrapped_schedule = ActiveScheduler::ResqueWrapper.wrap yml_schedule
   Resque.schedule  = wrapped_schedule
   
-  # Authenticate for use resque interface
+  # Authentication for the Resque web interface
   Resque::Server.use(Rack::Auth::Basic) do |user, password|
     user == ENV["ADMIN_KEY"]
     password == ENV["ADMIN_PASSWORD"]
