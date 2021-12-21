@@ -179,9 +179,8 @@ class RoomsController < ApplicationController
       )
     )
 
-    expires_at = Rails.configuration.launch_duration_mins.from_now
-
     # Store the data from this launch for easier access
+    expires_at = Rails.configuration.launch_duration_mins.from_now
     app_launch = AppLaunch.find_or_create_by(nonce: launch_nonce) do |launch|
       launch.update(
         params: launch_params,

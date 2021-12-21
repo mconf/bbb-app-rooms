@@ -1,5 +1,5 @@
-<h1><%= t('default.app.error') %></h1>
-
-<% if @error %>
-<%= render 'shared/error', key: @error[:key], message: @error[:message], suggestion: @error[:suggestion] %>
-<% end %>
+<%= render 'errors/error',
+    code: @error[:code],
+    message: @error[:message],
+    suggestion: @error[:suggestion],
+    explanation: @error[:explanation] %>

@@ -77,12 +77,14 @@ class ApplicationController < ActionController::Base
   def find_user
     room_session = get_room_session(@room)
     if room_session.present?
-      user_params = AppLaunch.find_by(nonce: room_session['launch']).user_params
-      @user = BbbAppRooms::User.new(user_params)
-      Rails.logger.info "Found the user #{@user.email} (#{@user.uid}, #{@user.launch_nonce})"
+      user_params = AppLaunch.find_by(nonce: room_session['launch'])&.user_params
+      if user_params.present?
+        @user = BbbAppRooms::User.new(user_params)
+        Rails.logger.info "Found the user #{@user.email} (#{@user.uid}, #{@user.launch_nonce})"
 
-      # update the locale so we use the user's locale, if any
-      set_current_locale
+        # update the locale so we use the user's locale, if any
+        set_current_locale
+      end
     end
 
     # TODO: check expiration here?
@@ -158,6 +160,7 @@ class ApplicationController < ActionController::Base
       key: t("error.#{model}.#{error}.code"),
       message: t("error.#{model}.#{error}.message"),
       suggestion: t("error.#{model}.#{error}.suggestion"),
+      explanation: t("error.#{model}.#{error}.status_code") == '404' ? nil : t("error.#{model}.#{error}.explanation"),
       code: t("error.#{model}.#{error}.status_code"),
       status: status
     }
@@ -227,6 +230,7 @@ class ApplicationController < ActionController::Base
       key: t("error.#{model}.#{status}.code"),
       message: t("error.#{model}.#{status}.message"),
       suggestion: t("error.#{model}.#{status}.suggestion"),
+      explanation: status == 404 ? nil : t("error.#{model}.#{status}.explanation"),
       code: status,
       status: status
     }
@@ -251,6 +255,8 @@ class ApplicationController < ActionController::Base
     case locale
     when /^pt/i
       I18n.locale = 'pt'
+    when /^es/i
+      I18n.locale = 'es'
     else
       I18n.locale = 'en' # fallback
     end

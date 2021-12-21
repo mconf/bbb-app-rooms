@@ -22,6 +22,14 @@ Repeat it for bbb-app-rooms (note that the URL is not the same)
 * Run (replacing YOUR_IP with your actual IP) `echo -n "postgresql://postgres:password@YOUR_IP:5433/lti_rooms" | base64`
 * Copy the base64 string and set it in the field `DATABASE_URL` in `lti/rooms/secrets.yml`
 
+Add the BigBlueButton API endpoint and secret to `lti/rooms/configmap.yml`. You can find them
+on the Notion documentation, probably on `Getting Started` page. Remember to **not** push those
+values to the repository. 
+
+* `BIGBLUEBUTTON_ENDPOINT`          -> url with format "https://your.api.domain/bigbluebutton/api"
+* `BIGBLUEBUTTON_ENDPOINT_INTERNAL` -> url for internal endpoint, might be same as above
+* `BIGBLUEBUTTON_SECRET`            -> string with format "1a2b3c"
+
 Login on dockerhub
 
 * $ `docker login`

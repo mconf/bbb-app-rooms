@@ -163,8 +163,9 @@ module BbbApi
       secret = Rails.configuration.bigbluebutton_secret
     end
 
+    # BigBlueButtonApi.new(url, secret, version=nil, logger=nil)
     BigBlueButton::BigBlueButtonApi.new(
-      remove_slash(fix_bbb_endpoint_format(endpoint)), secret, "0.9", "true"
+      remove_slash(fix_bbb_endpoint_format(endpoint)), secret, "0.9", Rails.logger
     )
   end
 

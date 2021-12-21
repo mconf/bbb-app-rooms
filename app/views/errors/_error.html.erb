@@ -1,9 +1,19 @@
-<div class="alert alert-danger fade in">
-  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-  <h4><strong><%= key %></strong>: <%= message %></h4>
-  <p>
-    <% if suggestion %>
-    <%= suggestion %>
+<div id="error-wrapper">
+  <div class="error-description">
+    <div class="ops-text">
+      <%= t("error.ops") %>
+    </div>
+    <div class="description-text">
+      <%= @error[:suggestion] %>
+    </div>
+    <% if @error[:explanation] %>
+      <div class="explanation-text">
+        <%= @error[:explanation] %>
+      </div>
     <% end %>
-  </p>
+    <div class="error-logo-all" id="error<%= @error[:code] %>-logo"></div>
+    <div class="title-text">
+      <%= "#{t('default.app.error').upcase} #{@error[:code]} – #{@error[:message]}" %>
+    </div>
+  </div>
 </div>

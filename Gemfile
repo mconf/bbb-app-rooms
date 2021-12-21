@@ -83,8 +83,8 @@ gem 'jquery-fileupload-rails'
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
 
-# API
-gem 'bigbluebutton-api-ruby'
+# BigBlueButton API
+gem 'bigbluebutton-api-ruby', '~> 1.8'
 
 # AWS S3 API (to access Spaces API)
 gem 'aws-sdk-s3', '~> 1'
