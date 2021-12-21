@@ -15,7 +15,7 @@ class RemoveOldAppLaunchJob < ApplicationJob
         LIMIT '#{limit_for_delete}'
       )
     SQL
-    deleted_launches = connection.execute(get_delete_launches).cmd_tuples
+    deleted_launches = ActiveRecord::Base.connection.execute(get_delete_launches).cmd_tuples
     query_duration = Time.now.utc - query_started
     Resque.logger.info "Removing the old AppLaunches from before #{date_limit}, " \
                       "#{deleted_launches} AppLaunches deleted, " \
