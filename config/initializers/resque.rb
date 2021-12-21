@@ -4,12 +4,9 @@ require 'resque/scheduler/server'
 require 'active_scheduler'
 
   logger = Logger.new(STDOUT)
-  logger.formatter = proc do |severity, datetime, progname, msg|
-    formatted_datetime = datetime.strftime("%Y-%m-%d %H:%M:%S.") << datetime.usec.to_s[0..2].rjust(3)
-    "#{formatted_datetime} [#{severity}] #{msg} (pid:#{$$})\n"
-  end
+  logger.formatter = Rails.application.config.log_formatter
+  logger.level = Rails.application.config.log_level
   Resque.logger = logger
-  Resque.logger.level = Logger::INFO
 
   attrs = {
     host: Rails.application.config.redis_host,
