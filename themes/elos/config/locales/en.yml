@@ -76,6 +76,14 @@ en:
     close:
       message: "Thank you for participating and until the next time."
       title: "Your session has ended"
+  coc:
+    schools: "Schools"
+    classes_header:
+      name: "Name"
+      serie: "Grades"
+      segment: "Segment"
+    classes:
+      schedules: "Schedules"
   scheduled_meetings:
     destroy: "Remove"
     edit:

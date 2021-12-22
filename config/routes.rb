@@ -48,6 +48,9 @@ Rails.application.routes.draw do
 
         # Handles errors.
         get '/errors/:code', to: 'errors#index', as: :errors
+
+        get '/coc/launch', to: 'coc#launch'
+        get '/coc/classes/:handler', to: 'coc#classes', as: :coc_classes
       end
 
       # NOTE: there are other actions in the rooms controller, but they are not used for now,

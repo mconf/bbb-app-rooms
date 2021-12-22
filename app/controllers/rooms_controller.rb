@@ -38,6 +38,13 @@ class RoomsController < ApplicationController
     end
   end
 
+  # show_coc/:handler/:class_id
+  def show_coc
+    @app_launch = AppLaunch.find_by(room_handler: params['handler'])
+    @app_launch.get_class(params['class_id'])
+
+  end
+
   def recordings
     @fetch_recordings_endpoint = recordings_pagination_room_path
     @per_page = Rails.application.config.recordings_per_page

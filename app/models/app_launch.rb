@@ -26,6 +26,13 @@ class AppLaunch < ApplicationRecord
     p
   end
 
+  def coc_class_params
+    {
+     handler: resource_handler,
+     schools: params['custom_params']['schools']
+    }
+  end
+
   def user_params
     {
       uid: self.params['user_id'],

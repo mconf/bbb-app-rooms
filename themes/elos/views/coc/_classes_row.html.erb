@@ -1,0 +1,20 @@
+<% segments.each do |segment| %>
+  <% segment['grades'].each do |grade| %>
+    <% grade['classes'].each do |klass| %>
+      <tr class="d-flex row tr-row">
+        <td class="d-flex col-12 col-md-3 align-items-sm-center align-items-md-start font-weight-bold">
+          <%= klass['name'] %>
+        </td>
+        <td class="col-12 col-md-3">
+          <%= grade['name'] %>
+        </td>
+        <td class="col-12 col-md-3">
+          <%= segment['name'] %>
+        </td>
+        <td class="col-12 col-md-3">
+          <%= link_to t('coc.classes.schedules'), '', class: "btn btn-schedules" %>
+        </td>
+      </tr>
+    <% end %>
+  <% end %>
+<% end %>
