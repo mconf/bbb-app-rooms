@@ -1,6 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=IBM+Plex+Sans');
-//@import url('https://fonts.googleapis.com/css?family=Montserrat');
-@import url('https://fonts.googleapis.com/css?family=Comfortaa');
+@import url('https://fonts.googleapis.com/css?family=Nunito+Sans');
 
 $vars: (
   --color-main: #2DCCD3,
@@ -27,8 +25,8 @@ $vars: (
   --color-gray-08: #575756,
   --color-gray-09: #3C3C3B,
   --font-color: #202020,
-  --font-family: "'IBM Plex Sans', sans-serif",
-  --font-family-title: "'Comfortaa', sans-serif",
+  --font-family: "'Nunito Sans'",
+  --font-family-title: "'Nunito Sans'",
   --font-weight: Regular,
   --font-size: 16.5px,
   --font-size-rem: 1.1rem, // Assumes the browser default, typically `16px`
