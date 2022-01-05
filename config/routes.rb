@@ -1,6 +1,8 @@
-# frozen_string_literal: true
+require 'resque/server'
 
 Rails.application.routes.draw do
+
+  mount Resque::Server.new, at: "/resque"
 
   get '/health_check', to: 'health_check#all', default: { format: nil }
   get '/healthz', to: 'health_check#all', default: { format: nil }
