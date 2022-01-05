@@ -54,12 +54,12 @@ class RoomsController < ApplicationController
       limit: limit,
       offset: offset
     }
-    recordings, all_recordings_loaded = get_recordings(@room, options)
+    meetings_and_recordings, all_meetings_loaded = get_all_meetings(@room, options.merge(:includeRecordings=>true))
 
-    args = { recordings: recordings,
+    args = { meetings_and_recordings: meetings_and_recordings,
              user: @user,
              room: @room,
-             all_recordings_loaded: all_recordings_loaded }
+             all_meetings_loaded: all_meetings_loaded }
 
     render partial: 'shared/recordings_list',
            layout: false,
