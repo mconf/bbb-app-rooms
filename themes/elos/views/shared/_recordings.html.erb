@@ -3,7 +3,7 @@
 
 <div id="recordings-list" class="row">
   <div id="recordings-header" class="col-12">
-    <h2><%= t('recordings.title') %></h2>
+    <h2><%= t('recordings.history') %></h2>
   </div>
 
   <%# Disable search for now %>
@@ -15,6 +15,16 @@
 
   <div class="col-12">
     <table id="recording-table" class="table" data-search-target="1">
+      <thead>
+        <tr class="d-flex">
+          <th class="col-md-5"><%= t("recordings.table.title") %></th>
+          <th class="col-md-1"><%= t("recordings.table.date") %></th>
+          <th class="col-md-1"><%= t("recordings.table.time") %></th>
+          <th class="col-md-2"><%= t("recordings.table.duration") %></th>
+          <th class="col-md-1"><%= t("recordings.table.status") %></th>
+          <th class="col-md-2"><%= t("recordings.table.playback") %></th>
+        </tr>
+      </thead>
       <tbody>
       </tbody>
     </table>
