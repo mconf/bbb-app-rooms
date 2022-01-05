@@ -53,14 +53,23 @@ pt:
     playback_link: "Copiar link de reprodução"
     playbacks:
       presentation: "Reproduzir"
-      presentation_video: "Baixar"
-    publish: "Publicar"
+      presentation_video: "Download"
     search:
       placeholder: "Buscar em título ou descrição..."
     table:
+      title: "Título"
+      date: "Data"
+      time: "Hora"
+      duration: "Duração"
+      status: "Status"
+      playback: "Reprodução"
       footnote: "Datas exibidas no fuso horário: %{zone}"
-    title: "Gravações"
-    unpublish: "Despublicar"
+    history: "Histórico"
+    publish: "Tornar visível"
+    unpublish: "Tornar privado"
+    published: "Visível"
+    unpublished: "Não visível"
+    processing: "Processando"
   reports:
     download: "Baixar"
     download_options:
@@ -102,6 +111,9 @@ pt:
       x_hours:
         one: 'an hour'
         other: '%{count} hours'
+  date:
+    formats:
+      day_month_year: '%d/%m/%Y'
   terms:
     message: "Ao clicar em <i>%{enter_room}</i>, você concorda com os nossos <a href='%{link}' target='_blank'>termos de uso</a>."
     enter_room: "Entrar"

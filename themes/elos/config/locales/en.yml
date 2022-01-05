@@ -52,15 +52,24 @@ en:
     load: "Load more recordings"
     playback_link: "Copy playback link"
     playbacks:
-      presentation: "Playback"
+      presentation: "Play"
       presentation_video: "Download"
-    publish: "Publish"
     search:
       placeholder: "Search by title or description..."
     table:
+      title: "Title"
+      date: "Date"
+      time: "Time"
+      duration: "Duration"
+      status: "Status"
+      playback: "Playback"
       footnote: "Dates shown in the time zone: %{zone}"
-    title: "Recordings"
-    unpublish: "Unpublish"
+    history: "History"
+    publish: "Make it visible"
+    unpublish: "Make it private"
+    published: "Visible"
+    unpublished: "Not visible"
+    processing: "Processing"
   reports:
     download: "Download"
     download_options:
@@ -103,6 +112,9 @@ en:
         about_x_hours:
           one: 'an hour'
           other: '%{count} hours'
+  date:
+    formats:
+      day_month_year: '%m/%d/%Y'
   terms:
     message: "By clicking <em>%{enter_room}</em>, you agree to our <a href='%{link}' target='_blank'>terms and conditions</a>."
     enter_room: "Join"
