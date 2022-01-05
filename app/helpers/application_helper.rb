@@ -59,4 +59,10 @@ module ApplicationHelper
   def theme_class
     "theme-#{Rails.configuration.theme}" if theme_defined?
   end
+
+  def options_for_tooltip(title, options={})
+    options.merge!(:title => title,
+                   :class => "tooltipped " + (options[:class] || ""),
+                   :"data-placement" => options[:"data-placement"] || "top")
+ end
 end
