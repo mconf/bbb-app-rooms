@@ -1,7 +1,7 @@
 <%# Params passed to render partial %>
 <% [user, room, meeting, recording] %>
 
-<tr class="recording-row d-flex row tr-row">
+<tr class="recording-row d-flex row tr-row rec-<%= !recording[:internalMeetingID].blank? %>">
   <td class="col-md-5 align-middle td-titles" data-search-field="1">
     <div class="item-title">
       <% if recording[:metadata][:name] %>
