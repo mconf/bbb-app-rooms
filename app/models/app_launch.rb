@@ -26,11 +26,8 @@ class AppLaunch < ApplicationRecord
     p
   end
 
-  def coc_class_params
-    {
-     handler: resource_handler,
-     schools: params['custom_params']['schools']
-    }
+  def tag
+    params['custom_params']['tag']
   end
 
   def user_params
