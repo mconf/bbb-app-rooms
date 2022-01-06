@@ -49,18 +49,27 @@ es:
     empty_list: "No hay grabaciones para mostrar"
     index:
       return: "< volver"
-    load: "Cargar más grabaciones"
+    load: "Cargar más conferencias"
     playback_link: "Copiar enlace de reproducción"
     playbacks:
       presentation: "Reproducir"
-      presentation_video: "Descargar"
-    publish: "Publicar"
+      presentation_video: "Download"
     search:
       placeholder: "Buscar en título o descripción..."
     table:
+      title:  "Titulo"
+      date: "Fecha"
+      time: "Hora"
+      duration: "Duración"
+      status: "Status"
+      playback: "Reproducción"
       footnote: "Fechas mostradas en la zona horaria: %{zone}"
-    title: "Grabaciones"
-    unpublish: "Anular publicación"
+    history: "Historial"
+    publish: "Hazlo visible"
+    unpublish: "Hazlo privado"
+    published: "Visible"
+    unpublished: "No visible"
+    processing: "Procesando"
   reports:
     download: "Descargar"
     download_options:
@@ -87,7 +96,7 @@ es:
       add: "+ Programar sesión"
       title: "Programar sesión"
     show:
-      view_recordings: "Ver grabaciones"
+      view_history: "Ver historial"
     table:
       footnote: "Fechas mostradas en la zona horaria: %{zone}"
     title: "Sesiones programadas"
@@ -102,6 +111,9 @@ es:
       x_hours:
         one: 'an hour'
         other: '%{count} hours'
+  date:
+    formats:
+      day_month_year: '%d/%m/%Y'
   terms:
     message: "Al hacer clic en <em>%{enter_room}</em>, acepta nuestros <a href='%{link}' target='_blank'>términos y condiciones</a>."
     enter_room: "Acceder"

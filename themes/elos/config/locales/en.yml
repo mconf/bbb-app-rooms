@@ -49,7 +49,7 @@ en:
     empty_list: "There are no recordings to show"
     index:
       return: "< go back"
-    load: "Load more recordings"
+    load: "Load more conferences"
     playback_link: "Copy playback link"
     playbacks:
       presentation: "Play"
@@ -96,7 +96,7 @@ en:
       add: "+ Schedule session"
       title: "Schedule session"
     show:
-      view_recordings: "View recordings"
+      view_history: "View history"
     table:
       footnote: "Dates shown in the time zone: %{zone}"
     title: "Scheduled sessions"
