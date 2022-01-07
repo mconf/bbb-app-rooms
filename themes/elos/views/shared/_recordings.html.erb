@@ -2,19 +2,21 @@
 <% [user, room, recordings, only_public] %>
 
 <div id="recordings-list" class="row">
-  <div id="recordings-header" class="col-12 col-sm-6 text-center text-sm-left">
-    <h2><%= t('recordings.history') %></h2>
-  </div>
+  <div class="row w-100 mb-3">
+    <div id="recordings-header" class="col-12 col-sm-6 d-flex align-items-center justify-content-center justify-content-sm-start">
+      <h2 class="font-weight-bold mb-0"><%= t('recordings.history') %></h2>
+    </div>
 
-  <div id="meetings-filters" class="col-12 col-sm-6 mb-3 mb-sm-0 d-flex align-items-center justify-content-center justify-content-sm-end btn-group-toggle" data-toggle="buttons">
-    <%# All meetings %>
-    <label class="btn btn-light d-flex align-items-center justify-content-center h-50 w-25 active">
-      <input type="radio" name="filters" value="no-filters" autocomplete="off" checked> <%= t('recordings.filters.no_filter') %>
-    </label>
-    <%# Only recorded meetings %>
-    <label class="btn btn-light d-flex align-items-center justify-content-center h-50 w-25 ml-4">
-      <input type="radio" name="filters" value="recorded-only" autocomplete="off"> <%= t('recordings.filters.recorded_only') %>
-    </label>
+    <div id="meetings-filters" class="col-12 col-sm-6 mb-3 mb-sm-0 d-flex align-items-center justify-content-center justify-content-sm-end btn-group-toggle" data-toggle="buttons">
+      <%# All meetings %>
+      <label class="btn btn-light d-flex align-items-center justify-content-center h-50 w-25 active">
+        <input type="radio" name="filters" value="no-filters" autocomplete="off" checked> <%= t('recordings.filters.no_filter') %>
+      </label>
+      <%# Only recorded meetings %>
+      <label class="btn btn-light d-flex align-items-center justify-content-center h-50 w-25 ml-4">
+        <input type="radio" name="filters" value="recorded-only" autocomplete="off"> <%= t('recordings.filters.recorded_only') %>
+      </label>
+    </div>
   </div>
 
   <%# Disable search for now %>
@@ -24,33 +26,35 @@
     </div>
   <% end %>
 
-  <div class="col-12">
-    <table id="recording-table" class="table" data-search-target="1">
-      <thead>
-        <tr class="d-flex">
-          <th class="col-md-5"><%= t("recordings.table.title") %></th>
-          <th class="col-md-1"><%= t("recordings.table.date") %></th>
-          <th class="col-md-1"><%= t("recordings.table.time") %></th>
-          <th class="col-md-2"><%= t("recordings.table.duration") %></th>
-          <th class="col-md-1"><%= t("recordings.table.status") %></th>
-          <th class="col-md-2"><%= t("recordings.table.playback") %></th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
-    <div id="status"
-         data-fetch-recordings-endpoint="<%= @fetch_recordings_endpoint %>"
-         data-per-page="<%= @per_page %>">
-      <div class="loader-wrapper">
-        <button class="load-recordings btn btn-light btn-sm"><%= t('recordings.load') %></button>
-        <div class="loader"></div>
-        <div class="all-loaded"><%= t('recordings.all_loaded') %></div>
-        <div class="empty"><%= t('recordings.empty_list') %></div>
+  <div class="row w-100">
+    <div class="col-12">
+      <table id="recording-table" class="table" data-search-target="1">
+        <thead>
+          <tr class="d-flex">
+            <th class="col-md-5 by-0 py-0"><%= t("recordings.table.title") %></th>
+            <th class="col-md-1 text-center by-0 py-0"><%= t("recordings.table.date") %></th>
+            <th class="col-md-1 text-center by-0 py-0"><%= t("recordings.table.time") %></th>
+            <th class="col-md-2 text-center by-0 py-0"><%= t("recordings.table.duration") %></th>
+            <th class="col-md-1 text-center by-0 py-0"><%= t("recordings.table.status") %></th>
+            <th class="col-md-1 text-center by-0 py-0"><%= t("recordings.table.playback") %></th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+      <div id="status"
+          data-fetch-recordings-endpoint="<%= @fetch_recordings_endpoint %>"
+          data-per-page="<%= @per_page %>">
+        <div class="loader-wrapper">
+          <button class="load-recordings btn btn-light btn-sm"><%= t('recordings.load') %></button>
+          <div class="loader"></div>
+          <div class="all-loaded"><%= t('recordings.all_loaded') %></div>
+          <div class="empty"><%= t('recordings.empty_list') %></div>
+        </div>
       </div>
-    </div>
-    <div class="table-footnote">
-      <%= t('recordings.table.footnote', zone: current_formatted_time_zone) %>
+      <div class="table-footnote">
+        <%= t('recordings.table.footnote', zone: current_formatted_time_zone) %>
+      </div>
     </div>
   </div>
 </div>

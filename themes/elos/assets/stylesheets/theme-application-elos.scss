@@ -286,12 +286,18 @@ body.theme-elos {
     margin-bottom: blocks(6);
 
     #recordings-header {
-      margin-top: blocks(2);
-      margin-bottom: blocks(4);
+      min-height: blocks(10);
     }
 
-    #recording-table.filter-recorded-only {
-      .rec-false {
+    #recording-table {
+
+      thead tr {
+        min-height: blocks(5);
+        color: var(--color-gray-06);
+      }
+
+      // Hide meetings without recordings
+      &.filter-recorded-only .rec-false {
         display: none !important;
       }
     }
