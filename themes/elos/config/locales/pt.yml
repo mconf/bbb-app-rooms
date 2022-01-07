@@ -47,6 +47,9 @@ pt:
     duration:
       less_than_a_minute: "Menos de 1 minuto"
     empty_list: "Não há gravações para mostrar"
+    filters:
+      no_filter: "Todas"
+      recorded_only: "Gravadas"
     index:
       return: "< voltar"
     load: "Carregar mais conferências"

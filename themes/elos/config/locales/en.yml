@@ -47,6 +47,9 @@ en:
     duration:
       less_than_a_minute: "Less than 1 minute"
     empty_list: "There are no recordings to show"
+    filters:
+      no_filter: "All"
+      recorded_only: "Recorded"
     index:
       return: "< go back"
     load: "Load more conferences"

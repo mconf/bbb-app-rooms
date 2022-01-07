@@ -57,4 +57,16 @@ $(document).on('turbolinks:load', function(){
     $(this).removeData('launch');
     return true;
   });
+
+  $("#meetings-filters input").on('change', function() {
+    filter = $('input[name=filters]:checked', '#meetings-filters').val();
+    switch (filter) {
+      case 'recorded-only':
+        $('#recording-table').addClass('filter-recorded-only');
+        break;
+      default:
+        $('#recording-table').removeClass('filter-recorded-only');
+    };
+    return true;
+  });
 });

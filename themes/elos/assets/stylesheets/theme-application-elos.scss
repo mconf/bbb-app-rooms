@@ -290,6 +290,16 @@ body.theme-elos {
       margin-bottom: blocks(4);
     }
 
+    #recording-table.filter-recorded-only {
+      .rec-false {
+        display: none !important;
+      }
+    }
+
+    #meetings-filters .btn.active {
+      @extend .btn-primary;
+    }
+
     #search_bar {
       margin-top: blocks(2);
       margin-bottom: blocks(4);

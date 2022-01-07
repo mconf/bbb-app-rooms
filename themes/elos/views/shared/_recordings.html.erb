@@ -2,8 +2,19 @@
 <% [user, room, recordings, only_public] %>
 
 <div id="recordings-list" class="row">
-  <div id="recordings-header" class="col-12">
+  <div id="recordings-header" class="col-12 col-sm-6 text-center text-sm-left">
     <h2><%= t('recordings.history') %></h2>
+  </div>
+
+  <div id="meetings-filters" class="col-12 col-sm-6 mb-3 mb-sm-0 d-flex align-items-center justify-content-center justify-content-sm-end btn-group-toggle" data-toggle="buttons">
+    <%# All meetings %>
+    <label class="btn btn-light d-flex align-items-center justify-content-center h-50 w-25 active">
+      <input type="radio" name="filters" value="no-filters" autocomplete="off" checked> <%= t('recordings.filters.no_filter') %>
+    </label>
+    <%# Only recorded meetings %>
+    <label class="btn btn-light d-flex align-items-center justify-content-center h-50 w-25 ml-4">
+      <input type="radio" name="filters" value="recorded-only" autocomplete="off"> <%= t('recordings.filters.recorded_only') %>
+    </label>
   </div>
 
   <%# Disable search for now %>
