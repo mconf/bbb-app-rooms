@@ -6,7 +6,7 @@ module Clients::Coc
       before_action -> { authenticate_with_oauth!(:bbbltibroker) },
                     only: :launch, raise: false
       before_action :set_launch_room, only: %i[launch]
-      before_action :find_app_launch, only: %i[launch index]
+      before_action :find_app_launch, only: %i[index show]
       before_action :find_user
       before_action only: %i[launch index show] do
         authorize_user!(:show, nil)
@@ -32,15 +32,13 @@ module Clients::Coc
           format.html do
             schools = @app_launch.params.dig('custom_params', 'schools')
             @schools = Helpers::CocHelper.sort_schools(schools)
-            render('clients/coc/classes')
+            render "classes/index"
           end
         end
       end
 
       # GET /coc/:handler/:class_id
       def show
-        @app_launch = AppLaunch.where(room_handler: params['handler']).last
-
         adapted_room_params = adapt_room_params
 
         @room = Room.create_with(adapted_room_params)
@@ -114,7 +112,7 @@ module Clients::Coc
 
         # Store the data from this launch for easier access
         expires_at = Rails.configuration.launch_duration_mins.from_now
-        app_launch = AppLaunch.find_or_create_by(nonce: launch_nonce) do |launch|
+        @app_launch = AppLaunch.find_or_create_by(nonce: launch_nonce) do |launch|
           launch.update(
             params: launch_params,
             omniauth_auth: session['omniauth_auth']['bbbltibroker'],
@@ -125,14 +123,31 @@ module Clients::Coc
         # Use this data only during the launch
         # From now on, take it from the AppLaunch
         session.delete('omniauth_auth')
+        set_coc_session(@app_launch.room_params[:handler], {nonce: launch_nonce})
+      end
+
+      def get_coc_session(handler)
+        session[COOKIE_ROOMS_SCOPE] ||= {}
+        return if handler.blank?
+
+        session[COOKIE_ROOMS_SCOPE][handler]
+      end
+
+      def set_coc_session(handler, data)
+        session[COOKIE_ROOMS_SCOPE] ||= {}
+
+        # so we know which ones are the oldest ones
+        data['ts'] = DateTime.now.to_i
+    
+        cleanup_room_session unless session[COOKIE_ROOMS_SCOPE].key?(handler)
+
+        # they will be strings in future calls, so make them strings already
+        session[COOKIE_ROOMS_SCOPE][handler] = data.stringify_keys
       end
 
       def find_app_launch
-        if permitted_params.key?('launch_nonce')
-          @app_launch = AppLaunch.find_by(nonce: permitted_params['launch_nonce'])
-        elsif permitted_params.key?('handler')
-          @app_launch = AppLaunch.where(room_handler: permitted_params['handler']).last
-        end
+        coc_session = get_coc_session(params[:handler])
+        @app_launch = AppLaunch.find_by(nonce: coc_session['nonce']) if coc_session.present?
       end
 
       def permitted_params
