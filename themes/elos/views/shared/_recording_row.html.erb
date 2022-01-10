@@ -53,9 +53,9 @@
             <% recording[:playbacks].each do |p| %>
               <% url = playback_url(room, recording[:recordID], p) %>
               <% if p[:type] == 'presentation' %>
-                <%= link_to icon_conference_play(title: t("recordings.playbacks.#{p[:type]}"), class: 'fa-2x'), url, class: 'd-flex text-decoration-none ml-2', target: "_blank" %>
+                <%= link_to icon_conference_play(title: t("recordings.playbacks.#{p[:type]}"), class: 'fa-2x'), url, class: 'd-flex text-decoration-none', target: "_blank" %>
               <% else %>
-                <%= link_to icon_file_download(title: t("recordings.playbacks.#{p[:type]}"), class: 'fa-2x'), url, class: 'd-flex text-decoration-none', target: "_blank" %>
+                <%= link_to icon_file_download(title: t("recordings.playbacks.#{p[:type]}"), class: 'fa-2x'), url, class: 'd-flex text-decoration-none mr-2', target: "_blank" %>
               <% end %>
             <% end %>
           <% else %>
