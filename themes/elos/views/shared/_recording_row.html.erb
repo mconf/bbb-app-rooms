@@ -3,7 +3,7 @@
 
 <tr class="recording-row d-flex row tr-row rec-<%= recording[:internalMeetingID].present? %>">
   <%# Meeting name and description %>
-  <td class="col-md-5 align-middle td-titles" data-search-field="1">
+  <td class="col-md-5 td-titles" data-search-field="1">
     <div class="item-title">
       <%= meeting[:meetingName] ? meeting[:meetingName] : recording[:metadata][:name] %>
     </div>
@@ -37,7 +37,7 @@
   <%# Meeting with recording %>
   <% if recording[:internalMeetingID].present? %>
     <%# Recording visibility %>
-    <td class="col-md-1 align-middle">
+    <td class="col-md-1">
       <% if recording[:published] %>
         <%= icon_visibility(title: t("recordings.published"), class: 'color-secondary fa-2x') %>
       <% else %>
@@ -46,7 +46,7 @@
     </td>
 
     <%# Recording state/action icons %>
-    <td class="col-md-1 align-middle flex-row-reverse">
+    <td class="col-md-1 flex-row-reverse">
       <% if recording[:state] != 'processing' %>
         <% if recording[:published] %>
           <% if can_download_recording?(user, room)%>
@@ -70,7 +70,7 @@
 
     <%# Options dropdown %>
     <% if recording[:state] != 'processing' %>
-      <td class="col-md-1 align-middle td-dropdown-opts">
+      <td class="col-md-1 td-dropdown-opts">
         <div class="dropdown dropdown-opts">
           <a href="#" class="dropdown-toggle d-flex text-decoration-none" id="dropdown-opts-<%= recording[:recordID] %>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <%= icon_options_dots %>
