@@ -39,9 +39,9 @@
     <%# Recording visibility %>
     <td class="col-md-1 align-middle">
       <% if recording[:published] %>
-        <%= icon_visibility(title: t("recordings.published"), class: 'text-secondary fa-2x') %>
+        <%= icon_visibility(title: t("recordings.published"), class: 'color-secondary fa-2x') %>
       <% else %>
-        <%= icon_visibility_off(title: t("recordings.unpublished"), class: 'color-gray-03 fa-2x') %>
+        <%= icon_visibility_off(title: t("recordings.unpublished"), class: 'color-gray-04 fa-2x') %>
       <% end %>
     </td>
 
@@ -64,7 +64,7 @@
           <% end %>
         <% end %>
       <% else %>
-        <%= icon_recording_load(title: t("recordings.processing"), class: 'text-primary fa-2x') %>
+        <%= icon_recording_load(title: t("recordings.processing"), class: 'color-primary fa-2x') %>
       <% end %>
     </td>
 
