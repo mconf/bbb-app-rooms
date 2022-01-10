@@ -1,0 +1,12 @@
+<%= render "shared/notifications" %>
+<div class="container">
+
+  <% @school =
+    { coc: true, name: 'Colégio Érico Veríssimo',
+      classroom: { name: 'Turma 101', serie: '3º', segment: 'Ensino Fundamental'}
+    }
+  %>
+
+  <%= render "shared/room_header", user: @user, room: @room, school: @school%>
+  <%= render "shared/scheduled_meetings", user: @user, room: @room, scheduled_meetings: @scheduled_meetings %>
+</div>
