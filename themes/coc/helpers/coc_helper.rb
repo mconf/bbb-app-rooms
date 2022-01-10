@@ -88,19 +88,16 @@ module CocHelper
 
   def meeting_creator_name(meeting)
     app_launch = AppLaunch.find_by(nonce: meeting.created_by_launch_nonce)
-    byebug
     app_launch.omniauth_auth.dig('info', 'full_name')
   end
 
   def meeting_creator_by_current_user?(user, meeting)
-    byebug
     app_launch = AppLaunch.find_by(nonce: meeting.created_by_launch_nonce)
     user_creator_id = app_launch.omniauth_auth.dig('uid')
     user.uid == user_creator_id ? true : false
   end
 
   def class_meeting_not_created_by_user(user, meeting, room)
-    byebug
     user_creator = meeting_creator_by_current_user?(user, meeting)
 
     if !user_creator && can_edit?(user, room)
