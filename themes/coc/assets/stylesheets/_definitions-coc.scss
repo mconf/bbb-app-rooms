@@ -144,6 +144,15 @@ $line-height-lg: map-get($vars, '--line-height') !default;
   &:disabled, &[readonly] {
     background: var(--color-white);
   }
+
+  &.active {
+    border-color: var(--color-main);
+    box-shadow: 0 0 0 0.2rem rgba(0, 132, 56, 0.25);
+  }
+}
+
+.form-control:focus {
+  border-color: var(--color-main);
 }
 
 @keyframes shadow-pulse
