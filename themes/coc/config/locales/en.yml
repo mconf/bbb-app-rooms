@@ -7,9 +7,9 @@ en:
   coc:
     schools: "Schools"
     classes_header:
-      classes: "Classes"
-      grades: "Grades"
-      segments: "Segments"
+      classes: "Classe"
+      grades: "Grade"
+      segments: "Segment"
     classrooms:
       schedules: "Schedules"
   helpers:
