@@ -1,22 +1,23 @@
 <% if @title.present? %>
   <div class="mb-4">
 
-    <div class="d-flex align-items-center mb-5" style="justify-content: space-between">
-      <% if can_edit?(user, room) %>
+    <% if can_edit?(user, room) %>
+      <div class="d-flex align-items-center justify-content-between mb-5">
         <%= link_to coc_classes_path(@app_launch.room_handler), class: "btn btn-light btn-sm" do %>
           <div class="d-flex">
             <i class="icon material-icons">chevron_left</i>
             <%= t('rooms.back') %>
           </div>
         <% end %>
-
+    <% else %>
+      <div class="d-flex align-items-center justify-content-end mb-5">
+    <% end %>
         <div class="d-flex align-items-center user-data">
           <i class="icon material-icons mr-2">person</i>
           <div class="user-name"> <%= user.full_name %> </div>
         </div>
 
-      <% end %>
-    </div>
+      </div>
 
     <div class="d-flex flex-column">
       <% if @subtitle.present? %>
