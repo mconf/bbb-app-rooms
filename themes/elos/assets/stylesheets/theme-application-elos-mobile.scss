@@ -12,6 +12,10 @@
 
     margin: blocks(2);
 
+    > .container {
+      padding: 0 !important;
+    }
+
     .table {
       td {
         justify-content: center;
@@ -29,10 +33,6 @@
       .td-titles { order: -2; }
       .td-dropdown-opts {
         order: -1;
-
-        .dropdown {
-          top: blocks(1.5);
-        }
       }
     }
 
@@ -73,6 +73,13 @@
       .btn {
         margin-right: 0;
         margin-bottom: blocks(1);
+      }
+    }
+
+    // Recordings list
+    #recordings-list {
+      #recordings-header {
+        min-height: blocks(6) !important;
       }
     }
   }

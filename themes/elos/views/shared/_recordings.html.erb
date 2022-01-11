@@ -1,8 +1,8 @@
 <%# Params passed to render partial %>
 <% [user, room, recordings, only_public] %>
 
-<div id="recordings-list" class="row">
-  <div class="row w-100 mb-3">
+<div id="recordings-list">
+  <div class="row mb-md-3">
     <div id="recordings-header" class="col-12 col-sm-6 d-flex align-items-center justify-content-center justify-content-sm-start">
       <h2 class="font-weight-bold mb-0"><%= t('recordings.history') %></h2>
     </div>
@@ -26,11 +26,11 @@
     </div>
   <% end %>
 
-  <div class="row w-100">
+  <div class="row">
     <div class="col-12">
       <table id="recording-table" class="table" data-search-target="1">
         <thead>
-          <tr class="d-flex">
+          <tr class="d-md-flex hide-on-mobile">
             <th class="col-md-5 by-0 py-0"><%= t("recordings.table.title") %></th>
             <th class="col-md-1 text-center by-0 py-0"><%= t("recordings.table.date") %></th>
             <th class="col-md-1 text-center by-0 py-0"><%= t("recordings.table.time") %></th>
