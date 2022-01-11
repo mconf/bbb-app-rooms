@@ -116,5 +116,13 @@ module BbbAppRooms
 
     # Integration with Analytics
     config.gta_id = ENV['MCONF_GTA_ID'] || ''
+
+    config.active_job.queue_adapter = :resque
+
+    # Redis configurations. Defaults to a localhost instance.
+    config.redis_host      = ENV['MCONF_REDIS_HOST']
+    config.redis_port      = ENV['MCONF_REDIS_PORT']
+    config.redis_db        = ENV['MCONF_REDIS_DB']
+    config.redis_password  = ENV['MCONF_REDIS_PASSWORD']
   end
 end

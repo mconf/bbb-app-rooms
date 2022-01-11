@@ -259,6 +259,8 @@ class ApplicationController < ActionController::Base
     case locale
     when /^pt/i
       I18n.locale = 'pt'
+    when /^es/i
+      I18n.locale = 'es'
     else
       I18n.locale = 'en' # fallback
     end

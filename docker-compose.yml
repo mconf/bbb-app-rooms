@@ -1,6 +1,8 @@
 version: '3'
 services:
   app:
+    container_name: rooms_app
+    image: rooms_app:app
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -22,6 +24,8 @@ services:
       - bundle-volume:/usr/src/bundle
     links:
       - postgres
+    depends_on:
+      - rooms_redis
 
   postgres:
     image: postgres:11-alpine
@@ -34,6 +38,42 @@ services:
     ports:
       - "5433:5432"
     command: -p 5433
+
+  rooms_redis:
+    container_name: rooms_dev_redis
+    image: redis:3.2
+    expose:
+      - "6379"
+    command: redis-server --requirepass "BCsy8zMwZay669ii"
+
+  rooms_worker:
+    container_name: rooms_dev_resque_worker
+    image: rooms_app:app
+    depends_on:
+      - postgres
+      - rooms_redis
+    env_file:
+      - ./.env
+    environment:
+      - QUEUE=*
+      - DATABASE_URL=${DATABASE_URL:-postgresql://postgres:password@postgres:5433/lti_rooms}
+    volumes:
+      - ./:/usr/src/app
+      - bundle-volume:/usr/src/bundle
+    command: "bin/rake resque:work"
+
+  rooms_scheduler:
+    container_name: rooms_dev_resque_scheduler
+    image: rooms_app:app
+    depends_on:
+      - postgres
+      - rooms_redis
+    env_file:
+      - ./.env
+    volumes:
+      - ./:/usr/src/app
+      - bundle-volume:/usr/src/bundle
+    command: "bin/rake resque:scheduler"
 
 volumes:
   bundle-volume:
