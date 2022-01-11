@@ -10,7 +10,7 @@ pt:
       classes: "Turma"
       grades: "Serie"
       segments: "Segmento"
-    classrooms:
+    classes:
       schedules: "Agendamentos"
   helpers:
     distance_of_time_in_hours_and_minutes:
