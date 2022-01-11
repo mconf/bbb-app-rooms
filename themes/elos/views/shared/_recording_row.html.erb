@@ -100,7 +100,7 @@
                 <%= link_to recording_unpublish_path(room, record_id: recording[:recordID]),
                 method: :post,
                 data: { confirm: t('recordings.confirm.unpublish') },
-                class: "dropdown-item" do %>
+                class: "dropdown-item rec-edit" do %>
                   <%= t("recordings.unpublish") %>
                 <% end %>
               <%# Publish recording %>
@@ -108,7 +108,7 @@
                 <%= link_to recording_publish_path(room, record_id: recording[:recordID]),
                 method: :post,
                 data: { confirm: t('recordings.confirm.publish') },
-                class: "dropdown-item" do %>
+                class: "dropdown-item rec-edit" do %>
                   <%= t("recordings.publish") %>
                 <% end %>
               <% end %>
@@ -116,7 +116,7 @@
               <%= link_to recording_delete_path(room, record_id: recording[:recordID]),
               method: :post,
               data: { confirm: t('recordings.confirm.destroy') },
-              class: "dropdown-item" do %>
+              class: "dropdown-item rec-edit" do %>
                 <%= t("recordings.destroy") %>
               <% end %>
             <% end %>

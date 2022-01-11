@@ -100,13 +100,13 @@ class RoomsController < ApplicationController
   # POST /rooms/:id/recording/:record_id/unpublish
   def recording_unpublish
     unpublish_recording(@room, params[:record_id])
-    redirect_to(recordings_room_path(@room))
+    redirect_to(recordings_room_path(@room, filter: params[:filter]))
   end
 
   # POST /rooms/:id/recording/:record_id/publish
   def recording_publish
     publish_recording(@room, params[:record_id])
-    redirect_to(recordings_room_path(@room))
+    redirect_to(recordings_room_path(@room, filter: params[:filter]))
   end
 
   # POST /rooms/:id/recording/:record_id/update

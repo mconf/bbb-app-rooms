@@ -62,10 +62,32 @@ $(document).on('turbolinks:load', function(){
     switch (filter) {
       case 'recorded-only':
         $('#recording-table').addClass('filter-recorded-only');
+        if(window.history.state.filter != null)
+          window.history.replaceState({filter: "recorded-only"}, 'filter', '?filter=recorded-only')
+        else
+          window.history.pushState({filter: "recorded-only"}, 'filter', '?filter=recorded-only')
         break;
       default:
         $('#recording-table').removeClass('filter-recorded-only');
+        window.history.replaceState({filter: "no-filters"}, 'filter', '?filter=no-filters')
     };
     return true;
+  });
+
+  if ((new URL(window.location.href)).searchParams.get("filter") == 'recorded-only' ) {
+    $("#meetings-filters input[value=recorded-only]").attr("checked", true);
+    $("#meetings-filters input[value=no-filters]").attr("checked", false);
+    $('#recording-table').addClass('filter-recorded-only');
+    if(window.history.state.filter != null)
+      window.history.replaceState({filter: "recorded-only"}, 'filter', '?filter=recorded-only')
+    else
+      window.history.pushState({filter: "recorded-only"}, 'filter', '?filter=recorded-only')
+  }
+
+  $("#recording-table").on('click', function(e) {
+    if (e.target.classList.contains('rec-edit')) {
+      if (window.history.state.filter != null && window.history.state.filter == 'recorded-only')
+        e.target.href += '?filter=recorded-only';
+    }
   });
 });
