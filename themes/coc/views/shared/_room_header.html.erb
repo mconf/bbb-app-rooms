@@ -3,7 +3,7 @@
 
     <div class="d-flex align-items-center mb-5" style="justify-content: space-between">
       <% if can_edit?(user, room) %>
-        <%= link_to coc_classes_path(@app_launch.room_handler), class: "btn btn-light btn-sm mb-4" do %>
+        <%= link_to coc_classes_path(@app_launch.room_handler), class: "btn btn-light btn-sm" do %>
           <div class="d-flex">
             <i class="icon material-icons">chevron_left</i>
             <%= t('rooms.back') %>
