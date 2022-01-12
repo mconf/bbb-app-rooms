@@ -84,6 +84,9 @@ module BbbAppRooms
 
     config.theme = ENV['APP_THEME']
     unless config.theme.blank?
+      # FIX ME: why we need this now?
+      config.eager_load_paths << Rails.root.join('themes', config.theme, 'helpers')
+
       config.paths['app/helpers']
         .unshift(Rails.root.join('themes', config.theme, 'helpers'))
       config.paths['app/views']
