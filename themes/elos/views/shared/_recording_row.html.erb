@@ -4,12 +4,14 @@
 <tr class="recording-row d-flex row tr-row rec-<%= recording[:internalMeetingID].present? %>">
   <%# Meeting name and description %>
   <td class="col-10 col-md-5 td-titles" data-search-field="1">
-    <div class="item-title">
-      <%= meeting[:meetingName] ? meeting[:meetingName] : recording[:metadata][:name] %>
+    <% meeting_name = meeting[:meetingName] ? meeting[:meetingName] : recording[:metadata][:name] %>
+    <div class="item-title word-break" title="<%= meeting_name %>">
+      <%= meeting_name.truncate(50) %>
     </div>
     <div class="item-description" data-search-field="1">
-      <div id='recording-description-text' class="text-wrap">
-        <%= recording[:metadata][:'bbb-recording-description'] ? recording[:metadata][:'bbb-recording-description'] : nil %>
+      <% meeting_description = recording[:metadata][:'bbb-recording-description'] ? recording[:metadata][:'bbb-recording-description'] : nil %>
+      <div id='recording-description-text' class="word-break" title="<%= meeting_description %>">
+        <%= meeting_description&.truncate(100) %>
       </div>
     </div>
   </td>
@@ -69,8 +71,8 @@
     </td>
 
     <%# Options dropdown %>
-    <% if recording[:state] != 'processing' %>
-      <td class="col-2 col-md-1 td-dropdown-opts">
+    <td class="col-2 col-md-1 td-dropdown-opts">
+      <% if recording[:state] != 'processing' %>
         <div class="dropdown dropdown-opts">
           <a href="#" class="dropdown-toggle d-flex text-decoration-none" id="dropdown-opts-<%= recording[:recordID] %>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <%= icon_options_dots %>
@@ -123,8 +125,8 @@
 
           </div>
         </div>
-      </td>
-    <% end %>
+      <% end %>
+    </td>
 
   <%# Meeting without recording, leave the last 3 columns empty %>
   <% else %>

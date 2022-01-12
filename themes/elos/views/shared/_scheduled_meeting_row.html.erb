@@ -1,8 +1,8 @@
 <tr class="d-flex row tr-row">
   <td class="col-10 col-md-5 align-middle td-titles">
-    <div class="item-title"><%= meeting.name %></div>
+    <div class="item-title word-break"><%= meeting.name %></div>
     <% unless meeting.description.blank? %>
-      <div class="item-description"><%= meeting.description %></div>
+      <div class="item-description word-break"><%= meeting.description %></div>
     <% end %>
   </td>
   <td class="col-12 col-md-3 align-middle">
