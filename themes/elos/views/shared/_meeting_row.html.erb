@@ -1,7 +1,7 @@
 <%# Params passed to render partial %>
 <% [user, room, meeting, recording] %>
 
-<tr class="recording-row d-flex row tr-row rec-<%= recording[:internalMeetingID].present? %>">
+<tr class="meeting-row d-flex row tr-row rec-<%= recording[:internalMeetingID].present? %>">
   <%# Meeting name and description %>
   <td class="col-10 col-md-5 td-titles" data-search-field="1">
     <% meeting_name = meeting[:meetingName] ? meeting[:meetingName] : recording[:metadata][:name] %>
@@ -32,7 +32,7 @@
     <% if duration/60 > 0 %>
       <%= duration_in_hours_and_minutes(duration).capitalize %>
     <% else %>
-      <%= t("recordings.duration.less_than_a_minute") %>
+      <%= t("meetings.duration.less_than_a_minute") %>
     <% end %>
   </td>
 
@@ -41,9 +41,9 @@
     <%# Recording visibility %>
     <td class="<%= recording[:published] ? 'col-6' : 'col-12' %> col-md-1">
       <% if recording[:published] %>
-        <%= icon_visibility(title: t("recordings.published"), class: 'color-secondary fa-2x') %>
+        <%= icon_visibility(title: t("meetings.recording.published"), class: 'color-secondary fa-2x') %>
       <% else %>
-        <%= icon_visibility_off(title: t("recordings.unpublished"), class: 'color-gray-04 fa-2x') %>
+        <%= icon_visibility_off(title: t("meetings.recording.unpublished"), class: 'color-gray-04 fa-2x') %>
       <% end %>
     </td>
 
@@ -55,18 +55,18 @@
             <% recording[:playbacks].each do |p| %>
               <% url = playback_url(room, recording[:recordID], p) %>
               <% if p[:type] == 'presentation' %>
-                <%= link_to icon_conference_play(title: t("recordings.playbacks.#{p[:type]}"), class: 'fa-2x'), url, class: 'd-flex text-decoration-none', target: "_blank" %>
+                <%= link_to icon_conference_play(title: t("meetings.recording.playbacks.#{p[:type]}"), class: 'fa-2x'), url, class: 'd-flex text-decoration-none', target: "_blank" %>
               <% else %>
-                <%= link_to icon_file_download(title: t("recordings.playbacks.#{p[:type]}"), class: 'fa-2x'), url, class: 'd-flex text-decoration-none mr-2', target: "_blank" %>
+                <%= link_to icon_file_download(title: t("meetings.recording.playbacks.#{p[:type]}"), class: 'fa-2x'), url, class: 'd-flex text-decoration-none mr-2', target: "_blank" %>
               <% end %>
             <% end %>
           <% else %>
             <% url = playback_url(room, recording[:recordID], recording[:playbacks].find { |p| p[:type] == 'presentation' }) %>
-            <%= link_to icon_conference_play(title: t("recordings.playbacks.presentation"), class: 'fa-2x'), url, class: 'd-flex text-decoration-none', target: "_blank" %>
+            <%= link_to icon_conference_play(title: t("meetings.recording.playbacks.presentation"), class: 'fa-2x'), url, class: 'd-flex text-decoration-none', target: "_blank" %>
           <% end %>
         <% end %>
       <% else %>
-        <%= icon_recording_load(title: t("recordings.processing"), class: 'color-primary fa-2x') %>
+        <%= icon_recording_load(title: t("meetings.recording.processing"), class: 'color-primary fa-2x') %>
       <% end %>
     </td>
 
@@ -84,7 +84,7 @@
               <% playback = recording[:playbacks].find { |p| p[:type] == 'presentation' } %>
               <% if playback.present? %>
                 <%=
-                link_to t('recordings.playback_link'), '#',
+                link_to t('meetings.recording.playback_link'), '#',
                 data: {
                   'clipboard-text': playback_url(room, recording[:recordID], playback),
                   turbolinks: false,
@@ -101,25 +101,25 @@
                 <div class="dropdown-divider"></div>
                 <%= link_to recording_unpublish_path(room, record_id: recording[:recordID]),
                 method: :post,
-                data: { confirm: t('recordings.confirm.unpublish') },
+                data: { confirm: t('meetings.recording.confirm.unpublish') },
                 class: "dropdown-item rec-edit" do %>
-                  <%= t("recordings.unpublish") %>
+                  <%= t("meetings.recording.unpublish") %>
                 <% end %>
               <%# Publish recording %>
               <% else %>
                 <%= link_to recording_publish_path(room, record_id: recording[:recordID]),
                 method: :post,
-                data: { confirm: t('recordings.confirm.publish') },
+                data: { confirm: t('meetings.recording.confirm.publish') },
                 class: "dropdown-item rec-edit" do %>
-                  <%= t("recordings.publish") %>
+                  <%= t("meetings.recording.publish") %>
                 <% end %>
               <% end %>
               <%# Delete recording %>
               <%= link_to recording_delete_path(room, record_id: recording[:recordID]),
               method: :post,
-              data: { confirm: t('recordings.confirm.destroy') },
+              data: { confirm: t('meetings.recording.confirm.destroy') },
               class: "dropdown-item rec-edit" do %>
-                <%= t("recordings.destroy") %>
+                <%= t("meetings.recording.destroy") %>
               <% end %>
             <% end %>
 

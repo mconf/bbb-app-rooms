@@ -51,8 +51,8 @@ module BbbApi
     )
   end
 
-  def get_all_meetings(room, option = {})
-    res = bbb(room).get_all_meetings(option.merge(room.params_for_get_recordings))
+  def get_all_meetings(room, options = {})
+    res = bbb(room).get_all_meetings(options.merge(room.params_for_get_all_meetings))
 
     no_more_meetings = res[:nextpage] == 'false'
 

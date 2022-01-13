@@ -1,7 +1,7 @@
 <% [user, room, meetings_and_recordings, all_meetings_loaded] %>
 
 <% meetings_and_recordings.each do |meet_rec| %>
-  <%= render "shared/recording_row", user: user, room: room, meeting: meet_rec[:meeting], recording: meet_rec[:recording] %>
+  <%= render "shared/meeting_row", user: user, room: room, meeting: meet_rec[:meeting], recording: meet_rec[:recording] %>
 <% end %>
 
 <% if all_meetings_loaded %>

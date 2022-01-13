@@ -1,9 +1,0 @@
-<%= render "shared/notifications" %>
-
-<%=
-link_to t('recordings.index.return'),
-  room_path(@room),
-  class: "btn btn-light btn-sm"
-%>
-
-<%= render "shared/recordings", user: @user, room: @room, recordings: @recordings, only_public: false %>

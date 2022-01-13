@@ -1,9 +1,9 @@
-let currentRecordingsCount = 0;
+let currentMeetingsCount = 0;
 
-// URL to fetch recordings
-let fetchRecordingsEndpoint;
+// URL to fetch meetings
+let fetchMeetingsEndpoint;
 
-let maxFetchRecordings;
+let maxFetchMeetings;
 
 // Jquery Elements
 let $statusElem;
@@ -23,12 +23,12 @@ let rendered = false;
 let ajaxTimeout = 5000;
 
 /* This is invoked only in 1 situations:
- * 1. When clicking on the link 'Recordings' in the Room view
+ * 1. When clicking on the link 'Meetings' in the Room view
 */
 $DOCUMENT.on('turbolinks:render', () => {
   const CONTROLLER = $("body").data('controller');
   const ACTION = $("body").data('action');
-  if (CONTROLLER != 'rooms' || ACTION != 'recordings') return;
+  if (CONTROLLER != 'rooms' || ACTION != 'meetings') return;
 
   // Avoid triggering turbolinks:render twice
   if (rendered) return;
@@ -46,32 +46,32 @@ $DOCUMENT.on('turbolinks:render', () => {
 $DOCUMENT.on('turbolinks:load',  () => {
   const CONTROLLER = $("body").data('controller');
   const ACTION = $("body").data('action');
-  if (CONTROLLER != 'rooms' || ACTION != 'recordings') return;
+  if (CONTROLLER != 'rooms' || ACTION != 'meetings') return;
 
   // Allow turbolinks:render to be called again
   rendered = false;
 
   initElements();
 
-  currentRecordingsCount = 0;
-  fetchRecordingsEndpoint = $statusElem.attr('data-fetch-recordings-endpoint');
-  maxFetchRecordings = $statusElem.attr('data-per-page');
+  currentMeetingsCount = 0;
+  fetchMeetingsEndpoint = $statusElem.attr('data-fetch-meetings-endpoint');
+  maxFetchMeetings = $statusElem.attr('data-per-page');
 
-  $($loadButton).on('click', tryToFetchRecordings);
+  $($loadButton).on('click', tryToFetchMeetings);
   $($toTopButton).on('click', handleToTopClick);
   $WINDOW.on('scroll', handleScroll);
   handleScroll();
-  tryToFetchRecordings();
+  tryToFetchMeetings();
 });
 
 let initElements = () => {
   $statusElem = $('#status');
   $loaderElem = $('#status .loader-wrapper .loader');
   $allLoadedElem = $('#status .loader-wrapper .all-loaded');
-  $loadButton = $('#status .loader-wrapper .load-recordings');
+  $loadButton = $('#status .loader-wrapper .load-meetings');
   $emptyElem = $('#status .loader-wrapper .empty')
   $tableFootnote = $('.table-footnote');
-  $recordingsTable = $('#recording-table tbody');
+  $meetingsTable = $('#meetings-table tbody');
   $toTopButton = $('.to-top');
 
   isFetching = false;
@@ -90,13 +90,13 @@ let handleScroll = () => {
   }
 }
 
-let tryToFetchRecordings = () => {
+let tryToFetchMeetings = () => {
   if (!isFetching && hasMoreToFetch) {
-    fetchRecordings();
+    fetchMeetings();
   }
 };
 
-/* Fetch the recordings and process the response
+/* Fetch the meetings and process the response
  *
  * In case of success, it will display the received partial.
  * If there is an element with 'data-all-loaded' set, them we will show
@@ -107,22 +107,22 @@ let tryToFetchRecordings = () => {
  *
  *
 */
-async function fetchRecordings() {
+async function fetchMeetings() {
   isFetching = true;
   try {
     setLoadingState();
     let response = await doAjax();
     response = $(response)
 
-    let rows = response.filter('.recording-row')
-    currentRecordingsCount += rows.length;
+    let rows = response.filter('.meeting-row')
+    currentMeetingsCount += rows.length;
 
     /* The element with data-all-loaded is added when the API returns
        nextpage=false. We use this information to hide the load button
        and show the 'all loaded' label. */
     hasMoreToFetch = response.filter('[data-all-loaded]').length == 0;
 
-    if (currentRecordingsCount == 0) {
+    if (currentMeetingsCount == 0) {
       setEmptyState();
     } else {
       if (hasMoreToFetch) {
@@ -130,7 +130,7 @@ async function fetchRecordings() {
       } else {
         setDoneState();
       }
-      showRecordings(rows);
+      showMeetings(rows);
     }
   } catch(err) {
     hasMoreToFetch = true;
@@ -144,16 +144,16 @@ async function fetchRecordings() {
   isFetching = false;
 }
 
-/* Request the recordings partial to the server.
- * @offset is the 'index' of the recording.
- * @limit is the max number of recordings we want.
+/* Request the meetings partial to the server.
+ * @offset is the 'index' of the meeting.
+ * @limit is the max number of meetings we want.
 */
 let doAjax = async () => {
   return $.ajax({
-    url: fetchRecordingsEndpoint,
+    url: fetchMeetingsEndpoint,
     data: {
-      "offset": currentRecordingsCount,
-      "limit": maxFetchRecordings
+      "offset": currentMeetingsCount,
+      "limit": maxFetchMeetings
     },
     type: "GET",
     timeout: ajaxTimeout
@@ -167,13 +167,13 @@ let setLoadingState = () => {
   hideAll();
 
   $loaderElem.show();
-  if (currentRecordingsCount > 0) {
+  if (currentMeetingsCount > 0) {
     $tableFootnote.show();
   }
 };
 
 /* Final state (1)
- * This state is reached when there is 0 recordings for the room
+ * This state is reached when there is 0 meetings for the room
 */
 let setEmptyState = () => {
   hideAll();
@@ -182,8 +182,8 @@ let setEmptyState = () => {
 };
 
 /* Intermediate state
- * This state is reached when recordings are received
- * and there is more recordings to be loaded from the server.
+ * This state is reached when meetings are received
+ * and there is more meetings to be loaded from the server.
 */
 let setLoadedState = () => {
   hideAll();
@@ -193,8 +193,8 @@ let setLoadedState = () => {
 };
 
 /* Final state (2)
- * This state is reached when recordings are received
- * and the server has all loaded recordings to provide.
+ * This state is reached when meetings are received
+ * and the server has all loaded meetings to provide.
 */
 let setDoneState = () => {
   hideAll();
@@ -206,7 +206,7 @@ let setDoneState = () => {
 let resetElements = () => {
   hideAll();
 
-  $recordingsTable.empty();
+  $meetingsTable.empty();
 };
 
 let hideAll = () => {
@@ -217,8 +217,8 @@ let hideAll = () => {
   $tableFootnote.hide();
 };
 
-let showRecordings = (rows) => {
+let showMeetings = (rows) => {
   for(let row of rows) {
-    $recordingsTable.append(row)
+    $meetingsTable.append(row)
   }
 };

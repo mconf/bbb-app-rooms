@@ -280,15 +280,15 @@ body.theme-elos {
     }
   }
 
-  #recordings-list {
+  #meetings-list {
     margin-top: blocks(2);
     margin-bottom: blocks(6);
 
-    #recordings-header {
+    #meetings-header {
       min-height: blocks(10);
     }
 
-    #recording-table {
+    #meetings-table {
 
       thead tr {
         min-height: blocks(5);
@@ -310,7 +310,7 @@ body.theme-elos {
       margin-bottom: blocks(4);
     }
 
-    .load-recordings {
+    .load-meetings {
       display: none;
     }
 
@@ -357,14 +357,6 @@ body.theme-elos {
         .empty {
           display: none;
         }
-      }
-    }
-
-    .recording-published-false {
-      color: var(--color-gray-05);
-
-      .item-title {
-        color: var(--color-gray-05);
       }
     }
 

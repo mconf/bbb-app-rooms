@@ -58,18 +58,18 @@ $(document).on('turbolinks:load', function(){
   });
 
   // When the #meetings-filters radio input changes, adds or removes a class to
-  // #recording-table, which will hide or show meetings depending on the filter.
+  // #meetings-table, which will hide or show meetings depending on the filter.
   // Also adds the filter to the current URL, so it can be kept between page reloads.
   $("#meetings-filters input").on('change', function() {
     filter = $('input[name=filters]:checked', '#meetings-filters').val();
     switch (filter) {
       case 'recorded-only':
-        $('#recording-table').addClass('filter-recorded-only');
+        $('#meetings-table').addClass('filter-recorded-only');
         window.history.replaceState({filter: "recorded-only"}, null, '?filter=recorded-only');
         break;
       default:
-        $('#recording-table').removeClass('filter-recorded-only');
-        window.history.replaceState(null, null, 'recordings');
+        $('#meetings-table').removeClass('filter-recorded-only');
+        window.history.replaceState(null, null, 'meetings');
     };
     return true;
   });
@@ -79,13 +79,13 @@ $(document).on('turbolinks:load', function(){
   if ((new URL(window.location.href)).searchParams.get("filter") == 'recorded-only' ) {
     $("#meetings-filters input[value=recorded-only]").attr("checked", true);
     $("#meetings-filters input[value=no-filters]").attr("checked", false);
-    $('#recording-table').addClass('filter-recorded-only');
+    $('#meetings-table').addClass('filter-recorded-only');
     window.history.replaceState({filter: "recorded-only"}, null, '?filter=recorded-only');
   }
 
   // Adds the 'recorded-only' filter to recording edit links after click, to keep it
   // after reload.
-  $("#recording-table").on('click', function(e) {
+  $("#meetings-table").on('click', function(e) {
     if (e.target.classList.contains('rec-edit')) {
       if (window.history.state.filter == 'recorded-only')
         e.target.href += '?filter=recorded-only';
