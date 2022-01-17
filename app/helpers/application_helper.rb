@@ -43,6 +43,11 @@ module ApplicationHelper
     config.present? && config[:message_reference_terms_use]
   end
 
+  def show_external_widget?(resource)
+    config = ConsumerConfig.find_by(key: resource[:consumer_key])
+    config.present? && config[:external_widget]
+  end
+
   def theme_defined?
     !Rails.configuration.theme.blank?
   end
