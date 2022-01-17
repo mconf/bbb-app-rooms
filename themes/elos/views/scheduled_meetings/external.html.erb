@@ -43,3 +43,7 @@
     <% end %>
   </div>
 </div>
+
+<% if show_external_widget?(@room)%>
+  <%= render "shared/external_widget" %>
+<% end %>

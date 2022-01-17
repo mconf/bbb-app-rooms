@@ -61,6 +61,10 @@
   <%= image_tag "elos-logo.svg", title: "Elos", class: "mx-auto" %>
 </div>
 
+<% if show_external_widget?(room)%>
+  <%= render "shared/external_widget" %>
+<% end %>
+
 <div id="external-link-copied-toast" aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center toast-area">
   <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="4000">
     <div class="toast-header">
