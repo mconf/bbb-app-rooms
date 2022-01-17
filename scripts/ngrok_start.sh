@@ -2,8 +2,8 @@
 
 # Set your paths for bbb-lti-broker and bbb-app-rooms before starting
 # Tip: use "$HOME" instead of "~"
-lti_broker_path=$HOME/bbb-lti-broker # ex: "$HOME/Projects/bbb-lti-broker"
-app_rooms_path=$HOME/bbb-app-rooms  #     "$HOME/Projects/bbb-app-rooms"
+lti_broker_path=../bbb-lti-broker # ex: "$HOME/Projects/bbb-lti-broker"
+app_rooms_path=.  #     "$HOME/Projects/bbb-app-rooms"
 
 my_key="my-key"
 my_secret="my-secret"
