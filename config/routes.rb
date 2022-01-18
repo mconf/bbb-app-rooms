@@ -56,8 +56,8 @@ Rails.application.routes.draw do
       #       rooms are automatically created when needed and can't be edited
       resources :rooms, only: :show do
         member do
-          get :recordings
-          get :recordings_pagination
+          get :meetings
+          get :meetings_pagination
           get '/error/:code', to: 'rooms#error'
         end
 

@@ -51,6 +51,29 @@ module BbbApi
     )
   end
 
+  def get_all_meetings(room, options = {})
+    res = bbb(room).get_all_meetings(options.merge(room.params_for_get_all_meetings))
+
+    no_more_meetings = res[:nextpage] == 'false'
+
+    # Format playbacks in a more pleasant way.
+    res[:meetings].each do |m|
+      next if m.key?(:error)
+      m[:recording][:playbacks] = if !m[:recording][:playback] || !m[:recording][:playback][:format]
+                        []
+                      elsif m[:recording][:playback][:format].is_a?(Array)
+                        m[:recording][:playback][:format]
+                      else
+                        [m[:recording][:playback][:format]]
+                      end
+
+      m[:recording].delete(:playback)
+    end
+
+    meetings = res[:meetings].sort_by { |meet| meet[:meeting][:endTime] }.reverse
+    [meetings, no_more_meetings]
+  end
+
   # Fetches all recordings for a room.
   def get_recordings(room, options = {})
     res = bbb(room).get_recordings(options.merge(room.params_for_get_recordings))

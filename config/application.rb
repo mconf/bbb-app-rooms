@@ -109,8 +109,8 @@ module BbbAppRooms
       ENV['COOKIES_SAME_SITE'].blank? ? 'None' : "#{ENV['COOKIES_SAME_SITE']}"
     config.browser_time_zone_default_tz = config.default_timezone
 
-    config.recordings_per_page =
-      ENV['RECORDINGS_PER_PAGE'].blank? ? 25 : ENV['RECORDINGS_PER_PAGE'].to_i
+    config.meetings_per_page =
+      ENV['MEETINGS_PER_PAGE'].blank? ? 25 : ENV['MEETINGS_PER_PAGE'].to_i
 
     # Integration with Analytics
     config.gta_id = ENV['MCONF_GTA_ID'] || ''
