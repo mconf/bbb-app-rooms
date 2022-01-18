@@ -84,7 +84,7 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails'
 
 # BigBlueButton API
-gem 'bigbluebutton-api-ruby', '~> 1.8'
+gem 'bigbluebutton-api-ruby', git: 'https://github.com/mconf/bigbluebutton-api-ruby.git', tag: 'v1.9.0-mconf-rc1'
 
 # AWS S3 API (to access Spaces API)
 gem 'aws-sdk-s3', '~> 1'
