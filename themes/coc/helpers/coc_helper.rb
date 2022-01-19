@@ -112,8 +112,11 @@ module CocHelper
     !meeting.disable_external_link && user_creator ? true : false
   end
 
-  def badName
-    return true
+  def return_classes_list?(app_launch)
+    schools = app_launch.params.dig('custom_params', 'schools')
+    classes_count = Clients::Coc::Helpers::CocHelper.classes_count(schools)
+
+    return true if classes_count > 1
   end
 
 end
