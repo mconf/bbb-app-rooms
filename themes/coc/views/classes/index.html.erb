@@ -13,8 +13,9 @@
     <% @schools.each_with_index do |school, index| %>
       <div id="accordion">
       <div class="card mb-3">
-        <div class="card-header border-bottom-0" id="heading-<%=index%>">
-          <h5 class="item-collapse d-flex align-items-center mb-0 w-90" data-toggle="collapse" data-target="#collapse-<%=index%>" aria-expanded="true" aria-controls="collapse-<%=index%>">
+        <div class="card-header border-bottom-0" id="heading-<%=index%>" data-toggle="collapse" data-target="#collapse-<%=index%>" aria-expanded="true" aria-controls="collapse-<%=index%>"
+        >
+          <h5 class="item-collapse d-flex align-items-center mb-0 w-90">
             <%= school['name'] %>
           </h5>
         </div>

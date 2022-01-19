@@ -1,7 +1,7 @@
 <% if @title.present? %>
   <div class="mb-4">
 
-    <% if can_edit?(user, room) %>
+    <% if return_classes_list?(@app_launch) %>
       <div class="d-flex align-items-center justify-content-between mb-5">
         <%= link_to coc_classes_path(@app_launch.room_handler), class: "btn btn-light btn-sm" do %>
           <div class="d-flex">
