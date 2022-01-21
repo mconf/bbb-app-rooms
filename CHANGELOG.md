@@ -3,6 +3,12 @@
 ## [Unreleased]
 
 
+## 0.7.1 - 2022-01-21
+### Fixed
+- Recordings page uses version `0.6.4` code.
+* [LTI-101] | Portal COC
+
+
 ## 0.7.0 - 2022-01-21
 ### Added
 - `COC` theme.
