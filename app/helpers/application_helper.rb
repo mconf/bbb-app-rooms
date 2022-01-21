@@ -44,8 +44,14 @@ module ApplicationHelper
   end
 
   def show_external_widget?(resource)
-    config = ConsumerConfig.find_by(key: resource[:consumer_key])
-    config.present? && config[:external_widget]
+    key = ConsumerConfig.find_by(key: resource[:consumer_key])
+    byebug
+    key.present? && key[:external_widget]
+  end
+
+  def render_external_widget(resource)
+    key = ConsumerConfig.find_by(key: resource[:consumer_key])
+    key.tag_widget.html_safe
   end
 
   def theme_defined?
