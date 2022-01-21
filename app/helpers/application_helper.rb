@@ -45,7 +45,6 @@ module ApplicationHelper
 
   def show_external_widget?(resource)
     key = ConsumerConfig.find_by(key: resource[:consumer_key])
-    byebug
     key.present? && key[:external_widget]
   end
 
