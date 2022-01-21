@@ -50,7 +50,7 @@ module ApplicationHelper
 
   def render_external_widget(resource)
     key = ConsumerConfig.find_by(key: resource[:consumer_key])
-    key.tag_widget.html_safe
+    key.external_widget.html_safe
   end
 
   def theme_defined?

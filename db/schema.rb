@@ -67,7 +67,7 @@ ActiveRecord::Schema.define(version: 2022_01_17_125312) do
     t.boolean "set_duration", default: false
     t.boolean "download_presentation_video", default: true
     t.boolean "message_reference_terms_use", default: true
-    t.boolean "external_widget", default: false
+    t.string "external_widget", default: ""
     t.index ["key"], name: "index_consumer_configs_on_key", unique: true
   end
 
