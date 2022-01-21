@@ -1,5 +1,16 @@
 # Change Log
 
+## [Unreleased]
+
+
+## 0.7.0 - 2022-01-21
+### Added
+- `COC` theme.
+- Integrations for theme `COC` with the broker.
+### Cards
+* [LTI-101] | Portal COC
+
+
 ## 0.6.4 - 2021-09-22
 
 * [LTI-89] Added validation to check if there is a `ConsumerConfig` to display the referring message
@@ -272,3 +283,12 @@ Migration notes:
 
 
 ## 0.0.12 Elos - 2020-07-13
+
+<!-- Cards -->
+[LTI-101]: https://www.notion.so/mconf/Portal-Gerenciamento-bccb3a3fa75c40f38ead425739d13bb7?p=9ac57ab16aa64130a0ac274241c873ce
+
+<!-- Prs -->
+
+<!-- Compares -->
+[Unreleased]: https://github.com/mconf/bbb-app-rooms/compare/feature-coc-on-0.6.4...mconf:master-elos
+[0.6.4]: https://github.com/mconf/bbb-app-rooms/compare/release-0.6.x-elos...mconf:feature-coc-on-0.6.4
