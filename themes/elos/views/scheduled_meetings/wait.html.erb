@@ -9,14 +9,28 @@
      data-auto="<%= @auto_join %>"
      data-join-method="post">
 
-  <%= image_tag 'guest-wait.svg' %>
+  <h1><%= @scheduled_meeting.name %></h1>
   <p>
+    <%= format_date(@scheduled_meeting.start_at) %> -
     <% if @auto_join %>
-      <%= t('default.scheduled_meeting.wait.message_auto', name: @full_name).html_safe %>
+      <%= t('default.scheduled_meeting.wait.creating_session') %>
     <% else %>
-      <%= t('default.scheduled_meeting.wait.message', name: @full_name).html_safe %>
+      <%= t('default.scheduled_meeting.wait.not_started') %>
     <% end %>
   </p>
+  
+  <%= image_tag 'guest-wait.svg' %>
+
+  <p><%= t('default.scheduled_meeting.wait.name_preview', name: @full_name).html_safe %></p>  
+  <h2><strong><%= @full_name%></strong></h2>
+
+  <u>
+    <%= 
+      link_to t('default.scheduled_meeting.wait.change_account'), 
+      external_room_scheduled_meeting_path(@room, @scheduled_meeting), 
+      class: "color-primary"
+    %>
+  </u>
 
   <div id="wait-for-moderator-back" style="display: none;">
     <%= button_to t('scheduled_meetings.wait.retry'), @post_to,

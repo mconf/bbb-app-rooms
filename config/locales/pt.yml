@@ -91,6 +91,10 @@ pt:
       wait:
         message: "Olá <strong>%{name}</strong>, a sessão ainda não começou. </br> Por favor aguarde alguns instantes."
         message_auto: "Olá <strong>%{name}</strong>, sua sessão está sendo criada, por favor aguarde alguns instantes."
+        not_started: "Ainda não começou"
+        creating_session: "Sua sessão está sendo criada, por favor aguarde alguns instantes"
+        name_preview: "Quando a sala for aberta você entrará como"
+        change_account: "Sair e trocar conta"
       waitmoderator:  "Aguardar moderador"
     session:
       retry:

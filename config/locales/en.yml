@@ -122,6 +122,10 @@ en:
       wait:
         message: "Hello <strong>%{name}</strong>, the session has not started yet. <br/> Please wait a few moments."
         message_auto: "Hello <strong>%{name}</strong>, your session is being created, please wait a few moments."
+        not_started: "The session has not started yet"
+        creating_session: "Your session is being created, please wait a few moments"
+        name_preview: "When the session starts you will join as"
+        change_account: "Log out and switch account"
       waitmoderator:  "Wait for moderator"
     session:
       retry:
