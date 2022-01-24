@@ -16,6 +16,7 @@ class RoomsController < ApplicationController
   before_action :validate_room, except: %i[launch close]
   before_action :find_user
   before_action :find_app_launch, only: %i[launch]
+  before_action :set_room_title, only: :show
 
   before_action only: %i[show launch close] do
     authorize_user!(:show, @room)
@@ -202,5 +203,12 @@ class RoomsController < ApplicationController
     set_room_session(
       @room, { launch: launch_nonce }
     )
+  end
+
+  def set_room_title
+    if @app_launch&.tag == 'coc'
+      @title = @room.name
+      @subtitle = @room.description
+    end
   end
 end

@@ -35,7 +35,8 @@ module BbbApi
     bbb(room, false).join_meeting_url(
       scheduled_meeting.meeting_id,
       user.username(t("default.bigbluebutton.#{role}")),
-      room.attributes[role]
+      room.attributes[role],
+      { userID: user.uid }
     )
   end
 

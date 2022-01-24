@@ -13,7 +13,9 @@ Bundler.require(*Rails.groups)
 
 module BbbAppRooms
   class Application < Rails::Application
-    VERSION = "0.6.4"
+    VERSION = "0.7.1"
+
+    config.eager_load_paths << Rails.root.join('lib')
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -82,6 +84,9 @@ module BbbAppRooms
 
     config.theme = ENV['APP_THEME']
     unless config.theme.blank?
+      # FIX ME: why we need this now?
+      config.eager_load_paths << Rails.root.join('themes', config.theme, 'helpers')
+
       config.paths['app/helpers']
         .unshift(Rails.root.join('themes', config.theme, 'helpers'))
       config.paths['app/views']

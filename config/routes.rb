@@ -50,6 +50,16 @@ Rails.application.routes.draw do
 
         # Handles errors.
         get '/errors/:code', to: 'errors#index', as: :errors
+
+        scope module: :clients do
+          scope module: :coc do
+            scope module: :controllers do
+              get '/coc/launch', to: 'classes#launch'
+              get '/coc/classes/:handler', to: 'classes#index', as: :coc_classes
+              get '/coc/:handler/:class_id', to: 'classes#show', as: :coc_classes_show
+            end
+          end
+        end
       end
 
       # NOTE: there are other actions in the rooms controller, but they are not used for now,

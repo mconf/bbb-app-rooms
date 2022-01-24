@@ -1,3 +1,14 @@
-#!/bin/bash
+#!/bin/bash -x
 
-docker build -t $IMAGE_NAME --build-arg APP_THEME=$APP_THEME -f $DOCKERFILE_PATH .
+ADDITIONAL_THEMES=(${APP_THEME})
+for THEME in "${ADDITIONAL_THEMES[@]}"; do
+  if [ "${THEME}" == "elos" ]; then
+    continue
+  fi
+
+  docker build -t $IMAGE_NAME-${THEME} --build-arg APP_THEME=${THEME} -f $DOCKERFILE_PATH .
+  docker push $IMAGE_NAME-${THEME}
+done
+
+docker build -t $IMAGE_NAME --build-arg APP_THEME="elos" -f $DOCKERFILE_PATH .
+
