@@ -177,6 +177,8 @@ class ScheduledMeetingsController < ApplicationController
 
     @scheduled_meeting.update_to_next_recurring_date
 
+    @is_running = mod_in_room?(@scheduled_meeting)
+
     @ended = !@scheduled_meeting.active? && !mod_in_room?(@scheduled_meeting)
 
     @disclaimer = ConsumerConfig

@@ -441,6 +441,17 @@ body.theme-elos {
     }
   }
 
+  &[data-controller="scheduled_meetings"][data-action="external"] {
+    h1, p {
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    img {
+      margin: 3rem 0;
+    }
+  }
+
   &[data-controller="errors"], &[data-controller="sessions"] {
     h1 {
       margin-bottom: blocks(5);
