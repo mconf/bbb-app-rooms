@@ -419,13 +419,12 @@ body.theme-elos {
   &[data-controller="rooms"][data-action="close"] {
     background-color: var(--color-black);
     width: auto;
-    margin: auto;
     text-align: center;
     font-family: var(--font-family);
 
     h1 {
       font-weight: var(--font-weight-semibold);
-      margin: calc(10vw - 48px) 0 0 0;
+      margin: 0;
     }
 
     h2 {
@@ -433,15 +432,12 @@ body.theme-elos {
     }
 
     img {
-      width: 30vw;
       margin: 3rem 0;
     }
 
     p {
       color: white;
-      line-height: 2.0vw;
       margin: 0 auto;
-      max-width: 40vw;
     }
   }
 
