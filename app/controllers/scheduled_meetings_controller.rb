@@ -179,6 +179,8 @@ class ScheduledMeetingsController < ApplicationController
 
     @is_running = mod_in_room?(@scheduled_meeting)
 
+    @participants_count = @is_running ? get_participants_count(@scheduled_meeting) : 0
+
     @ended = !@scheduled_meeting.active? && !mod_in_room?(@scheduled_meeting)
 
     @disclaimer = ConsumerConfig

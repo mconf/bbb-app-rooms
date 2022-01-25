@@ -53,6 +53,10 @@ pt:
       destroy:
         confirmation: "Você tem certeza que deseja remover este agendamento?"
       destroyed:      "O agendamento foi removido"
+      distance_in_words:
+        x_participants:
+          one: "1 pessoa na conferência"
+          other: "%{count} pessoas na conferência"
       durations:
         5m: "5 minutos"
         10m: "10 minutos"
@@ -75,6 +79,8 @@ pt:
         invalid_start_at: "A data ou tempo de início é inválido"
       external:
         ended:        "Esta sessão já encerrou."
+        running:      "Esta sessão já começou"
+        not_started:  "Esta sessão ainda não começou"
         first_name:   "Primeiro nome"
         join:         "Entrar"
         last_name:    "Sobrenome"
@@ -91,7 +97,7 @@ pt:
       wait:
         message: "Olá <strong>%{name}</strong>, a sessão ainda não começou. </br> Por favor aguarde alguns instantes."
         message_auto: "Olá <strong>%{name}</strong>, sua sessão está sendo criada, por favor aguarde alguns instantes."
-        not_started: "Ainda não começou"
+        not_started: "Esta sessão ainda não começou"
         creating_session: "Sua sessão está sendo criada, por favor aguarde alguns instantes"
         name_preview: "Quando a sala for aberta você entrará como"
         change_account: "Sair e trocar conta"

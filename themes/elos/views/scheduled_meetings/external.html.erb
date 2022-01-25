@@ -13,6 +13,12 @@
     </p>
 
     <% unless @ended %>
+      <% if @participants_count == 1 %>
+        <p><%= t('default.scheduled_meeting.distance_in_words.x_participants.one') %></p>
+      <% else %>
+        <p><%= t('default.scheduled_meeting.distance_in_words.x_participants.other', count: @participants_count).html_safe %></p>
+      <% end %>
+
       <% if @is_running %>
         <%= image_tag 'meeting-running.svg' %>
       <% else %>

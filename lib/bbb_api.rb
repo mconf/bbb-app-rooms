@@ -14,6 +14,12 @@ module BbbApi
     bbb(room).is_meeting_running?(scheduled_meeting.meeting_id)
   end
 
+  def get_participants_count(scheduled_meeting)
+    room = scheduled_meeting.room
+    res = bbb(room).get_meeting_info(scheduled_meeting.meeting_id, scheduled_meeting.hash_id)
+    res[:participantCount]
+  end
+
   def join_api_url(scheduled_meeting, user)
     return unless scheduled_meeting.present? && user.present?
 

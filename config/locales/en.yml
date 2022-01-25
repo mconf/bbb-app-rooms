@@ -84,6 +84,10 @@ en:
       destroy:
         confirmation: "Are you sure you want to remove this scheduled session?"
       destroyed:      "The scheduled session was removed"
+      distance_in_words:
+        x_participants:
+          one: "1 person in the conference"
+          other: "%{count} people in the conference"
       durations:
         5m: "5 minutes"
         10m: "10 minutes"
