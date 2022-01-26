@@ -4,7 +4,7 @@
     <p>
       <%= format_date(@scheduled_meeting.start_at) %> -
       <% if @is_running %>
-        <%= t('default.scheduled_meeting.external.running') %>
+        <%= t('default.scheduled_meeting.external.running', duration: @started_ago).html_safe %>
       <% elsif @ended %>
         <%= t('default.scheduled_meeting.external.ended') %>
       <% else %>

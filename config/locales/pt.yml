@@ -79,7 +79,7 @@ pt:
         invalid_start_at: "A data ou tempo de início é inválido"
       external:
         ended:        "Esta sessão já encerrou."
-        running:      "Esta sessão já começou"
+        running:      "Começou há %{duration}"
         not_started:  "Esta sessão ainda não começou"
         first_name:   "Primeiro nome"
         join:         "Entrar"

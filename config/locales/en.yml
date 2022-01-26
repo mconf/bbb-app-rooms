@@ -110,6 +110,8 @@ en:
         invalid_start_at: "Invalid start date or time"
       external:
         ended:        "This session has already ended."
+        running:      "Started %{duration} ago"
+        not_started:  "The session has not started yet"
         first_name:   "First name"
         join:         "Join"
         last_name:    "Last name"

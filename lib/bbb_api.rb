@@ -2,6 +2,8 @@
 
 require 'tests_helper'
 module BbbApi
+  include ActionView::Helpers::DateHelper
+
   def wait_for_mod?(scheduled_meeting, user)
     return unless scheduled_meeting and user
     scheduled_meeting.check_wait_moderator &&
@@ -20,6 +22,14 @@ module BbbApi
 
     res = bbb(room).get_meeting_info(scheduled_meeting.meeting_id, scheduled_meeting.hash_id)
     res[:participantCount]
+  end
+
+  def get_current_duration(scheduled_meeting)
+    room = scheduled_meeting.room
+    return unless bbb(room).is_meeting_running?(scheduled_meeting.meeting_id)
+
+    res = bbb(room).get_meeting_info(scheduled_meeting.meeting_id, scheduled_meeting.hash_id)
+    time_ago_in_words(res[:startTime].to_datetime)
   end
 
   def join_api_url(scheduled_meeting, user)
