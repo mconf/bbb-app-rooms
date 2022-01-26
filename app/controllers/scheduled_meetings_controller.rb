@@ -183,6 +183,8 @@ class ScheduledMeetingsController < ApplicationController
 
     @ended = !@scheduled_meeting.active? && !mod_in_room?(@scheduled_meeting)
 
+    @started_ago = get_current_duration(@scheduled_meeting)
+
     @disclaimer = ConsumerConfig
                     .select(:external_disclaimer)
                     .find_by(key: @room.consumer_key)
