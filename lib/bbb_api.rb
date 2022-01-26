@@ -16,6 +16,8 @@ module BbbApi
 
   def get_participants_count(scheduled_meeting)
     room = scheduled_meeting.room
+    return 0 unless bbb(room).is_meeting_running?(scheduled_meeting.meeting_id)
+
     res = bbb(room).get_meeting_info(scheduled_meeting.meeting_id, scheduled_meeting.hash_id)
     res[:participantCount]
   end
