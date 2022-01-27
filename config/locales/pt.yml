@@ -55,8 +55,8 @@ pt:
       destroyed:      "O agendamento foi removido"
       distance_in_words:
         x_participants:
-          one: "1 pessoa na conferência"
-          other: "%{count} pessoas na conferência"
+          one: "1 pessoa na videoconferência"
+          other: "%{count} pessoas na videoconferência"
       durations:
         5m: "5 minutos"
         10m: "10 minutos"
@@ -79,11 +79,11 @@ pt:
         invalid_start_at: "A data ou tempo de início é inválido"
       external:
         ended:        "Esta sessão já encerrou."
-        running:      "Começou há %{duration}"
-        not_started:  "Esta sessão ainda não começou"
         first_name:   "Primeiro nome"
         join:         "Entrar"
         last_name:    "Sobrenome"
+        not_started:  "Esta sessão ainda não começou"
+        running:      "Começou há %{duration}"
       recording:      "Gravação"
       repeat_options:
         none: "Não se repete"
@@ -95,12 +95,12 @@ pt:
         allmoderators: "Todos usuários serão moderadores"
       updated:        "O agendamento foi atualizado"
       wait:
+        change_account: "Sair e trocar conta"
+        creating_session: "Sua sessão está sendo criada, por favor aguarde alguns instantes"
         message: "Olá <strong>%{name}</strong>, a sessão ainda não começou. </br> Por favor aguarde alguns instantes."
         message_auto: "Olá <strong>%{name}</strong>, sua sessão está sendo criada, por favor aguarde alguns instantes."
-        not_started: "Esta sessão ainda não começou"
-        creating_session: "Sua sessão está sendo criada, por favor aguarde alguns instantes"
         name_preview: "Quando a sala for aberta você entrará como"
-        change_account: "Sair e trocar conta"
+        not_started: "Esta sessão ainda não começou"
       waitmoderator:  "Aguardar moderador"
     session:
       retry:
