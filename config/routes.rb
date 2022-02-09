@@ -74,6 +74,7 @@ Rails.application.routes.draw do
 
         resources :scheduled_meetings, only: [:new, :create, :edit, :update, :destroy] do
           member do
+            post :join
             get :join
             get :external
             get :wait
