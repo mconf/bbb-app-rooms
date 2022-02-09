@@ -3,6 +3,13 @@
 ## [Unreleased]
 
 
+## 0.8.1 - 2022-02-09
+### Fixed
+- [LTI-104] | Add get route to `/join` to open conference in new tab, without exposed method return
+  `404` to user.
+  - PRs: [#57], [#58]
+
+
 ## 0.8.0 - 2022-02-04
 ### Migration notes
 - Migration to add the `external_widget` column from `consumer_configs` table.
@@ -300,14 +307,18 @@ Migration notes:
 ## 0.0.12 Elos - 2020-07-13
 
 <!-- Cards -->
+[LTI-104]: https://www.notion.so/mconf/Portal-Gerenciamento-bccb3a3fa75c40f38ead425739d13bb7?p=5ca12a2eb7a7496cb75b4ec58c9a3f0d
 [LTI-103]: https://www.notion.so/mconf/e7590828a6524cbeaedbba8b99e258ae?v=835bec4b62b04edeb84d052f7900054a&p=174de60d3c614ff0abf964b265fd21ef
 [LTI-101]: https://www.notion.so/mconf/Portal-Gerenciamento-bccb3a3fa75c40f38ead425739d13bb7?p=9ac57ab16aa64130a0ac274241c873ce
 
 <!-- Prs -->
-[PR-52]: https://github.com/mconf/bbb-app-rooms/pull/52
+[#58]: https://github.com/mconf/bbb-app-rooms/pull/58
+[#57]: https://github.com/mconf/bbb-app-rooms/pull/57
+[#52]: https://github.com/mconf/bbb-app-rooms/pull/52
 
 <!-- Compares -->
-[Unreleased]:https://github.com/mconf/bbb-app-rooms/compare/v0.8.0...master-elos
+[Unreleased]:https://github.com/mconf/bbb-app-rooms/compare/v0.8.1...master-elos
+[0.8.1]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/mconf/bbb-app-rooms/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/mconf/bbb-app-rooms/compare/v0.6.4...v0.7.1
 [0.6.4]: https://github.com/mconf/bbb-app-rooms/compare/release-0.6.x-elos...mconf:feature-coc-on-0.6.4
