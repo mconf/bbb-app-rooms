@@ -48,6 +48,16 @@ on_worker_boot do
   ActiveRecord::Base.establish_connection if defined?(ActiveRecord)
 end
 
+# Initialize prometheus_exporter
+# This will only work in clustered mode, so if PUMA_WORKERS is not set it won't
+# work (setting PUMA_WORKERS=1 works)
+after_worker_boot do
+  if Rails.env.production?
+    require 'prometheus_exporter/instrumentation'
+    PrometheusExporter::Instrumentation::Puma.start
+  end
+end
+
 # Allow puma to be restarted by `rails restart` command.
 plugin(:tmp_restart)
 
