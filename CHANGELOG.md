@@ -3,11 +3,17 @@
 ## [Unreleased]
 
 
+## 0.8.2 - 2022-02-11
+### Fixed
+- [LTI-104] | Added `post` route` :join`, for external access.
+  - PRs: [#58]
+
+
 ## 0.8.1 - 2022-02-09
 ### Fixed
 - [LTI-104] | Add get route to `/join` to open conference in new tab, without exposed method return
   `404` to user.
-  - PRs: [#57], [#58]
+  - PRs: [#57]
 
 
 ## 0.8.0 - 2022-02-04
@@ -317,7 +323,8 @@ Migration notes:
 [#52]: https://github.com/mconf/bbb-app-rooms/pull/52
 
 <!-- Compares -->
-[Unreleased]:https://github.com/mconf/bbb-app-rooms/compare/v0.8.1...master-elos
+[Unreleased]:https://github.com/mconf/bbb-app-rooms/compare/v0.8.2...master-elos
+[0.8.2]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.1...v0.8.2
 [0.8.1]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/mconf/bbb-app-rooms/compare/v0.7.1...v0.8.0
 [0.7.1]: https://github.com/mconf/bbb-app-rooms/compare/v0.6.4...v0.7.1
