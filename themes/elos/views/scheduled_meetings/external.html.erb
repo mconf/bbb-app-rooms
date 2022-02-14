@@ -1,22 +1,37 @@
-<div id="external-join" class="row">
+<div id="external-join"
+     class="row"
+     data-room-id="<%= @room.to_param %>"
+     data-meeting-id="<%= @scheduled_meeting.to_param %>"
+     data-external-url="<%= room_scheduled_meeting_path(@room, @scheduled_meeting) %>">
+
   <div class="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3">
     <h1><%= @scheduled_meeting.name %></h1>
     <p>
       <%= format_date(@scheduled_meeting.start_at) %> -
       <% if @is_running %>
-        <%= t('default.scheduled_meeting.external.running', duration: @started_ago).html_safe %>
+        <span id="status-meeting">
+          <%= t('default.scheduled_meeting.external.running', duration: @started_ago).html_safe %>
+        </span>
       <% elsif @ended %>
-        <%= t('default.scheduled_meeting.external.ended') %>
+        <span id="status-meeting">
+          <%= t('default.scheduled_meeting.external.ended') %>
+        </span>
       <% else %>
-        <%= t('default.scheduled_meeting.external.not_started') %>
+        <span id="status-meeting">
+          <%= t('default.scheduled_meeting.external.not_started') %>
+        </span>
       <% end %>
     </p>
 
     <% unless @ended %>
       <% if @participants_count == 1 %>
-        <p><%= t('default.scheduled_meeting.distance_in_words.x_participants.one') %></p>
+        <p id="participants_count">
+          <%= t('default.scheduled_meeting.distance_in_words.x_participants.one') %>
+        </p>
       <% else %>
-        <p><%= t('default.scheduled_meeting.distance_in_words.x_participants.other', count: @participants_count).html_safe %></p>
+        <p id="participants_count">
+          <%= t('default.scheduled_meeting.distance_in_words.x_participants.other', count: @participants_count).html_safe %>
+        </p>
       <% end %>
 
       <% if @is_running %>

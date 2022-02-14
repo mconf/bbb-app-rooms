@@ -14,9 +14,10 @@
 // You should have received a copy of the GNU Lesser General Public License along
 // with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 //= require './polling'
+//= require i18n/translations
 
 $(document).on('turbolinks:load', function(){
-
+  I18n.locale = $("body").data('locale');
   var controller = $("body").data('controller');
   var action = $("body").data('action');
   var cable = $("body").data('use-cable');
@@ -36,17 +37,58 @@ $(document).on('turbolinks:load', function(){
     });
   };
 
+  var pollStatusTeste = function() {
+    var url = $('#external-join').data('external-url');
+    var action = '/updateMeetingData'
+
+    $.ajax({
+      url: url + action,
+      dataType: "json",
+      contentType: "application/json",
+      error: function() { console.log('Error do pullStatusTeste'); },
+      success: function(data) {
+        updateMeetingData(data);
+      }
+    });
+  };
+
+  var updateMeetingData = function(data) {
+    // update participants
+    var participants = $('#external-join').find('p#participants_count')[0]
+
+    if (data.participants_count == 1) {
+      participant.innerText = I18n.t('default.scheduled_meeting.distance_in_words.x_participants.one')
+    } else if (data.participants_count > 1) {
+      participants.innerText = I18n.t('default.scheduled_meeting.distance_in_words.x_participants.other', { count: data.participants_count } )
+    }
+
+
+    // update start_ago
+    var start_ago = $('#external-join').find('span#status-meeting')[0]
+    if (data.running == false && data.ended == false) {
+      start_ago.innerText = I18n.t('default.scheduled_meeting.external.not_started')
+    } else if (data.running == true) {
+      start_ago.innerText = I18n.t('default.scheduled_meeting.external.running', { duration: data.start_ago } )
+    } else if (data.ended == true){
+      start_ago.innerText = I18n.t('default.scheduled_meeting.external.ended')
+    }
+  };
+
   var joinSession = function() {
     $('#wait-for-moderator').find('form [type=submit]').addClass('disabled');
     $('#wait-for-moderator').find('form').submit();
   };
+
+  if (controller === 'scheduled_meetings' && action === 'external') {
+    Polling.setPolling(pollStatusTeste)
+  }
 
   if (controller === 'scheduled_meetings' && action === 'wait') {
     var room = $('#wait-for-moderator').data('room-id');
     var meeting = $('#wait-for-moderator').data('meeting-id');
 
     Polling.setPolling(pollStatus)
-    
+
     var running = $('#wait-for-moderator').data('is-running');
     if (running === true) {
       setTimeout(function() { joinSession(); }, 200);
