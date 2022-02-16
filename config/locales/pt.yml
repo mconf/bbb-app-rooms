@@ -95,7 +95,7 @@ pt:
         allmoderators: "Todos usuários serão moderadores"
       updated:        "O agendamento foi atualizado"
       wait:
-        change_account: "Sair e trocar conta"
+        change_name: "Alterar nome"
         creating_session: "Sua sessão está sendo criada, por favor aguarde alguns instantes"
         message: "Olá <strong>%{name}</strong>, a sessão ainda não começou. </br> Por favor aguarde alguns instantes."
         message_auto: "Olá <strong>%{name}</strong>, sua sessão está sendo criada, por favor aguarde alguns instantes."

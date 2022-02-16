@@ -95,7 +95,7 @@ es:
         allmoderators: "Todos los usuarios serán moderadores"
       updated:        "La programación ha sido actualizada"
       wait:
-        change_account: "Cerrar sesión y cambiar de cuenta"
+        change_name: "Cambiar nombre"
         creating_session: "Se está creando su sesión, por favor espere unos momentos"
         message: "Hola <strong>%{name}</strong>, la sesión aún no ha comenzado. </br> Espere unos minutos."
         message_auto: "Hola <strong>%{name}</strong>, se está creando su sesión, por favor espere unos momentos."

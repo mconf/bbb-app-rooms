@@ -126,7 +126,7 @@ en:
         allmoderators: "All users will join as moderators"
       updated:        "The session schedule was updated"
       wait:
-        change_account: "Log out and switch account"
+        change_name: "Change name"
         creating_session: "Your session is being created, please wait a few moments"
         message: "Hello <strong>%{name}</strong>, the session has not started yet. <br/> Please wait a few moments."
         message_auto: "Hello <strong>%{name}</strong>, your session is being created, please wait a few moments."
