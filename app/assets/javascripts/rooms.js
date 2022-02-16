@@ -56,8 +56,10 @@ $(document).on('turbolinks:load', function(){
     // update participants
     var participants = $('#external-join').find('p#participants_count')[0]
 
-    if (data.participants_count == 1) {
-      participant.innerText = I18n.t('default.scheduled_meeting.distance_in_words.x_participants.one')
+    if (data.ended) {
+      participants?.remove()
+    } else if (data.participants_count == 1) {
+      participants.innerText = I18n.t('default.scheduled_meeting.distance_in_words.x_participants.one')
     } else if (data.participants_count > 1) {
       participants.innerText = I18n.t('default.scheduled_meeting.distance_in_words.x_participants.other', { count: data.participants_count } )
     }
@@ -71,6 +73,20 @@ $(document).on('turbolinks:load', function(){
       start_ago.innerText = I18n.t('default.scheduled_meeting.external.running', { duration: data.start_ago } )
     } else if (data.ended == true){
       start_ago.innerText = I18n.t('default.scheduled_meeting.external.ended')
+    }
+
+    // update image
+    var image = $('#external-join').find('img')[0]
+    if (data.running) {
+      image.src= "/rooms/assets/meeting-running.svg"
+    } else if (data.ended) {
+      image?.remove()
+    }
+
+    //remove form
+    var form = $('#external-join').find('form')[0]
+    if (data.ended) {
+      form?.remove()
     }
   };
 
