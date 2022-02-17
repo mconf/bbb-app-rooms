@@ -21,7 +21,7 @@ $(document).on('turbolinks:load', function(){
 
   if (window.location.href.includes('/scheduled_meetings')) {
     var datePicker = document.getElementsByName("scheduled_meeting[date]")[0];
-    datePicker.addEventListener('change', checkTime);
+    datePicker?.addEventListener('change', checkTime);
 
     function checkTime(e) {
       var dateFormat = $(".datepicker").first().data('format');
