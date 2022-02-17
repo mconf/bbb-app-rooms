@@ -240,7 +240,7 @@ class ScheduledMeetingsController < ApplicationController
     begin
       ScheduledMeeting.parse_start_at(
         params[:scheduled_meeting][:date], params[:scheduled_meeting][:time]
-      ) > DateTime.now
+      ) > (DateTime.now - 5.minutes)
     rescue Date::Error
       scheduled_meeting.start_at = nil
       scheduled_meeting.errors.add(:start_at, t('default.scheduled_meeting.error.invalid_start_at'))
