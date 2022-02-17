@@ -58,12 +58,11 @@ $(document).on('turbolinks:load', function(){
 
     if (data.ended) {
       participants?.remove()
-    } else if (data.participants_count == 1) {
+    } else if (data.participants_count == 1 ) {
       participants.innerText = I18n.t('default.scheduled_meeting.distance_in_words.x_participants.one')
-    } else if (data.participants_count > 1) {
+    } else if (data.participants_count !== 1) {
       participants.innerText = I18n.t('default.scheduled_meeting.distance_in_words.x_participants.other', { count: data.participants_count } )
     }
-
 
     // update start_ago
     var start_ago = $('#external-join').find('span#status-meeting')[0]
@@ -81,6 +80,8 @@ $(document).on('turbolinks:load', function(){
       image.src= "/rooms/assets/meeting-running.svg"
     } else if (data.ended) {
       image?.remove()
+    } else {
+      image.src= "/rooms/assets/guest-wait.svg"
     }
 
     //remove form
