@@ -120,3 +120,6 @@ gem 'browser'
 gem 'resque', require: 'resque/server'
 gem 'resque-scheduler', require: 'resque/scheduler/server'
 gem 'active_scheduler'
+
+# Return texts I18n in .js
+gem 'i18n-js', '~> 3.9'

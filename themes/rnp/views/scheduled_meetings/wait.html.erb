@@ -9,17 +9,35 @@
      data-auto="<%= @auto_join %>"
      data-join-method="post">
 
-  <%= image_tag 'guest-wait.svg' %>
-  <p>
-    <% if @auto_join %>
-      <%= t('default.scheduled_meeting.wait.message_auto', name: @full_name).html_safe %>
-    <% else %>
-      <%= t('default.scheduled_meeting.wait.message', name: @full_name).html_safe %>
-    <% end %>
-  </p>
+  <div class="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3">
+    <h1><%= @scheduled_meeting.name %></h1>
+    <p>
+      <%= format_date(@scheduled_meeting.start_at) %> -
+      <% if @auto_join %>
+        <%= t('default.scheduled_meeting.wait.creating_session') %>
+      <% else %>
+        <%= t('default.scheduled_meeting.wait.not_started') %>
+      <% end %>
+    </p>
 
-  <div id="wait-for-moderator-back" style="display: none;">
-    <%= button_to t('scheduled_meetings.wait.retry'), @post_to,
-     method: :post, class: "btn btn-secondary btn-sm disabled", disabled: true %>
+    <%= image_tag 'guest-wait.svg' %>
+
+    <p><%= t('default.scheduled_meeting.wait.name_preview', name: @full_name).html_safe %></p>
+    <h2><strong><%= @full_name%></strong></h2>
+
+    <% if @user.nil? %>
+      <u>
+        <%=
+          link_to t('default.scheduled_meeting.wait.change_name'),
+          external_room_scheduled_meeting_path(@room, @scheduled_meeting),
+          class: "color-primary"
+        %>
+      </u>
+    <% end %>
+
+    <div id="wait-for-moderator-back" style="display: none;">
+      <%= button_to t('scheduled_meetings.wait.retry'), @post_to,
+       method: :post, class: "btn btn-secondary btn-sm disabled", disabled: true %>
+    </div>
   </div>
 </div>
