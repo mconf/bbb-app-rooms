@@ -74,6 +74,9 @@ GEM
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.1, >= 1.2.0)
+    active_scheduler (0.7.0)
+      activejob (>= 4.2.0)
+      rake
     activejob (6.1.4.4)
       activesupport (= 6.1.4.4)
       globalid (>= 0.3.6)
@@ -159,6 +162,13 @@ GEM
     et-orbi (1.2.6)
       tzinfo
     execjs (2.7.0)
+    factory_bot (6.2.0)
+      activesupport (>= 5.0.0)
+    factory_bot_rails (6.2.0)
+      factory_bot (~> 6.2.0)
+      railties (>= 5.0.0)
+    faker (2.19.0)
+      i18n (>= 1.6, < 2)
     faraday (1.0.1)
       multipart-post (>= 1.2, < 3)
     ffi (1.13.0)
@@ -166,6 +176,9 @@ GEM
       railties (>= 3.2, < 8.0)
     friendly_id (5.4.2)
       activerecord (>= 4.0.0)
+    fugit (1.5.2)
+      et-orbi (~> 1.1, >= 1.1.8)
+      raabro (~> 1.4)
     globalid (1.0.0)
       activesupport (>= 5.0)
     haml (5.2.1)
@@ -230,6 +243,7 @@ GEM
     mini_mime (1.1.2)
     mini_portile2 (2.7.1)
     minitest (5.15.0)
+    mono_logger (1.1.1)
     msgpack (1.3.3)
     multi_json (1.14.1)
     multi_xml (0.6.0)
@@ -238,9 +252,6 @@ GEM
       ruby2_keywords (~> 0.0.1)
     nested_form (0.3.2)
     netrc (0.11.0)
-    nio4r (2.5.7)
-    nokogiri (1.12.5)
-      mini_portile2 (~> 2.6.1)
     nio4r (2.5.8)
     nokogiri (1.13.0)
       mini_portile2 (~> 2.7.0)
@@ -353,6 +364,14 @@ GEM
     rspec-mocks (3.9.1)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.9.0)
+    rspec-rails (4.0.1)
+      actionpack (>= 4.2)
+      activesupport (>= 4.2)
+      railties (>= 4.2)
+      rspec-core (~> 3.9)
+      rspec-expectations (~> 3.9)
+      rspec-mocks (~> 3.9)
+      rspec-support (~> 3.9)
     rspec-support (3.9.3)
     rspec_junit_formatter (0.4.1)
       rspec-core (>= 2, < 4, != 2.12.0)
@@ -394,6 +413,8 @@ GEM
     selenium-webdriver (3.142.7)
       childprocess (>= 0.5, < 4.0)
       rubyzip (>= 1.2.2)
+    shoulda-matchers (4.5.1)
+      activesupport (>= 4.2.0)
     sinatra (2.1.0)
       mustermann (~> 1.0)
       rack (~> 2.2)
@@ -462,6 +483,8 @@ DEPENDENCIES
   capybara (>= 2.15, < 4.0)
   coffee-rails (~> 5.0)
   dotenv-rails
+  factory_bot_rails
+  faker
   font-awesome-rails
   friendly_id (~> 5.4.0)
   jbuilder (~> 2.5)
@@ -486,11 +509,13 @@ DEPENDENCIES
   resque-scheduler
   rest-client
   rspec
+  rspec-rails (~> 4.0.0)
   rspec_junit_formatter
   rubocop (~> 0.79.0)
   rubocop-rails (~> 2.4.0)
   sass-rails (~> 5.0)
   selenium-webdriver
+  shoulda-matchers (~> 4.0)
   spring
   spring-watcher-listen (~> 2.0.0)
   sqlite3 (~> 1.3)
