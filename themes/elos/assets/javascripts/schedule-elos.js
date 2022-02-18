@@ -3,7 +3,7 @@ $(document).on('turbolinks:load', function(){
     var valueSelect = document.getElementsByName("scheduled_meeting[duration]")[0],
       contentCustomDuration = document.getElementById("content_custom_duration")
 
-    valueSelect.addEventListener('change', controlCustomDuration)
+    valueSelect?.addEventListener('change', controlCustomDuration)
     function controlCustomDuration(e) {
       let valueSelectDuration = e.target.value;
       valueSelectDuration == 0 ? contentCustomDuration.classList.add('d-block') :
