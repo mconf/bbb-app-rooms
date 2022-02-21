@@ -7,6 +7,9 @@ Rails.application.routes.draw do
   get '/health_check', to: 'health_check#all', default: { format: nil }
   get '/healthz', to: 'health_check#all', default: { format: nil }
 
+  get '/meetings/download_participants', to: 'meetings#download_participants', as: 'download_participants'
+  get '/meetings/download_notes', to: 'meetings#download_notes', as: 'download_notes'
+
   if Mconf::Env.fetch_boolean("SERVE_RAILS_ADMIN", false)
     mount RailsAdmin::Engine => '/dash', as: 'rails_admin'
 
