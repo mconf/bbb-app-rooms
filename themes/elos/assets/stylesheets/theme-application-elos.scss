@@ -383,6 +383,18 @@ body.theme-elos {
         }
       }
     }
+
+    .field_with_errors > input {
+      border-color: var(--color-error);
+    }
+
+    .error-description {
+      color: var(--color-error);
+      margin: 0;
+      font-size: large;
+      text-align: left;
+      white-space: nowrap;
+    }
   }
 
   #external-join {

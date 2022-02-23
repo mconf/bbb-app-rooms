@@ -52,6 +52,8 @@ class ScheduledMeetingsController < ApplicationController
       valid_start_at = validate_start_at(@scheduled_meeting)
       if valid_start_at
         @scheduled_meeting.set_dates_from_params(params[:scheduled_meeting])
+      else
+        @scheduled_meeting.errors.add(:start_at, t('default.scheduled_meeting.error.invalid_start_at'))
       end
 
       room_session = get_room_session(@room)
@@ -75,6 +77,8 @@ class ScheduledMeetingsController < ApplicationController
       valid_start_at = validate_start_at(@scheduled_meeting)
       if valid_start_at
         @scheduled_meeting.set_dates_from_params(params[:scheduled_meeting])
+      else
+        @scheduled_meeting.errors.add(:start_at, t('default.scheduled_meeting.error.invalid_start_at'))
       end
 
       if params[:scheduled_meeting]['duration'].to_i.zero?
@@ -243,7 +247,6 @@ class ScheduledMeetingsController < ApplicationController
       ) > (DateTime.now - 5.minutes)
     rescue Date::Error
       scheduled_meeting.start_at = nil
-      scheduled_meeting.errors.add(:start_at, t('default.scheduled_meeting.error.invalid_start_at'))
       false
     end
   end
