@@ -168,6 +168,18 @@ body.theme-rnp {
         color: var(--color-main);
       }
     }
+
+    .field_with_errors > input {
+      border-color: var(--color-error);
+    }
+
+    .error-description {
+      color: var(--color-error);
+      margin: 0;
+      font-size: large;
+      text-align: left;
+      white-space: nowrap;
+    }
   }
 
   .table-footnote {
