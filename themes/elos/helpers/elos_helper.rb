@@ -98,4 +98,13 @@ module ElosHelper
     }
     return links[page][locale]
   end
+
+  def meeting_recurring?(meeting_id)
+    meeting = ScheduledMeeting.find_by(id: meeting_id)
+    return true if meeting.present? && meeting[:repeat] != nil
+  end
+
+  def return_recurrence(meeting_id)
+    meeting_recurrence = ScheduledMeeting.find_by(id: meeting_id)[:repeat]
+  end
 end

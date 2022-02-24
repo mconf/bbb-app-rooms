@@ -21,10 +21,24 @@
   <%# Meeting creation date %>
   <td class="col-6 col-md-1">
     <%= format_date(meeting[:startTime].to_i, :day_month_year, false) %>
+
+    <% meeting_db_id = meeting[:metadata][:'bbb-meeting-db-id'] %>
+    <% if meeting_recurring?(meeting_db_id)%>
+      <span class="badge meeting-badge-recurring">
+        <i class="icon material-icons">repeat</i>
+        <span>
+          <%= t("default.scheduled_meeting.repeat_options.#{return_recurrence(meeting_db_id)}") %>
+        </span>
+      </span>
+    <% end %>
   </td>
 
   <%# Meeting creation time %>
-  <td class="col-6 col-md-1">
+  <% if meeting_recurring?(meeting_db_id)%>
+    <td class="col-6 col-md-1 justify-content-start">
+  <% else %>
+    <td class="col-6 col-md-1">
+  <% end %>
     <%= format_time(meeting[:startTime].to_i) %>
   </td>
 
