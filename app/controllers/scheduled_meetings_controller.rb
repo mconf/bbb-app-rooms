@@ -247,6 +247,7 @@ class ScheduledMeetingsController < ApplicationController
       ) > (DateTime.now - 5.minutes)
     rescue Date::Error
       scheduled_meeting.start_at = nil
+      @scheduled_meeting.errors.add(:start_at, t('default.scheduled_meeting.error.invalid_start_at'))
       false
     end
   end
