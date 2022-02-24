@@ -1,7 +1,7 @@
 <%# Params passed to render partial %>
 <% [user, room, recording] %>
 
-<tr class="d-flex row tr-row recording-published-<%= recording[:published] %>">
+<tr class="recording-row d-flex row tr-row recording-published-<%= recording[:published] %>">
   <td class="col-10 col-md-5 align-middle td-titles" data-search-field="1">
     <div class="item-title">
       <% if recording[:metadata][:name] %>
@@ -35,7 +35,7 @@
       <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown-opts-<%= recording[:recordID] %>">
 
         <% if recording[:published] %>
-          
+
           <% if can_download_recording?(user, room)%>
             <% recording[:playbacks].each do |p| %>
               <% url = playback_url(room, recording[:recordID], p) %>

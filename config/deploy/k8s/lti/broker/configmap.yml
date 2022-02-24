@@ -1,0 +1,24 @@
+---
+apiVersion: v1
+data:
+  # TODO filter out unused configs
+  APP_NAME: "Elos • LTI"
+  APP_ROOMS_URL: "https://elos.local"
+  CONSUMER_KEY: "key"
+  CONSUMER_SECRET: "secret"
+  DEFAULT_LTI_TOOL: "rooms"
+  LOGRAGE_ENABLED: "1"
+  LOG_LEVEL: "info"
+  PUMA_TOKEN: "abc"
+  RAILS_ENV: "production"
+  RAILS_LOG_TO_STDOUT: "true"
+  RAILS_SERVE_STATIC_FILES: "true"
+  RELATIVE_URL_ROOT: "lti"
+  SERVE_APPLICATION: "true"
+  SERVE_RAILS_ADMIN: "false"
+  TOOL_ROOMS_ICON: "https://d1k4mwiyt5caw9.cloudfront.net/rooms/favicon.svg"
+  URL_HOST: "elos.local"
+kind: ConfigMap
+metadata:
+  name: mconf-lti-broker-cm
+  namespace: app-lti

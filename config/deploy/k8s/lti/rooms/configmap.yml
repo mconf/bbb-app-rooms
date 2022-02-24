@@ -1,0 +1,34 @@
+---
+apiVersion: v1
+data:
+  APP_LAUNCH_DURATION_MINS: "30"
+  APP_NAME: "Elos • LTI"
+  APP_THEME: "elos"
+  BIGBLUEBUTTON_ENDPOINT: ""
+  BIGBLUEBUTTON_ENDPOINT_INTERNAL: ""
+  BIGBLUEBUTTON_MODERATOR_ROLES: "Instructor,Faculty,Teacher,Mentor,Administrator,Admin"
+  BIGBLUEBUTTON_SECRET: ""
+  CABLE_ADAPTER: "postgresql"
+  CABLE_BTN_TIMEOUT: "60000"
+  CABLE_ENABLED: "false"
+  CABLE_MOUNT_PATH: "/cable-not-used"
+  DEFAULT_TIMEZONE: "Brasilia"
+  LOGRAGE_ENABLED: "1"
+  LOG_LEVEL: "info"
+  OMNIAUTH_BBBLTIBROKER_ROOT: "lti"
+  OMNIAUTH_BBBLTIBROKER_SITE: "https://elos.local"
+  OMNIAUTH_BBBLTIBROKER_KEY: "my-internal-key"
+  OMNIAUTH_BBBLTIBROKER_SECRET: "my-internal-secret"
+  PUMA_TOKEN: "abc"
+  RAILS_ENV: "production"
+  RAILS_LOG_TO_STDOUT: "true"
+  RAILS_SERVE_STATIC_FILES: "true"
+  RELATIVE_URL_ROOT: ""
+  RUNNING_POLLING_DELAY: "15000"
+  SERVE_APPLICATION: "true"
+  SERVE_RAILS_ADMIN: "false"
+  URL_HOST: "elos.local"
+kind: ConfigMap
+metadata:
+  name: mconf-lti-rooms-cm
+  namespace: app-lti

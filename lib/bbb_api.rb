@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'tests_helper'
 module BbbApi
   def wait_for_mod?(scheduled_meeting, user)
     return unless scheduled_meeting and user
@@ -38,6 +39,7 @@ module BbbApi
       {
         'userdata-bbb_override_default_locale': I18n.locale,
         'userdata-mconf_custom_language': I18n.locale
+        userID: user.uid
       }
     )
   end
@@ -57,9 +59,39 @@ module BbbApi
     )
   end
 
+  def get_all_meetings(room, options = {})
+    res = bbb(room).get_all_meetings(options.merge(room.params_for_get_all_meetings))
+
+    no_more_meetings = res[:nextpage] == 'false'
+
+    # Format playbacks in a more pleasant way.
+    res[:meetings].each do |m|
+      next if m.key?(:error)
+      if m[:recording].present?
+        m[:recording][:playbacks] = if !m[:recording][:playback] || !m[:recording][:playback][:format]
+                          []
+                        elsif m[:recording][:playback][:format].is_a?(Array)
+                          m[:recording][:playback][:format]
+                        else
+                          [m[:recording][:playback][:format]]
+                        end
+
+        m[:recording].delete(:playback)
+      end
+    end
+
+    meetings = res[:meetings].sort_by { |meet| meet[:meeting][:endTime] }.reverse
+    [meetings, no_more_meetings]
+  end
+
   # Fetches all recordings for a room.
   def get_recordings(room, options = {})
     res = bbb(room).get_recordings(options.merge(room.params_for_get_recordings))
+
+    # Use this for tests only
+    # res = TestsHelper.gen_fake_res(options)
+
+    no_more_recordings = res[:nextpage] == 'false'
 
     # Format playbacks in a more pleasant way.
     res[:recordings].each do |r|
@@ -76,7 +108,8 @@ module BbbApi
       r.delete(:playback)
     end
 
-    res[:recordings].sort_by { |rec| rec[:endTime] }.reverse
+    recordings = res[:recordings].sort_by { |rec| rec[:endTime] }.reverse
+    [recordings, no_more_recordings]
   end
 
   # Calls getRecodringToken and return the token
@@ -163,8 +196,9 @@ module BbbApi
       secret = Rails.configuration.bigbluebutton_secret
     end
 
+    # BigBlueButtonApi.new(url, secret, version=nil, logger=nil)
     BigBlueButton::BigBlueButtonApi.new(
-      remove_slash(fix_bbb_endpoint_format(endpoint)), secret, "0.9", "true"
+      remove_slash(fix_bbb_endpoint_format(endpoint)), secret, "0.9", Rails.logger
     )
   end
 

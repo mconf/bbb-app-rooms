@@ -7,7 +7,7 @@ git_source(:github) do |repo_name|
 end
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.0.3'
+gem 'rails', '~> 6.1.4'
 # Include sqlite as the default database
 gem 'sqlite3', '~> 1.3'
 # Include postgres as another database option
@@ -72,6 +72,10 @@ group :test do
   gem 'webdrivers'
 end
 
+group :production do
+  gem 'prometheus_exporter'
+end
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data'
 
@@ -83,8 +87,8 @@ gem 'jquery-fileupload-rails'
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
 
-# API
-gem 'bigbluebutton-api-ruby'
+# BigBlueButton API
+gem 'bigbluebutton-api-ruby', git: 'https://github.com/mconf/bigbluebutton-api-ruby.git', tag: 'v1.9.0-mconf-rc1'
 
 # AWS S3 API (to access Spaces API)
 gem 'aws-sdk-s3', '~> 1'
@@ -115,3 +119,8 @@ gem 'friendly_id', '~> 5.4.0'
 
 # Other
 gem 'browser'
+
+# For queues
+gem 'resque', require: 'resque/server'
+gem 'resque-scheduler', require: 'resque/scheduler/server'
+gem 'active_scheduler'

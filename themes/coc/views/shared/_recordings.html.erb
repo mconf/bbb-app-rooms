@@ -6,9 +6,11 @@
     <h2><%= t('recordings.title') %></h2>
   </div>
 
+<% if false %>
   <div id="search_bar" class="col-12">
     <input type="text" data-search="recordings" data-search-table="#recording-table" class="form-control" placeholder="<%= t('recordings.search.placeholder') %>">
   </div>
+<% end %>
 
   <% if recordings.count > 0 %>
     <div class="col-12">

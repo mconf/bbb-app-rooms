@@ -1,0 +1,6 @@
+remove_old_app_launch_job:
+  # Every day at 01 GMT -3
+   cron: "0 4 * * *"
+   class: RemoveOldAppLaunchJob
+   queue: default
+   description: "Remove old AppLaunches"

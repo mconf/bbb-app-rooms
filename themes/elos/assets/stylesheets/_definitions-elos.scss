@@ -1,6 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=IBM+Plex+Sans');
-//@import url('https://fonts.googleapis.com/css?family=Montserrat');
-@import url('https://fonts.googleapis.com/css?family=Comfortaa');
+@import url('https://fonts.googleapis.com/css?family=Nunito+Sans');
 
 $vars: (
   --color-main: #2DCCD3,
@@ -27,9 +25,11 @@ $vars: (
   --color-gray-08: #575756,
   --color-gray-09: #3C3C3B,
   --font-color: #202020,
-  --font-family: "'IBM Plex Sans', sans-serif",
-  --font-family-title: "'Comfortaa', sans-serif",
+  --font-family: "'Nunito Sans', sans-serif",
+  --font-family-title: "'Nunito Sans', sans-serif",
   --font-weight: Regular,
+  --font-weight-bold: 700,
+  --font-weight-semibold: 600,
   --font-size: 16.5px,
   --font-size-rem: 1.1rem, // Assumes the browser default, typically `16px`
   --font-size-details: 14.3px,
@@ -152,6 +152,11 @@ $line-height-lg: map-get($vars, '--line-height') !default;
   }
 }
 
+@keyframes dots {
+  0% { box-shadow: 0 28px 0 -28px $primary }
+  100% { box-shadow: 0 28px 0 $primary }
+}
+
 .icon-input-select {
   appearance: none;
   background: transparent;
@@ -169,3 +174,4 @@ select.form-control {
 @import "bootstrap/mixins";
 @import "bootstrap/functions";
 @import "bootstrap/variables";
+@import "font-awesome";

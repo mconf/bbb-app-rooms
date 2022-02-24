@@ -1,0 +1,530 @@
+@import "definitions-coc";
+
+// keep it here so it won't take precedence and override links
+// inside dropdowns and buttons, for example
+a {
+  color: var(--color-sec);
+
+  &:hover {
+    color: var(--color-sec-hover);
+    background: none;
+  }
+}
+
+body.theme-coc {
+
+  //
+  // override things that are set in the LTI's default theme
+  //
+
+  line-height: var(--line-height);
+  .dropdown-item:visited:not(.btn) {
+    &:hover, &:active {
+      color: $dropdown-link-hover-color;
+    }
+  }
+  p, ol, ul, td {
+    font-family: var(--font-family);
+    font-weight: var(--font-weight);
+    font-size: var(--font-size);
+    line-height: var(--line-height);
+  }
+
+  //
+  // GLOBAL STYLES
+  //
+
+  margin: blocks(4);
+  font-family: var(--font-family);
+  font-weight: var(--font-weight);
+  font-size: var(--font-size);
+
+  > .container {
+    padding: blocks(6) 0;
+  }
+
+  h1, h2, h3, h4, h5 {
+    color: var(--color-main);
+  }
+  h1 {
+    font-size: var(--font-size-h1);
+    font-family: var(--font-family-title);
+  }
+  h2 {
+    font-size: var(--font-size-h2);
+  }
+
+  .dropdown-opts .dropdown-toggle {
+    &:after { content: none }
+  }
+
+  table {
+    border-bottom: 1px solid var(--color-gray-02);
+
+    .item-title {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .item-description {
+      font-size: var(--font-size-details);
+      margin-top: 12px;
+      color: var(--color-gray-05);
+    }
+
+    tr {
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    td {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: center;
+
+      &.td-titles {
+        flex-direction: column;
+
+        > * {
+          align-self: flex-start;
+        }
+      }
+    }
+
+    .dropdown-opts {
+      top: 0;
+      right: $block;
+
+      > a {
+        color: var(--font-color);
+      }
+    }
+  }
+
+  .join-room-btn {
+    height: blocks(5);
+    width: blocks(5);
+    border-radius: 50%;
+    padding: 0;
+
+    .icon {
+      margin: 0;
+      font-size: 33px;
+      width: 100%;
+      line-height: 1;
+      padding: 3px 0px 0 1px;
+    }
+
+    &.loading {
+      animation: shadow-pulse 1s infinite;
+    }
+  }
+
+  .subtitle-header-rooms {
+    font-size: var(--font-size-details);
+    color: var(--color-gray-05);
+  }
+
+  .user-not-creator-meeting > td:not(:last-child){
+    opacity: .5;
+  }
+
+  .classes-header {
+    color: #75787B;
+    font-size: 18px;
+    line-height: 24px;
+    border-top: none
+  }
+
+  .classes-item:first-child {
+    font-weight: var(--font-weight-extrabold);
+    font-size: 20px;
+    line-height: 27px;
+  }
+
+  .classes-item {
+    color: var(--font-color);
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  #coc-logo img{
+    height: 36px;
+    margin-top: 0;
+    width: auto;
+  }
+
+  .item-collapse:after {
+    content: "\f078";
+    font-family: 'FontAwesome';
+    position: absolute;
+    right: 20px;
+    font-size: 24px;
+  }
+
+  .item-collapse[aria-expanded=true]:after {
+    content: "\f077" !important;
+    font-size: 24px;
+  }
+
+  .card-header {
+    cursor: pointer;
+  }
+
+  .btn-schedules {
+    background-color: var(--color-main);
+    color: var(--color-white);
+    font-size: var(--font-size);
+    max-width: 225px;
+    padding: 8px 48px;
+    width: 80%;
+  }
+
+  .form-actions {
+    text-align: right;
+    margin-top: blocks(6);
+
+    .btn {
+      margin-left: blocks(2);
+    }
+  }
+
+  .toast-area {
+    position: absolute;
+    top: blocks(2);
+    right: blocks(2);
+    left: blocks(2);
+    flex-direction: column;
+    z-index: var(--z-index-toast);
+
+    .toast {
+      margin-bottom: blocks(1);
+      max-width: 60%;
+
+      // so hidden toasts don't mess with visible toasts
+      height: 0;
+      &.show { height: auto; }
+
+      .toast-header {
+        border-bottom: none;
+        padding: 0.5rem 1.5rem;
+      }
+
+      /* &.toast-notice, &.toast-success { */
+      /*   background-color: var(--color-ok-hover); */
+      /* } */
+
+      /* &.toast-error { */
+      /*   background-color: var(--color-error-hover); */
+      /* } */
+    }
+  }
+
+  form {
+    label {
+      .icon-label-hint {
+        font-size: var(--font-size-md);
+        cursor: pointer;
+        color: var(--color-main);
+      }
+    }
+  }
+
+  .table-footnote {
+    text-align: right;
+    font-size: var(--font-size-details);
+    color: var(--color-gray-05);
+  }
+
+  .table-pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: blocks(6);
+  }
+
+  //
+  // PAGE-SPECIFIC STYLES
+  //
+
+  .error-description {
+    text-align: center;
+    color: #2B2D42;
+    font-size: 22px;
+    display: flex;
+    flex-direction: column;
+
+    .ops-text {
+      font-size: 34px;
+      font-weight: var(--font-weight-bold);
+    }
+
+    .description-text {
+      font-weight: var(--font-weight-bold);
+    }
+
+    .title-text {
+      font-weight: var(--font-weight-semibold);
+      margin-top: 30px;
+    }
+
+    .error-logo-all {
+      @include make-row;
+
+      margin: 30px auto 0 auto;
+      float: none;
+      width: 50%;
+      overflow: visible;
+    }
+
+    #error401-logo {
+      background: url(image-path('errors/401_Error.png')) no-repeat top;
+      background-size: contain;
+      padding-top: 29.88%; /* (img-height / img-width * container-width) - scales div height to background image */
+    }
+
+    #error403-logo {
+      background: url(image-path('errors/403_Error.png')) no-repeat top;
+      background-size: contain;
+      padding-top: 33.33%; /* (img-height / img-width * container-width) - scales div height to background image */
+    }
+
+    #error404-logo {
+      background: url(image-path('errors/404_Error.png')) no-repeat top;
+      background-size: contain;
+      padding-top: 33.33%; /* (img-height / img-width * container-width) - scales div height to background image */
+    }
+
+    #error500-logo {
+      background: url(image-path('errors/500_Error.png')) no-repeat top;
+      background-size: contain;
+      padding-top: 22.22%; /* (img-height / img-width * container-width) - scales div height to background image */
+    }
+  }
+
+  #scheduled-meetings-list {
+    table {
+      margin-top: blocks(2);
+
+      tr {
+        min-height: 97px; // the height when there's a name and description in the item
+      }
+
+      .badge-recurring {
+        background-color: var(--color-sec);
+        color: var(--color-white);
+        padding: blocks(1) blocks(1);
+        margin-top: blocks(1);
+        font-size: 95%;
+
+        .icon {
+          font-size: 85%;
+        }
+      }
+    }
+  }
+
+  #action-buttons {
+    margin-bottom: blocks(6);
+    text-align: center;
+
+    .btn {
+      max-width: 350px;
+      width: 100%;
+      padding: blocks(2) $block;
+      margin-right: blocks(2);
+    }
+  }
+
+  #recordings-list {
+    margin-top: blocks(2);
+    margin-bottom: blocks(6);
+
+    #recordings-header {
+      margin-top: blocks(2);
+      margin-bottom: blocks(4);
+    }
+
+    #search_bar {
+      margin-top: blocks(2);
+      margin-bottom: blocks(4);
+    }
+
+    .load-recordings {
+      display: none;
+    }
+
+    #status {
+      text-align: center;
+      .loader-wrapper {
+        display: flex;
+        justify-content: center;
+        height: 33px;
+
+        .loader {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          position: relative;
+          animation: dots 0.7s ease alternate infinite;
+          animation-delay: 0.2s;
+          top: 50%;
+          margin: -42px auto 0; }
+          .loader::after, .loader::before {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: dots 0.7s ease alternate infinite; }
+          .loader::before {
+            left: -17px;
+            animation-delay: 0s; }
+          .loader::after {
+            right: -17px;
+            animation-delay: 0.4s; }
+
+        @keyframes dots {
+          0% { box-shadow: 0 28px 0 -28px $primary }
+          100% { box-shadow: 0 28px 0 $primary }
+        }
+
+        .all-loaded {
+          display: none;
+          color: var(--color-gray-05);
+        }
+
+        .empty {
+          display: none;
+        }
+      }
+    }
+
+    .recording-published-false {
+      color: var(--color-gray-05);
+
+      .item-title {
+        color: var(--color-gray-05);
+      }
+    }
+
+    table {
+      tr {
+        min-height: 97px; // the height when there's a name and description in the item
+      }
+    }
+  }
+
+  .to-top {
+    position: fixed;
+    bottom: 100px;
+    right: 200px;
+    padding: 2px 10px;
+  }
+
+  #scheduled-meetings-new, #scheduled-meetings-edit {
+    form {
+      margin-top: blocks(6);
+
+      .repeat-hint {
+        ul {
+          margin: 0;
+          padding: 0;
+          list-style-type: none;
+          margin-top: -0.2rem;
+          padding-bottom: blocks(1);
+          color: var(--color-gray-05);
+          font-size: 80%;
+        }
+      }
+    }
+  }
+
+  #external-join {
+    .meeting-date {
+      margin-bottom: blocks(6);
+    }
+
+    .anonymous-disclaimer {
+      text-align: center;
+      font-size: var(--font-size-sm);
+      margin-top: blocks(8);
+      padding: blocks(2) 0;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+  }
+
+  #wait-for-moderator {
+    .btn {
+      margin-top: blocks(4);
+    }
+  }
+
+  // This is a copy of the style of the guest wait page from BigBlueButton/Live
+  // with a few adaptations, but to look as similar as possible
+  &[data-controller="scheduled_meetings"][data-action="wait"],
+  &[data-controller="rooms"][data-action="close"] {
+    background-color: var(--color-black);
+    width: auto;
+    margin: auto;
+    text-align: center;
+    font-family: var(--font-family);
+
+    img {
+      width: 40vw;
+      margin: calc(10vw - 48px) 0 0 0;
+    }
+
+    p {
+      color: white;
+      font-size: 1.5vw;
+      line-height: 2.0vw;
+      margin: 1em auto;
+      max-width: 40vw;
+    }
+  }
+
+  &[data-controller="errors"], &[data-controller="sessions"] {
+    h1 {
+      margin-bottom: blocks(5);
+    }
+  }
+
+  &[data-controller="sessions"] {
+    .btn {
+      margin: 0 auto;
+      margin-top: blocks(1);
+      width: 70%;
+      max-width: 400px;
+      min-width: 300px;
+    }
+
+    #retry-alternatives {
+      margin-top: blocks(8);
+
+      p, ul {
+        font-size: var(--font-size-sm);
+      }
+    }
+  }
+
+  .w-90 {
+    width: 90%
+  }
+
+  .user-data {
+    color: var(--color-gray);
+
+    .user-name {
+      // color: var(--color-gray);
+      font-size: 20px;
+      font-weight: var(--font-weight-bold);
+    }
+  }
+
+  .powered-by {
+    color: var(--color-gray-05);
+    font-size: var(--font-size)
+  }
+}

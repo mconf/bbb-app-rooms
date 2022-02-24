@@ -1,0 +1,44 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    # TODO use cert-manager
+    #cert-manager.io/cluster-issuer: letsencrypt-production-http01
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-buffer-size: 256k
+    nginx.ingress.kubernetes.io/affinity: cookie
+    nginx.ingress.kubernetes.io/session-cookie-name: ingroute
+    nginx.ingress.kubernetes.io/session-cookie-samesite: None
+  name: mconf-lti-ingress
+  namespace: app-lti
+spec:
+  rules:
+  - host: elos.local
+    http:
+      paths:
+      - backend:
+          service:
+            name: mconf-lti-rooms-svc
+            port:
+              number: 3000
+        path: /rooms
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: mconf-lti-rooms-svc
+            port:
+              number: 3000
+        path: /brightspace
+        pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: mconf-lti-broker-svc
+            port:
+              number: 3000
+        path: /lti
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - elos.local
+    secretName: secret-tls

@@ -94,7 +94,6 @@ body.theme-elos {
 
     .dropdown-opts {
       top: 0;
-      right: $block;
 
       > a {
         color: var(--font-color);
@@ -119,6 +118,32 @@ body.theme-elos {
     &.loading {
       animation: shadow-pulse 1s infinite;
     }
+  }
+
+  .item-collapse:after {
+    content: "\f078";
+    font-family: 'FontAwesome';
+    position: absolute;
+    right: 20px;
+    font-size: 24px;
+  }
+
+  .item-collapse[aria-expanded=true]:after {
+    content: "\f077" !important;
+    font-size: 24px;
+  }
+
+  .card-header {
+    cursor: pointer;
+  }
+
+  .btn-schedules {
+    background-color: var(--color-sec);
+    color: var(--color-white);
+    font-size: var(--font-size);
+    max-width: 225px;
+    padding: 8px 48px;
+    width: 80%;
   }
 
   .form-actions {
@@ -183,10 +208,64 @@ body.theme-elos {
     margin-top: blocks(6);
   }
 
-
   //
   // PAGE-SPECIFIC STYLES
   //
+
+  .error-description {
+    text-align: center;
+    color: #2B2D42;
+    font-size: 22px;
+    display: flex;
+    flex-direction: column;
+
+    .ops-text {
+      font-size: 34px;
+      font-weight: var(--font-weight-bold);
+    }
+
+    .description-text {
+      font-weight: var(--font-weight-bold);
+    }
+
+    .title-text {
+      font-weight: var(--font-weight-semibold);
+      margin-top: 30px;
+    }
+
+    .error-logo-all {
+      @include make-row;
+
+      margin: 30px auto 0 auto;
+      float: none;
+      width: 50%;
+      overflow: visible;
+    }
+
+    #error401-logo {
+      background: url(image-path('errors/401_Error.png')) no-repeat top;
+      background-size: contain;
+      padding-top: 29.88%; /* (img-height / img-width * container-width) - scales div height to background image */
+    }
+
+    #error403-logo {
+      background: url(image-path('errors/403_Error.png')) no-repeat top;
+      background-size: contain;
+      padding-top: 33.33%; /* (img-height / img-width * container-width) - scales div height to background image */
+    }
+
+    #error404-logo {
+      background: url(image-path('errors/404_Error.png')) no-repeat top;
+      background-size: contain;
+      padding-top: 33.33%; /* (img-height / img-width * container-width) - scales div height to background image */
+    }
+
+    #error500-logo {
+      background: url(image-path('errors/500_Error.png')) no-repeat top;
+      background-size: contain;
+      padding-top: 22.22%; /* (img-height / img-width * container-width) - scales div height to background image */
+    }
+  }
 
   #elos-logo {
     margin-top: blocks(6);
@@ -227,20 +306,83 @@ body.theme-elos {
     }
   }
 
-  #recordings-list {
+  #meetings-list {
     margin-top: blocks(2);
     margin-bottom: blocks(6);
+
+    #meetings-header {
+      min-height: blocks(10);
+    }
+
+    #meetings-table {
+
+      thead tr {
+        min-height: blocks(5);
+        color: var(--color-gray-06);
+      }
+
+      // Hide meetings without recordings
+      &.filter-recorded-only .rec-false {
+        display: none !important;
+      }
+    }
+
+    #meetings-filters .btn.active {
+      @extend .btn-primary;
+    }
 
     #search_bar {
       margin-top: blocks(2);
       margin-bottom: blocks(4);
     }
 
-    .recording-published-false {
-      color: var(--color-gray-05);
+    .load-meetings {
+      display: none;
+    }
 
-      .item-title {
-        color: var(--color-gray-05);
+    #status {
+      text-align: center;
+      .loader-wrapper {
+        display: flex;
+        justify-content: center;
+        height: 33px;
+
+        .loader {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          position: relative;
+          animation: dots 0.7s ease alternate infinite;
+          animation-delay: 0.2s;
+          top: 50%;
+          margin: -42px auto 0; }
+          .loader::after, .loader::before {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: dots 0.7s ease alternate infinite; }
+          .loader::before {
+            left: -17px;
+            animation-delay: 0s; }
+          .loader::after {
+            right: -17px;
+            animation-delay: 0.4s; }
+
+        @keyframes dots {
+          0% { box-shadow: 0 28px 0 -28px $primary }
+          100% { box-shadow: 0 28px 0 $primary }
+        }
+
+        .all-loaded {
+          display: none;
+          color: var(--color-gray-05);
+        }
+
+        .empty {
+          display: none;
+        }
       }
     }
 
@@ -249,6 +391,13 @@ body.theme-elos {
         min-height: 97px; // the height when there's a name and description in the item
       }
     }
+  }
+
+  .to-top {
+    position: fixed;
+    bottom: 5%;
+    right: 8%;
+    padding: 2px 10px;
   }
 
   #scheduled-meetings-new, #scheduled-meetings-edit {
