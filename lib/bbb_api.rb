@@ -38,7 +38,7 @@ module BbbApi
       room.attributes[role],
       {
         'userdata-bbb_override_default_locale': I18n.locale,
-        'userdata-mconf_custom_language': I18n.locale
+        'userdata-mconf_custom_language': I18n.locale,
         userID: user.uid
       }
     )
