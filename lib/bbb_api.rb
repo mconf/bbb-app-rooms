@@ -36,7 +36,11 @@ module BbbApi
       scheduled_meeting.meeting_id,
       user.username(t("default.bigbluebutton.#{role}")),
       room.attributes[role],
-      { userID: user.uid }
+      {
+        'userdata-bbb_override_default_locale': I18n.locale,
+        'userdata-mconf_custom_language': I18n.locale,
+        userID: user.uid
+      }
     )
   end
 
@@ -48,7 +52,10 @@ module BbbApi
       scheduled_meeting.meeting_id,
       full_name,
       room.attributes['viewer'],
-      { guest: true }
+      { guest: true,
+        'userdata-bbb_override_default_locale': I18n.locale,
+        'userdata-mconf_custom_language': I18n.locale
+      }
     )
   end
 
