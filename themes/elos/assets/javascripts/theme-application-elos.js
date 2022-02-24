@@ -19,43 +19,6 @@ $(document).on('turbolinks:load', function(){
     });
   });
 
-  if (window.location.href.includes('/scheduled_meetings')) {
-    var datePicker = document.getElementsByName("scheduled_meeting[date]")[0];
-    datePicker?.addEventListener('change', checkTime);
-
-    function checkTime(e) {
-      var dateFormat = $(".datepicker").first().data('format');
-      let selectedDate;
-      if (dateFormat === 'd/m/Y') {
-        let dataString = e.target.value.split("/");
-        selectedDate = new Date(dataString[2], dataString[1] - 1, dataString[0]);
-      } else {
-        selectedDate = new Date(e.target.value);
-      }
-
-      const today = new Date();
-      let selectedDateIsToday = selectedDate.getDate() === today.getDate() &&
-        selectedDate.getMonth() === today.getMonth() &&
-        selectedDate.getFullYear() === today.getFullYear();
-
-      let isHourInPast = parseInt($(".timepicker")[0].value.split(':')[0]) <= (new Date()).getHours();
-
-      $(".timepicker").each(function() {
-        var timeFormat = $(this).data('format');
-        $(this).flatpickr({
-          enableTime: true,
-          noCalendar: true,
-          dateFormat: timeFormat,
-          time_24hr: true,
-          minTime: selectedDateIsToday ? new Date() : undefined,
-          defaultDate: (selectedDateIsToday && isHourInPast)
-            ? `${(new Date()).getHours() + 1}:00`
-            : $(".timepicker")[0].value,
-        });
-      });
-    }
-  }
-
   $(".timepicker").each(function() {
     var format = $(this).data('format');
     $(this).flatpickr({
