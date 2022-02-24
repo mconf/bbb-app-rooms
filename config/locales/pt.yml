@@ -76,7 +76,7 @@ pt:
         'Custom Duration': "Duração customizada"
       edit:           "Editar"
       error:
-        invalid_start_at: "A data ou tempo de início é inválido"
+        invalid_start_at: "Data ou hora de início inválida"
       external:
         ended:        "Esta sessão já encerrou."
         first_name:   "Primeiro nome"

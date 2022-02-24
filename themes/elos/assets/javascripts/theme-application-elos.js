@@ -26,6 +26,7 @@ $(document).on('turbolinks:load', function(){
       noCalendar: true,
       dateFormat: format,
       time_24hr: true,
+      minTime: new Date(),
     });
   });
 
