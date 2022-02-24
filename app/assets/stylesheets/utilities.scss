@@ -1,0 +1,60 @@
+//
+// Colors
+//
+
+.color-gray-01 {
+  color: var(--color-gray-01);
+}
+.color-gray-02 {
+  color: var(--color-gray-02);
+}
+.color-gray-03 {
+  color: var(--color-gray-03);
+}
+.color-gray-04 {
+  color: var(--color-gray-04);
+}
+.color-gray-05 {
+  color: var(--color-gray-05);
+}
+.color-gray-06 {
+  color: var(--color-gray-06);
+}
+.color-gray-07 {
+  color: var(--color-gray-07);
+}
+.color-gray-08 {
+  color: var(--color-gray-08);
+}
+.color-gray-09 {
+  color: var(--color-gray-09);
+}
+
+.color-primary {
+  color: var(--color-main);
+}
+.color-secondary {
+  color: var(--color-sec);
+}
+
+//
+// Borders
+//
+
+.by-0 {
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+}
+
+.bx-0 {
+  border-left: 0 !important;
+  border-right: 0 !important;
+}
+
+//
+// Text
+//
+
+.word-break {
+  word-wrap: anywhere;
+}

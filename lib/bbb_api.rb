@@ -2,6 +2,8 @@
 
 require 'tests_helper'
 module BbbApi
+  include ActionView::Helpers::DateHelper
+
   def wait_for_mod?(scheduled_meeting, user)
     return unless scheduled_meeting and user
     scheduled_meeting.check_wait_moderator &&
@@ -12,6 +14,22 @@ module BbbApi
   def mod_in_room?(scheduled_meeting)
     room = scheduled_meeting.room
     bbb(room).is_meeting_running?(scheduled_meeting.meeting_id)
+  end
+
+  def get_participants_count(scheduled_meeting)
+    room = scheduled_meeting.room
+    return 0 unless bbb(room).is_meeting_running?(scheduled_meeting.meeting_id)
+
+    res = bbb(room).get_meeting_info(scheduled_meeting.meeting_id, scheduled_meeting.hash_id)
+    res[:participantCount]
+  end
+
+  def get_current_duration(scheduled_meeting)
+    room = scheduled_meeting.room
+    return unless bbb(room).is_meeting_running?(scheduled_meeting.meeting_id)
+
+    res = bbb(room).get_meeting_info(scheduled_meeting.meeting_id, scheduled_meeting.hash_id)
+    time_ago_in_words(res[:startTime].to_datetime)
   end
 
   def join_api_url(scheduled_meeting, user)
@@ -35,7 +53,8 @@ module BbbApi
     bbb(room, false).join_meeting_url(
       scheduled_meeting.meeting_id,
       user.username(t("default.bigbluebutton.#{role}")),
-      room.attributes[role]
+      room.attributes[role],
+      { userID: user.uid }
     )
   end
 
@@ -49,6 +68,29 @@ module BbbApi
       room.attributes['viewer'],
       { guest: true }
     )
+  end
+
+  def get_all_meetings(room, options = {})
+    res = bbb(room).get_all_meetings(options.merge(room.params_for_get_all_meetings))
+
+    no_more_meetings = res[:nextpage] == 'false'
+
+    # Format playbacks in a more pleasant way.
+    res[:meetings].each do |m|
+      next if m.key?(:error)
+      m[:recording][:playbacks] = if !m[:recording][:playback] || !m[:recording][:playback][:format]
+                        []
+                      elsif m[:recording][:playback][:format].is_a?(Array)
+                        m[:recording][:playback][:format]
+                      else
+                        [m[:recording][:playback][:format]]
+                      end
+
+      m[:recording].delete(:playback)
+    end
+
+    meetings = res[:meetings].sort_by { |meet| meet[:meeting][:endTime] }.reverse
+    [meetings, no_more_meetings]
   end
 
   # Fetches all recordings for a room.

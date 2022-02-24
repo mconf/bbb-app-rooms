@@ -94,7 +94,6 @@ body.theme-elos {
 
     .dropdown-opts {
       top: 0;
-      right: $block;
 
       > a {
         color: var(--font-color);
@@ -119,6 +118,32 @@ body.theme-elos {
     &.loading {
       animation: shadow-pulse 1s infinite;
     }
+  }
+
+  .item-collapse:after {
+    content: "\f078";
+    font-family: 'FontAwesome';
+    position: absolute;
+    right: 20px;
+    font-size: 24px;
+  }
+
+  .item-collapse[aria-expanded=true]:after {
+    content: "\f077" !important;
+    font-size: 24px;
+  }
+
+  .card-header {
+    cursor: pointer;
+  }
+
+  .btn-schedules {
+    background-color: var(--color-sec);
+    color: var(--color-white);
+    font-size: var(--font-size);
+    max-width: 225px;
+    padding: 8px 48px;
+    width: 80%;
   }
 
   .form-actions {
@@ -293,13 +318,29 @@ body.theme-elos {
     }
   }
 
-  #recordings-list {
+  #meetings-list {
     margin-top: blocks(2);
     margin-bottom: blocks(6);
 
-    #recordings-header {
-      margin-top: blocks(2);
-      margin-bottom: blocks(4);
+    #meetings-header {
+      min-height: blocks(10);
+    }
+
+    #meetings-table {
+
+      thead tr {
+        min-height: blocks(5);
+        color: var(--color-gray-06);
+      }
+
+      // Hide meetings without recordings
+      &.filter-recorded-only .rec-false {
+        display: none !important;
+      }
+    }
+
+    #meetings-filters .btn.active {
+      @extend .btn-primary;
     }
 
     #search_bar {
@@ -307,7 +348,7 @@ body.theme-elos {
       margin-bottom: blocks(4);
     }
 
-    .load-recordings {
+    .load-meetings {
       display: none;
     }
 
@@ -357,14 +398,6 @@ body.theme-elos {
       }
     }
 
-    .recording-published-false {
-      color: var(--color-gray-05);
-
-      .item-title {
-        color: var(--color-gray-05);
-      }
-    }
-
     table {
       tr {
         min-height: 97px; // the height when there's a name and description in the item
@@ -374,8 +407,8 @@ body.theme-elos {
 
   .to-top {
     position: fixed;
-    bottom: 100px;
-    right: 200px;
+    bottom: 5%;
+    right: 8%;
     padding: 2px 10px;
   }
 
@@ -424,21 +457,35 @@ body.theme-elos {
   &[data-controller="rooms"][data-action="close"] {
     background-color: var(--color-black);
     width: auto;
-    margin: auto;
     text-align: center;
     font-family: var(--font-family);
 
+    h1 {
+      margin: 0;
+    }
+
+    h2 {
+      color: white;
+    }
+
     img {
-      width: 40vw;
-      margin: calc(10vw - 48px) 0 0 0;
+      margin: 3rem 0;
     }
 
     p {
       color: white;
-      font-size: 1.5vw;
-      line-height: 2.0vw;
-      margin: 1em auto;
-      max-width: 40vw;
+      margin: 0 auto;
+    }
+  }
+
+  &[data-controller="scheduled_meetings"][data-action="external"] {
+    h1, p {
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    img {
+      margin: 3rem 0;
     }
   }
 

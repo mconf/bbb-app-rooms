@@ -10,7 +10,7 @@ class ScheduledMeetingsController < ApplicationController
   include BbbAppRooms
 
   # actions that can be accessed without a session, without the LTI launch
-  open_actions = %i[external wait join running]
+  open_actions = %i[external wait join running updateMeetingData]
 
   # validate the room/session only for routes that are not open
   before_action :find_room
@@ -183,7 +183,13 @@ class ScheduledMeetingsController < ApplicationController
 
     @scheduled_meeting.update_to_next_recurring_date
 
+    @is_running = mod_in_room?(@scheduled_meeting)
+
+    @participants_count = get_participants_count(@scheduled_meeting)
+
     @ended = !@scheduled_meeting.active? && !mod_in_room?(@scheduled_meeting)
+
+    @started_ago = get_current_duration(@scheduled_meeting)
 
     @disclaimer = ConsumerConfig
                     .select(:external_disclaimer)
@@ -198,6 +204,20 @@ class ScheduledMeetingsController < ApplicationController
                  status: :ok,
                  running: mod_in_room?(@scheduled_meeting),
                  interval: Rails.configuration.cable_polling_secs.to_i
+               }
+      }
+    end
+  end
+
+  def updateMeetingData
+    respond_to do |format|
+      format.json {
+        render json: {
+                  status: :ok,
+                  running: mod_in_room?(@scheduled_meeting),
+                  participants_count: get_participants_count(@scheduled_meeting),
+                  start_ago: get_current_duration(@scheduled_meeting),
+                  ended: !@scheduled_meeting.active? && !mod_in_room?(@scheduled_meeting)
                }
       }
     end

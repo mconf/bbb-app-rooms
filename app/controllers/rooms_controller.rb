@@ -16,6 +16,7 @@ class RoomsController < ApplicationController
   before_action :validate_room, except: %i[launch close]
   before_action :find_user
   before_action :find_app_launch, only: %i[launch]
+  before_action :set_room_title, only: :show
 
   before_action only: %i[show launch close] do
     authorize_user!(:show, @room)
@@ -38,30 +39,28 @@ class RoomsController < ApplicationController
     end
   end
 
-  def recordings
-    @fetch_recordings_endpoint = recordings_pagination_room_path
-    @per_page = Rails.application.config.recordings_per_page
-    respond_to do |format|
-      format.html { render :recordings }
-    end
+  def meetings
+    @fetch_meetings_endpoint = meetings_pagination_room_path
+    @per_page = Rails.application.config.meetings_per_page
   end
 
-  def recordings_pagination
+  def meetings_pagination
     offset = params[:offset].to_i
     limit = (params[:limit] || 1).to_i
 
     options = {
       limit: limit,
-      offset: offset
+      offset: offset,
+      includeRecordings: true
     }
-    recordings, all_recordings_loaded = get_recordings(@room, options)
+    meetings_and_recordings, all_meetings_loaded = get_all_meetings(@room, options)
 
-    args = { recordings: recordings,
+    args = { meetings_and_recordings: meetings_and_recordings,
              user: @user,
              room: @room,
-             all_recordings_loaded: all_recordings_loaded }
+             all_meetings_loaded: all_meetings_loaded }
 
-    render partial: 'shared/recordings_list',
+    render partial: 'shared/meetings_list',
            layout: false,
            locals: args
   end
@@ -100,13 +99,13 @@ class RoomsController < ApplicationController
   # POST /rooms/:id/recording/:record_id/unpublish
   def recording_unpublish
     unpublish_recording(@room, params[:record_id])
-    redirect_to(recordings_room_path(@room))
+    redirect_to(meetings_room_path(@room, filter: params[:filter]))
   end
 
   # POST /rooms/:id/recording/:record_id/publish
   def recording_publish
     publish_recording(@room, params[:record_id])
-    redirect_to(recordings_room_path(@room))
+    redirect_to(meetings_room_path(@room, filter: params[:filter]))
   end
 
   # POST /rooms/:id/recording/:record_id/update
@@ -116,13 +115,13 @@ class RoomsController < ApplicationController
     elsif params[:setting] == "describe_recording"
       update_recording(@room, params[:record_id], "meta_description" => params[:record_description])
     end
-    redirect_to(recordings_room_path(@room))
+    redirect_to(meetings_room_path(@room, filter: params[:filter]))
   end
 
   # POST /rooms/:id/recording/:record_id/delete
   def recording_delete
     delete_recording(@room, params[:record_id])
-    redirect_to(recordings_room_path(@room))
+    redirect_to(meetings_room_path(@room, filter: params[:filter]))
   end
 
   def error
@@ -138,7 +137,7 @@ class RoomsController < ApplicationController
     redirect_to(*redirect_args)
   end
 
-  helper_method :recordings, :recording_date, :recording_length
+  helper_method :meetings, :recording_date, :recording_length
 
   private
 
@@ -204,5 +203,12 @@ class RoomsController < ApplicationController
     set_room_session(
       @room, { launch: launch_nonce }
     )
+  end
+
+  def set_room_title
+    if @app_launch&.tag == 'coc'
+      @title = @room.name
+      @subtitle = @room.description
+    end
   end
 end

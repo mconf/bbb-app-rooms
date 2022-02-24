@@ -7,7 +7,7 @@ git_source(:github) do |repo_name|
 end
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.0.3'
+gem 'rails', '~> 6.1.4'
 # Include sqlite as the default database
 gem 'sqlite3', '~> 1.3'
 # Include postgres as another database option
@@ -48,10 +48,14 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'dotenv-rails'
+  gem 'factory_bot_rails'
+  gem 'faker'
   gem 'rspec'
   gem 'rspec_junit_formatter'
+  gem 'rspec-rails', '~> 4.0.0'
   gem 'rubocop', '~> 0.79.0', require: false
   gem 'rubocop-rails', '~> 2.4.0', require: false
+  gem 'shoulda-matchers', '~> 4.0'
 end
 
 group :development do
@@ -84,7 +88,7 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails'
 
 # BigBlueButton API
-gem 'bigbluebutton-api-ruby', '~> 1.8'
+gem 'bigbluebutton-api-ruby', git: 'https://github.com/mconf/bigbluebutton-api-ruby.git', tag: 'v1.9.0-mconf-rc1'
 
 # AWS S3 API (to access Spaces API)
 gem 'aws-sdk-s3', '~> 1'
@@ -120,3 +124,6 @@ gem 'browser'
 gem 'resque', require: 'resque/server'
 gem 'resque-scheduler', require: 'resque/scheduler/server'
 gem 'active_scheduler'
+
+# Return texts I18n in .js
+gem 'i18n-js', '~> 3.9'

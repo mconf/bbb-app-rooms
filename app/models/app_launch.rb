@@ -26,6 +26,10 @@ class AppLaunch < ApplicationRecord
     p
   end
 
+  def tag
+    params['custom_params']['tag']
+  end
+
   def user_params
     {
       uid: self.params['user_id'],

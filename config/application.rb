@@ -13,7 +13,9 @@ Bundler.require(*Rails.groups)
 
 module BbbAppRooms
   class Application < Rails::Application
-    VERSION = "0.6.4"
+    VERSION = "0.8.2"
+
+    config.eager_load_paths << Rails.root.join('lib')
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -82,6 +84,9 @@ module BbbAppRooms
 
     config.theme = ENV['APP_THEME']
     unless config.theme.blank?
+      # FIX ME: why we need this now?
+      config.eager_load_paths << Rails.root.join('themes', config.theme, 'helpers')
+
       config.paths['app/helpers']
         .unshift(Rails.root.join('themes', config.theme, 'helpers'))
       config.paths['app/views']
@@ -109,8 +114,8 @@ module BbbAppRooms
       ENV['COOKIES_SAME_SITE'].blank? ? 'None' : "#{ENV['COOKIES_SAME_SITE']}"
     config.browser_time_zone_default_tz = config.default_timezone
 
-    config.recordings_per_page =
-      ENV['RECORDINGS_PER_PAGE'].blank? ? 25 : ENV['RECORDINGS_PER_PAGE'].to_i
+    config.meetings_per_page =
+      ENV['MEETINGS_PER_PAGE'].blank? ? 25 : ENV['MEETINGS_PER_PAGE'].to_i
 
     # Integration with Analytics
     config.gta_id = ENV['MCONF_GTA_ID'] || ''

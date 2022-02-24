@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema.define(version: 2021_07_14_174949) do
+ActiveRecord::Schema.define(version: 2022_01_17_125312) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,8 +65,9 @@ ActiveRecord::Schema.define(version: 2021_07_14_174949) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "set_duration", default: false
-    t.boolean "message_reference_terms_use", default: true
     t.boolean "download_presentation_video", default: true
+    t.boolean "message_reference_terms_use", default: true
+    t.string "external_widget", default: ""
     t.index ["key"], name: "index_consumer_configs_on_key", unique: true
   end
 

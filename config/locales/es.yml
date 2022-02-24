@@ -53,6 +53,10 @@ es:
       destroy:
         confirmation: "¿Está seguro de que desea eliminar esta programación?"
       destroyed:      "La programación fue eliminada"
+      distance_in_words:
+        x_participants:
+          one: "1 persona en la videoconferencia"
+          other: "%{count} personas en la videoconferencia"
       durations:
         5m: "5 minutos"
         10m: "10 minutos"
@@ -78,6 +82,8 @@ es:
         first_name:   "Primer nombre"
         join:         "Entrar"
         last_name:    "Apellido"
+        not_started:  "La sesión aún no ha comenzado."
+        running:      "Comenzó hace %{duration}"
       recording:      "Grabación"
       repeat_options:
         none: "No repite"
@@ -89,8 +95,12 @@ es:
         allmoderators: "Todos los usuarios serán moderadores"
       updated:        "La programación ha sido actualizada"
       wait:
+        change_name: "Cambiar nombre"
+        creating_session: "Se está creando su sesión, por favor espere unos momentos"
         message: "Hola <strong>%{name}</strong>, la sesión aún no ha comenzado. </br> Espere unos minutos."
         message_auto: "Hola <strong>%{name}</strong>, se está creando su sesión, por favor espere unos momentos."
+        name_preview: "Cuando comience la sesión entrarás como"
+        not_started: "La sesión aún no ha comenzado"
       waitmoderator:  "Espera al moderador"
     session:
       retry:
