@@ -25,7 +25,6 @@
     <% meeting_db_id = meeting[:metadata][:'bbb-meeting-db-id'] %>
     <% if meeting_recurring?(meeting_db_id)%>
       <span class="badge meeting-badge-recurring">
-        <i class="icon material-icons">repeat</i>
         <span>
           <%= t("default.scheduled_meeting.repeat_options.#{return_recurrence(meeting_db_id)}") %>
         </span>
