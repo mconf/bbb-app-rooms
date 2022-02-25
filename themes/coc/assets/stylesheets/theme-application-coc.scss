@@ -6,7 +6,7 @@ a {
   color: var(--color-sec);
 
   &:hover {
-    color: var(--color-sec-hover);
+    color: var(--color-main-hover);
     background: none;
   }
 }
@@ -94,7 +94,6 @@ body.theme-coc {
 
     .dropdown-opts {
       top: 0;
-      right: $block;
 
       > a {
         color: var(--font-color);
@@ -336,13 +335,44 @@ body.theme-coc {
     }
   }
 
-  #recordings-list {
+  #meetings-list {
     margin-top: blocks(2);
     margin-bottom: blocks(6);
 
-    #recordings-header {
-      margin-top: blocks(2);
-      margin-bottom: blocks(4);
+    #meetings-header {
+      min-height: blocks(10);
+    }
+
+    #meetings-table {
+
+      thead tr {
+        min-height: blocks(5);
+        color: var(--color-gray-06);
+      }
+
+      .meeting-badge-recurring {
+        background-color: var(--color-main);
+        color: var(--color-white);
+        display: flex;
+        font-size: 95%;
+        justify-content: space-around;
+        padding: blocks(1) blocks(1);
+        margin-top: blocks(1);
+        width: 100%;
+
+        .icon {
+          font-size: 100%;
+        }
+      }
+
+      // Hide meetings without recordings
+      &.filter-recorded-only .rec-false {
+        display: none !important;
+      }
+    }
+
+    #meetings-filters .btn.active {
+      @extend .btn-primary;
     }
 
     #search_bar {
@@ -350,7 +380,7 @@ body.theme-coc {
       margin-bottom: blocks(4);
     }
 
-    .load-recordings {
+    .load-meetings {
       display: none;
     }
 
@@ -400,14 +430,6 @@ body.theme-coc {
       }
     }
 
-    .recording-published-false {
-      color: var(--color-gray-05);
-
-      .item-title {
-        color: var(--color-gray-05);
-      }
-    }
-
     table {
       tr {
         min-height: 97px; // the height when there's a name and description in the item
@@ -417,8 +439,8 @@ body.theme-coc {
 
   .to-top {
     position: fixed;
-    bottom: 100px;
-    right: 200px;
+    bottom: 5%;
+    right: 8%;
     padding: 2px 10px;
   }
 
