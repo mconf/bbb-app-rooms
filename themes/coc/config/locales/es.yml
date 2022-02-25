@@ -45,30 +45,43 @@ es:
         start_time_time: "Hora de inicio"
         wait_moderator: "Espere a que ingrese el moderador para entrar"
         welcome: "Mensaje de bienvenida (opcional)"
-  recordings:
-    all_loaded: "Se han cargado todas las grabaciones"
-    confirm:
-      destroy: "¿Estás seguro de que deseas eliminar esta grabación?"
-      publish: "¿Estás seguro de que quieres publicar esta grabación?"
-      unpublish: "¿Estás seguro de que deseas anular la publicación de esta grabación?"
-    destroy: "Eliminar"
+  meetings:
+    all_loaded: "Se han cargado todas las conferencias"
     duration:
       less_than_a_minute: "Menos de 1 minuto"
-    empty_list: "No hay grabaciones para mostrar"
+    empty_list: "No hay conferencias para mostrar"
+    filters:
+      no_filter: "Todas"
+      recorded_only: "Grabadas"
+    history: "Historial"
     index:
       return: "< volver"
-    load: "Cargar más grabaciones"
-    playback_link: "Copiar enlace de reproducción"
-    playbacks:
-      presentation: "Reproducir"
-      presentation_video: "Descargar"
-    publish: "Publicar"
+    load: "Cargar más conferencias"
+    recording:
+      confirm:
+        destroy: "¿Estás seguro de que deseas eliminar esta grabación?"
+        publish: "¿Estás seguro de que deseas hacer esta grabación visible?"
+        unpublish: "¿Estás seguro de que deseas hacer esta grabación no visible?"
+      destroy: "Eliminar grabación"
+      playback_link: "Copiar enlace de reproducción"
+      playbacks:
+        presentation: "Reproducir"
+        presentation_video: "Download"
+      processing: "Procesando"
+      published: "Visible"
+      publish: "Hacer la grabación visible"
+      unpublished: "No visible"
+      unpublish: "Hacer la grabación no visible"
     search:
       placeholder: "Buscar en título o descripción..."
     table:
+      title:  "Titulo"
+      date: "Fecha"
+      time: "Hora"
+      duration: "Duración"
+      status: "Status"
+      playback: "Reproducción"
       footnote: "Fechas mostradas en la zona horaria: %{zone}"
-    title: "Grabaciones"
-    unpublish: "Anular publicación"
   reports:
     download: "Descargar"
     download_options:
@@ -111,6 +124,9 @@ es:
       x_hours:
         one: 'an hour'
         other: '%{count} hours'
+  date:
+    formats:
+      day_month_year: '%d/%m/%Y'
   terms:
     message: "Al hacer clic en <em>%{enter_room}</em>, acepta nuestros <a href='%{link}' target='_blank'>términos y condiciones</a>."
     enter_room: "Acceder"
