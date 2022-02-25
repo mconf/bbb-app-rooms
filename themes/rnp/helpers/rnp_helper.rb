@@ -17,6 +17,19 @@ module RnpHelper
     end
   end
 
+  def format_time(date)
+    if date.present?
+      if date.is_a?(Integer) && date.to_s.length == 13
+        value = Time.at(date/1000)
+      else
+        value = Time.at(date)
+      end
+      value.to_s(:time)
+    else
+      nil
+    end
+  end
+
   def recording_duration_secs(recording)
     playbacks = recording[:playbacks]
     valid_playbacks = playbacks.reject { |p| p[:type] == 'statistics' }
@@ -85,5 +98,14 @@ module RnpHelper
       }
     }
     return links[page][locale]
+  end
+
+  def meeting_recurring?(meeting_id)
+    meeting = ScheduledMeeting.find_by(id: meeting_id)
+    return true if meeting.present? && meeting[:repeat] != nil
+  end
+
+  def return_recurrence(meeting_id)
+    meeting_recurrence = ScheduledMeeting.find_by(id: meeting_id)[:repeat]
   end
 end
