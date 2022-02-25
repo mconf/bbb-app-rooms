@@ -37,30 +37,43 @@ en:
         start_time_time: "Start time"
         wait_moderator: "Wait for a moderator to join"
         welcome: "Welcome message (optional)"
-  recordings:
-    all_loaded: "All recordings loaded"
-    confirm:
-      destroy: "Are you sure you want to remove this recording?"
-      publish: "Are you sure you want to publish this recording?"
-      unpublish: "Are you sure you want to unpublish this recording?"
-    destroy: "Remove"
+  meetings:
+    all_loaded: "All conferences loaded"
     duration:
       less_than_a_minute: "Less than 1 minute"
-    empty_list: "There are no recordings to show"
+    empty_list: "There are no conferences to show"
+    filters:
+      no_filter: "All"
+      recorded_only: "Recorded"
+    history: "History"
     index:
       return: "< go back"
-    load: "Load more recordings"
-    playback_link: "Copy playback link"
-    playbacks:
-      presentation: "Playback"
-      presentation_video: "Download"
-    publish: "Publish"
+    load: "Load more conferences"
+    recording:
+      confirm:
+        destroy: "Are you sure you want to delete this recording?"
+        publish: "Are you sure you want to make this recording visible?"
+        unpublish: "Are you sure you want to make this recording not visible?"
+      destroy: "Delete recording"
+      playback_link: "Copy playback link"
+      playbacks:
+        presentation: "Play"
+        presentation_video: "Download"
+      processing: "Processing"
+      published: "Visible"
+      publish: "Make the recording visible"
+      unpublished: "Not visible"
+      unpublish: "Make the recording not visible"
     search:
       placeholder: "Search by title or description..."
     table:
+      title: "Title"
+      date: "Date"
+      time: "Time"
+      duration: "Duration"
+      status: "Status"
+      recording: "Recording"
       footnote: "Dates shown in the time zone: %{zone}"
-    title: "Recordings"
-    unpublish: "Unpublish"
   reports:
     download: "Download"
     download_options:
@@ -87,7 +100,7 @@ en:
       add: "+ Schedule session"
       title: "Schedule session"
     show:
-      view_recordings: "View recordings"
+      view_history: "View history"
     table:
       footnote: "Dates shown in the time zone: %{zone}"
     title: "Scheduled sessions"
@@ -103,6 +116,9 @@ en:
         about_x_hours:
           one: 'an hour'
           other: '%{count} hours'
+  date:
+    formats:
+      day_month_year: '%m/%d/%Y'
   terms:
     message: "By clicking <em>%{enter_room}</em>, you agree to our <a href='%{link}' target='_blank'>terms and conditions</a>."
     enter_room: "Join"
