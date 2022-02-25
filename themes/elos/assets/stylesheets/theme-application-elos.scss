@@ -322,8 +322,8 @@ body.theme-elos {
       }
 
       .meeting-badge-recurring {
-        background-color: #B1E4E3;
-        color: #202020;
+        background-color: var(--color-bullet-recurring);
+        color: var(--color-black);
         display: flex;
         font-size: 95%;
         justify-content: space-around;
