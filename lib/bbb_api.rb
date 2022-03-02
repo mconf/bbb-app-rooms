@@ -36,7 +36,11 @@ module BbbApi
       scheduled_meeting.meeting_id,
       user.username(t("default.bigbluebutton.#{role}")),
       room.attributes[role],
-      { userID: user.uid }
+      {
+        'userdata-bbb_override_default_locale': I18n.locale,
+        'userdata-mconf_custom_language': I18n.locale,
+        userID: user.uid
+      }
     )
   end
 
@@ -48,7 +52,10 @@ module BbbApi
       scheduled_meeting.meeting_id,
       full_name,
       room.attributes['viewer'],
-      { guest: true }
+      { guest: true,
+        'userdata-bbb_override_default_locale': I18n.locale,
+        'userdata-mconf_custom_language': I18n.locale
+      }
     )
   end
 
@@ -60,15 +67,17 @@ module BbbApi
     # Format playbacks in a more pleasant way.
     res[:meetings].each do |m|
       next if m.key?(:error)
-      m[:recording][:playbacks] = if !m[:recording][:playback] || !m[:recording][:playback][:format]
-                        []
-                      elsif m[:recording][:playback][:format].is_a?(Array)
-                        m[:recording][:playback][:format]
-                      else
-                        [m[:recording][:playback][:format]]
-                      end
+      if m[:recording].present?
+        m[:recording][:playbacks] = if !m[:recording][:playback] || !m[:recording][:playback][:format]
+                          []
+                        elsif m[:recording][:playback][:format].is_a?(Array)
+                          m[:recording][:playback][:format]
+                        else
+                          [m[:recording][:playback][:format]]
+                        end
 
-      m[:recording].delete(:playback)
+        m[:recording].delete(:playback)
+      end
     end
 
     meetings = res[:meetings].sort_by { |meet| meet[:meeting][:endTime] }.reverse

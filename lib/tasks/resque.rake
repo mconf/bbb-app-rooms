@@ -17,5 +17,10 @@ namespace :resque do
     # schedule changes and applies them on the fly.
     # Note: This feature is only available in >=2.0.0.
     # Resque::Scheduler.dynamic = true
+
+    # Scheduler configuration
+    yml_schedule     = YAML.load_file("config/jobs_schedule.yml")
+    wrapped_schedule = ActiveScheduler::ResqueWrapper.wrap yml_schedule
+    Resque.schedule  = wrapped_schedule
   end
 end
