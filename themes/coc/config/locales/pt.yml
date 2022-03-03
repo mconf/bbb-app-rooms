@@ -45,30 +45,43 @@ pt:
         start_time_time: "Hora de início"
         wait_moderator: "Aguardar moderador para entrar"
         welcome: "Mensagem de boas vindas (opcional)"
-  recordings:
-    all_loaded: "Todas as gravações foram carregadas"
-    confirm:
-      destroy: "Você tem certeza que deseja remover esta gravação?"
-      publish: "Você tem certeza que deseja publicar esta gravação?"
-      unpublish: "Você tem certeza que deseja despublicar esta gravação?"
-    destroy: "Remover"
+  meetings:
+    all_loaded: "Todas as conferências foram carregadas"
     duration:
       less_than_a_minute: "Menos de 1 minuto"
-    empty_list: "Não há gravações para mostrar"
+    empty_list: "Não há conferências para mostrar"
+    filters:
+      no_filter: "Todas"
+      recorded_only: "Gravadas"
+    history: "Histórico"
     index:
       return: "< voltar"
-    load: "Carregar mais gravações"
-    playback_link: "Copiar link de reprodução"
-    playbacks:
-      presentation: "Reproduzir"
-      presentation_video: "Baixar"
-    publish: "Publicar"
+    load: "Carregar mais conferências"
+    recording:
+      confirm:
+        destroy: "Você tem certeza que deseja deletar esta gravação?"
+        publish: "Você tem certeza que deseja tornar esta gravação visível?"
+        unpublish: "Você tem certeza que deseja tornar esta gravação não visível?"
+      destroy: "Deletar gravação"
+      playback_link: "Copiar link de reprodução"
+      playbacks:
+        presentation: "Reproduzir"
+        presentation_video: "Download"
+      processing: "Processando"
+      published: "Visível"
+      publish: "Tornar gravação visível"
+      unpublished: "Não visível"
+      unpublish: "Tornar gravação não visível"
     search:
       placeholder: "Buscar em título ou descrição..."
     table:
+      title: "Título"
+      date: "Data"
+      time: "Hora"
+      duration: "Duração"
+      status: "Status"
+      recording: "Gravação"
       footnote: "Datas exibidas no fuso horário: %{zone}"
-    title: "Gravações"
-    unpublish: "Despublicar"
   reports:
     download: "Baixar"
     download_options:
@@ -97,7 +110,7 @@ pt:
       title: "Agendar sessão"
     scheduled_by: "Agendada por:"
     show:
-      view_recordings: "Ver gravações"
+      view_history: "Ver histórico"
     table:
       footnote: "Datas exibidas no fuso horário: %{zone}"
     title: "Sessões agendadas"
@@ -112,6 +125,9 @@ pt:
       x_hours:
         one: 'an hour'
         other: '%{count} hours'
+  date:
+    formats:
+      day_month_year: '%d/%m/%Y'
   terms:
     message: "Ao clicar em <i>%{enter_room}</i>, você concorda com os nossos <a href='%{link}' target='_blank'>termos de uso</a>."
     enter_room: "Entrar"
