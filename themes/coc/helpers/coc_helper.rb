@@ -132,13 +132,13 @@ module CocHelper
     return true if classes_count > 1
   end
 
-  def meeting_recurring?(meeting_id)
+  def recurring_meeting?(meeting_id)
     meeting = ScheduledMeeting.find_by(id: meeting_id)
-    return true if meeting.present? && meeting[:repeat] != nil
+
+    meeting.present? && meeting[:repeat].present?
   end
 
-  def return_recurrence(meeting_id)
-    meeting_recurrence = ScheduledMeeting.find_by(id: meeting_id)[:repeat]
+  def meeting_recurrence(meeting_id)
+    ScheduledMeeting.find_by(id: meeting_id)[:repeat]
   end
-
 end
