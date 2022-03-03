@@ -33,11 +33,7 @@
   </td>
 
   <%# Meeting creation time %>
-  <% if meeting_recurring?(meeting_db_id)%>
-    <td class="col-6 col-md-1 justify-content-start">
-  <% else %>
-    <td class="col-6 col-md-1">
-  <% end %>
+  <td class="col-6 col-md-1">
     <%= format_time(meeting[:startTime].to_i) %>
   </td>
 
