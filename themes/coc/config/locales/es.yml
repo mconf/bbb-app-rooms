@@ -80,7 +80,7 @@ es:
       time: "Hora"
       duration: "Duración"
       status: "Status"
-      playback: "Reproducción"
+      recording: "Grabación"
       footnote: "Fechas mostradas en la zona horaria: %{zone}"
   reports:
     download: "Descargar"
@@ -109,7 +109,7 @@ es:
       title: "Programar sesión"
     scheduled_by: "Programada por:"
     show:
-      view_recordings: "Ver grabaciones"
+      view_history: "Ver historial"
     table:
       footnote: "Fechas mostradas en la zona horaria: %{zone}"
     title: "Sesiones programadas"

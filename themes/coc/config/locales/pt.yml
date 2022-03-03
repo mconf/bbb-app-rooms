@@ -110,7 +110,7 @@ pt:
       title: "Agendar sessão"
     scheduled_by: "Agendada por:"
     show:
-      view_recordings: "Ver gravações"
+      view_history: "Ver histórico"
     table:
       footnote: "Datas exibidas no fuso horário: %{zone}"
     title: "Sessões agendadas"

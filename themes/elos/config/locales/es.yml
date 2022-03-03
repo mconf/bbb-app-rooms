@@ -72,7 +72,7 @@ es:
       time: "Hora"
       duration: "Duración"
       status: "Status"
-      playback: "Reproducción"
+      recording: "Grabación"
       footnote: "Fechas mostradas en la zona horaria: %{zone}"
   reports:
     download: "Descargar"

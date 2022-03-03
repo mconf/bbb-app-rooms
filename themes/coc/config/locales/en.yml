@@ -110,7 +110,7 @@ en:
       title: "Schedule session"
     scheduled_by: "Scheduled by:"
     show:
-      view_recordings: "View recordings"
+      view_history: "View history"
     table:
       footnote: "Dates shown in the time zone: %{zone}"
     title: "Scheduled sessions"
