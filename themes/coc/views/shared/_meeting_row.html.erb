@@ -52,7 +52,7 @@
     <%# Recording visibility %>
     <td class="<%= recording[:published] ? 'col-6' : 'col-12' %> col-md-1">
       <% if recording[:published] %>
-        <%= icon_visibility(title: t("meetings.recording.published"), class: 'color-secondary fa-2x') %>
+        <%= icon_visibility(title: t("meetings.recording.published"), class: 'color-primary fa-2x') %>
       <% else %>
         <%= icon_visibility_off(title: t("meetings.recording.unpublished"), class: 'color-gray-04 fa-2x') %>
       <% end %>
@@ -66,9 +66,9 @@
             <% recording[:playbacks].each do |p| %>
               <% url = playback_url(room, recording[:recordID], p) %>
               <% if p[:type] == 'presentation' %>
-                <%= link_to icon_conference_play(title: t("meetings.recording.playbacks.#{p[:type]}"), class: 'fa-2x'), url, class: 'd-flex text-decoration-none', target: "_blank" %>
+                <%= link_to icon_conference_play(title: t("meetings.recording.playbacks.#{p[:type]}"), class: 'fa-2x'), url, class: 'd-flex text-decoration-none color-primary', target: "_blank" %>
               <% else %>
-                <%= link_to icon_file_download(title: t("meetings.recording.playbacks.#{p[:type]}"), class: 'fa-2x'), url, class: 'd-flex text-decoration-none mr-2', target: "_blank" %>
+                <%= link_to icon_file_download(title: t("meetings.recording.playbacks.#{p[:type]}"), class: 'fa-2x'), url, class: 'd-flex text-decoration-none mr-2 color-primary', target: "_blank" %>
               <% end %>
             <% end %>
           <% else %>

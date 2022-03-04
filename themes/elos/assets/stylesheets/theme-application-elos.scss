@@ -321,6 +321,17 @@ body.theme-elos {
         color: var(--color-gray-06);
       }
 
+      .badge-recurring-meeting {
+        background-color: var(--color-bullet-recurring);
+        color: var(--color-black);
+        display: flex;
+        font-size: 95%;
+        justify-content: space-around;
+        padding: blocks(1) blocks(1);
+        margin-top: blocks(1);
+        width: 100%;
+      }
+
       // Hide meetings without recordings
       &.filter-recorded-only .rec-false {
         display: none !important;
