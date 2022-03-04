@@ -7,9 +7,6 @@ Rails.application.routes.draw do
   get '/health_check', to: 'health_check#all', default: { format: nil }
   get '/healthz', to: 'health_check#all', default: { format: nil }
 
-  get '/meetings/download_participants', to: 'meetings#download_participants', as: 'download_participants'
-  get '/meetings/download_notes', to: 'meetings#download_notes', as: 'download_notes'
-
   if Mconf::Env.fetch_boolean("SERVE_RAILS_ADMIN", false)
     mount RailsAdmin::Engine => '/dash', as: 'rails_admin'
 
@@ -88,6 +85,12 @@ Rails.application.routes.draw do
             get :send_create_calendar_event, to: 'brightspace#send_create_calendar_event'
             get :send_update_calendar_event, to: 'brightspace#send_update_calendar_event'
             get :send_delete_calendar_event, to: 'brightspace#send_delete_calendar_event'
+          end
+
+          resources :meetings, as: :internal, only: [] do
+            get :download_participants, to: 'meetings#download_participants'
+            get :download_notes, to: 'meetings#download_notes'
+            get :check_bucket_files, to: 'meetings#check_bucket_files'
           end
         end
       end

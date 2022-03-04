@@ -134,15 +134,50 @@
               <% end %>
             <% end %>
 
+            <%# Download notes and participants %>
+            <div class="dropdown-divider"></div>
+            <%= render_async room_scheduled_meeting_internal_check_bucket_files_path(room, meeting[:meetingID], meeting[:internalMeetingID], has_recording: recording.present?) do %>
+              <%= button_to room_scheduled_meetings_path(room), disabled: true, class: "dropdown-item rec-edit" do %>
+                <%= t('meetings.meeting_data_download.download_notes') %>
+              <% end %>
+
+              <%= button_to room_scheduled_meetings_path(room), disabled: true, class: "dropdown-item rec-edit" do %>
+                <%= t('meetings.meeting_data_download.download_participants') %>
+              <% end %>
+            <% end %>
           </div>
         </div>
       <% end %>
     </td>
 
-  <%# Meeting without recording, leave the last 3 columns empty %>
+  <%# Meeting without recording, leave 'Status' and 'Recording' columns empty %>
   <% else %>
     <td class="col-md-1"></td>
     <td class="col-md-1"></td>
-    <td class="col-md-1 td-dropdown-opts"></td>
+    <%# Options dropdown %>
+    <td class="col-md-1 td-dropdown-opts">
+      <div class="dropdown dropdown-opts">
+        <a href="#" class="dropdown-toggle d-flex text-decoration-none" id="dropdown-opts-<%= meeting[:meetingID] %>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <%= icon_options_dots %>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown-opts-<%= meeting[:meetingID] %>">
+
+        <%# Download notes and participants %>
+        <%= render_async room_scheduled_meeting_internal_check_bucket_files_path(room, meeting[:meetingID], meeting[:internalMeetingID], has_recording: recording.present?) do %>
+
+          <%= button_to room_scheduled_meetings_path(room), disabled: true, class: "dropdown-item rec-edit" do %>
+            <%= t('meetings.meeting_data_download.download_notes') %>
+          <% end %>
+
+          <%= button_to room_scheduled_meetings_path(room), disabled: true, class: "dropdown-item rec-edit" do %>
+            <%= t('meetings.meeting_data_download.download_participants') %>
+          <% end %>
+
+        <% end %>
+        </div>
+      </div>
+    </td>
   <% end %>
 </tr>
+
+<%= content_for :render_async %>
