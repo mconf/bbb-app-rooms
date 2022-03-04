@@ -26,7 +26,7 @@ class MeetingsController < ApplicationController
 
   # GET /rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/meetings/:internal_id/check_bucket_files
   def check_bucket_files
-    @notes_exist = MeetingsHelper.file_exists_on_bucket?(@meeting, @room, :notes) || true
+    @notes_exist = MeetingsHelper.file_exists_on_bucket?(@meeting, @room, :notes)
     @participants_exist = MeetingsHelper.file_exists_on_bucket?(@meeting, @room, :participants)
     @has_recording = params[:has_recording].eql?("true")
 
