@@ -6,12 +6,13 @@ module MeetingsHelper
   end
 
   def self.has_required_info_for_bucket?(meeting)
-    !meeting.meetingid.blank? &&
-      !meeting.internal_meeting_id.blank? &&
-      !meeting&.room&.owner&.institution&.shared_secret_guid.blank?
+    !meeting[:meetingID].blank? &&
+      !meeting[:internalMeetingID].blank? &&
+      !ApplicationHelper.get_shared_secret_guid(meeting[:room]).blank?
   end
 
-  def self.file_exists_on_bucket?(meeting, file_type)
+  def self.file_exists_on_bucket?(meeting, room, file_type)
+    meeting[:room] = room
     if self.bucket_configured? && self.has_required_info_for_bucket?(meeting)
       file = self.filename_for_datafile(file_type)
       return false if file.nil?
@@ -23,7 +24,7 @@ module MeetingsHelper
     end
   end
 
-  def filename_for_datafile(type)
+  def self.filename_for_datafile(type)
     case type
     when :participants
       Rails.configuration.meeting_participants_filename

@@ -25,17 +25,17 @@ module Mconf
     end
 
     def self.gen_key(meeting, file_name)
-      uuid = meeting.room.owner.institution.shared_secret_guid || ""
-      external_meeting_id = meeting.meetingid || ""
-      internal_meeting_id = meeting.internal_meeting_id || ""
+      uuid = ApplicationHelper.get_shared_secret_guid(meeting[:room]) || ""
+      external_meeting_id = meeting[:meetingID] || ""
+      internal_meeting_id = meeting[:internalMeetingID] || ""
       key = uuid + "/" + external_meeting_id + "/" + internal_meeting_id + "/" + file_name
 
       key
     end
     
     def self.gen_min_key(meeting)
-      uuid = meeting.room.owner.institution.shared_secret_guid || ""
-      external_meeting_id = meeting.meetingid || ""
+      uuid = ApplicationHelper.get_shared_secret_guid(meeting[:room]) || ""
+      external_meeting_id = meeting[:meetingID] || ""
       key = uuid + "/" + external_meeting_id
 
       key
