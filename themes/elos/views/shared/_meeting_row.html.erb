@@ -137,13 +137,8 @@
             <%# Download notes and participants %>
             <div class="dropdown-divider"></div>
             <%= render_async room_scheduled_meeting_internal_check_bucket_files_path(room, meeting[:meetingID], meeting[:internalMeetingID], has_recording: recording.present?) do %>
-              <%= button_to room_scheduled_meetings_path(room), disabled: true, class: "dropdown-item rec-edit" do %>
-                <%= t('meetings.meeting_data_download.download_notes') %>
-              <% end %>
-
-              <%= button_to room_scheduled_meetings_path(room), disabled: true, class: "dropdown-item rec-edit" do %>
-                <%= t('meetings.meeting_data_download.download_participants') %>
-              <% end %>
+              <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_notes') %>
+              <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_participants') %>
             <% end %>
           </div>
         </div>
@@ -164,15 +159,8 @@
 
         <%# Download notes and participants %>
         <%= render_async room_scheduled_meeting_internal_check_bucket_files_path(room, meeting[:meetingID], meeting[:internalMeetingID], has_recording: recording.present?) do %>
-
-          <%= button_to room_scheduled_meetings_path(room), disabled: true, class: "dropdown-item rec-edit" do %>
-            <%= t('meetings.meeting_data_download.download_notes') %>
-          <% end %>
-
-          <%= button_to room_scheduled_meetings_path(room), disabled: true, class: "dropdown-item rec-edit" do %>
-            <%= t('meetings.meeting_data_download.download_participants') %>
-          <% end %>
-
+          <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_notes') %>
+          <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_participants') %>
         <% end %>
         </div>
       </div>
