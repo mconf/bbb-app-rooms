@@ -28,7 +28,6 @@ class MeetingsController < ApplicationController
   def check_bucket_files
     @notes_exist = MeetingsHelper.file_exists_on_bucket?(@meeting, @room, :notes)
     @participants_exist = MeetingsHelper.file_exists_on_bucket?(@meeting, @room, :participants)
-    @has_recording = params[:has_recording].eql?("true")
 
     render partial: "shared/meeting_data_download"
   end

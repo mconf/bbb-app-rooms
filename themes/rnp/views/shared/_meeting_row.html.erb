@@ -136,7 +136,7 @@
 
             <%# Download notes and participants %>
             <div class="dropdown-divider"></div>
-            <%= render_async room_scheduled_meeting_internal_check_bucket_files_path(room, meeting[:meetingID], meeting[:internalMeetingID], has_recording: recording.present?) do %>
+            <%= render_async room_scheduled_meeting_internal_check_bucket_files_path(room, meeting[:meetingID], meeting[:internalMeetingID]) do %>
               <%= button_to room_scheduled_meetings_path(room), disabled: true, class: "dropdown-item rec-edit" do %>
                 <%= t('meetings.meeting_data_download.download_notes') %>
               <% end %>
@@ -163,7 +163,7 @@
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown-opts-<%= meeting[:meetingID] %>">
 
         <%# Download notes and participants %>
-        <%= render_async room_scheduled_meeting_internal_check_bucket_files_path(room, meeting[:meetingID], meeting[:internalMeetingID], has_recording: recording.present?) do %>
+        <%= render_async room_scheduled_meeting_internal_check_bucket_files_path(room, meeting[:meetingID], meeting[:internalMeetingID]) do %>
 
           <%= button_to room_scheduled_meetings_path(room), disabled: true, class: "dropdown-item rec-edit" do %>
             <%= t('meetings.meeting_data_download.download_notes') %>
