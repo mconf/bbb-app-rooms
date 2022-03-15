@@ -132,13 +132,13 @@
               class: "dropdown-item rec-edit" do %>
                 <%= t("meetings.recording.destroy") %>
               <% end %>
-            <% end %>
 
-            <%# Download notes and participants %>
-            <div class="dropdown-divider"></div>
-            <%= render_async room_scheduled_meeting_internal_check_bucket_files_path(room, meeting[:meetingID], meeting[:internalMeetingID]) do %>
-              <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_notes') %>
-              <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_participants') %>
+              <%# Download notes and participants %>
+              <div class="dropdown-divider"></div>
+              <%= render_async room_scheduled_meeting_internal_check_bucket_files_path(room, meeting[:meetingID], meeting[:internalMeetingID]) do %>
+                <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_notes') %>
+                <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_participants') %>
+              <% end %>
             <% end %>
           </div>
         </div>
@@ -151,19 +151,21 @@
     <td class="col-md-1"></td>
     <%# Options dropdown %>
     <td class="col-md-1 td-dropdown-opts">
-      <div class="dropdown dropdown-opts">
-        <a href="#" class="dropdown-toggle d-flex text-decoration-none" id="dropdown-opts-<%= meeting[:meetingID] %>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <%= icon_options_dots %>
-        </a>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown-opts-<%= meeting[:meetingID] %>">
+      <% if can_edit?(user, room) %>
+        <div class="dropdown dropdown-opts">
+          <a href="#" class="dropdown-toggle d-flex text-decoration-none" id="dropdown-opts-<%= meeting[:meetingID] %>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <%= icon_options_dots %>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown-opts-<%= meeting[:meetingID] %>">
 
-        <%# Download notes and participants %>
-        <%= render_async room_scheduled_meeting_internal_check_bucket_files_path(room, meeting[:meetingID], meeting[:internalMeetingID]) do %>
-          <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_notes') %>
-          <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_participants') %>
-        <% end %>
+            <%# Download notes and participants %>
+            <%= render_async room_scheduled_meeting_internal_check_bucket_files_path(room, meeting[:meetingID], meeting[:internalMeetingID]) do %>
+              <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_notes') %>
+              <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_participants') %>
+            <% end %>
+          </div>
         </div>
-      </div>
+      <% end %>
     </td>
   <% end %>
 </tr>
