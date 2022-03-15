@@ -6,8 +6,8 @@ GIT
 
 GIT
   remote: https://github.com/mconf/bigbluebutton-api-ruby.git
-  revision: fd245d9c3c7ae69cc6e201506c8e689e70209ee3
-  tag: v1.9.0-mconf-rc1
+  revision: f979243cdb7b753d77ba5a8c8b5db1aa5353250e
+  branch: master-mconf
   specs:
     bigbluebutton-api-ruby (1.8.0)
       childprocess (>= 1.0.1)
