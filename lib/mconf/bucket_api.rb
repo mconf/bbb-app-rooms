@@ -90,7 +90,25 @@ module Mconf
         key: key
       })
     end
-    
+
+    def self.upload_file_object()
+      bucket_name = Rails.application.config.meetings_bucket_name
+
+      # /shared_secret_guid/external_meeting_id/internal_meeting_id/file.txt
+      object_key = 'key'
+
+      File.open('notes.txt', 'rb') do |file|
+        res = client.put_object(bucket: bucket_name, key: object_key, body: file)
+        if res.etag
+          puts "Object '#{object_key}' uploaded to bucket '#{bucket_name}'."
+          true
+        else
+          puts "Object '#{object_key}' not uploaded to bucket '#{bucket_name}'."
+          false
+        end
+      end
+    end
+
     private
 
     # Raises BucketConfigMissingError if any required config is missing
