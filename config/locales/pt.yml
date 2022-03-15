@@ -170,6 +170,10 @@ pt:
         suggestion: "O agendamento não foi encontrado."
         explanation: "Ele pode ter sido removido pelo criador da sessão."
         status_code: "404"
+  bucket_api:
+    error: Erro de comunicação com o servidor de armazenamento de relatórios. Por favor, tente novamente ou entre em contato com o suporte.
+    credentials_missing: "Erro: Credenciais do bucket não configuradas no arquivo .env"
+    access_data_missing: "Erro: Dados de acesso ao bucket estão faltando."
   views:
     pagination:
       first: "&laquo;"

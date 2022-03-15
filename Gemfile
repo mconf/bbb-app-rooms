@@ -124,3 +124,6 @@ gem 'browser'
 gem 'resque', require: 'resque/server'
 gem 'resque-scheduler', require: 'resque/scheduler/server'
 gem 'active_scheduler'
+
+# Asynchronous partial loading with AJAX
+gem 'render_async', '~> 2.1'

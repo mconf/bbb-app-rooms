@@ -1,4 +1,5 @@
 @import "definitions-elos";
+@import "placeholder-loading";
 
 // keep it here so it won't take precedence and override links
 // inside dropdowns and buttons, for example
@@ -448,6 +449,30 @@ body.theme-elos {
     .btn {
       margin-top: blocks(4);
     }
+  }
+
+  .report-data-placeholder {
+    background-color: #FCFCFC;
+
+    .ph-item {
+      background-color: inherit;
+      border: 0;
+      margin-bottom: 0;
+      padding: 0;
+    }
+  }
+
+  .dropdown-placeholder {
+    margin: 4.8px 0;
+
+    .placeholder-text-size {
+      height: 16.8px;
+      color: transparent;
+    }
+  }
+
+  .no-hover {
+    pointer-events: none;
   }
 
   // This is a copy of the style of the guest wait page from BigBlueButton/Live

@@ -49,6 +49,9 @@ es:
     index:
       return: "< volver"
     load: "Cargar más conferencias"
+    meeting_data_download:
+      download_notes: "Descargar notas de la reunión"
+      download_participants: "Descargar lista de participantes"
     recording:
       confirm:
         destroy: "¿Estás seguro de que deseas eliminar esta grabación?"

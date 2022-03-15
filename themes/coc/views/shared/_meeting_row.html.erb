@@ -83,7 +83,7 @@
 
     <%# Options dropdown %>
     <td class="col-2 col-md-1 td-dropdown-opts">
-      <% if recording[:state] != 'processing' %>
+      <% if recording[:state] != 'processing' && recording[:published] || can_edit?(user, room) %>
         <div class="dropdown dropdown-opts">
           <a href="#" class="dropdown-toggle d-flex text-decoration-none" id="dropdown-opts-<%= recording[:recordID] %>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <%= icon_options_dots %>
@@ -132,17 +132,42 @@
               class: "dropdown-item rec-edit" do %>
                 <%= t("meetings.recording.destroy") %>
               <% end %>
-            <% end %>
 
+              <%# Download notes and participants %>
+              <div class="dropdown-divider"></div>
+              <%= render_async room_scheduled_meeting_internal_check_bucket_files_path(room, meeting[:meetingID], meeting[:internalMeetingID]) do %>
+                <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_notes') %>
+                <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_participants') %>
+              <% end %>
+            <% end %>
           </div>
         </div>
       <% end %>
     </td>
 
-  <%# Meeting without recording, leave the last 3 columns empty %>
+  <%# Meeting without recording, leave 'Status' and 'Recording' columns empty %>
   <% else %>
     <td class="col-md-1"></td>
     <td class="col-md-1"></td>
-    <td class="col-md-1 td-dropdown-opts"></td>
+    <%# Options dropdown %>
+    <td class="col-md-1 td-dropdown-opts">
+      <% if can_edit?(user, room) %>
+        <div class="dropdown dropdown-opts">
+          <a href="#" class="dropdown-toggle d-flex text-decoration-none" id="dropdown-opts-<%= meeting[:meetingID] %>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <%= icon_options_dots %>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown-opts-<%= meeting[:meetingID] %>">
+
+            <%# Download notes and participants %>
+            <%= render_async room_scheduled_meeting_internal_check_bucket_files_path(room, meeting[:meetingID], meeting[:internalMeetingID]) do %>
+              <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_notes') %>
+              <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_participants') %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </td>
   <% end %>
 </tr>
+
+<%= content_for :render_async %>

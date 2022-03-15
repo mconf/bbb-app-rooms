@@ -57,6 +57,9 @@ pt:
     index:
       return: "< voltar"
     load: "Carregar mais conferências"
+    meeting_data_download:
+      download_notes: "Download das notas da reunião"
+      download_participants: "Download da lista de participantes"
     recording:
       confirm:
         destroy: "Você tem certeza que deseja deletar esta gravação?"
