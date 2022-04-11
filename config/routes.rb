@@ -87,6 +87,12 @@ Rails.application.routes.draw do
             get :send_update_calendar_event, to: 'brightspace#send_update_calendar_event'
             get :send_delete_calendar_event, to: 'brightspace#send_delete_calendar_event'
           end
+
+          resources :meetings, as: :internal, only: [] do
+            get :download_participants, to: 'meetings#download_participants'
+            get :download_notes, to: 'meetings#download_notes'
+            get :check_bucket_files, to: 'meetings#check_bucket_files'
+          end
         end
       end
     end

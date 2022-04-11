@@ -49,6 +49,9 @@ en:
     index:
       return: "< go back"
     load: "Load more conferences"
+    meeting_data_download:
+      download_notes: "Download meeting's notes"
+      download_participants: "Download participants list"
     recording:
       confirm:
         destroy: "Are you sure you want to delete this recording?"

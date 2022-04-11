@@ -212,6 +212,10 @@ en:
         suggestion:    "The scheduled meeting was not found"
         explanation: "It might have been removed by the session creator."
         status_code: "404"
+  bucket_api:
+    error: Error contacting the reports storage server. Please try again later or contact support.
+    credentials_missing: "Error: Bucket credentials missing from the .env file."
+    access_data_missing: "Error: Bucket access data missing."
   views:
     pagination:
       first: "&laquo;"

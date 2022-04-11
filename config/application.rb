@@ -127,5 +127,16 @@ module BbbAppRooms
     config.redis_port      = ENV['MCONF_REDIS_PORT']
     config.redis_db        = ENV['MCONF_REDIS_DB']
     config.redis_password  = ENV['MCONF_REDIS_PASSWORD']
+
+    # Meeting's data bucket
+    config.meetings_bucket_key_id     = Mconf::Env.fetch('MCONF_MEETINGS_BUCKET_KEY_ID')
+    config.meetings_bucket_secret     = Mconf::Env.fetch('MCONF_MEETINGS_BUCKET_SECRET')
+    config.meetings_bucket_endpoint   = Mconf::Env.fetch('MCONF_MEETINGS_BUCKET_ENDPOINT', nil)
+    config.meetings_bucket_region     = Mconf::Env.fetch('MCONF_MEETINGS_BUCKET_REGION')
+    config.meetings_bucket_name       = Mconf::Env.fetch('MCONF_MEETINGS_BUCKET_NAME')
+    config.meetings_bucket_expires_in = Mconf::Env.fetch_int('MCONF_MEETINGS_BUCKET_EXPIRES_IN', 300)
+
+    config.meeting_notes_filename        = 'notes.txt'
+    config.meeting_participants_filename = 'activities.txt'
   end
 end

@@ -117,6 +117,10 @@ async function fetchMeetings() {
     let rows = response.filter('.meeting-row')
     currentMeetingsCount += rows.length;
 
+    /* For every .meeting-row in the response all the scripts for the previous meetings
+       are sent, so it should filter only the last n(number of rows per page) scripts. */
+    let scripts = response.filter('script').slice(-$statusElem.attr('data-per-page'))
+
     /* The element with data-all-loaded is added when the API returns
        nextpage=false. We use this information to hide the load button
        and show the 'all loaded' label. */
@@ -131,6 +135,7 @@ async function fetchMeetings() {
         setDoneState();
       }
       showMeetings(rows);
+      appendScripts(scripts)
     }
   } catch(err) {
     hasMoreToFetch = true;
@@ -220,5 +225,11 @@ let hideAll = () => {
 let showMeetings = (rows) => {
   for(let row of rows) {
     $meetingsTable.append(row)
+  }
+};
+
+let appendScripts = (scripts) => {
+  for(let script of scripts) {
+    $('body').append(script)
   }
 };

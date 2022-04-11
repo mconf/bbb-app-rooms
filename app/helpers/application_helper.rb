@@ -53,6 +53,12 @@ module ApplicationHelper
     key.external_widget.html_safe
   end
 
+  def self.get_shared_secret_guid(resource)
+    key = ConsumerConfig.find_by(key: resource[:consumer_key])&.server
+    return nil if key.nil?
+    key[:shared_secret_guid]
+  end
+
   def theme_defined?
     !Rails.configuration.theme.blank?
   end

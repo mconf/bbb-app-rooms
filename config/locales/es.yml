@@ -180,6 +180,10 @@ es:
         suggestion:  "No se encontró la programación"
         explanation: "Es posible que el creador de la sesión lo haya eliminado."
         status_code: "404"
+  bucket_api:
+    error: Error al contactar con el servidor de almacenamiento de informes. Inténtalo de nuevo más tarde o ponte en contacto con el servicio de soporte.
+    credentials_missing: "Error: Bucket Faltan credenciales del archivo .env."
+    access_data_missing: "Error: Bucket faltan datos de acceso."
   views:
     pagination:
       first: "&laquo;"

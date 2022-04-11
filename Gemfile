@@ -76,6 +76,10 @@ group :test do
   gem 'webdrivers'
 end
 
+group :production do
+  gem 'prometheus_exporter'
+end
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data'
 
@@ -88,7 +92,8 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails'
 
 # BigBlueButton API
-gem 'bigbluebutton-api-ruby', git: 'https://github.com/mconf/bigbluebutton-api-ruby.git', tag: 'v1.9.0-mconf-rc1'
+# gem 'bigbluebutton-api-ruby', git: 'https://github.com/mconf/bigbluebutton-api-ruby.git', tag: 'v1.9.0-mconf-rc1'
+gem 'bigbluebutton-api-ruby', git: 'https://github.com/mconf/bigbluebutton-api-ruby.git', branch: 'master-mconf'
 
 # AWS S3 API (to access Spaces API)
 gem 'aws-sdk-s3', '~> 1'
@@ -127,3 +132,6 @@ gem 'active_scheduler'
 
 # Return texts I18n in .js
 gem 'i18n-js', '~> 3.9'
+
+# Asynchronous partial loading with AJAX
+gem 'render_async', '~> 2.1'

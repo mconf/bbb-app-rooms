@@ -24,6 +24,7 @@ $vars: (
   --color-gray-07: #706F6F,
   --color-gray-08: #575756,
   --color-gray-09: #3C3C3B,
+  --color-bullet-recurring: #B1E4E3,
   --font-color: #202020,
   --font-family: "'Nunito Sans', sans-serif",
   --font-family-title: "'Nunito Sans', sans-serif",
@@ -39,6 +40,7 @@ $vars: (
   --line-height: 1.5,
   --border-color: #DEE2E6,
   --z-index-toast: 999,
+  --background-placeholder-loading: #ced4da
 );
 // variables in this map can be used as in:
 // map-get($vars, '--color-main')

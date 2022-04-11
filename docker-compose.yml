@@ -27,6 +27,41 @@ services:
     depends_on:
       - rooms_redis
 
+  prod:
+    container_name: rooms_app_prod
+    image: rooms_app_prod:prod
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        RAILS_ENV: production
+    ports:
+      - '3001:3000'
+    env_file:
+      - ./.env
+      - ./.env.production
+    stdin_open: true
+    tty: true
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:password@postgres:5433/lti_rooms}
+      RAILS_ENV: production
+      SECRET_KEY_BASE: d7d93ffde4e0eb407fd82d5ae207445834d2cef5acbfc2d42fa10be44f94a8342c82d2c9b4785e1e2ec9d135b7cd3dda443ea3da732ffb8ba182368f0909cfa5
+      MCONF_REDIS_HOST: rooms_redis
+      MCONF_REDIS_PASSWORD: BCsy8zMwZay669ii
+      MCONF_REDIS_PORT: 6379
+      MCONF_REDIS_DB: 0
+      PROMETHEUS_EXPORTER_HOST: prod_exporter
+      PROMETHEUS_EXPORTER_PORT: 9394
+      PUMA_WORKERS: 1
+    volumes:
+      - .:/usr/src/app
+      - bundle-volume:/usr/src/bundle
+    links:
+      - postgres
+    depends_on:
+      - prod_exporter
+      - rooms_redis
+
   test:
     container_name: rooms_test
     image: rooms_test:test
@@ -51,6 +86,21 @@ services:
     links:
       - postgres
       - rooms_test_redis
+
+  prod_exporter:
+    container_name: rooms_prod_exporter
+    image: rooms_app_prod:prod
+    tty: true
+    stdin_open: true
+    ports:
+      - "9394:9394"
+    env_file:
+      - ./.env
+      - ./.env.production
+    volumes:
+      - .:/usr/src/app
+      - bundle-volume:/usr/src/bundle
+    command: bundle exec prometheus_exporter -b 0.0.0.0 -p 9394 --prefix 'rooms_app_'
 
   postgres:
     image: postgres:11-alpine
