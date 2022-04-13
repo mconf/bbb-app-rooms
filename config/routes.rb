@@ -2,8 +2,6 @@ require 'resque/server'
 
 Rails.application.routes.draw do
 
-  mount Resque::Server.new, at: "/resque"
-
   get '/health_check', to: 'health_check#all', default: { format: nil }
   get '/healthz', to: 'health_check#all', default: { format: nil }
 
@@ -59,6 +57,10 @@ Rails.application.routes.draw do
               get '/coc/:handler/:class_id', to: 'classes#show', as: :coc_classes_show
             end
           end
+        end
+
+        if Mconf::Env.fetch_boolean("MCONF_SERVE_RESQUE_INTERFACE", false)
+          mount Resque::Server.new, at: "/resque"
         end
       end
 
