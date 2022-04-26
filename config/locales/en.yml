@@ -108,6 +108,9 @@ en:
       edit:           "Edit"
       error:
         invalid_start_at: "Invalid start date or time"
+        simultaneousMeetingsLimitReachedForSecret: "Maximum limit of simultaneous meetings reached"
+        simultaneousMeetingsLimitReachedForInstitution: "Maximum limit of simultaneous meetings of the institution reached"
+        simultaneousParticipantsLimitReachedForSecret: "Maximum limit of simultaneous participants reached"
       external:
         ended:        "This session has already ended."
         first_name:   "First name"

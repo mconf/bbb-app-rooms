@@ -112,7 +112,13 @@ class ScheduledMeetingsController < ApplicationController
         end
 
         # join as moderator (creates the meeting if not created yet)
-        redirect_to join_api_url(@scheduled_meeting, @user)
+        res = join_api_url(@scheduled_meeting, @user)
+        if res[:can_join?]
+          redirect_to res[:join_api_url]
+        else
+          flash[:error] = t("default.scheduled_meeting.error.#{res[:messageKey]}")
+          redirect_to room_path(@room)
+        end
       end
 
     # no signed in user, expects identification parameters in the url and join
@@ -132,7 +138,13 @@ class ScheduledMeetingsController < ApplicationController
       else
         # join as guest
         name = "#{params[:first_name]} #{params[:last_name]}"
-        redirect_to external_join_api_url(@scheduled_meeting, name)
+        res = external_join_api_url(@scheduled_meeting, name)
+        if res[:can_join?]
+          redirect_to res[:join_api_url]
+        else
+          flash[:error] = t("default.scheduled_meeting.error.#{res[:messageKey]}")
+          redirect_to external_room_scheduled_meeting_path(@room, @scheduled_meeting)
+        end
       end
     end
   end
