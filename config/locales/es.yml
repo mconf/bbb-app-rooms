@@ -77,6 +77,9 @@ es:
       edit:           "Editar"
       error:
         invalid_start_at: "Fecha u hora de inicio inválida"
+        simultaneousMeetingsLimitReachedForSecret: "Límite máximo de reuniones simultáneas alcanzado"
+        simultaneousMeetingsLimitReachedForInstitution: "Límite máximo de reuniones simultáneas de la institución alcanzado"
+        simultaneousParticipantsLimitReachedForSecret: "Límite máximo de participantes simultáneos alcanzado"
       external:
         ended:        "Esta sesión ya terminó."
         first_name:   "Primer nombre"

@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 require 'tests_helper'
+require 'nokogiri'
+require 'open-uri'
+
 module BbbApi
   include ActionView::Helpers::DateHelper
 
@@ -38,19 +41,45 @@ module BbbApi
     room = scheduled_meeting.room
 
     unless bbb(room).is_meeting_running?(scheduled_meeting.meeting_id)
-      bbb(room).create_meeting(
-        scheduled_meeting.name,
-        scheduled_meeting.meeting_id,
-        scheduled_meeting.create_options(user).merge(
-          { logoutURL: autoclose_url }
+      begin
+        bbb(room).create_meeting(
+          scheduled_meeting.name,
+          scheduled_meeting.meeting_id,
+          scheduled_meeting.create_options(user).merge(
+            { logoutURL: autoclose_url }
+          )
         )
-      )
+      rescue BigBlueButton::BigBlueButtonException => e
+        if ['simultaneousMeetingsLimitReachedForSecret', 'simultaneousMeetingsLimitReachedForInstitution'].include? e.key.to_s
+          return { can_join?: false, messageKey: e.key.to_s }
+        else
+          raise
+        end
+      end
     end
 
     is_moderator = user.moderator?(Abilities.moderator_roles) ||
                    scheduled_meeting.check_all_moderators
     role = is_moderator ? 'moderator' : 'viewer'
-    bbb(room, false).join_meeting_url(
+
+    join_api_url = bbb(room, false).join_meeting_url(
+      scheduled_meeting.meeting_id,
+      user.username(t("default.bigbluebutton.#{role}")),
+      room.attributes[role],
+      {
+        'userdata-bbb_override_default_locale': I18n.locale,
+        'userdata-mconf_custom_language': I18n.locale,
+        userID: user.uid,
+        redirect: false
+      }
+    )
+
+    doc = Nokogiri::XML(URI.open(join_api_url))
+    hash = Hash.from_xml(doc.to_s)
+
+    return { can_join?: false, messageKey: hash['response']['messageKey'] } if hash['response']['returncode'] == 'FAILED'
+
+    join_api_url = bbb(room, false).join_meeting_url(
       scheduled_meeting.meeting_id,
       user.username(t("default.bigbluebutton.#{role}")),
       room.attributes[role],
@@ -60,13 +89,31 @@ module BbbApi
         userID: user.uid
       }
     )
+
+    { can_join?: true, join_api_url: join_api_url }
   end
 
   def external_join_api_url(scheduled_meeting, full_name)
     return unless scheduled_meeting.present? && full_name.present?
 
     room = scheduled_meeting.room
-    bbb(room, false).join_meeting_url(
+    join_api_url = bbb(room, false).join_meeting_url(
+      scheduled_meeting.meeting_id,
+      full_name,
+      room.attributes['viewer'],
+      { guest: true,
+        'userdata-bbb_override_default_locale': I18n.locale,
+        'userdata-mconf_custom_language': I18n.locale,
+        redirect: false
+      }
+    )
+
+    doc = Nokogiri::XML(URI.open(join_api_url))
+    hash = Hash.from_xml(doc.to_s)
+
+    return { can_join?: false, messageKey: hash['response']['messageKey'] } if hash['response']['returncode'] == 'FAILED'
+
+    join_api_url = bbb(room, false).join_meeting_url(
       scheduled_meeting.meeting_id,
       full_name,
       room.attributes['viewer'],
@@ -75,6 +122,8 @@ module BbbApi
         'userdata-mconf_custom_language': I18n.locale
       }
     )
+
+    { can_join?: true, join_api_url: join_api_url }
   end
 
   def get_all_meetings(room, options = {})
