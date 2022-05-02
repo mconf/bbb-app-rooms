@@ -5,7 +5,7 @@ class RemoveOldAppLaunchJob < ApplicationJob
 
     app_launches = qty_expired_launches(date_limit)
 
-    while app_launches > 0
+    while app_launches.positive?
       begin
         Resque.logger.info "Removing old AppLaunches:"
 
