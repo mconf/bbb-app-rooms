@@ -41,8 +41,9 @@ RUN gem update --system
 
 COPY . $APP_HOME
 
-RUN if [ "$RAILS_ENV" == "production" ]; \
-  then SECRET_KEY_BASE=`bin/rake secret` bundle exec rake assets:precompile --trace; \
+RUN if [ "$RAILS_ENV" == "production" ]; then \
+  SECRET_KEY_BASE=`bin/rake secret` \
+  bundle exec rake assets:precompile --trace; \
   fi
 
 EXPOSE 3000
