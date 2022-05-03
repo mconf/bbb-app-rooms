@@ -30,6 +30,10 @@ class AppLaunch < ApplicationRecord
     params['custom_params']['tag']
   end
 
+  def coc_launch?
+    self.tag == 'coc'
+  end
+
   def user_params
     {
       uid: self.params['user_id'],
