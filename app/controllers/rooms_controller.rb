@@ -206,7 +206,7 @@ class RoomsController < ApplicationController
   end
 
   def set_room_title
-    if @app_launch&.tag == 'coc'
+    if @app_launch&.coc_launch?
       @title = @room.name
       @subtitle = @room.description
     end
