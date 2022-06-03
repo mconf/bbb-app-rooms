@@ -148,6 +148,7 @@ module Clients::Coc
       def find_app_launch
         coc_session = get_coc_session(params[:handler])
         @app_launch = AppLaunch.find_by(nonce: coc_session['nonce']) if coc_session.present?
+        redirect_to errors_path(404) unless @app_launch.present?
       end
 
       def permitted_params
