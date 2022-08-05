@@ -68,7 +68,6 @@ module BbbApi
       room.attributes[role],
       {
         'userdata-bbb_override_default_locale': I18n.locale,
-        'userdata-mconf_custom_language': I18n.locale,
         userID: user.uid,
         redirect: false
       }
@@ -85,7 +84,6 @@ module BbbApi
       room.attributes[role],
       {
         'userdata-bbb_override_default_locale': I18n.locale,
-        'userdata-mconf_custom_language': I18n.locale,
         userID: user.uid
       }
     )
@@ -103,7 +101,6 @@ module BbbApi
       room.attributes['viewer'],
       { guest: true,
         'userdata-bbb_override_default_locale': I18n.locale,
-        'userdata-mconf_custom_language': I18n.locale,
         redirect: false
       }
     )
@@ -119,7 +116,6 @@ module BbbApi
       room.attributes['viewer'],
       { guest: true,
         'userdata-bbb_override_default_locale': I18n.locale,
-        'userdata-mconf_custom_language': I18n.locale
       }
     )
 
