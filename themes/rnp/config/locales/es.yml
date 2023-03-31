@@ -1,0 +1,107 @@
+es:
+  _all:
+    cancel: "Cancelar"
+    clipboard:
+      link_copied: "Link copiado al clipboard!"
+    schedule: "Agendar"
+  helpers:
+    distance_of_time_in_hours_and_minutes:
+      hour:
+        one: "%{count} hora"
+        other: "%{count} horas"
+      minute:
+        one: "%{count} minuto"
+        other: "%{count} minutos"
+      connector: "y"
+    hint:
+      disable_external_link: "El acceso a la sala virtual estará restringido a estudiantes autenticados."
+      disable_private_chat: "El estudiante aún puede enviar mensajes privados al maestro. Esta función se puede reactivar dentro de la habitación a través de la opción \"Restringir participantes\"."
+      disable_note: "El profesor aún puede usar las notas compartidas, pero los estudiantes solo pueden ver el contenido, no editarlo. Esta función se puede reactivar dentro de la habitación a través de la opción \"Restringir participantes\"."
+      repeat: "El enlace externo para una programación periódica siempre será el mismo. El nuevo horario aparecerá en la lista una vez finalizado el actual."
+      time: "Estás usando la zona horaria: %{zone}"
+      custom_duration: "Informe la duración de la sesión: HH:MM"
+    label:
+      scheduled_meeting:
+        all_moderators: "Todos entran como moderadores."
+        custom_duration: "Duración personalizada"
+        description: "Descripción (opcional)"
+        disable_external_link: "Deshabilitar enlace externo"
+        disable_private_chat: "Deshabilitar chats privados"
+        disable_note: "Deshabilitar notas compartidas"
+        duration: "Duración"
+        name: "Nombre de la sesión"
+        recording: "Permitir que se grabe la sesión"
+        repeat: "Recurrencia"
+        start_time: "Fecha y hora de inicio"
+        start_time_date: "Data"
+        start_time_time: "Hora de inicio"
+        wait_moderator: "Espere a que ingrese el moderador para entrar"
+        welcome: "Mensaje de bienvenida (opcional)"
+  recordings:
+    all_loaded: "Se han cargado todas las grabaciones"
+    confirm:
+      destroy: "¿Estás seguro de que deseas eliminar esta grabación?"
+      publish: "¿Estás seguro de que quieres publicar esta grabación?"
+      unpublish: "¿Estás seguro de que deseas anular la publicación de esta grabación?"
+    destroy: "Eliminar"
+    duration:
+      less_than_a_minute: "Menos de 1 minuto"
+    empty_list: "No hay grabaciones para mostrar"
+    index:
+      return: "< volver"
+    load: "Cargar más grabaciones"
+    playback_link: "Copiar enlace de reproducción"
+    playbacks:
+      presentation: "Reproducir"
+      presentation_video: "Descargar"
+    publish: "Publicar"
+    search:
+      placeholder: "Buscar en título o descripción..."
+    table:
+      footnote: "Fechas mostradas en la zona horaria: %{zone}"
+    title: "Grabaciones"
+    unpublish: "Anular publicación"
+  reports:
+    download: "Descargar"
+    download_options:
+      csv: "Planilla de reuniones (CSV)"
+      xls: "Planilla de reuniones (Excel XLS)"
+    empty_list: "No se encontraron informes :("
+    index:
+      return: "< volver"
+    table_footnote: "Los informes del mes actual se actualizan diariamente."
+    title: "Informes"
+    view_reports: "Ver informes"
+  rooms:
+    close:
+      message: "Gracias por su participación y hasta luego."
+      title: "Tu sesión ha terminado"
+  scheduled_meetings:
+    destroy: "Eliminar"
+    edit:
+      action: "Editar"
+      title: "Editar sesión"
+    empty_list: "No hay sesiones programadas para mostrar"
+    external_link: "Copiar enlace externo"
+    new:
+      add: "+ Programar sesión"
+      title: "Programar sesión"
+    show:
+      view_recordings: "Ver grabaciones"
+    table:
+      footnote: "Fechas mostradas en la zona horaria: %{zone}"
+    title: "Sesiones programadas"
+    wait:
+      retry: "Entrar"
+  time:
+    am: am
+    formats:
+      short_custom: "%d/%m/%Y %H:%M"
+  datetime:
+    distance_in_words:
+      x_hours:
+        one: 'an hour'
+        other: '%{count} hours'
+  terms:
+    message: "Al hacer clic en <em>%{enter_room}</em>, acepta nuestros <a href='%{link}' target='_blank'>términos y condiciones</a>."
+    enter_room: "Acceder"
