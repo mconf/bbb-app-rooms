@@ -1,0 +1,179 @@
+es:
+  default:
+    app:
+      bigbluebutton_error: "Error de comunicación con el servidor de conferencias. Inténtelo de nuevo o contáctenos. (%{status})"
+      spaces_error:   "Error de comunicación con el servidor de almacenamiento de informes. Inténtelo de nuevo o contáctenos."
+      error:          "Error"
+    admin:
+      back:           "Vuelve"
+      handler:        "Handler"
+      newroom:        "Nueva sala"
+      showall:        "Ver todo"
+      showroom:
+        text:         "Exhibir"
+      editroom:
+        text:         "Editar"
+      destroyroom:
+        text:         "Eliminar"
+        confirmation: "¿Estás seguro de que deseas eliminar esta sala?"
+    bigbluebutton:
+      moderator:      "Moderador"
+      viewer:         "Participante"
+    room:
+      cancel:         "Cancelar"
+      created:        "La sala se creó con éxito"
+      description:    "Descripción"
+      destroy:        "Eliminar"
+      destroyed:      "La sala se ha eliminado correctamente"
+      edit:           "Editar"
+      editing:        "Editando sala"
+      error:
+        oauth:        "Se produjo un error al autorizar a través de OAuth."
+      join:           "Iniciar sesión"
+      moderator:      "Clave de moderador"
+      name:           "Nombre"
+      recordings:     "Grabaciones"
+      scheduled_meetings: "Sesiones programadas"
+      show:           "Exhibir"
+      showing:        "Visualización de sala"
+      update:         "Actualizar"
+      updated:        "Actualizado"
+      viewer:         "Clave de participante"
+      waitmodmsg:     "Por favor, espere hasta que un moderador entre en la sala. Serás redirigido automáticamente."
+      welcome:        "Bienvenida"
+    meeting:
+      close:           "Cerrar ventana"
+      close_manually:  "Esta ventana debe cerrarse manualmente"
+    scheduled_meeting:
+      allmoderators:  "Todos moderadores"
+      calendar:
+        description:
+          link:       "Haga clic aquí para acceder a esta clase."
+      created:        "La sesión ha sido programada"
+      destroy:
+        confirmation: "¿Está seguro de que desea eliminar esta programación?"
+      destroyed:      "La programación fue eliminada"
+      durations:
+        5m: "5 minutos"
+        10m: "10 minutos"
+        15m: "15 minutos"
+        20m: "20 minutos"
+        30m: "30 minutos"
+        45m: "45 minutos"
+        1h: "1 hora"
+        2h: "2 horas"
+        3h: "3 horas"
+        4h: "4 horas"
+        5h: "5 horas"
+        6h: "6 horas"
+        8h: "8 horas"
+        12h: "12 horas"
+        24h: "24 horas"
+        'Custom Duration': "Duración personalizada"
+      edit:           "Editar"
+      error:
+        invalid_start_at: "La fecha u hora de inicio no es válida"
+      external:
+        ended:        "Esta sesión ya terminó."
+        first_name:   "Primer nombre"
+        join:         "Entrar"
+        last_name:    "Apellido"
+      recording:      "Grabación"
+      repeat_options:
+        none: "No repite"
+        weekly: "Semanal"
+        every_two_weeks: "Quincenal"
+      tooltip:
+        recording:    "La sesión se puede grabar"
+        waitmoderator: "Los participantes no pueden ingresar hasta que ingrese un moderador"
+        allmoderators: "Todos los usuarios serán moderadores"
+      updated:        "La programación ha sido actualizada"
+      wait:
+        message: "Hola <strong>%{name}</strong>, la sesión aún no ha comenzado. </br> Espere unos minutos."
+        message_auto: "Hola <strong>%{name}</strong>, se está creando su sesión, por favor espere unos momentos."
+      waitmoderator:  "Espera al moderador"
+    session:
+      retry:
+        alternatives:
+          title: "Si desea probar otras alternativas, puede:"
+          a: "Utilice su navegador en modo normal (no anónimo)"
+          b: "Compruebe si su navegador tiene habilitadas las cookies."
+          c: "Deshabilite los plugins, especialmente los bloqueadores de anuncios."
+        description: "Esto suele ocurrir porque su navegador está bloqueando el acceso. Intente acceder en una nueva ventana usando el botón de abajo:"
+        launch_btn: "Abrir en nueva ventana"
+        title: "No pudimos autenticar su acceso"
+    formats:
+      flatpickr:
+        date_js: "d/m/Y"
+        date_ruby: "%d/%m/%Y"
+        time_js: "H:i"
+        time_ruby: "%H:%M"
+  error:
+    ops: "Uy!"
+    http:
+      _401:
+        code:       "Unauthorized"
+        message:    "Autenticación fallida."
+        suggestion: "Parece que no puedes iniciar sesión aquí."
+        explanation: "Si cree que se trata de un error, intente iniciar la sala nuevamente en su LMS o intente actualizar esta página en su navegador."
+        status_code: "401"
+      _404:
+        code:       "NotFound"
+        message:    "Esta página no existe."
+        suggestion: "Parece que no hay nada aquí."
+        status_code: "404"
+    bigbluebutton:
+      invalid_request:
+        code:        "BBBAPICallInvalid"
+        message:     "falla del servidor"
+        suggestion:  "Llamada no válida a BigBlueButton"
+        explanation: "Asegúrese de que el servidor de BigBlueButton que está utilizando esté disponible y accesible para el servidor donde está instalada la aplicación LTI."
+        status_code: "500"
+    generic:
+      404:
+        code:       "NotFound"
+        message:    "Esta página no existe."
+        suggestion: "Parece que no hay nada aquí."
+      406:
+        code:       "NotAcceptable"
+        message:    "Formato no compatible"
+        suggestion: "La URL que ingresaste probablemente sea incorrecta."
+        status_code: "406"
+      500:
+        code: "ServerError"
+        message: "Falla del servidor."
+        suggestion: "Parece que algo se rompió."
+        explanation: "Ya estamos trabajando para reparar esto."
+        status_code: "500"
+    room:
+      forbidden:
+        code:        "AccessForbidden"
+        message:     "Acceso no permitido."
+        suggestion:  "La sesión ha expirado"
+        explanation: "Si está utilizando esta sala a través de LTI, intente iniciar la sala nuevamente en su LMS o intente actualizar esta página en su navegador."
+        status_code: "403"
+      not_found:
+        code:       "NotFound"
+        message:    "Sala no encontrada"
+        suggestion: "No se encontró la sala a la que intentó acceder."
+        status_code: "404"
+      invalid_secret:
+        code:        "InvalidSecret"
+        message:     "Acceso no permitido."
+        suggestion:  "No se puede verificar el token"
+        explanation: "El problema puede deberse al uso de una clave no válida para validar la solicitud realizada por el proveedor de LTI."
+        status_code: "403"
+    scheduled_meeting:
+      not_found:
+        code:        "NotFound"
+        message:     "Reunión no encontrada"
+        suggestion:  "No se encontró la programación"
+        explanation: "Es posible que el creador de la sesión lo haya eliminado."
+        status_code: "404"
+  views:
+    pagination:
+      first: "&laquo;"
+      last: "&raquo;"
+      previous: "&lsaquo;"
+      next: "&rsaquo;"
+      truncate: "&hellip;"
