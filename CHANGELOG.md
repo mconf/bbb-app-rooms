@@ -1,7 +1,18 @@
 # Change Log
 
 ## [Unreleased]
+[Unreleased]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.3...master-elos
 
+## 0.8.3 - 2023-04-04
+### Added
+- [LTI-125] | Added `Spanish` locale support.
+  - PRs: [#74]
+
+<!-- Cards -->
+[LTI-125]: https://www.notion.so/mconf/Portal-Gerenciamento-bccb3a3fa75c40f38ead425739d13bb7?p=8216254199cf491e93224e3441f3f9b6&pm=c
+
+<!-- PRs -->
+[#74]: https://github.com/mconf/bbb-app-rooms/pull/74
 
 ## 0.8.2 - 2022-02-11
 ### Fixed
@@ -323,7 +334,7 @@ Migration notes:
 [#52]: https://github.com/mconf/bbb-app-rooms/pull/52
 
 <!-- Compares -->
-[Unreleased]:https://github.com/mconf/bbb-app-rooms/compare/v0.8.2...master-elos
+[0.8.3]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.2...v0.8.3
 [0.8.2]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.1...v0.8.2
 [0.8.1]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/mconf/bbb-app-rooms/compare/v0.7.1...v0.8.0
