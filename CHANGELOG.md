@@ -1,7 +1,98 @@
 # Change Log
 
 ## [Unreleased]
+[Unreleased]: https://github.com/mconf/bbb-app-rooms/compare/v0.9.0...master-elos
 
+## 0.9.0 - 2023-04-04
+### Added
+- [LTI-5] | Added new getting to recordings with paginate. Now get 25 recordings each page, 
+  the number of recordings per page can be set by `RECORDINGS_PER_PAGE` env var.
+  - PRs: [#38]
+- [LTI-72] | Added `participants` and `notes` from meetings. New integration made with Bucket.
+  - PRs: [#63]
+- [LTI-82] | Added Analytics tags.
+  - PRs: [#41]
+- [LTI-84] | Added metrics exporter by new integration with `prometheus_exporter`. 
+  - PRs: [#56]
+- [LTI-90] | Created local deploy from `k8s`.
+  - PRs: [#43]
+- [LTI-107] | Added meeting and recording history page(theme RNP & COC).
+  - PRs: [#65]
+- [LTI-110] | Added recurrence bullet to history page.
+  - PRs: [#64]
+- [ELOSP-700] | Added new error pages.
+  - PRs: [#46]
+### Changed
+- [LTI-23] | Changed history page, from recordings list to meetings list. 
+  if there was any recording in the meeting, it will be added in.
+  - PRs: [#50]
+- [LTI-46] | Changed logic item(`app_launches`) reduction to background with workers.
+  - PRs: [#45]
+- [LTI-78] | Now `getRecordings` using `meetingID` with `wildcard` instead of metadata.
+  - PRs: [#37]
+- [LTI-100] | Updated to `bbb_api_ruby` new version.
+  - PRs: [#47]
+- [LTI-109] | Updated to `bbb_api_ruby` new version with fixed `get_all_meetings`.
+  - PRs: [#73]
+- [LTI-116] | Updated `workers` and added loop.
+  - PRs: [#68]
+### Fixed
+- [LTI-36] | Fixed to render error page on wrong url.
+  - PRs: [#44]
+- [LTI-108] | Fixed `get_all_meeting`.
+  - PRs: [#59]
+### Removed
+- [LTI-101] | Removed secret and endpoint from deploy configs from `k8s`.
+  - PRs: [#48]
+
+<!-- Cards -->
+[LTI-5]: https://www.notion.so/mconf/Pagina-o-de-grava-es-no-LTI-2af06b03e0bb40d6b1755f4c0f4d4128
+[LTI-23]: https://www.notion.so/mconf/P-gina-de-hist-rico-de-reuni-es-e-grava-es-no-LTI-tema-Elos-6bc76c72f9d34f4583211b9f2f2741a8
+[LTI-36]: https://www.notion.so/mconf/Erro-ao-tentar-renderizar-p-gina-de-erro-no-LTI-5c6a560bdae04b0e96d65d5214aa27d3
+[LTI-46]: https://www.notion.so/mconf/Mudar-a-l-gica-de-remo-o-de-itens-antigos-para-ser-em-background-workers-5b88b9304c0e4c44b93f283e6fcd292e
+[LTI-72]: https://www.notion.so/mconf/Relat-rio-para-professores-com-dados-da-atividade-dos-alunos-46b59cb67b4e48a088ba051458be0577
+[LTI-78]: https://www.notion.so/getRecordings-usando-meetingID-com-wildcard-no-lugar-de-metadados-649d87fa3907486c8a24a87bf1a08fcc
+[LTI-82]: https://www.notion.so/mconf/Incluir-tags-do-Analytics-no-LTI-rooms-1b68a8e92c5348e78c4c9655bf464d1c
+[LTI-84]: https://www.notion.so/mconf/Exporter-de-m-tricas-para-o-prometheus-no-LTI-68a2436959804efbb7d14b9705018dbe
+[LTI-90]: https://www.notion.so/mconf/Criar-o-deploy-local-do-k8s-9e2c3ac567a44c26856295f4afcf9d36
+[LTI-100]: https://www.notion.so/mconf/Atualizar-o-portal-LTI-para-a-nova-vers-o-da-bbb_api_ruby-c993583d12ee41768f952af84ec85a92
+[LTI-101]: https://www.notion.so/mconf/Remover-secret-e-endpoint-nos-configs-do-deploy-do-kubernetes-no-LTI-308be992ca5b42f29f6175dbdcb9e5c9
+[LTI-107]: https://www.notion.so/mconf/P-gina-de-hist-rico-de-reuni-es-e-grava-es-no-LTI-tema-RNP-e-COC-64bb4995dfa445838cbf7e1cf6da12a6
+[LTI-108]: https://www.notion.so/mconf/Corrigir-get_all_meetings-no-LTI-b7ae974e2259409b8c67e125a01152e9
+[LTI-109]: https://www.notion.so/mconf/Atualizar-LTI-para-nova-vers-o-da-bbb-api-ruby-get_all_meetings-96faff318527454e8fdb5c444d45ca62
+[LTI-110]: https://www.notion.so/mconf/Usar-metadado-de-qual-agendamento-as-confer-ncias-se-originaram-e-montar-o-bullet-de-periodicidade-f226526cde0e487cac28f0a65cd834e2
+[LTI-116]: https://www.notion.so/mconf/Melhorias-no-workers-da-v0-9-0-e-v0-5-0-do-LTI-9aa0b6f0d8cb4cc283ebe391ef409bb1
+[ELOSP-700]: https://www.notion.so/mconf/Novas-telas-para-as-p-ginas-de-erros-751f2ec7da914dd983517a36ecead24d
+
+<!-- PRs -->
+[#38]: https://github.com/mconf/bbb-app-rooms/pull/38
+[#50]: https://github.com/mconf/bbb-app-rooms/pull/50
+[#44]: https://github.com/mconf/bbb-app-rooms/pull/44
+[#45]: https://github.com/mconf/bbb-app-rooms/pull/45
+[#63]: https://github.com/mconf/bbb-app-rooms/pull/63
+[#37]: https://github.com/mconf/bbb-app-rooms/pull/37
+[#41]: https://github.com/mconf/bbb-app-rooms/pull/41
+[#56]: https://github.com/mconf/bbb-app-rooms/pull/56
+[#43]: https://github.com/mconf/bbb-app-rooms/pull/43
+[#47]: https://github.com/mconf/bbb-app-rooms/pull/47
+[#48]: https://github.com/mconf/bbb-app-rooms/pull/48
+[#65]: https://github.com/mconf/bbb-app-rooms/pull/65
+[#59]: https://github.com/mconf/bbb-app-rooms/pull/59
+[#73]: https://github.com/mconf/bbb-app-rooms/pull/73
+[#64]: https://github.com/mconf/bbb-app-rooms/pull/64
+[#68]: https://github.com/mconf/bbb-app-rooms/pull/68
+[#46]: https://github.com/mconf/bbb-app-rooms/pull/46
+
+## 0.8.3 - 2023-04-04
+### Added
+- [LTI-125] | Added `Spanish` locale support.
+  - PRs: [#74]
+
+<!-- Cards -->
+[LTI-125]: https://www.notion.so/mconf/Portal-Gerenciamento-bccb3a3fa75c40f38ead425739d13bb7?p=8216254199cf491e93224e3441f3f9b6&pm=c
+
+<!-- PRs -->
+[#74]: https://github.com/mconf/bbb-app-rooms/pull/74
 
 ## 0.8.2 - 2022-02-11
 ### Fixed
@@ -323,7 +414,8 @@ Migration notes:
 [#52]: https://github.com/mconf/bbb-app-rooms/pull/52
 
 <!-- Compares -->
-[Unreleased]:https://github.com/mconf/bbb-app-rooms/compare/v0.8.2...master-elos
+[0.9.0]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.3...v0.9.0
+[0.8.3]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.2...v0.8.3
 [0.8.2]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.1...v0.8.2
 [0.8.1]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/mconf/bbb-app-rooms/compare/v0.7.1...v0.8.0
