@@ -50,6 +50,7 @@ pt:
       return: "< voltar"
     load: "Carregar mais conferências"
     meeting_data_download:
+      dashboard: "Painel de aprendizagem"
       download_notes: "Download das notas da reunião"
       download_participants: "Download da lista de participantes"
     recording:

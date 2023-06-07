@@ -30,6 +30,8 @@ module MeetingsHelper
       Rails.configuration.meeting_participants_filename
     when :notes
       Rails.configuration.meeting_notes_filename
+    when :dashboard
+      Rails.configuration.meeting_learning_dashboard_filename
     else
       nil
     end

@@ -24,10 +24,18 @@ class MeetingsController < ApplicationController
     redirect_to url
   end
 
+  # GET /rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/meetings/:internal_id/learning_dashboard
+  def learning_dashboard
+    filename = MeetingsHelper.filename_for_datafile(:dashboard)
+    json_url = Mconf::BucketApi.download_url(@meeting, filename)
+    redirect_to Rails.configuration.meeting_learning_dashboard_url + ERB::Util.url_encode(json_url)
+  end
+
   # GET /rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/meetings/:internal_id/check_bucket_files
   def check_bucket_files
     @notes_exist = MeetingsHelper.file_exists_on_bucket?(@meeting, @room, :notes)
     @participants_exist = MeetingsHelper.file_exists_on_bucket?(@meeting, @room, :participants)
+    @dashboard_exist = MeetingsHelper.file_exists_on_bucket?(@meeting, @room, :dashboard)
 
     render partial: "shared/meeting_data_download"
   end

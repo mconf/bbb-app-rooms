@@ -58,6 +58,7 @@ es:
       return: "< volver"
     load: "Cargar más conferencias"
     meeting_data_download:
+      dashboard: "Panel de aprendizaje"
       download_notes: "Descargar notas de la reunión"
       download_participants: "Descargar lista de participantes"
     recording:
