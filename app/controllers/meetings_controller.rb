@@ -7,8 +7,8 @@ class MeetingsController < ApplicationController
 
   before_action :find_room
   before_action :get_scheduled_meeting_info
-  before_action :check_bucket_credentials, only: [:download_notes, :download_participants]
-  before_action :check_bucket_access_data, only: [:download_notes, :download_participants]
+  before_action :check_bucket_credentials, only: [:download_notes, :download_participants, :learning_dashboard]
+  before_action :check_bucket_access_data, only: [:download_notes, :download_participants, :learning_dashboard]
 
   # GET /rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/meetings/:internal_id/download_notes
   def download_notes
@@ -26,6 +26,12 @@ class MeetingsController < ApplicationController
 
   # GET /rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/meetings/:internal_id/learning_dashboard
   def learning_dashboard
+    if Rails.configuration.meeting_learning_dashboard_url.blank?
+      Rails.logger.error 'Learning dashboard URL not configured'
+      flash[:error] = t('error.meeting.learning_dashboard_url_missing')
+      redirect_back(fallback_location: my_home_path) and return
+    end
+
     filename = MeetingsHelper.filename_for_datafile(:dashboard)
     json_url = Mconf::BucketApi.download_url(@meeting, filename)
     redirect_to Rails.configuration.meeting_learning_dashboard_url + ERB::Util.url_encode(json_url)
