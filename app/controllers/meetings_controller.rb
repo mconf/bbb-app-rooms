@@ -28,8 +28,8 @@ class MeetingsController < ApplicationController
   def learning_dashboard
     if Rails.configuration.meeting_learning_dashboard_url.blank?
       Rails.logger.error 'Learning dashboard URL not configured'
-      flash[:error] = t('error.meeting.learning_dashboard_url_missing')
-      redirect_back(fallback_location: my_home_path) and return
+      redirect_back(fallback_location: room_path(@room),
+                      notice: t('error.meeting.learning_dashboard_url_missing')) and return
     end
 
     filename = MeetingsHelper.filename_for_datafile(:dashboard)
