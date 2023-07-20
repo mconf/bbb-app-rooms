@@ -92,6 +92,7 @@ Rails.application.routes.draw do
           resources :meetings, as: :internal, only: [] do
             get :download_participants, to: 'meetings#download_participants'
             get :download_notes, to: 'meetings#download_notes'
+            get :learning_dashboard, to: 'meetings#learning_dashboard'
             get :check_bucket_files, to: 'meetings#check_bucket_files'
           end
         end

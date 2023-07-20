@@ -19,3 +19,14 @@
     <%= t('meetings.meeting_data_download.download_participants') %>
   <% end %>
 <% end %>
+
+<% if @dashboard_exist && Rails.configuration.meeting_learning_dashboard_url.present? %>
+  <%= link_to room_scheduled_meeting_internal_learning_dashboard_path(@room, @meeting[:meetingID], @meeting[:internalMeetingID]),
+    target: '_blank', class: "dropdown-item rec-edit" do %>
+    <%= t('meetings.meeting_data_download.dashboard') %>
+  <% end %>
+<% else %>
+  <%= button_to room_scheduled_meetings_path(@room), disabled: true, class: "dropdown-item rec-edit" do %>
+    <%= t('meetings.meeting_data_download.dashboard') %>
+  <% end %>
+<% end %>

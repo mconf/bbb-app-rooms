@@ -50,6 +50,7 @@ en:
       return: "< go back"
     load: "Load more conferences"
     meeting_data_download:
+      dashboard: "Learning dashboard"
       download_notes: "Download meeting's notes"
       download_participants: "Download participants list"
     recording:

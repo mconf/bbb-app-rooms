@@ -136,7 +136,9 @@ module BbbAppRooms
     config.meetings_bucket_name       = Mconf::Env.fetch('MCONF_MEETINGS_BUCKET_NAME')
     config.meetings_bucket_expires_in = Mconf::Env.fetch_int('MCONF_MEETINGS_BUCKET_EXPIRES_IN', 300)
 
-    config.meeting_notes_filename        = 'notes.txt'
-    config.meeting_participants_filename = 'activities.txt'
+    config.meeting_learning_dashboard_url      = Mconf::Env.fetch('MCONF_LEARNING_DASHBOARD_URL')
+    config.meeting_notes_filename              = 'notes.txt'
+    config.meeting_participants_filename       = 'activities.txt'
+    config.meeting_learning_dashboard_filename = 'learning_dashboard.json'
   end
 end
