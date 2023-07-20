@@ -7,8 +7,18 @@ class MeetingsController < ApplicationController
 
   before_action :find_room
   before_action :get_scheduled_meeting_info
+  before_action :find_user, only: :check_bucket_files
   before_action :check_bucket_credentials, only: [:download_notes, :download_participants, :learning_dashboard]
   before_action :check_bucket_access_data, only: [:download_notes, :download_participants, :learning_dashboard]
+  before_action only: :download_notes do
+    authorize_user!(:download_notes, @room)
+  end
+  before_action only: :download_participants do
+    authorize_user!(:download_participants, @room)
+  end
+  before_action only: :learning_dashboard do
+    authorize_user!(:learning_dashboard, @room)
+  end
 
   # GET /rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/meetings/:internal_id/download_notes
   def download_notes
@@ -39,9 +49,15 @@ class MeetingsController < ApplicationController
 
   # GET /rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/meetings/:internal_id/check_bucket_files
   def check_bucket_files
-    @notes_exist = MeetingsHelper.file_exists_on_bucket?(@meeting, @room, :notes)
-    @participants_exist = MeetingsHelper.file_exists_on_bucket?(@meeting, @room, :participants)
-    @dashboard_exist = MeetingsHelper.file_exists_on_bucket?(@meeting, @room, :dashboard)
+    if Abilities.can?(@user, :download_notes, @room)
+      @notes_exist = MeetingsHelper.file_exists_on_bucket?(@meeting, @room, :notes)
+    end
+    if Abilities.can?(@user, :download_participants, @room)
+      @participants_exist = MeetingsHelper.file_exists_on_bucket?(@meeting, @room, :participants)
+    end
+    if Abilities.can?(@user, :learning_dashboard, @room)
+      @dashboard_exist = MeetingsHelper.file_exists_on_bucket?(@meeting, @room, :dashboard)
+    end
 
     render partial: "shared/meeting_data_download"
   end
