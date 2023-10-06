@@ -5,6 +5,9 @@ Rails.application.routes.draw do
   get '/health_check', to: 'health_check#all', default: { format: nil }
   get '/healthz', to: 'health_check#all', default: { format: nil }
 
+  # worka
+  get '/open', to: 'worka#open'
+
   if Mconf::Env.fetch_boolean("SERVE_RAILS_ADMIN", false)
     mount RailsAdmin::Engine => '/dash', as: 'rails_admin'
 
