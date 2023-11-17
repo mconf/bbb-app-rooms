@@ -26,7 +26,7 @@ port0="3000"
 port1="3001"
 
 start_ngrok() {
-  ngrok_log="$HOME/.ngrok2/ngrok.log"
+  ngrok_log="$HOME/.config/ngrok/ngrok.log"
   ngrok_is_running=false
   if [ $(ps -e | grep -Po "\s+ngrok\s*$" | wc -l) -gt 0 ];
   then
@@ -49,8 +49,8 @@ start_ngrok() {
 
   # cat -v is used to read binary files
   # grep will search for the regex and will return anything after \K
-  address0_cmd="cat -v $ngrok_log | grep -Po \"msg=\\\"started tunnel\\\".*localhost:$port0.*url=http://\K.*\.ngrok\.io\""
-  address1_cmd="cat -v $ngrok_log | grep -Po \"msg=\\\"started tunnel\\\".*localhost:$port1.*url=http://\K.*\.ngrok\.io\""
+  address0_cmd="cat -v $ngrok_log | grep -Po 'msg=\"started tunnel\".*localhost:$port0.*url=http?s://\K.*\.ngrok-free\.app'"
+  address1_cmd="cat -v $ngrok_log | grep -Po 'msg=\"started tunnel\".*localhost:$port1.*url=http?s://\K.*\.ngrok-free\.app'"
 
   address0=$(eval $address0_cmd)
   address1=$(eval $address1_cmd)
