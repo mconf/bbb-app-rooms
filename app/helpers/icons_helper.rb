@@ -23,6 +23,22 @@ module IconsHelper
     material_icon_constructor "more_vert", "icon material-icons icon icon-options-dots", options
   end
 
+  def icon_content_copy(options={})
+    image_tag 'content_copy.svg'
+  end
+
+  def icon_hide_recording(options={})
+    image_tag 'hide_recording.svg'
+  end
+
+  def icon_delete(options={})
+    image_tag 'delete.svg'
+  end
+
+  def icon_download(options={})
+    image_tag 'download.svg'
+  end
+
   # Base method for most of the methods above
   def icon_constructor(title=nil, cls=nil, options={})
     options[:class] = options.has_key?(:class) ? cls + " " + options[:class] : cls
