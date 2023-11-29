@@ -110,6 +110,16 @@
             <% end %>
 
             <% if can_edit?(user, room) %>
+              <div class="dropdown-divider"></div>
+                <%# Filesender %>
+                <% if user.moderator?(Abilities.moderator_roles) && Rails.application.config.filesender_enabled %>
+                  <%= link_to room_scheduled_meeting_internal_filesender_path(room, meeting[:meetingID], meeting[:internalMeetingID], recording[:recordID]),
+                  method: :get,
+                  class:"dropdown-item", target:'_blank' do %>
+                    <%= icon_filesender %>
+                    <%= t('scheduled_meetings.share_via_filesender') %>
+                  <% end %>
+                <% end %>
               <%# Unpublish recording %>
               <% if recording[:published] %>
                 <%= link_to recording_unpublish_path(room, record_id: recording[:recordID]),

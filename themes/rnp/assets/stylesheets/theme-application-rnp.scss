@@ -275,6 +275,17 @@ body.theme-rnp {
     }
   }
 
+  #filesender {
+    h1 {
+      color: var(--color-rnp);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    h2 {
+      font-size: 26px;
+    }
+  }
+
   #action-buttons {
     margin-bottom: blocks(6);
     text-align: center;

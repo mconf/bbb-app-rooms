@@ -4,6 +4,7 @@ require 'user'
 require 'bbb_api'
 
 class MeetingsController < ApplicationController
+  include BbbApi
 
   before_action :find_room
   before_action :get_scheduled_meeting_info
@@ -60,6 +61,21 @@ class MeetingsController < ApplicationController
     end
 
     render partial: "shared/meeting_data_download"
+  end
+
+  # GET	/rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/meetings/:internal_id/filesender/:recordid
+  def filesender
+    recording = get_recordings(@room, recordID: params[:record_id]).first
+
+    render "scheduled_meetings/filesender"
+  end
+
+  # TODO: file upload
+  # POST /rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/meetings/:internal_id/filesender_upload/:recordid
+  def filesender_upload
+    flash[:notice] = I18n.t('scheduled_meetings.filesender.sending')
+
+    redirect_to meetings_room_path(@room)
   end
 
   protected

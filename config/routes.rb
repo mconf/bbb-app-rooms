@@ -94,6 +94,8 @@ Rails.application.routes.draw do
             get :download_notes, to: 'meetings#download_notes'
             get :learning_dashboard, to: 'meetings#learning_dashboard'
             get :check_bucket_files, to: 'meetings#check_bucket_files'
+            get '/filesender/:recordid', to: 'meetings#filesender', as: 'filesender'
+            post '/filesender_upload/:recordid', to: 'meetings#filesender_upload', as: 'filesender_upload'
           end
         end
       end
