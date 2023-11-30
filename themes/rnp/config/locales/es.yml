@@ -4,6 +4,11 @@ es:
     clipboard:
       link_copied: "Link copiado al clipboard!"
     schedule: "Agendar"
+    select2:
+      hint: "Escriba para empezar a buscar"
+      no_results: "No se han encontrado resultados"
+      searching: "Buscando"
+      space_or_comma: "Pulse la barra espaciadora o escriba una coma para confirmar el correo electrónico"
     send: "Enviar"
   helpers:
     distance_of_time_in_hours_and_minutes:

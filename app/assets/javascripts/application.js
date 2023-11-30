@@ -22,3 +22,4 @@
 //= schedule-elos
 //= schedule-rnp
 //= require select2
+//= require i18n/translations

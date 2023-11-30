@@ -109,7 +109,10 @@ $(document).on('turbolinks:load', function(){
     width: '100%',
     tags: true,
     tokenSeparators: [",", ";", " "],
-    createSearchChoice: function(term, data) { if (validateEmail(term.trim())) { return { id: term, text: term }; } }
+    createSearchChoice: function(term, data) { if (validateEmail(term.trim())) { return { id: term, text: term }; } },
+    formatSearching: function() { return I18n.t('_all.select2.space_or_comma'); },
+    formatInputTooShort: function () { return I18n.t('_all.select2.hint') },
+    formatNoMatches: function () { return I18n.t('_all.select2.no_results') }
   });
 
 });
