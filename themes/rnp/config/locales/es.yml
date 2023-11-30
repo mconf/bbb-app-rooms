@@ -43,14 +43,6 @@ es:
     duration:
       less_than_a_minute: "Menos de 1 minuto"
     empty_list: "No hay conferencias para mostrar"
-    filesender:
-      description: "Con Filesender@RNP puedes compartir la grabación. Sus destinatarios serán notificados por correo electrónico."
-      emails: "Correo electrónico de los destinatarios"
-      message: "Mesaje (Opcional)"
-      sending: "Enviar archivo a Filesender"
-      share_via_filesender: "Compartir la grabación a través de FileSender"
-      subject: "Sujeto"
-      title: "FileSender@RNP"
     filters:
       no_filter: "Todas"
       recorded_only: "Grabadas"
@@ -109,6 +101,14 @@ es:
       title: "Editar sesión"
     empty_list: "No hay sesiones programadas para mostrar"
     external_link: "Copiar enlace externo"
+    filesender:
+      description: "Con Filesender@RNP puedes compartir la grabación. Sus destinatarios serán notificados por correo electrónico."
+      emails: "Correo electrónico de los destinatarios"
+      message: "Mesaje (Opcional)"
+      sending: "Enviar archivo a Filesender"
+      share_via_filesender: "Compartir la grabación a través de FileSender"
+      subject: "Sujeto"
+      title: "FileSender@RNP"
     new:
       add: "+ Programar sesión"
       title: "Programar sesión"

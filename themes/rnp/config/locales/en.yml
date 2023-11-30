@@ -43,14 +43,6 @@ en:
     duration:
       less_than_a_minute: "Less than 1 minute"
     empty_list: "There are no conferences to show"
-    filesender:
-      description: "With Filesender@RNP you can share the recording. Your recipients will be notified by email."
-      emails: "Recipients"
-      message: "Message (Optional)"
-      sending: "Sending file to Filesender"
-      share_via_filesender: "Share recording via Filesender"
-      subject: "Subject"
-      title: "FileSender@RNP"
     filters:
       no_filter: "All"
       recorded_only: "Recorded"
@@ -109,6 +101,14 @@ en:
       title: "Edit session"
     empty_list: "There are no scheduled sessions to show"
     external_link: "Copy external link"
+    filesender:
+      description: "With Filesender@RNP you can share the recording. Your recipients will be notified by email."
+      emails: "Recipients"
+      message: "Message (Optional)"
+      sending: "Sending file to Filesender"
+      share_via_filesender: "Share recording via Filesender"
+      subject: "Subject"
+      title: "FileSender@RNP"
     new:
       add: "+ Schedule session"
       title: "Schedule session"

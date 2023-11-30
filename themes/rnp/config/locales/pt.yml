@@ -43,14 +43,6 @@ pt:
     duration:
       less_than_a_minute: "Menos de 1 minuto"
     empty_list: "Não há conferências para mostrar"
-    filesender:
-      description: "Com o FileSender@RNP você pode fazer o compartilhamento da gravação. Seus destinatários serão notificados por e-mail."
-      emails: "E-mail dos Destinatários"
-      message: "Mensagem (Opcional)"
-      sending: "Enviando arquivo para o Filesender"
-      share_via_filesender: "Compartilhar gravação via FileSender"
-      subject: "Assunto"
-      title: "FileSender@RNP"
     filters:
       no_filter: "Todas"
       recorded_only: "Gravadas"
@@ -117,6 +109,14 @@ pt:
       title: "Editar sessão"
     empty_list: "Não há agendamentos para mostrar"
     external_link: "Copiar link externo"
+    filesender:
+      description: "Com o FileSender@RNP você pode fazer o compartilhamento da gravação. Seus destinatários serão notificados por e-mail."
+      emails: "E-mail dos Destinatários"
+      message: "Mensagem (Opcional)"
+      sending: "Enviando arquivo para o Filesender"
+      share_via_filesender: "Compartilhar gravação via FileSender"
+      subject: "Assunto"
+      title: "FileSender@RNP"
     new:
       add: "+ Agendar sessão"
       title: "Agendar sessão"

@@ -113,7 +113,7 @@
               <div class="dropdown-divider"></div>
                 <%# Filesender %>
                 <% if user.moderator?(Abilities.moderator_roles) && Rails.application.config.filesender_enabled %>
-                  <%= link_to room_scheduled_meeting_internal_filesender_path(room, meeting[:meetingID], meeting[:internalMeetingID], recording[:recordID]),
+                  <%= link_to room_scheduled_meeting_filesender_path(room, meeting[:meetingID], recording[:recordID]),
                   method: :get,
                   class:"dropdown-item", target:'_blank' do %>
                     <%= icon_filesender %>
