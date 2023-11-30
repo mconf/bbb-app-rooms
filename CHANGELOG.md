@@ -1,7 +1,19 @@
 # Change Log
 
 ## [Unreleased]
-[Unreleased]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.3...master-elos
+[Unreleased]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.4...master-elos
+
+## 0.8.4 - 2023-11-30
+### Added
+- [LTI-134] | Support for scoping rooms by Moodle activity. Switched on via the custom parameter
+  `enable_groups_scoping=true`, configured on the LMS.
+  - PRs: [#76]
+
+<!-- Cards -->
+[LTI-134]: https://www.notion.so/mconf/Suporte-a-grupos-do-Moodle-no-LTI-0b27302d8b7c49e6a35e87c4f554113b?pvs=4
+
+<!-- PRs -->
+[#76]: https://github.com/mconf/bbb-app-rooms/pull/76
 
 ## 0.8.3 - 2023-04-04
 ### Added
@@ -334,6 +346,7 @@ Migration notes:
 [#52]: https://github.com/mconf/bbb-app-rooms/pull/52
 
 <!-- Compares -->
+[0.8.4]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.3...v0.8.4
 [0.8.3]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.2...v0.8.3
 [0.8.2]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.1...v0.8.2
 [0.8.1]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.0...v0.8.1
