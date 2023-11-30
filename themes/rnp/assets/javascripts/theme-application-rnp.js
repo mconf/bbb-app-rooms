@@ -1,5 +1,6 @@
 //= require flatpickr/dist/flatpickr
 //= require clipboard
+//= require select2
 
 $(document).on('turbolinks:load', function(){
   $('.toast').toast();
@@ -92,4 +93,23 @@ $(document).on('turbolinks:load', function(){
         e.target.href += '?filter=recorded-only';
     }
   });
+
+  // Returns whether an email is valid or not.
+  // From: http://www.w3resource.com/javascript/form/email-validation.php
+  const validateEmail = (email) => {
+    return email.match(
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+  };
+
+  // Select2 
+  $("#filesender-emails").select2({
+    theme: "bootstrap",
+    minimumInputLength: 1,
+    width: '100%',
+    tags: true,
+    tokenSeparators: [",", ";", " "],
+    createSearchChoice: function(term, data) { if (validateEmail(term.trim())) { return { id: term, text: term }; } }
+  });
+
 });

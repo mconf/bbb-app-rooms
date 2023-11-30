@@ -128,3 +128,6 @@ gem 'active_scheduler'
 
 # Asynchronous partial loading with AJAX
 gem 'render_async', '~> 2.1'
+
+# Select2
+gem "select2-rails"

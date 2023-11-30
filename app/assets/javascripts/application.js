@@ -21,3 +21,4 @@
 //= require_tree .
 //= schedule-elos
 //= schedule-rnp
+//= require select2
