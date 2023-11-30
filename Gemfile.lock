@@ -470,6 +470,7 @@ DEPENDENCIES
   capybara (>= 2.15, < 4.0)
   coffee-rails (~> 5.0)
   dotenv-rails
+  faraday
   font-awesome-rails
   friendly_id (~> 5.4.0)
   jbuilder (~> 2.5)

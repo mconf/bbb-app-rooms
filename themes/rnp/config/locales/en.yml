@@ -59,6 +59,7 @@ en:
         publish: "Are you sure you want to make this recording visible?"
         unpublish: "Are you sure you want to make this recording not visible?"
       destroy: "Delete recording"
+      eduplay: "Share recording via Eduplay"
       playback_link: "Copy playback link"
       playbacks:
         presentation: "Play"

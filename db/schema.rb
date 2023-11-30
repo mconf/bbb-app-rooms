@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_25_145323) do
+ActiveRecord::Schema.define(version: 2023_11_28_132214) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -70,6 +70,14 @@ ActiveRecord::Schema.define(version: 2022_02_25_145323) do
     t.boolean "message_reference_terms_use", default: true
     t.string "external_widget", default: ""
     t.index ["key"], name: "index_consumer_configs_on_key", unique: true
+  end
+
+  create_table "eduplay_tokens", force: :cascade do |t|
+    t.string "user_uid"
+    t.string "token"
+    t.datetime "expires_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "rooms", force: :cascade do |t|
