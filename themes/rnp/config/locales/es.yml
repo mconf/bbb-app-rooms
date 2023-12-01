@@ -66,6 +66,14 @@ es:
         unpublish: "¿Estás seguro de que deseas hacer esta grabación no visible?"
       destroy: "Eliminar grabación"
       eduplay: "Compartir grabación a través de Eduplay"
+      filesender:
+        description: "Con Filesender@RNP puedes compartir la grabación. Sus destinatarios serán notificados por correo electrónico."
+        emails: "Correo electrónico de los destinatarios"
+        message: "Mesaje (Opcional)"
+        sending: "Enviar archivo a Filesender"
+        share_via_filesender: "Compartir la grabación a través de FileSender"
+        subject: "Sujeto"
+        title: "FileSender@RNP"
       playback_link: "Copiar enlace de reproducción"
       playbacks:
         presentation: "Reproducir"
@@ -107,14 +115,6 @@ es:
       title: "Editar sesión"
     empty_list: "No hay sesiones programadas para mostrar"
     external_link: "Copiar enlace externo"
-    filesender:
-      description: "Con Filesender@RNP puedes compartir la grabación. Sus destinatarios serán notificados por correo electrónico."
-      emails: "Correo electrónico de los destinatarios"
-      message: "Mesaje (Opcional)"
-      sending: "Enviar archivo a Filesender"
-      share_via_filesender: "Compartir la grabación a través de FileSender"
-      subject: "Sujeto"
-      title: "FileSender@RNP"
     new:
       add: "+ Programar sesión"
       title: "Programar sesión"

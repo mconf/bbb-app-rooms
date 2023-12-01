@@ -63,21 +63,6 @@ class MeetingsController < ApplicationController
     render partial: "shared/meeting_data_download"
   end
 
-  # GET	/rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/filesender/:recordid(.:format)
-  def filesender
-    recording = get_recordings(@room, recordID: params[:record_id]).first
-
-    render "scheduled_meetings/filesender"
-  end
-
-  # TODO: file upload
-  # POST /rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/filesender_upload/:recordid(.:format)
-  def filesender_upload
-    flash[:notice] = I18n.t('scheduled_meetings.filesender.sending')
-
-    redirect_to meetings_room_path(@room)
-  end
-
   protected
 
   def get_scheduled_meeting_info

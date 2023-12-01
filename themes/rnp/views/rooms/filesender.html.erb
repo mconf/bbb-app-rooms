@@ -1,26 +1,26 @@
 <div id="filesender">
   <div class="row d-flex align-items-center justify-content-center">
     <div class="col-12 col-md-10 text-center">
-      <h1><%= t('scheduled_meetings.filesender.title') %></h1>
+      <h1><%= t('meetings.recording.filesender.title') %></h1>
     </div>
 
     <div class="col-12 col-md-10 mb-5">
-      <h2><%= t('scheduled_meetings.filesender.description') %></h2> 
+      <h2><%= t('meetings.recording.filesender.description') %></h2> 
     </div>
   </div>
 
-  <%= form_with url: room_scheduled_meeting_filesender_upload_path(@room) do |form| %>
+  <%= form_with url: filesender_upload_path(@room) do |form| %>
     <div class="form-row d-flex align-items-center justify-content-center">
       <div class="form-group col-12 col-md-10">
-        <%= form.label :subject, t('scheduled_meetings.filesender.subject') %>
+        <%= form.label :subject, t('meetings.recording.filesender.subject') %>
         <%= form.text_field :subject, required: true, minlength: 2,  class: "form-control", autofocus: true %>
       </div>
       <div class="form-group col-12 col-md-10">
-        <%= form.label :message, t('scheduled_meetings.filesender.message') %>
+        <%= form.label :message, t('meetings.recording.filesender.message') %>
         <%= form.text_field :message, required: true, minlength: 2,  class: "form-control", autofocus: true %>
       </div>
       <div class="form-group col-12 col-md-10">
-        <%= form.label :emails, t('scheduled_meetings.filesender.emails') %>
+        <%= form.label :emails, t('meetings.recording.filesender.emails') %>
         <%= form.text_field :emails, id: "filesender-emails", required: true, class: "form-control" %>
       </div>
     </div>

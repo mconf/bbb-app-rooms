@@ -66,6 +66,14 @@ pt:
         unpublish: "Você tem certeza que deseja tornar esta gravação não visível?"
       destroy: "Deletar gravação"
       eduplay: "Compartilhar gravação via Eduplay"
+      filesender:
+        description: "Com o FileSender@RNP você pode fazer o compartilhamento da gravação. Seus destinatários serão notificados por e-mail."
+        emails: "E-mail dos Destinatários"
+        message: "Mensagem (Opcional)"
+        sending: "Enviando arquivo para o Filesender"
+        share_via_filesender: "Compartilhar gravação via FileSender"
+        subject: "Assunto"
+        title: "FileSender@RNP"
       playback_link: "Copiar link de reprodução"
       playbacks:
         presentation: "Reproduzir"
@@ -115,14 +123,6 @@ pt:
       title: "Editar sessão"
     empty_list: "Não há agendamentos para mostrar"
     external_link: "Copiar link externo"
-    filesender:
-      description: "Com o FileSender@RNP você pode fazer o compartilhamento da gravação. Seus destinatários serão notificados por e-mail."
-      emails: "E-mail dos Destinatários"
-      message: "Mensagem (Opcional)"
-      sending: "Enviando arquivo para o Filesender"
-      share_via_filesender: "Compartilhar gravação via FileSender"
-      subject: "Assunto"
-      title: "FileSender@RNP"
     new:
       add: "+ Agendar sessão"
       title: "Agendar sessão"

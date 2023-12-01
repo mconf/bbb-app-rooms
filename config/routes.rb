@@ -32,6 +32,8 @@ Rails.application.routes.draw do
           post '/update', to: 'rooms#recording_update', as: :recording_update
           post '/delete', to: 'rooms#recording_delete', as: :recording_delete
           post '/eduplay', to: 'rooms#eduplay_upload'
+          get '/filesender', to: 'rooms#filesender', as: 'filesender'
+          post '/filesender_upload', to: 'rooms#filesender_upload', as: 'filesender_upload'
         end
 
         # Handles launches.
@@ -102,8 +104,6 @@ Rails.application.routes.draw do
             get :learning_dashboard, to: 'meetings#learning_dashboard'
             get :check_bucket_files, to: 'meetings#check_bucket_files'
           end
-          get '/filesender/:recordid', to: 'meetings#filesender', as: 'filesender'
-          post '/filesender_upload/:recordid', to: 'meetings#filesender_upload', as: 'filesender_upload'
         end
       end
     end

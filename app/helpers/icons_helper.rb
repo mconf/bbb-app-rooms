@@ -43,6 +43,10 @@ module IconsHelper
     image_tag 'icon_filesender.svg'
   end
 
+  def icon_eduplay(options={})
+    image_tag 'icon_eduplay.svg'
+  end
+
   # Base method for most of the methods above
   def icon_constructor(title=nil, cls=nil, options={})
     options[:class] = options.has_key?(:class) ? cls + " " + options[:class] : cls
