@@ -31,6 +31,14 @@ module IconsHelper
     image_tag 'hide_recording.svg'
   end
 
+  def icon_show_recording(options={})
+    image_tag 'visibility.svg'
+  end
+
+  def icon_learning_dashboard(options={})
+    image_tag 'learning_dashboard.svg'
+  end
+
   def icon_delete(options={})
     image_tag 'delete.svg'
   end

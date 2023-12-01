@@ -107,10 +107,10 @@
                   <%= t('meetings.recording.playback_link') %>
                 <% end %>
               <% end %>
-              <div class="dropdown-divider"></div>
             <% end %>
 
             <% if can_edit?(user, room) %>
+              <div class="dropdown-divider"></div>
               <% eduplay_token = EduplayToken.find_by(user_uid: user.uid)%>
               <% if eduplay_token.present? && eduplay_token.expires_at > Time.now + 30.minutes %>
                 <%= link_to eduplay_path(room, record_id: recording[:recordID]),
@@ -151,6 +151,7 @@
                 method: :post,
                 data: { confirm: t('meetings.recording.confirm.publish') },
                 class: "dropdown-item rec-edit" do %>
+                  <%= icon_show_recording %>
                   <%= t("meetings.recording.publish") %>
                 <% end %>
               <% end %>
