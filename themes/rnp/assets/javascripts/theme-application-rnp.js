@@ -42,13 +42,12 @@ $(document).on('turbolinks:load', function(){
     });
   });
 
-  $(".copy-to-clipboard").each(function() {
-    $toast = $('.toast', $(this).data('toast-id'));
-    clipboard = new ClipboardJS(this);
-    clipboard.on('success', function(e) {
-      $toast.toast('dispose');
-      $toast.toast('show');
-    });
+  clipboard = new ClipboardJS('.copy-to-clipboard');
+  clipboard.on('success', function(e) {
+    toast_id = $(e.trigger).data('toast-id');
+    $toast = $('.toast', toast_id);
+    $toast.toast('dispose');
+    $toast.toast('show');
   });
 
   $(".btn-retry").on('click', function() {
