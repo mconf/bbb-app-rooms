@@ -222,10 +222,33 @@ let hideAll = () => {
   $tableFootnote.hide();
 };
 
+var authWindow;
+function openAuthWindow(url) {
+  authWindow = window.open(url, 'Eduplay', 'width=800,height=600');
+}
+
+window.addEventListener('message', function(event) {
+  // Verify the origin of the message
+  if (event.source === authWindow) {
+    authWindow.close()
+    const room_path = $("#room_path")[0].value
+    $.ajax({
+      url: room_path + '/recording/' + event.data['record_id'] + '/eduplay',
+      type: "POST",
+      data: { access_token: event.data['access_token'], expires_at: event.data['expires_at'],  }
+    });
+  }
+});
+
 let showMeetings = (rows) => {
   for(let row of rows) {
     $meetingsTable.append(row)
   }
+
+  $('.eduplay-login').on('click', function(e) {
+    e.preventDefault()
+    openAuthWindow($(this).data('url'));
+  });
 };
 
 let appendScripts = (scripts) => {

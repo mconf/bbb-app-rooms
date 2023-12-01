@@ -19,6 +19,9 @@ pt:
     bigbluebutton:
       moderator:      "Moderador"
       viewer:         "Participante"
+    eduplay:
+      success: "Seu vídeo está sendo carregado para o Eduplay"
+      error:   "Um erro ocorreu. Por favor, tente novamente!"
     room:
       cancel:         "Cancelar"
       created:        "A sala foi criada com sucesso"

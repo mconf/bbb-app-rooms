@@ -2,6 +2,7 @@
 
 require 'user'
 require 'bbb_api'
+require './lib/mconf/eduplay'
 
 class RoomsController < ApplicationController
   include ApplicationHelper
@@ -135,6 +136,26 @@ class RoomsController < ApplicationController
       redirect_args << { notice: notice }
     end
     redirect_to(*redirect_args)
+  end
+
+  def eduplay_upload
+    old_eduplay_token = EduplayToken.find_by(user_uid: @user.uid)
+    if params['access_token'].present?
+      if old_eduplay_token.nil?
+        EduplayToken.create!(user_uid: @user.uid, token: params['access_token'], expires_at: params['expires_at'])
+      else
+        old_eduplay_token.update(token: params['access_token'], expires_at: params['expires_at'])
+      end
+    else
+      if old_eduplay_token.nil?
+        flash[:notice] = t('default.eduplay.error')
+        redirect_to(meetings_room_path(@room, filter: params[:filter])) and return
+      end
+    end
+
+    flash[:notice] = t('default.eduplay.success')
+    UploadRecordingToEduplayJob.perform_later(@room, params['record_id'], @user.uid)
+    redirect_to(meetings_room_path(@room, filter: params[:filter]))
   end
 
   helper_method :meetings, :recording_date, :recording_length
