@@ -143,5 +143,10 @@ module BbbAppRooms
     config.meeting_notes_filename              = 'notes.txt'
     config.meeting_participants_filename       = 'activities.txt'
     config.meeting_learning_dashboard_filename = 'learning_dashboard.json'
+
+    config.eduplay_client_id         = Mconf::Env.fetch('MCONF_EDUPLAY_CLIENT_ID')
+    config.eduplay_redirect_callback = Mconf::Env.fetch('MCONF_EDUPLAY_REDIRECT_CALLBACK')
+    config.eduplay_service_url       = Mconf::Env.fetch('MCONF_EDUPLAY_SERVICE_URL')
+    config.eduplay_client_secret     = Mconf::Env.fetch('MCONF_EDUPLAY_CLIENT_SECRET')
   end
 end

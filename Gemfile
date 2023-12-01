@@ -88,6 +88,7 @@ gem 'font-awesome-rails'
 gem 'jquery-fileupload-rails'
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
+gem 'faraday'
 
 # BigBlueButton API
 # gem 'bigbluebutton-api-ruby', git: 'https://github.com/mconf/bigbluebutton-api-ruby.git', tag: 'v1.9.0-mconf-rc1'

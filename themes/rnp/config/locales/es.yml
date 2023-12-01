@@ -65,6 +65,7 @@ es:
         publish: "¿Estás seguro de que deseas hacer esta grabación visible?"
         unpublish: "¿Estás seguro de que deseas hacer esta grabación no visible?"
       destroy: "Eliminar grabación"
+      eduplay: "Compartir grabación a través de Eduplay"
       playback_link: "Copiar enlace de reproducción"
       playbacks:
         presentation: "Reproducir"

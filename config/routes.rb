@@ -31,6 +31,7 @@ Rails.application.routes.draw do
           post '/unprotect', to: 'rooms#recording_unprotect', as: :recording_unprotect
           post '/update', to: 'rooms#recording_update', as: :recording_update
           post '/delete', to: 'rooms#recording_delete', as: :recording_delete
+          post '/eduplay', to: 'rooms#eduplay_upload'
         end
 
         # Handles launches.
@@ -55,6 +56,12 @@ Rails.application.routes.draw do
               get '/coc/launch', to: 'classes#launch'
               get '/coc/classes/:handler', to: 'classes#index', as: :coc_classes
               get '/coc/:handler/:class_id', to: 'classes#show', as: :coc_classes_show
+            end
+          end
+
+          scope module: :rnp do
+            scope module: :controllers do
+              get '/eduplay/callback', to: 'callbacks#eduplay_callback'
             end
           end
         end
