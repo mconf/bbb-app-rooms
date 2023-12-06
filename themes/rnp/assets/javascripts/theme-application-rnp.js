@@ -1,5 +1,6 @@
 //= require flatpickr/dist/flatpickr
 //= require clipboard
+//= require select2
 
 $(document).on('turbolinks:load', function(){
   $('.toast').toast();
@@ -41,13 +42,12 @@ $(document).on('turbolinks:load', function(){
     });
   });
 
-  $(".copy-to-clipboard").each(function() {
-    $toast = $('.toast', $(this).data('toast-id'));
-    clipboard = new ClipboardJS(this);
-    clipboard.on('success', function(e) {
-      $toast.toast('dispose');
-      $toast.toast('show');
-    });
+  clipboard = new ClipboardJS('.copy-to-clipboard');
+  clipboard.on('success', function(e) {
+    toast_id = $(e.trigger).data('toast-id');
+    $toast = $('.toast', toast_id);
+    $toast.toast('dispose');
+    $toast.toast('show');
   });
 
   $(".btn-retry").on('click', function() {
@@ -92,6 +92,28 @@ $(document).on('turbolinks:load', function(){
         e.target.href += '?filter=recorded-only';
     }
   });
+
+  // Returns whether an email is valid or not.
+  // From: http://www.w3resource.com/javascript/form/email-validation.php
+  const validateEmail = (email) => {
+    return email.match(
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+  };
+
+  // Select2 
+  $("#filesender-emails").select2({
+    theme: "bootstrap",
+    minimumInputLength: 1,
+    width: '100%',
+    tags: true,
+    tokenSeparators: [",", ";", " "],
+    createSearchChoice: function(term, data) { if (validateEmail(term.trim())) { return { id: term, text: term }; } },
+    formatSearching: function() { return I18n.t('_all.select2.space_or_comma'); },
+    formatInputTooShort: function () { return I18n.t('_all.select2.hint') },
+    formatNoMatches: function () { return I18n.t('_all.select2.no_results') }
+  });
+
 });
 
 $DOCUMENT.on('turbolinks:load',  () => {

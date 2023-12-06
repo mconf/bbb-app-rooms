@@ -4,6 +4,12 @@ en:
     clipboard:
       link_copied: "Link copied to the clipboard!"
     schedule: "Schedule"
+    select2:
+      hint: "Type to start searching"
+      no_results: "No results found"
+      searching: "Searching"
+      space_or_comma: "Press Space or type a comma to confirm the e-mail"
+    send: "Send"
   helpers:
     distance_of_time_in_hours_and_minutes:
       hour:
@@ -60,15 +66,23 @@ en:
         unpublish: "Are you sure you want to make this recording not visible?"
       destroy: "Delete recording"
       eduplay: "Share recording via Eduplay"
+      filesender:
+        description: "With FileSender@RNP you can share the recording. Your recipients will be notified by email."
+        emails: "Recipients"
+        message: "Message (Optional)"
+        sending: "Sending file to FileSender"
+        share_via_filesender: "Share recording via FileSender"
+        subject: "Subject"
+        title: "FileSender@RNP"
       playback_link: "Copy playback link"
       playbacks:
         presentation: "Play"
         presentation_video: "Download"
       processing: "Processing"
       published: "Visible"
-      publish: "Make the recording visible"
+      publish: "Make recording visible"
       unpublished: "Not visible"
-      unpublish: "Make the recording not visible"
+      unpublish: "Hide recording"
     search:
       placeholder: "Search by title or description..."
     table:

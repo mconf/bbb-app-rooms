@@ -4,6 +4,7 @@ require 'user'
 require 'bbb_api'
 
 class MeetingsController < ApplicationController
+  include BbbApi
 
   before_action :find_room
   before_action :get_scheduled_meeting_info

@@ -4,6 +4,12 @@ es:
     clipboard:
       link_copied: "Link copiado al clipboard!"
     schedule: "Agendar"
+    select2:
+      hint: "Escriba para empezar a buscar"
+      no_results: "No se han encontrado resultados"
+      searching: "Buscando"
+      space_or_comma: "Pulse la barra espaciadora o escriba una coma para confirmar el correo electrónico"
+    send: "Enviar"
   helpers:
     distance_of_time_in_hours_and_minutes:
       hour:
@@ -60,6 +66,14 @@ es:
         unpublish: "¿Estás seguro de que deseas hacer esta grabación no visible?"
       destroy: "Eliminar grabación"
       eduplay: "Compartir grabación a través de Eduplay"
+      filesender:
+        description: "Con FileSender@RNP puedes compartir la grabación. Sus destinatarios serán notificados por correo electrónico."
+        emails: "Correo electrónico de los destinatarios"
+        message: "Mesaje (Opcional)"
+        sending: "Enviar archivo a FileSender"
+        share_via_filesender: "Compartir la grabación a través de FileSender"
+        subject: "Sujeto"
+        title: "FileSender@RNP"
       playback_link: "Copiar enlace de reproducción"
       playbacks:
         presentation: "Reproducir"

@@ -158,6 +158,21 @@ class RoomsController < ApplicationController
     redirect_to(meetings_room_path(@room, filter: params[:filter]))
   end
 
+  # GET	/rooms/:id/recording/:record_id/filesender
+  def filesender
+    recording = get_recordings(@room, recordID: params[:record_id]).first
+
+    render "rooms/filesender"
+  end
+
+  # TODO: file upload
+  # POST /rooms/:id/recording/:record_id/filesender_upload
+  def filesender_upload
+    flash[:notice] = I18n.t('meetings.recording.filesender.sending')
+
+    redirect_to meetings_room_path(@room)
+  end
+
   helper_method :meetings, :recording_date, :recording_length
 
   private

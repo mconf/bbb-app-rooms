@@ -52,6 +52,9 @@ module BbbAppRooms
     config.omniauth_secret = {}
     config.omniauth_secret[:bbbltibroker] = ENV['OMNIAUTH_BBBLTIBROKER_SECRET'] || ''
 
+    # Filesender
+    config.filesender_enabled = ENV['FILESENDER_ENABLED'] == 'true'
+
     # Spaces API config
     config.spaces_key = ENV['SPACES_KEY'] || ''
     config.spaces_secret = ENV['SPACES_SECRET'] || ''
