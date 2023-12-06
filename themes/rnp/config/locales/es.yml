@@ -67,10 +67,10 @@ es:
       destroy: "Eliminar grabación"
       eduplay: "Compartir grabación a través de Eduplay"
       filesender:
-        description: "Con Filesender@RNP puedes compartir la grabación. Sus destinatarios serán notificados por correo electrónico."
+        description: "Con FileSender@RNP puedes compartir la grabación. Sus destinatarios serán notificados por correo electrónico."
         emails: "Correo electrónico de los destinatarios"
         message: "Mesaje (Opcional)"
-        sending: "Enviar archivo a Filesender"
+        sending: "Enviar archivo a FileSender"
         share_via_filesender: "Compartir la grabación a través de FileSender"
         subject: "Sujeto"
         title: "FileSender@RNP"

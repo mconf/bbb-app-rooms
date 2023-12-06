@@ -70,7 +70,7 @@ pt:
         description: "Com o FileSender@RNP você pode fazer o compartilhamento da gravação. Seus destinatários serão notificados por e-mail."
         emails: "E-mail dos Destinatários"
         message: "Mensagem (Opcional)"
-        sending: "Enviando arquivo para o Filesender"
+        sending: "Enviando arquivo para o FileSender"
         share_via_filesender: "Compartilhar gravação via FileSender"
         subject: "Assunto"
         title: "FileSender@RNP"
