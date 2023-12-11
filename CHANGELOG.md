@@ -1,7 +1,19 @@
 # Change Log
 
 ## [Unreleased]
-[Unreleased]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.4...master-elos
+[Unreleased]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.5...master-elos
+
+# 0.8.5 - 2023-12-11
+### Fixed
+- [LTI-140] | Correction on the `recordings` page when there is no `presentation_video`.
+  - PRs: [#79]
+
+<!-- Cards -->
+[LTI-140]: https://www.notion.so/mconf/Fix-recordings-page-LTI-ConfWeb-016131edc43240f587d804b1ec302aea?pvs=4
+
+<!-- PRs -->
+[#79]: https://github.com/mconf/bbb-app-rooms/pull/79
+
 
 ## 0.8.4 - 2023-11-30
 ### Added
@@ -346,6 +358,7 @@ Migration notes:
 [#52]: https://github.com/mconf/bbb-app-rooms/pull/52
 
 <!-- Compares -->
+[0.8.5]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.4...v0.8.5
 [0.8.4]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.3...v0.8.4
 [0.8.3]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.2...v0.8.3
 [0.8.2]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.1...v0.8.2
