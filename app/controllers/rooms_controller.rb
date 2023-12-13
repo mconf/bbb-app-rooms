@@ -154,7 +154,7 @@ class RoomsController < ApplicationController
     end
 
     flash[:notice] = t('default.eduplay.success')
-    UploadRecordingToEduplayJob.perform_later(@room, params['record_id'], @user.uid)
+    UploadRecordingToEduplayJob.perform_later(@room, params['record_id'], @user.as_json.symbolize_keys)
     redirect_to(meetings_room_path(@room, filter: params[:filter]))
   end
 
