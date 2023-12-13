@@ -161,6 +161,12 @@ class RoomsController < ApplicationController
 
   # GET	/rooms/:id/recording/:record_id/filesender
   def filesender
+    filesender_token = FilesenderToken.find_by(user_uid: @user.uid)
+    if filesender_token.nil? || filesender_token.expires_at < Time.now + 5
+      flash[:notice] = t('default.eduplay.error')
+      redirect_to(meetings_room_path(@room)) and return
+    end
+
     recording = get_recordings(@room, recordID: params[:record_id]).first
 
     render "rooms/filesender"
