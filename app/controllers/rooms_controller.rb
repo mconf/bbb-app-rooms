@@ -3,6 +3,7 @@
 require 'user'
 require 'bbb_api'
 require './lib/mconf/eduplay'
+require './lib/mconf/filesender'
 
 class RoomsController < ApplicationController
   include ApplicationHelper
@@ -165,12 +166,36 @@ class RoomsController < ApplicationController
     render "rooms/filesender"
   end
 
-  # TODO: file upload
   # POST /rooms/:id/recording/:record_id/filesender_upload
   def filesender_upload
-    flash[:notice] = I18n.t('meetings.recording.filesender.sending')
+    data = {
+      subject: params['subject'],
+      message: params['message'],
+      recipients: params['emails'].split(',').uniq
+    }
 
-    redirect_to meetings_room_path(@room)
+    flash[:notice] = t('default.filesender.success')
+    UploadRecordingToFilesenderJob.perform_later(@room, params['record_id'], @user.as_json.symbolize_keys, data)
+    redirect_to(meetings_room_path(@room))
+  end
+
+  # POST /rooms/:id/recording/:record_id/filesender
+  def filesender_auth
+    old_filesender_token = FilesenderToken.find_by(user_uid: @user.uid)
+    if params['access_token'].present?
+      if old_filesender_token.nil?
+        FilesenderToken.create!(user_uid: @user.uid, token: params['access_token'], expires_at: params['expires_at'])
+      else
+        old_filesender_token.update(token: params['access_token'], expires_at: params['expires_at'])
+      end
+    else
+      if old_filesender_token.nil?
+        flash[:notice] = t('default.filesender.error')
+        redirect_to(meetings_room_path(@room, filter: params[:filter])) and return
+      end
+    end
+
+    redirect_to(filesender_path(@room, record_id: params['record_id']))
   end
 
   helper_method :meetings, :recording_date, :recording_length

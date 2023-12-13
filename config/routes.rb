@@ -33,7 +33,8 @@ Rails.application.routes.draw do
           post '/delete', to: 'rooms#recording_delete', as: :recording_delete
           post '/eduplay', to: 'rooms#eduplay_upload'
           get '/filesender', to: 'rooms#filesender', as: 'filesender'
-          post '/filesender_upload', to: 'rooms#filesender_upload', as: 'filesender_upload'
+          post '/filesender', to: 'rooms#filesender_auth'
+          post '/filesender_upload', to: 'rooms#filesender_upload'
         end
 
         # Handles launches.
@@ -64,6 +65,7 @@ Rails.application.routes.draw do
           scope module: :rnp do
             scope module: :controllers do
               get '/eduplay/callback', to: 'callbacks#eduplay_callback'
+              get '/filesender/callback', to: 'callbacks#filesender_callback'
             end
           end
         end
