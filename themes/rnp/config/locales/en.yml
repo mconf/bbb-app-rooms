@@ -52,6 +52,8 @@ en:
     meeting_data_download:
       download_notes: "Download meeting's notes"
       download_participants: "Download participants list"
+      unavailable_notes: "Unavailable meeting's notes"
+      unavailable_participants: "Unavailable participants list"
     recording:
       confirm:
         destroy: "Are you sure you want to delete this recording?"
