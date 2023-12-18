@@ -6,9 +6,9 @@ class UploadRecordingToEduplayJob < ApplicationJob
   include BbbApi
   queue_as :default
 
-  def perform(room, rec_id, user_uid)
+  def perform(room, rec_id, user)
     @recording = get_recordings(room, recordID: rec_id).first.first
-    @eduplay_token = EduplayToken.find_by(user_uid: user_uid)
+    @eduplay_token = EduplayToken.find_by(user_uid: user[:uid])
     playback = @recording[:playbacks].find{ |f| f[:type] == 'presentation_video' }
 
     if playback.nil?
@@ -24,7 +24,7 @@ class UploadRecordingToEduplayJob < ApplicationJob
     # download URL
     rec_url = URI.parse(playback[:url])
     if Rails.application.config.playback_url_authentication
-      token = get_recording_token(@room, @user.full_name, params[:record_id])
+      token = get_recording_token(room, user[:full_name], params[:record_id])
       rec_url.query = URI.encode_www_form({ token: token })
     end
 

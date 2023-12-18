@@ -119,10 +119,11 @@ $(document).on('turbolinks:load', function(){
 $DOCUMENT.on('turbolinks:load',  () => {
   const CONTROLLER = $("body").data('controller');
   const ACTION = $("body").data('action');
-  if (CONTROLLER != 'clients/rnp/controllers/callbacks' || ACTION != 'eduplay_callback') return;
+  if (CONTROLLER != 'clients/rnp/controllers/callbacks' || (ACTION != 'eduplay_callback' && ACTION != 'filesender_callback')) return;
 
   const accessToken = $("#access_token")[0].value
   const expiresAt = $("#expires_at")[0].value
   const recordID = $("#recordID")[0].value
-  window.opener.postMessage({ access_token: accessToken, expires_at: expiresAt, record_id: recordID }, '*')
+  const service_name = $("#service_name")[0].value
+  window.opener.postMessage({ access_token: accessToken, expires_at: expiresAt, record_id: recordID, service_name: service_name }, '*')
 });

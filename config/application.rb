@@ -52,9 +52,6 @@ module BbbAppRooms
     config.omniauth_secret = {}
     config.omniauth_secret[:bbbltibroker] = ENV['OMNIAUTH_BBBLTIBROKER_SECRET'] || ''
 
-    # Filesender
-    config.filesender_enabled = ENV['FILESENDER_ENABLED'] == 'true'
-
     # Spaces API config
     config.spaces_key = ENV['SPACES_KEY'] || ''
     config.spaces_secret = ENV['SPACES_SECRET'] || ''
@@ -148,5 +145,13 @@ module BbbAppRooms
     config.eduplay_redirect_callback = Mconf::Env.fetch('MCONF_EDUPLAY_REDIRECT_CALLBACK')
     config.eduplay_service_url       = Mconf::Env.fetch('MCONF_EDUPLAY_SERVICE_URL')
     config.eduplay_client_secret     = Mconf::Env.fetch('MCONF_EDUPLAY_CLIENT_SECRET')
+
+
+    # Filesender
+    config.filesender_enabled           = Mconf::Env.fetch_boolean('FILESENDER_ENABLED')
+    config.filesender_client_id         = Mconf::Env.fetch('MCONF_FILESENDER_CLIENT_ID')
+    config.filesender_redirect_callback = Mconf::Env.fetch('MCONF_FILESENDER_REDIRECT_CALLBACK')
+    config.filesender_service_url       = Mconf::Env.fetch('MCONF_FILESENDER_SERVICE_URL')
+    config.filesender_client_secret     = Mconf::Env.fetch('MCONF_FILESENDER_CLIENT_SECRET')
   end
 end

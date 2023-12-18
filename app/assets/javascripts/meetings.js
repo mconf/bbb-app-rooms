@@ -223,8 +223,8 @@ let hideAll = () => {
 };
 
 var authWindow;
-function openAuthWindow(url) {
-  authWindow = window.open(url, 'Eduplay', 'width=800,height=600');
+function openAuthWindow(url, service) {
+  authWindow = window.open(url, service, 'width=800,height=600');
 }
 
 window.addEventListener('message', function(event) {
@@ -233,7 +233,7 @@ window.addEventListener('message', function(event) {
     authWindow.close()
     const room_path = $("#room_path")[0].value
     $.ajax({
-      url: room_path + '/recording/' + event.data['record_id'] + '/eduplay',
+      url: room_path + '/recording/' + event.data['record_id'] + '/' + event.data['service_name'],
       type: "POST",
       data: { access_token: event.data['access_token'], expires_at: event.data['expires_at'],  }
     });
@@ -247,7 +247,12 @@ let showMeetings = (rows) => {
 
   $('.eduplay-login').on('click', function(e) {
     e.preventDefault()
-    openAuthWindow($(this).data('url'));
+    openAuthWindow($(this).data('url'), 'Eduplay');
+  });
+
+  $('.filesender-login').on('click', function(e) {
+    e.preventDefault()
+    openAuthWindow($(this).data('url'), 'Filesender');
   });
 };
 

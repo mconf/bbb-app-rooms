@@ -107,6 +107,7 @@ GEM
     ast (2.4.1)
     autoprefixer-rails (9.8.4)
       execjs
+    awesome_print (1.9.2)
     aws-eventstream (1.1.0)
     aws-partitions (1.393.0)
     aws-sdk-core (3.109.2)
@@ -463,6 +464,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_scheduler
+  awesome_print
   aws-sdk-s3 (~> 1)
   bigbluebutton-api-ruby!
   bootsnap (>= 1.1.0)
