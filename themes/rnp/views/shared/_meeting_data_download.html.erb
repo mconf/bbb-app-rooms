@@ -1,6 +1,6 @@
 <% if @notes_exist %>
-  <%= link_to room_scheduled_meeting_internal_download_notes_path(@room, @meeting[:meetingID], @meeting[:internalMeetingID]),
-    target: '_blank', class: "dropdown-item rec-edit" do %>
+  <%= button_to room_scheduled_meeting_internal_download_notes_path(@room, @meeting[:meetingID], @meeting[:internalMeetingID]),
+    method: :get, target: '_blank', class: "dropdown-item rec-edit" do %>
     <%= t('meetings.meeting_data_download.download_notes') %>
   <% end %>
 <% else %>
@@ -10,12 +10,12 @@
 <% end %>
 
 <% if @participants_exist %>
-  <%= link_to room_scheduled_meeting_internal_download_participants_path(@room, @meeting[:meetingID], @meeting[:internalMeetingID]),
-    target: '_blank', class: "dropdown-item rec-edit" do %>
+  <%= button_to room_scheduled_meeting_internal_download_participants_path(@room, @meeting[:meetingID], @meeting[:internalMeetingID]),
+    method: :get, target: '_blank', class: "dropdown-item rec-edit" do %>
     <%= t('meetings.meeting_data_download.download_participants') %>
   <% end %>
 <% else %>
-  <%= button_to room_scheduled_meetings_path(@room), disabled: true, class: "dropdown-item rec-edit" do %>
+  <%= button_to room_scheduled_meetings_path(@room),disabled: true,  class: "dropdown-item rec-edit" do %>
     <%= t('meetings.meeting_data_download.unavailable_participants') %>
   <% end %>
 <% end %>

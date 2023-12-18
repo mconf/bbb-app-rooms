@@ -86,7 +86,7 @@
       <% if recording[:state] != 'processing' && recording[:published] || can_edit?(user, room) %>
         <div class="dropdown dropdown-opts">
           <a href="#" class="dropdown-toggle d-flex text-decoration-none dropdown-opts-link"
-            meeting-id="<%= meeting[:internalMeetingID] %>" 
+            meeting-id="<%= meeting[:meetingID] %>" 
             check-bucket-files-endpoint="<%= room_scheduled_meeting_internal_check_bucket_files_path(@room, meeting[:meetingID], meeting[:internalMeetingID]) %>"
             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <%= icon_options_dots %>
@@ -138,6 +138,10 @@
 
               <%# Download notes and participants %>
               <div class="dropdown-divider"></div>
+              <div class="dropdown-item-loading">
+                <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_notes') %>
+                <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_participants') %>
+              </div>
             <% end %>
           </div>
         </div>
@@ -153,12 +157,16 @@
       <% if can_edit?(user, room) %>
         <div class="dropdown dropdown-opts">
           <a href="#" class="dropdown-toggle d-flex text-decoration-none dropdown-opts-link"
-            meeting-id="<%= meeting[:internalMeetingID] %>" 
+            meeting-id="<%= meeting[:meetingID] %>" 
             check-bucket-files-endpoint="<%= room_scheduled_meeting_internal_check_bucket_files_path(@room, meeting[:meetingID], meeting[:internalMeetingID]) %>"
             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <%= icon_options_dots %>
           </a>
           <div class="dropdown-menu dropdown-menu-right dropdown-items" aria-labelledby="dropdown-opts-<%= meeting[:meetingID] %>">
+            <div class="dropdown-item-loading">
+              <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_notes') %>
+              <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_participants') %>
+            </div>
           </div>
         </div>
       <% end %>

@@ -18,6 +18,7 @@ const $DOCUMENT = $(document);
 let isFetching = false;
 let hasMoreToFetch = true;
 let rendered = false;
+let loadedMeetingId = null;
 
 // Max time to wait for ajax response
 let ajaxTimeout = 5000;
@@ -238,24 +239,20 @@ let doAjaxBucket = async (check_bucket_endpoint) => {
  * In case of timeout, the timeout value will increase in 1 second.
 */
 let checkBucketFiles = async(meeting_id, check_bucket_endpoint) => {
-  let currentButtonsCount = 0;
-  try {
-    let response = await doAjaxBucket(check_bucket_endpoint);
-    response = $(response);
-
-    let buttons = response.filter('.button_to')
-    currentButtonsCount += buttons.length;
-    if (currentButtonsCount == 0) {
-    } else {
+  if (loadedMeetingId != meeting_id) {
+    try {
+      let response = await doAjaxBucket(check_bucket_endpoint);
+      response = $(response);
+  
+      loadedMeetingId = meeting_id;
+      let buttons = response.filter('.button_to')
       showDropdownItems(buttons);
-    }
-    currentButtonsCount = 0;
-    
-  } catch(err) {
-    if (err.statusText == 'timeout') {
-      ajaxTimeout += 1000;
-    } else {
-      console.error(`Unexpected error: ${err}`);
+    } catch(err) {
+      if (err.statusText == 'timeout') {
+        ajaxTimeout += 1000;
+      } else {
+        console.error(`Unexpected error: ${err}`);
+      }
     }
   }
 };
@@ -268,15 +265,16 @@ let showMeetings = (rows) => {
   $('.dropdown-opts-link').on('click', function(e) {
     checkBucketFiles(this.getAttribute('meeting-id'), this.getAttribute('check-bucket-files-endpoint'));
   });
-
 };
 
 let showDropdownItems = (buttons) => {
+  // Hide the loading items animation
+  $('.dropdown-item-loading').hide();
   // Remove only the items appended previously
   $('.dropdown-items .appended-item').remove();
 
   for (let button of buttons) {
-    $(button).addClass('appended-item');
+    $(button).addClass('appended-item rec-edit');
     $('.dropdown-items').append(button);
   }
 };
