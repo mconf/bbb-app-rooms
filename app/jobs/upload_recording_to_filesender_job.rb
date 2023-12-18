@@ -28,7 +28,7 @@ class UploadRecordingToFilesenderJob < ApplicationJob
     # If the recordings server uses token authentication, we must get an authenticated
     rec_url = URI.parse(@playback[:url])
     if Rails.application.config.playback_url_authentication
-      token = get_recording_token(@room, user[:full_name], params[:record_id])
+      token = get_recording_token(room, user[:full_name], params[:record_id])
       rec_url.query = URI.encode_www_form({ token: token })
     end
 
