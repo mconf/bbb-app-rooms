@@ -3,8 +3,9 @@
     <div id="schedule-meeting" class="col-12 col-sm-12 col-md-4 col-lg-4">
       <%=
       link_to t('scheduled_meetings.new.add'),
-       new_room_scheduled_meeting_path(room),
-       class: "btn btn-primary"
+      new_room_scheduled_meeting_path(room),
+      method: :get,
+      class: "btn btn-primary"
       %>
     </div>
   <% end %>
@@ -16,16 +17,18 @@
   <% end %>
     <%=
     link_to t('scheduled_meetings.show.view_history'),
-     meetings_room_path(room),
-     class: "btn btn-light"
+    meetings_room_path(room),
+    method: :get,
+    class: "btn btn-light"
     %>
   </div>
 
-  <% if can_edit?(user, room) && spaces_configured? %>
+  <% if can_edit?(user, room) && !spaces_configured? %>
     <div id="view-reports" class="col-12 col-sm-12 col-md-4 col-lg-4">
       <%=
       link_to t('reports.view_reports'),
       room_reports_path(room),
+      method: :get,
       class: "btn btn-light"
       %>
     </div>

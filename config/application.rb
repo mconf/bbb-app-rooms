@@ -141,14 +141,15 @@ module BbbAppRooms
     config.meeting_participants_filename       = 'activities.txt'
     config.meeting_learning_dashboard_filename = 'learning_dashboard.json'
 
+    # Eduplay
+    config.eduplay_enabled           = Mconf::Env.fetch_boolean('EDUPLAY_ENABLED', false)
     config.eduplay_client_id         = Mconf::Env.fetch('MCONF_EDUPLAY_CLIENT_ID')
     config.eduplay_redirect_callback = Mconf::Env.fetch('MCONF_EDUPLAY_REDIRECT_CALLBACK')
     config.eduplay_service_url       = Mconf::Env.fetch('MCONF_EDUPLAY_SERVICE_URL')
     config.eduplay_client_secret     = Mconf::Env.fetch('MCONF_EDUPLAY_CLIENT_SECRET')
 
-
     # Filesender
-    config.filesender_enabled           = Mconf::Env.fetch_boolean('FILESENDER_ENABLED')
+    config.filesender_enabled           = Mconf::Env.fetch_boolean('FILESENDER_ENABLED', false)
     config.filesender_client_id         = Mconf::Env.fetch('MCONF_FILESENDER_CLIENT_ID')
     config.filesender_redirect_callback = Mconf::Env.fetch('MCONF_FILESENDER_REDIRECT_CALLBACK')
     config.filesender_service_url       = Mconf::Env.fetch('MCONF_FILESENDER_SERVICE_URL')

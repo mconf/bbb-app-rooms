@@ -143,7 +143,7 @@
     </div>
   </div>
   <div class="form-actions">
-    <%= link_to t('_all.cancel'), room_path(@room), class: "btn btn-light" %>
+    <%= link_to t('_all.cancel'), room_path(@room), class: "btn btn-light", method: :get %>
     <%= form.submit t('_all.schedule'), class: "btn btn-primary" %>
   </div>
 <% end %>
