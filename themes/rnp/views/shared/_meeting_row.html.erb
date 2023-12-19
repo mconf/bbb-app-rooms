@@ -111,20 +111,22 @@
 
             <% if can_edit?(user, room) %>
               <div class="dropdown-divider"></div>
-              <% eduplay_token = EduplayToken.find_by(user_uid: user.uid)%>
-              <% if eduplay_token.present? && eduplay_token.expires_at > Time.now + 30.minutes %>
-                <%= link_to eduplay_path(room, record_id: recording[:recordID]),
-                method: :post,
-                class: "dropdown-item rec-edit" do %>
-                  <%= icon_eduplay %>
-                  <%= t("meetings.recording.eduplay") %>
-                <% end %>
-              <% else %>
-                <%= link_to '#',
-                'data-url': Eduplay::API.authorize_path(recording[:recordID]),
-                class: "eduplay-login dropdown-item rec-edit" do %>
-                  <%= icon_eduplay %>
-                  <%= t("meetings.recording.eduplay") %>
+              <% if user.moderator?(Abilities.moderator_roles) && Rails.application.config.eduplay_enabled %>
+                <% eduplay_token = EduplayToken.find_by(user_uid: user.uid)%>
+                <% if eduplay_token.present? && eduplay_token.expires_at > Time.now + 30.minutes %>
+                  <%= link_to eduplay_path(room, record_id: recording[:recordID]),
+                  method: :post,
+                  class: "dropdown-item rec-edit" do %>
+                    <%= icon_eduplay %>
+                    <%= t("meetings.recording.eduplay") %>
+                  <% end %>
+                <% else %>
+                  <%= link_to '#',
+                  'data-url': Eduplay::API.authorize_path(recording[:recordID]),
+                  class: "eduplay-login dropdown-item rec-edit" do %>
+                    <%= icon_eduplay %>
+                    <%= t("meetings.recording.eduplay") %>
+                  <% end %>
                 <% end %>
               <% end %>
               <%# Filesender %>
