@@ -4,6 +4,12 @@ pt:
     clipboard:
       link_copied: "Link copiado para o clipboard!"
     schedule: "Agendar"
+    select2:
+      hint: "Digite para começar a buscar"
+      no_results: "Sem resultados encontrados"
+      searching: "Buscando"
+      space_or_comma: "Aperte Espaço ou digite uma vírgula para confirmar o e-mail"
+    send: "Enviar"
   helpers:
     distance_of_time_in_hours_and_minutes:
       hour:
@@ -50,14 +56,27 @@ pt:
       return: "< voltar"
     load: "Carregar mais conferências"
     meeting_data_download:
+      dashboard: "Painel de aprendizagem"
       download_notes: "Download das notas da reunião"
       download_participants: "Download da lista de participantes"
+      unavailable_dashboard: "Painel de aprendizagem indisponível"
+      unavailable_notes: "Notas da reunião indisponíveis"
+      unavailable_participants: "Lista de participante indisponível"
     recording:
       confirm:
         destroy: "Você tem certeza que deseja deletar esta gravação?"
         publish: "Você tem certeza que deseja tornar esta gravação visível?"
         unpublish: "Você tem certeza que deseja tornar esta gravação não visível?"
       destroy: "Deletar gravação"
+      eduplay: "Compartilhar gravação via Eduplay"
+      filesender:
+        description: "Com o FileSender@RNP você pode fazer o compartilhamento da gravação. Seus destinatários serão notificados por e-mail."
+        emails: "E-mail dos Destinatários"
+        message: "Mensagem (Opcional)"
+        sending: "Enviando arquivo para o FileSender"
+        share_via_filesender: "Compartilhar gravação via FileSender"
+        subject: "Assunto"
+        title: "FileSender@RNP"
       playback_link: "Copiar link de reprodução"
       playbacks:
         presentation: "Reproduzir"

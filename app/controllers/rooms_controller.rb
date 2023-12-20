@@ -2,6 +2,8 @@
 
 require 'user'
 require 'bbb_api'
+require './lib/mconf/eduplay'
+require './lib/mconf/filesender'
 
 class RoomsController < ApplicationController
   include ApplicationHelper
@@ -86,7 +88,8 @@ class RoomsController < ApplicationController
 
   # GET /rooms/:id/recording/:record_id/playback/:playback_type
   def recording_playback
-    recording = get_recordings(@room, recordID: params[:record_id]).first
+    # get_recordings returns [[{rec_hash}], boolean]
+    recording = get_recordings(@room, recordID: params[:record_id]).first.first
     playback = recording[:playbacks].find { |p| p[:type] == params[:playback_type] }
     playback_url = URI.parse(playback[:url])
     if Rails.application.config.playback_url_authentication
@@ -135,6 +138,71 @@ class RoomsController < ApplicationController
       redirect_args << { notice: notice }
     end
     redirect_to(*redirect_args)
+  end
+
+  def eduplay_upload
+    old_eduplay_token = EduplayToken.find_by(user_uid: @user.uid)
+    if params['access_token'].present?
+      if old_eduplay_token.nil?
+        EduplayToken.create!(user_uid: @user.uid, token: params['access_token'], expires_at: params['expires_at'])
+      else
+        old_eduplay_token.update(token: params['access_token'], expires_at: params['expires_at'])
+      end
+    else
+      if old_eduplay_token.nil?
+        flash[:notice] = t('default.eduplay.error')
+        redirect_to(meetings_room_path(@room, filter: params[:filter])) and return
+      end
+    end
+
+    flash[:notice] = t('default.eduplay.success')
+    UploadRecordingToEduplayJob.perform_later(@room, params['record_id'], @user.as_json.symbolize_keys)
+    redirect_to(meetings_room_path(@room, filter: params[:filter]))
+  end
+
+  # GET	/rooms/:id/recording/:record_id/filesender
+  def filesender
+    filesender_token = FilesenderToken.find_by(user_uid: @user.uid)
+    if filesender_token.nil? || filesender_token.expires_at < Time.now + 5
+      flash[:notice] = t('default.eduplay.error')
+      redirect_to(meetings_room_path(@room)) and return
+    end
+
+    recording = get_recordings(@room, recordID: params[:record_id]).first
+
+    render "rooms/filesender"
+  end
+
+  # POST /rooms/:id/recording/:record_id/filesender_upload
+  def filesender_upload
+    data = {
+      subject: params['subject'],
+      message: params['message'],
+      recipients: params['emails'].split(',').uniq
+    }
+
+    flash[:notice] = t('default.filesender.success')
+    UploadRecordingToFilesenderJob.perform_later(@room, params['record_id'], @user.as_json.symbolize_keys, data)
+    redirect_to(meetings_room_path(@room))
+  end
+
+  # POST /rooms/:id/recording/:record_id/filesender
+  def filesender_auth
+    old_filesender_token = FilesenderToken.find_by(user_uid: @user.uid)
+    if params['access_token'].present?
+      if old_filesender_token.nil?
+        FilesenderToken.create!(user_uid: @user.uid, token: params['access_token'], expires_at: params['expires_at'])
+      else
+        old_filesender_token.update(token: params['access_token'], expires_at: params['expires_at'])
+      end
+    else
+      if old_filesender_token.nil?
+        flash[:notice] = t('default.filesender.error')
+        redirect_to(meetings_room_path(@room, filter: params[:filter])) and return
+      end
+    end
+
+    redirect_to(filesender_path(@room, record_id: params['record_id']))
   end
 
   helper_method :meetings, :recording_date, :recording_length

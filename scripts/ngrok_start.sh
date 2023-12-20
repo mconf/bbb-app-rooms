@@ -28,15 +28,7 @@ port0="3000"
 port1="3001"
 
 start_ngrok() {
-  ngrok_version=$(ngrok --version | grep -Po '(?<= )([0-9])(?=\.)')
-
-  if [ "$ngrok_version" = "3" ];
-  then
-    ngrok_log="$HOME/.config/ngrok/ngrok.log"
-  else
-    ngrok_log="$HOME/.ngrok2/ngrok.log"
-  fi
-
+  ngrok_log="$HOME/.config/ngrok/ngrok.log"
   ngrok_is_running=false
   if [ $(ps -e | grep -Po "\s+ngrok\s*$" | wc -l) -gt 0 ];
   then

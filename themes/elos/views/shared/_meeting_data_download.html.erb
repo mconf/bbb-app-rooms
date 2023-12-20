@@ -1,21 +1,35 @@
 <% if @notes_exist %>
-  <%= link_to room_scheduled_meeting_internal_download_notes_path(@room, @meeting[:meetingID], @meeting[:internalMeetingID]),
-    target: '_blank', class: "dropdown-item rec-edit" do %>
+  <%= button_to room_scheduled_meeting_internal_download_notes_path(@room, @meeting[:meetingID], @meeting[:internalMeetingID]),
+    method: :get, target: '_blank', class: "dropdown-item rec-edit" do %>
+    <%= icon_download %>
     <%= t('meetings.meeting_data_download.download_notes') %>
   <% end %>
 <% else %>
   <%= button_to room_scheduled_meetings_path(@room), disabled: true, class: "dropdown-item rec-edit" do %>
-    <%= t('meetings.meeting_data_download.download_notes') %>
+    <%= t('meetings.meeting_data_download.unavailable_notes') %>
   <% end %>
 <% end %>
 
 <% if @participants_exist %>
-  <%= link_to room_scheduled_meeting_internal_download_participants_path(@room, @meeting[:meetingID], @meeting[:internalMeetingID]),
-    target: '_blank', class: "dropdown-item rec-edit" do %>
+  <%= button_to room_scheduled_meeting_internal_download_participants_path(@room, @meeting[:meetingID], @meeting[:internalMeetingID]),
+    method: :get, target: '_blank', class: "dropdown-item rec-edit" do %>
+    <%= icon_download %>
     <%= t('meetings.meeting_data_download.download_participants') %>
   <% end %>
 <% else %>
   <%= button_to room_scheduled_meetings_path(@room), disabled: true, class: "dropdown-item rec-edit" do %>
-    <%= t('meetings.meeting_data_download.download_participants') %>
+    <%= t('meetings.meeting_data_download.unavailable_participants') %>
+  <% end %>
+<% end %>
+
+<% if @dashboard_exist && Rails.configuration.meeting_learning_dashboard_url.present? %>
+  <%= button_to room_scheduled_meeting_internal_learning_dashboard_path(@room, @meeting[:meetingID], @meeting[:internalMeetingID]),
+    method: :get, target: '_blank', class: "dropdown-item rec-edit" do %>
+    <%= icon_learning_dashboard %>
+    <%= t('meetings.meeting_data_download.dashboard') %>
+  <% end %>
+<% else %>
+  <%= button_to room_scheduled_meetings_path(@room), disabled: true, class: "dropdown-item rec-edit" do %>
+    <%= t('meetings.meeting_data_download.unavailable_dashboard') %>
   <% end %>
 <% end %>

@@ -44,6 +44,10 @@ gem 'bootsnap', '>= 1.1.0', require: false
 
 gem 'rails_admin', '~> 2.0'
 
+gem 'i18n-js', '~> 3.0.0.rc12'
+
+gem 'awesome_print', require: 'ap'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
@@ -90,6 +94,7 @@ gem 'font-awesome-rails'
 gem 'jquery-fileupload-rails'
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
+gem 'faraday'
 
 # BigBlueButton API
 gem 'bigbluebutton-api-ruby', git: 'https://github.com/mconf/bigbluebutton-api-ruby.git', tag: 'v1.9.0-mconf'
@@ -134,3 +139,6 @@ gem 'i18n-js', '~> 3.9'
 
 # Asynchronous partial loading with AJAX
 gem 'render_async', '~> 2.1'
+
+# Select2
+gem "select2-rails"

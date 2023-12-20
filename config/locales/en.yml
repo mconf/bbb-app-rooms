@@ -50,6 +50,12 @@ en:
     bigbluebutton:
       moderator:      "Moderator"
       viewer:         "Viewer"
+    eduplay:
+      success: "Your video is being uploaded to Eduplay"
+      error:   "An error has occurred. Please try again"
+    filesender:
+      success: "Your video is being uploaded to Filesender"
+      error:   "An error has occurred. Please try again"
     rooms:
       cancel:         "Cancel"
       created:        "Room was successfully created"
@@ -215,10 +221,12 @@ en:
         suggestion:    "The scheduled meeting was not found"
         explanation: "It might have been removed by the session creator."
         status_code: "404"
+    meeting:
+      learning_dashboard_url_missing: "Error: Learning dashboard URL not configured"
   bucket_api:
     error: Error contacting the reports storage server. Please try again later or contact support.
-    credentials_missing: "Error: Bucket credentials missing from the .env file."
-    access_data_missing: "Error: Bucket access data missing."
+    access_data_missing: "Error: Bucket access data missing"
+    credentials_missing: "Error: Bucket credentials missing from the .env file"
   views:
     pagination:
       first: "&laquo;"

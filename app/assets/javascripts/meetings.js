@@ -18,6 +18,7 @@ const $DOCUMENT = $(document);
 let isFetching = false;
 let hasMoreToFetch = true;
 let rendered = false;
+let loadedMeetingId = null;
 
 // Max time to wait for ajax response
 let ajaxTimeout = 5000;
@@ -222,9 +223,85 @@ let hideAll = () => {
   $tableFootnote.hide();
 };
 
+var authWindow;
+function openAuthWindow(url, service) {
+  authWindow = window.open(url, service, 'width=800,height=600');
+}
+
+window.addEventListener('message', function(event) {
+  // Verify the origin of the message
+  if (event.source === authWindow) {
+    authWindow.close()
+    const room_path = $("#room_path")[0].value
+    $.ajax({
+      url: room_path + '/recording/' + event.data['record_id'] + '/' + event.data['service_name'],
+      type: "POST",
+      data: { access_token: event.data['access_token'], expires_at: event.data['expires_at'],  }
+    });
+  }
+});
+/* Request the bucket files partial to the server.
+*/
+let doAjaxBucket = async (check_bucket_endpoint) => {
+  return $.ajax({
+    url: check_bucket_endpoint,
+    type: "GET",
+    timeout: ajaxTimeout
+  });
+}
+
+/* Fetch the files from bucket and process the response
+ *
+ * In case of success, it will display the received partial.
+ * In case of timeout, the timeout value will increase in 1 second.
+*/
+let checkBucketFiles = async(meeting_id, check_bucket_endpoint) => {
+  if (loadedMeetingId != meeting_id) {
+    try {
+      let response = await doAjaxBucket(check_bucket_endpoint);
+      response = $(response);
+  
+      loadedMeetingId = meeting_id;
+      let buttons = response.filter('.button_to')
+      showDropdownItems(buttons, meeting_id);
+    } catch(err) {
+      if (err.statusText == 'timeout') {
+        ajaxTimeout += 1000;
+      } else {
+        console.error(`Unexpected error: ${err}`);
+      }
+    }
+  }
+};
+
 let showMeetings = (rows) => {
   for(let row of rows) {
     $meetingsTable.append(row)
+  }
+
+  $('.eduplay-login').on('click', function(e) {
+    e.preventDefault()
+    openAuthWindow($(this).data('url'), 'Eduplay');
+  });
+
+  $('.filesender-login').on('click', function(e) {
+    e.preventDefault()
+    openAuthWindow($(this).data('url'), 'Filesender');
+  });
+  $('.dropdown-opts-link').on('click', function(e) {
+    checkBucketFiles(this.getAttribute('meeting-id'), this.getAttribute('check-bucket-files-endpoint'));
+  });
+};
+
+let showDropdownItems = (buttons, meeting_id) => {
+  // Hide the loading items animation
+  $(`div[aria-labelledby="dropdown-opts-${meeting_id}"] .dropdown-item-loading`).hide();
+  // Remove only the items appended previously
+  $(`div[aria-labelledby="dropdown-opts-${meeting_id}"] .appended-item`).remove();
+
+  for (let button of buttons) {
+    $(button).addClass('appended-item rec-edit');
+    $(`div[aria-labelledby="dropdown-opts-${meeting_id}"]`).append(button);
   }
 };
 

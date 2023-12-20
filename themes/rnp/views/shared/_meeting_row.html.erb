@@ -85,36 +85,80 @@
     <td class="col-2 col-md-1 td-dropdown-opts">
       <% if recording[:state] != 'processing' && recording[:published] || can_edit?(user, room) %>
         <div class="dropdown dropdown-opts">
-          <a href="#" class="dropdown-toggle d-flex text-decoration-none" id="dropdown-opts-<%= recording[:recordID] %>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <a href="#" class="dropdown-toggle d-flex text-decoration-none dropdown-opts-link"
+            meeting-id="<%= meeting[:meetingID] %>" 
+            check-bucket-files-endpoint="<%= room_scheduled_meeting_internal_check_bucket_files_path(@room, meeting[:meetingID], meeting[:internalMeetingID]) %>"
+            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <%= icon_options_dots %>
           </a>
-          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown-opts-<%= recording[:recordID] %>">
+          <div class="dropdown-menu dropdown-menu-right dropdown-items" aria-labelledby="dropdown-opts-<%= meeting[:meetingID] %>">
 
             <%# Copy playback link %>
             <% if recording[:published] %>
               <% playback = recording[:playbacks].find { |p| p[:type] == 'presentation' } %>
               <% if playback.present? %>
                 <%=
-                link_to t('meetings.recording.playback_link'), '#',
+                link_to '#',
                 data: {
                   'clipboard-text': playback_url(room, recording[:recordID], playback),
                   turbolinks: false,
                   'toast-id': '#playback-link-copied-toast'
                 },
-                class: "dropdown-item copy-to-clipboard"
+                class: "dropdown-item copy-to-clipboard" do
                 %>
+                  <%= icon_content_copy %>
+                  <%= t('meetings.recording.playback_link') %>
+                <% end %>
               <% end %>
             <% end %>
 
             <% if can_edit?(user, room) %>
+              <div class="dropdown-divider"></div>
+              <% if user.moderator?(Abilities.moderator_roles) && Rails.application.config.eduplay_enabled %>
+                <% eduplay_token = EduplayToken.find_by(user_uid: user.uid)%>
+                <% if eduplay_token.present? && eduplay_token.expires_at > Time.now + 30.minutes %>
+                  <%= link_to eduplay_path(room, record_id: recording[:recordID]),
+                  method: :post,
+                  class: "dropdown-item rec-edit" do %>
+                    <%= icon_eduplay %>
+                    <%= t("meetings.recording.eduplay") %>
+                  <% end %>
+                <% else %>
+                  <%= link_to '#',
+                  'data-url': Eduplay::API.authorize_path(recording[:recordID]),
+                  class: "eduplay-login dropdown-item rec-edit" do %>
+                    <%= icon_eduplay %>
+                    <%= t("meetings.recording.eduplay") %>
+                  <% end %>
+                <% end %>
+              <% end %>
+              <%# Filesender %>
+              <% if user.moderator?(Abilities.moderator_roles) && Rails.application.config.filesender_enabled %>
+                <% filesender_token = FilesenderToken.find_by(user_uid: user.uid)%>
+                <% if filesender_token.present? && filesender_token.expires_at > Time.now + 30.minutes %>
+                  <%= link_to filesender_path(room, record_id: recording[:recordID]),
+                  method: :get,
+                  class:"dropdown-item" do %>
+                    <%= icon_filesender %>
+                    <%= t("meetings.recording.filesender.share_via_filesender") %>
+                  <% end %>
+                <% else %>
+                  <%= link_to '#',
+                  'data-url': Filesender::API.authorize_path(recording[:recordID]),
+                  class: "filesender-login dropdown-item rec-edit" do %>
+                    <%= icon_eduplay %>
+                    <%= t("meetings.recording.filesender.share_via_filesender") %>
+                  <% end %>
+                <% end %>
+              <% end %>
               <%# Unpublish recording %>
               <% if recording[:published] %>
-                <div class="dropdown-divider"></div>
                 <%= link_to recording_unpublish_path(room, record_id: recording[:recordID]),
                 method: :post,
                 data: { confirm: t('meetings.recording.confirm.unpublish') },
                 class: "dropdown-item rec-edit" do %>
-                  <%= t("meetings.recording.unpublish") %>
+                  <%= icon_hide_recording %>
+                  <%= t("meetings.recording.unpublish")%>
                 <% end %>
               <%# Publish recording %>
               <% else %>
@@ -122,6 +166,7 @@
                 method: :post,
                 data: { confirm: t('meetings.recording.confirm.publish') },
                 class: "dropdown-item rec-edit" do %>
+                  <%= icon_show_recording %>
                   <%= t("meetings.recording.publish") %>
                 <% end %>
               <% end %>
@@ -130,15 +175,17 @@
               method: :post,
               data: { confirm: t('meetings.recording.confirm.destroy') },
               class: "dropdown-item rec-edit" do %>
+                <%= icon_delete %>
                 <%= t("meetings.recording.destroy") %>
               <% end %>
 
-              <%# Download notes and participants %>
+              <%# Download notes and participants, access learning dashboard %>
               <div class="dropdown-divider"></div>
-              <%= render_async room_scheduled_meeting_internal_check_bucket_files_path(room, meeting[:meetingID], meeting[:internalMeetingID]) do %>
+              <div class="dropdown-item-loading">
                 <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_notes') %>
                 <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_participants') %>
-              <% end %>
+                <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.dashboard') %>
+              </div>
             <% end %>
           </div>
         </div>
@@ -153,16 +200,18 @@
     <td class="col-md-1 td-dropdown-opts">
       <% if can_edit?(user, room) %>
         <div class="dropdown dropdown-opts">
-          <a href="#" class="dropdown-toggle d-flex text-decoration-none" id="dropdown-opts-<%= meeting[:meetingID] %>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <a href="#" class="dropdown-toggle d-flex text-decoration-none dropdown-opts-link"
+            meeting-id="<%= meeting[:meetingID] %>"
+            check-bucket-files-endpoint="<%= room_scheduled_meeting_internal_check_bucket_files_path(@room, meeting[:meetingID], meeting[:internalMeetingID]) %>"
+            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <%= icon_options_dots %>
           </a>
-          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown-opts-<%= meeting[:meetingID] %>">
-
-          <%# Download notes and participants %>
-          <%= render_async room_scheduled_meeting_internal_check_bucket_files_path(room, meeting[:meetingID], meeting[:internalMeetingID]) do %>
-            <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_notes') %>
-            <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_participants') %>
-          <% end %>
+          <div class="dropdown-menu dropdown-menu-right dropdown-items" aria-labelledby="dropdown-opts-<%= meeting[:meetingID] %>">
+            <div class="dropdown-item-loading">
+              <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_notes') %>
+              <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_participants') %>
+              <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.dashboard') %>
+            </div>
           </div>
         </div>
       <% end %>

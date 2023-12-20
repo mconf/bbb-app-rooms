@@ -13,7 +13,7 @@ Bundler.require(*Rails.groups)
 
 module BbbAppRooms
   class Application < Rails::Application
-    VERSION = "0.9.0"
+    VERSION = "0.9.1"
 
     config.eager_load_paths << Rails.root.join('lib')
 
@@ -136,7 +136,26 @@ module BbbAppRooms
     config.meetings_bucket_name       = Mconf::Env.fetch('MCONF_MEETINGS_BUCKET_NAME')
     config.meetings_bucket_expires_in = Mconf::Env.fetch_int('MCONF_MEETINGS_BUCKET_EXPIRES_IN', 300)
 
-    config.meeting_notes_filename        = 'notes.txt'
-    config.meeting_participants_filename = 'activities.txt'
+    config.meeting_learning_dashboard_url      = Mconf::Env.fetch('MCONF_LEARNING_DASHBOARD_URL')
+    config.meeting_notes_filename              = 'notes.txt'
+    config.meeting_participants_filename       = 'activities.txt'
+    config.meeting_learning_dashboard_filename = 'learning_dashboard.json'
+
+    # Eduplay
+    config.eduplay_enabled           = Mconf::Env.fetch_boolean('EDUPLAY_ENABLED', false)
+    config.eduplay_client_id         = Mconf::Env.fetch('MCONF_EDUPLAY_CLIENT_ID')
+    config.eduplay_redirect_callback = Mconf::Env.fetch('MCONF_EDUPLAY_REDIRECT_CALLBACK')
+    config.eduplay_service_url       = Mconf::Env.fetch('MCONF_EDUPLAY_SERVICE_URL')
+    config.eduplay_client_secret     = Mconf::Env.fetch('MCONF_EDUPLAY_CLIENT_SECRET')
+
+    # Filesender
+    config.filesender_enabled           = Mconf::Env.fetch_boolean('FILESENDER_ENABLED', false)
+    config.filesender_client_id         = Mconf::Env.fetch('MCONF_FILESENDER_CLIENT_ID')
+    config.filesender_redirect_callback = Mconf::Env.fetch('MCONF_FILESENDER_REDIRECT_CALLBACK')
+    config.filesender_service_url       = Mconf::Env.fetch('MCONF_FILESENDER_SERVICE_URL')
+    config.filesender_client_secret     = Mconf::Env.fetch('MCONF_FILESENDER_CLIENT_SECRET')
+
+    # RNP CHAT
+    config.rnp_chat_id = Mconf::Env.fetch('RNP_CHAT_ID', '')
   end
 end
