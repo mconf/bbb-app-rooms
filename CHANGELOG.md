@@ -98,6 +98,30 @@
 [#68]: https://github.com/mconf/bbb-app-rooms/pull/68
 [#46]: https://github.com/mconf/bbb-app-rooms/pull/46
 
+# 0.8.5 - 2023-12-11
+### Fixed
+- [LTI-140] | Correction on the `recordings` page when there is no `presentation_video`.
+  - PRs: [#79]
+
+<!-- Cards -->
+[LTI-140]: https://www.notion.so/mconf/Fix-recordings-page-LTI-ConfWeb-016131edc43240f587d804b1ec302aea?pvs=4
+
+<!-- PRs -->
+[#79]: https://github.com/mconf/bbb-app-rooms/pull/79
+
+
+## 0.8.4 - 2023-11-30
+### Added
+- [LTI-134] | Support for scoping rooms by Moodle activity. Switched on via the custom parameter
+  `enable_groups_scoping=true`, configured on the LMS.
+  - PRs: [#76]
+
+<!-- Cards -->
+[LTI-134]: https://www.notion.so/mconf/Suporte-a-grupos-do-Moodle-no-LTI-0b27302d8b7c49e6a35e87c4f554113b?pvs=4
+
+<!-- PRs -->
+[#76]: https://github.com/mconf/bbb-app-rooms/pull/76
+
 ## 0.8.3 - 2023-04-04
 ### Added
 - [LTI-125] | Added `Spanish` locale support.
@@ -431,6 +455,8 @@ Migration notes:
 <!-- Compares -->
 [0.9.1]: https://github.com/mconf/bbb-app-rooms/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.3...v0.9.0
+[0.8.5]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.4...v0.8.5
+[0.8.4]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.3...v0.8.4
 [0.8.3]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.2...v0.8.3
 [0.8.2]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.1...v0.8.2
 [0.8.1]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.0...v0.8.1
