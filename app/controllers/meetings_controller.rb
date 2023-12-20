@@ -8,7 +8,7 @@ class MeetingsController < ApplicationController
 
   before_action :find_room
   before_action :get_scheduled_meeting_info
-  before_action :find_user, only: :check_bucket_files
+  before_action :find_user, only: [:check_bucket_files, :download_notes, :download_participants, :learning_dashboard]
   before_action :check_bucket_credentials, only: [:download_notes, :download_participants, :learning_dashboard]
   before_action :check_bucket_access_data, only: [:download_notes, :download_participants, :learning_dashboard]
   before_action only: :download_notes do
