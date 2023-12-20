@@ -60,12 +60,25 @@ class AppLaunch < ApplicationRecord
   # might change the rooms that are associated with a given course/lms/launch.
   def resource_handler
     handler = Digest::SHA1.hexdigest(
-      'rooms' + self.consumer_id + self.context_id
+      'rooms' + self.consumer_id + self.context_id + self.custom_groups
     ).to_s
-    Rails.logger.info "Resource handler=#{handler} calculated based on " \
-                      "consumer_id=#{self.consumer_id}, context_id=#{self.context_id} " \
-                      "oauth_consumer_key=#{self.oauth_consumer_key}"
+    log_str = "Resource handler=#{handler} calculated based on " \
+              "consumer_id=#{self.consumer_id}, context_id=#{self.context_id}, " \
+              "oauth_consumer_key=#{self.oauth_consumer_key}"
+    log_str += ", resource_link_id=#{self.custom_groups}" unless self.custom_groups.blank?
+    Rails.logger.info log_str
+
     handler
+  end
+
+  def custom_groups
+    resource_id = self.params['resource_link_id']
+    group_separation = self.params['custom_params']['custom_enable_groups_scoping']
+
+    if group_separation == 'true' && resource_id.present?
+      return resource_id.to_s
+    end
+    return ''
   end
 
   # The LTI attribute that defines which resource it is
