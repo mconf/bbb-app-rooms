@@ -6,7 +6,6 @@ require 'json'
 
 module Filesender
 
-  # ???
   def flatten(a, p = nil)
     o = []
     a.sort.to_h.each do |k, v|

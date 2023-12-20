@@ -100,6 +100,18 @@
         </div>
       <% end %>
 
+      <% if @room.can_create_moodle_calendar_event %>
+      <div class="form-group">
+        <div class="form-check">
+          <%= form.check_box :create_moodle_calendar_event, class: "form-check-input" %>
+          <%= form.label :create_moodle_calendar_event, class: "form-check-label" do %>
+            <%= t('helpers.label.scheduled_meeting.create_moodle_calendar_event') %>
+            <i class="icon material-icons icon-label-hint" data-toggle="tooltip" title="<%= t('helpers.hint.create_moodle_calendar_event') %>">help</i>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
       <% if @room.allow_all_moderators %>
         <div class="form-group">
           <div class="form-check">

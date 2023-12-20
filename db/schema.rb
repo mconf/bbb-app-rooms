@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_12_11_185056) do
+ActiveRecord::Schema.define(version: 2023_12_19_131720) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -88,6 +88,15 @@ ActiveRecord::Schema.define(version: 2023_12_11_185056) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "moodle_tokens", force: :cascade do |t|
+    t.bigint "consumer_config_id"
+    t.string "token"
+    t.string "url"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["consumer_config_id"], name: "index_moodle_tokens_on_consumer_config_id"
+  end
+
   create_table "rooms", force: :cascade do |t|
     t.string "name"
     t.string "description"
@@ -133,4 +142,5 @@ ActiveRecord::Schema.define(version: 2023_12_11_185056) do
   add_foreign_key "brightspace_calendar_events", "rooms"
   add_foreign_key "consumer_config_brightspace_oauths", "consumer_configs"
   add_foreign_key "consumer_config_servers", "consumer_configs"
+  add_foreign_key "moodle_tokens", "consumer_configs"
 end
