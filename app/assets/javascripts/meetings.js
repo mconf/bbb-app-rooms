@@ -263,7 +263,7 @@ let checkBucketFiles = async(meeting_id, check_bucket_endpoint) => {
   
       loadedMeetingId = meeting_id;
       let buttons = response.filter('.button_to')
-      showDropdownItems(buttons);
+      showDropdownItems(buttons, meeting_id);
     } catch(err) {
       if (err.statusText == 'timeout') {
         ajaxTimeout += 1000;
@@ -293,15 +293,16 @@ let showMeetings = (rows) => {
   });
 };
 
-let showDropdownItems = (buttons) => {
+let showDropdownItems = (buttons, meeting_id) => {
   // Hide the loading items animation
-  $('.dropdown-item-loading').hide();
+  console.log(meeting_id);
+  $(`div[aria-labelledby="dropdown-opts-${meeting_id}"] .dropdown-item-loading`).hide();
   // Remove only the items appended previously
-  $('.dropdown-items .appended-item').remove();
+  $(`div[aria-labelledby="dropdown-opts-${meeting_id}"] .appended-item`).remove();
 
   for (let button of buttons) {
     $(button).addClass('appended-item rec-edit');
-    $('.dropdown-items').append(button);
+    $(`div[aria-labelledby="dropdown-opts-${meeting_id}"]`).append(button);
   }
 };
 

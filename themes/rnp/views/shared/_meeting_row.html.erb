@@ -91,7 +91,7 @@
             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <%= icon_options_dots %>
           </a>
-          <div class="dropdown-menu dropdown-menu-right dropdown-items" aria-labelledby="dropdown-opts-<%= recording[:recordID] %>">
+          <div class="dropdown-menu dropdown-menu-right dropdown-items" aria-labelledby="dropdown-opts-<%= meeting[:meetingID] %>">
 
             <%# Copy playback link %>
             <% if recording[:published] %>
@@ -201,7 +201,7 @@
       <% if can_edit?(user, room) %>
         <div class="dropdown dropdown-opts">
           <a href="#" class="dropdown-toggle d-flex text-decoration-none dropdown-opts-link"
-            meeting-id="<%= meeting[:meetingID] %>" 
+            meeting-id="<%= meeting[:meetingID] %>"
             check-bucket-files-endpoint="<%= room_scheduled_meeting_internal_check_bucket_files_path(@room, meeting[:meetingID], meeting[:internalMeetingID]) %>"
             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <%= icon_options_dots %>
