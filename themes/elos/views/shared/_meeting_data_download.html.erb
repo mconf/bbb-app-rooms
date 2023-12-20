@@ -27,6 +27,6 @@
   <% end %>
 <% else %>
   <%= button_to room_scheduled_meetings_path(@room), disabled: true, class: "dropdown-item rec-edit" do %>
-    <%= t('meetings.meeting_data_download.dashboard') %>
+    <%= t('meetings.meeting_data_download.unavailable_dashboard') %>
   <% end %>
 <% end %>
