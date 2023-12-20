@@ -53,6 +53,9 @@ pt:
       dashboard: "Painel de aprendizagem"
       download_notes: "Download das notas da reunião"
       download_participants: "Download da lista de participantes"
+      unavailable_dashboard: "Painel de aprendizagem indisponível"
+      unavailable_notes: "Notas da reunião indisponíveis"
+      unavailable_participants: "Lista de participante indisponível"
     recording:
       confirm:
         destroy: "Você tem certeza que deseja deletar esta gravação?"

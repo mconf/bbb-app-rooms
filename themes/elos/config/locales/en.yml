@@ -53,6 +53,9 @@ en:
       dashboard: "Learning dashboard"
       download_notes: "Download meeting's notes"
       download_participants: "Download participants list"
+      unavailable_dashboard: "Unavailable learning dashboard"
+      unavailable_notes: "Unavailable meeting's notes"
+      unavailable_participants: "Unavailable participants list"
     recording:
       confirm:
         destroy: "Are you sure you want to delete this recording?"

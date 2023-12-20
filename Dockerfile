@@ -37,7 +37,7 @@ RUN bundle config set path ${BUNDLE_PATH}
 RUN bundle install --jobs 4
 
 RUN bundle update --bundler 2.1.4
-RUN gem update --system
+RUN gem update --system 3.4.22
 
 COPY . $APP_HOME
 

@@ -88,7 +88,8 @@ class RoomsController < ApplicationController
 
   # GET /rooms/:id/recording/:record_id/playback/:playback_type
   def recording_playback
-    recording = get_recordings(@room, recordID: params[:record_id]).first
+    # get_recordings returns [[{rec_hash}], boolean]
+    recording = get_recordings(@room, recordID: params[:record_id]).first.first
     playback = recording[:playbacks].find { |p| p[:type] == params[:playback_type] }
     playback_url = URI.parse(playback[:url])
     if Rails.application.config.playback_url_authentication
