@@ -154,5 +154,8 @@ module BbbAppRooms
     config.filesender_redirect_callback = Mconf::Env.fetch('MCONF_FILESENDER_REDIRECT_CALLBACK')
     config.filesender_service_url       = Mconf::Env.fetch('MCONF_FILESENDER_SERVICE_URL')
     config.filesender_client_secret     = Mconf::Env.fetch('MCONF_FILESENDER_CLIENT_SECRET')
+
+    # RNP CHAT
+    config.rnp_chat_id = Mconf::Env.fetch('RNP_CHAT_ID', '')
   end
 end
