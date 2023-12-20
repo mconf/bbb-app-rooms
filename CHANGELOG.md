@@ -1,11 +1,26 @@
 # Change Log
 
 ## [Unreleased]
-[Unreleased]: https://github.com/mconf/bbb-app-rooms/compare/v0.9.0...master-elos
+[Unreleased]: https://github.com/mconf/bbb-app-rooms/compare/v0.9.1...master-elos
+
+## 0.9.1 - 2023-12-20
+### Changed
+- [LTI-136] | History page:
+  - Load meeting data (participants and notes) links only when the dropdown is opened, via XHR,
+  to reduce the number of API calls;
+  - Make the UI more clear when meeting data links are disabled;
+  - Meeting data links can only be opened by logged in users.
+  - PRs: [#81]
+
+<!-- Cards -->
+[LTI-136]: https://www.notion.so/mconf/Fixes-vers-o-0-9-0-Rooms-62b177893e4b4615b3e56e3495e83e5d?pvs=4
+
+<!-- PRs -->
+[#81]: https://github.com/mconf/bbb-app-rooms/pull/81
 
 ## 0.9.0 - 2023-04-04
 ### Added
-- [LTI-5] | Added new getting to recordings with paginate. Now get 25 recordings each page, 
+- [LTI-5] | Added new getting to recordings with paginate. Now get 25 recordings each page,
   the number of recordings per page can be set by `RECORDINGS_PER_PAGE` env var.
   - PRs: [#38]
 - [LTI-72] | Added `participants` and `notes` from meetings. New integration made with Bucket.
@@ -23,7 +38,7 @@
 - [ELOSP-700] | Added new error pages.
   - PRs: [#46]
 ### Changed
-- [LTI-23] | Changed history page, from recordings list to meetings list. 
+- [LTI-23] | Changed history page, from recordings list to meetings list.
   if there was any recording in the meeting, it will be added in.
   - PRs: [#50]
 - [LTI-46] | Changed logic item(`app_launches`) reduction to background with workers.
@@ -414,6 +429,7 @@ Migration notes:
 [#52]: https://github.com/mconf/bbb-app-rooms/pull/52
 
 <!-- Compares -->
+[0.9.1]: https://github.com/mconf/bbb-app-rooms/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.3...v0.9.0
 [0.8.3]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.2...v0.8.3
 [0.8.2]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.1...v0.8.2
