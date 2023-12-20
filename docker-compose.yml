@@ -62,6 +62,31 @@ services:
       - prod_exporter
       - rooms_redis
 
+  test:
+    container_name: rooms_test
+    image: rooms_test:test
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        RAILS_ENV: test
+    ports:
+      - '3001:3000'
+    env_file:
+      - ./.env
+      - ./.env.test
+    stdin_open: true
+    tty: true
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:password@postgres:5433/lti_rooms}
+      RAILS_ENV: test
+    volumes:
+      - .:/usr/src/app
+      - bundle-volume:/usr/src/bundle
+    links:
+      - postgres
+      - rooms_test_redis
+
   prod_exporter:
     container_name: rooms_prod_exporter
     image: rooms_app_prod:prod
@@ -91,6 +116,13 @@ services:
 
   rooms_redis:
     container_name: rooms_dev_redis
+    image: redis:3.2
+    expose:
+      - "6379"
+    command: redis-server --requirepass "BCsy8zMwZay669ii"
+
+  rooms_test_redis:
+    container_name: rooms_test_redis
     image: redis:3.2
     expose:
       - "6379"

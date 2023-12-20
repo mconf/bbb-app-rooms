@@ -90,6 +90,10 @@ en:
       destroy:
         confirmation: "Are you sure you want to remove this scheduled session?"
       destroyed:      "The scheduled session was removed"
+      distance_in_words:
+        x_participants:
+          one: "1 person in the videoconference"
+          other: "%{count} people in the videoconference"
       durations:
         5m: "5 minutes"
         10m: "10 minutes"
@@ -110,11 +114,16 @@ en:
       edit:           "Edit"
       error:
         invalid_start_at: "Invalid start date or time"
+        simultaneousMeetingsLimitReachedForSecret: "Maximum limit of simultaneous meetings reached"
+        simultaneousMeetingsLimitReachedForInstitution: "Maximum limit of simultaneous meetings of the institution reached"
+        simultaneousParticipantsLimitReachedForSecret: "Maximum limit of simultaneous participants reached"
       external:
         ended:        "This session has already ended."
         first_name:   "First name"
         join:         "Join"
         last_name:    "Last name"
+        running:      "Started %{duration} ago"
+        not_started:  "This session has not started yet"
       recording:      "Recording"
       repeat_options:
         none: "Doesn't repeat"
@@ -126,8 +135,12 @@ en:
         allmoderators: "All users will join as moderators"
       updated:        "The session schedule was updated"
       wait:
+        change_name: "Change name"
+        creating_session: "Your session is being created, please wait a few moments"
         message: "Hello <strong>%{name}</strong>, the session has not started yet. <br/> Please wait a few moments."
         message_auto: "Hello <strong>%{name}</strong>, your session is being created, please wait a few moments."
+        name_preview: "When the session starts you will join as"
+        not_started: "The session has not started yet"
       waitmoderator:  "Wait for moderator"
     session:
       retry:

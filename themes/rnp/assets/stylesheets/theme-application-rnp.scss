@@ -169,6 +169,18 @@ body.theme-rnp {
         color: var(--color-main);
       }
     }
+
+    .field_with_errors > input {
+      border-color: var(--color-error);
+    }
+
+    .error-description {
+      color: var(--color-error);
+      margin: 0;
+      font-size: large;
+      text-align: left;
+      white-space: nowrap;
+    }
   }
 
   .table-footnote {
@@ -472,21 +484,35 @@ body.theme-rnp {
   &[data-controller="rooms"][data-action="close"] {
     background-color: var(--color-black);
     width: auto;
-    margin: auto;
     text-align: center;
     font-family: var(--font-family);
 
+    h1 {
+      margin: 0;
+    }
+
+    h2 {
+      color: white;
+    }
+
     img {
-      width: 40vw;
-      margin: calc(10vw - 48px) 0 0 0;
+      margin: 3rem 0;
     }
 
     p {
       color: white;
-      font-size: 1.5vw;
-      line-height: 2.0vw;
-      margin: 1em auto;
-      max-width: 40vw;
+      margin: 0 auto;
+    }
+  }
+
+  &[data-controller="scheduled_meetings"][data-action="external"] {
+    h1, p {
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    img {
+      margin: 3rem 0;
     }
   }
 

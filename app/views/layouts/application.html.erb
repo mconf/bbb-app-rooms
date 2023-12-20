@@ -15,6 +15,7 @@
   </head>
 
   <body lang="<%= I18n.locale %>"
+        data-locale = "<%= I18n.locale %>"
         data-controller="<%= params[:controller] %>"
         data-action="<%= params[:action] %>"
         data-use-cable="<%= Rails.configuration.cable_enabled %>"

@@ -59,6 +59,10 @@ es:
       destroy:
         confirmation: "¿Está seguro de que desea eliminar esta programación?"
       destroyed:      "La programación fue eliminada"
+      distance_in_words:
+        x_participants:
+          one: "1 persona en la videoconferencia"
+          other: "%{count} personas en la videoconferencia"
       durations:
         5m: "5 minutos"
         10m: "10 minutos"
@@ -78,12 +82,17 @@ es:
         'Custom Duration': "Duración personalizada"
       edit:           "Editar"
       error:
-        invalid_start_at: "La fecha u hora de inicio no es válida"
+        invalid_start_at: "Fecha u hora de inicio inválida"
+        simultaneousMeetingsLimitReachedForSecret: "Límite máximo de reuniones simultáneas alcanzado"
+        simultaneousMeetingsLimitReachedForInstitution: "Límite máximo de reuniones simultáneas de la institución alcanzado"
+        simultaneousParticipantsLimitReachedForSecret: "Límite máximo de participantes simultáneos alcanzado"
       external:
         ended:        "Esta sesión ya terminó."
         first_name:   "Primer nombre"
         join:         "Entrar"
         last_name:    "Apellido"
+        not_started:  "La sesión aún no ha comenzado."
+        running:      "Comenzó hace %{duration}"
       recording:      "Grabación"
       repeat_options:
         none: "No repite"
@@ -95,8 +104,12 @@ es:
         allmoderators: "Todos los usuarios serán moderadores"
       updated:        "La programación ha sido actualizada"
       wait:
+        change_name: "Cambiar nombre"
+        creating_session: "Se está creando su sesión, por favor espere unos momentos"
         message: "Hola <strong>%{name}</strong>, la sesión aún no ha comenzado. </br> Espere unos minutos."
         message_auto: "Hola <strong>%{name}</strong>, se está creando su sesión, por favor espere unos momentos."
+        name_preview: "Cuando comience la sesión entrarás como"
+        not_started: "La sesión aún no ha comenzado"
       waitmoderator:  "Espera al moderador"
     session:
       retry:

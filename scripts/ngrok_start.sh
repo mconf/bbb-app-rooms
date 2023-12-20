@@ -5,6 +5,8 @@
 lti_broker_path=../bbb-lti-broker # ex: "$HOME/Projects/bbb-lti-broker"
 app_rooms_path=.  #     "$HOME/Projects/bbb-app-rooms"
 
+env="development"
+
 my_key="my-key"
 my_secret="my-secret"
 my_internal_key="my-internal-key"
@@ -86,10 +88,10 @@ update_ngrok_addresses() {
   if [ "${proceed,,}" = "y" ];
   then
     dc_file=$lti_broker_path/docker-compose.yml
-    docker-compose -f $dc_file run app bundle exec rake db:environment:set RAILS_ENV=development
-    docker-compose -f $dc_file run app bundle exec rake db:reset
-    docker-compose -f $dc_file run app bundle exec rake "db:keys:add[$my_key:$my_secret]"
-    docker-compose -f $dc_file run app bundle exec rake "db:apps:add[rooms,https://$address1/rooms/auth/bbbltibroker/callback,$my_internal_key,$my_internal_secret]"
+    docker-compose -f $dc_file run --rm app bundle exec rake db:environment:set RAILS_ENV=$env
+    docker-compose -f $dc_file run --rm app bundle exec rake db:reset
+    docker-compose -f $dc_file run --rm app bundle exec rake "db:keys:add[$my_key:$my_secret]"
+    docker-compose -f $dc_file run --rm app bundle exec rake "db:apps:add[rooms,https://$address1/rooms/auth/bbbltibroker/callback,$my_internal_key,$my_internal_secret]"
   else
     echo "exiting"
     exit 1

@@ -295,7 +295,6 @@ let showMeetings = (rows) => {
 
 let showDropdownItems = (buttons, meeting_id) => {
   // Hide the loading items animation
-  console.log(meeting_id);
   $(`div[aria-labelledby="dropdown-opts-${meeting_id}"] .dropdown-item-loading`).hide();
   // Remove only the items appended previously
   $(`div[aria-labelledby="dropdown-opts-${meeting_id}"] .appended-item`).remove();

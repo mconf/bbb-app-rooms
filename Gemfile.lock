@@ -6,10 +6,10 @@ GIT
 
 GIT
   remote: https://github.com/mconf/bigbluebutton-api-ruby.git
-  revision: f979243cdb7b753d77ba5a8c8b5db1aa5353250e
-  branch: master-mconf
+  revision: 5375e17d823ea760bfed2ca3f705226ac5a67f83
+  tag: v1.9.0-mconf
   specs:
-    bigbluebutton-api-ruby (1.8.0)
+    bigbluebutton-api-ruby (1.9.0.pre.mconf)
       childprocess (>= 1.0.1)
       ffi (>= 1.9.24)
       json (>= 1.8.6)
@@ -163,6 +163,13 @@ GEM
     et-orbi (1.2.6)
       tzinfo
     execjs (2.7.0)
+    factory_bot (6.2.0)
+      activesupport (>= 5.0.0)
+    factory_bot_rails (6.2.0)
+      factory_bot (~> 6.2.0)
+      railties (>= 5.0.0)
+    faker (2.19.0)
+      i18n (>= 1.6, < 2)
     faraday (1.0.1)
       multipart-post (>= 1.2, < 3)
     ffi (1.13.0)
@@ -363,6 +370,14 @@ GEM
     rspec-mocks (3.9.1)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.9.0)
+    rspec-rails (4.0.1)
+      actionpack (>= 4.2)
+      activesupport (>= 4.2)
+      railties (>= 4.2)
+      rspec-core (~> 3.9)
+      rspec-expectations (~> 3.9)
+      rspec-mocks (~> 3.9)
+      rspec-support (~> 3.9)
     rspec-support (3.9.3)
     rspec_junit_formatter (0.4.1)
       rspec-core (>= 2, < 4, != 2.12.0)
@@ -405,6 +420,8 @@ GEM
     selenium-webdriver (3.142.7)
       childprocess (>= 0.5, < 4.0)
       rubyzip (>= 1.2.2)
+    shoulda-matchers (4.5.1)
+      activesupport (>= 4.2.0)
     sinatra (2.1.0)
       mustermann (~> 1.0)
       rack (~> 2.2)
@@ -475,7 +492,9 @@ DEPENDENCIES
   capybara (>= 2.15, < 4.0)
   coffee-rails (~> 5.0)
   dotenv-rails
+  factory_bot_rails
   faraday
+  faker
   font-awesome-rails
   friendly_id (~> 5.4.0)
   i18n-js (~> 3.0.0.rc12)
@@ -503,12 +522,14 @@ DEPENDENCIES
   resque-scheduler
   rest-client
   rspec
+  rspec-rails (~> 4.0.0)
   rspec_junit_formatter
   rubocop (~> 0.79.0)
   rubocop-rails (~> 2.4.0)
   sass-rails (~> 5.0)
   select2-rails
   selenium-webdriver
+  shoulda-matchers (~> 4.0)
   spring
   spring-watcher-listen (~> 2.0.0)
   sqlite3 (~> 1.3)

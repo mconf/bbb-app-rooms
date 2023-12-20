@@ -125,10 +125,11 @@ class ScheduledMeeting < ApplicationRecord
     # set the duration + 1h if configured to do so in the consumer
     config = ConsumerConfig.select(:set_duration).find_by(key: self.room.consumer_key)
     opts[:duration] = duration_minutes + 60 if !config.blank? && config.set_duration
+    launch_params = AppLaunch.find_by(nonce: user.launch_nonce)
 
     # will be added as meta_bbb-*
     meta_bbb = {
-      origin: 'LTI',
+      origin: launch_params&.coc_launch? ? 'Portal COC' : 'LTI',
       'recording-name': self.name,
       'recording-description': self.description,
       'room-handler': self.room.handler,
@@ -136,7 +137,6 @@ class ScheduledMeeting < ApplicationRecord
     }
 
     # extra launch params, if we can found them
-    launch_params = AppLaunch.find_by(nonce: user.launch_nonce)
     if launch_params.present?
       meta_bbb.merge!(
         {

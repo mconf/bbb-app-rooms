@@ -98,14 +98,17 @@
               <% playback = recording[:playbacks].find { |p| p[:type] == 'presentation' } %>
               <% if playback.present? %>
                 <%=
-                link_to t('meetings.recording.playback_link'), '#',
+                link_to '#',
                 data: {
                   'clipboard-text': playback_url(room, recording[:recordID], playback),
                   turbolinks: false,
                   'toast-id': '#playback-link-copied-toast'
                 },
-                class: "dropdown-item copy-to-clipboard"
+                class: "dropdown-item copy-to-clipboard" do
                 %>
+                  <%= icon_content_copy %>
+                  <%= t('meetings.recording.playback_link') %>
+                <% end %>
               <% end %>
             <% end %>
 
@@ -117,6 +120,7 @@
                 method: :post,
                 data: { confirm: t('meetings.recording.confirm.unpublish') },
                 class: "dropdown-item rec-edit" do %>
+                  <%= icon_hide_recording %>
                   <%= t("meetings.recording.unpublish") %>
                 <% end %>
               <%# Publish recording %>
@@ -125,6 +129,7 @@
                 method: :post,
                 data: { confirm: t('meetings.recording.confirm.publish') },
                 class: "dropdown-item rec-edit" do %>
+                  <%= icon_show_recording %>
                   <%= t("meetings.recording.publish") %>
                 <% end %>
               <% end %>
@@ -133,6 +138,7 @@
               method: :post,
               data: { confirm: t('meetings.recording.confirm.destroy') },
               class: "dropdown-item rec-edit" do %>
+                <%= icon_delete %>
                 <%= t("meetings.recording.destroy") %>
               <% end %>
 

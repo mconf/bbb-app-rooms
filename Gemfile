@@ -52,10 +52,14 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'dotenv-rails'
+  gem 'factory_bot_rails'
+  gem 'faker'
   gem 'rspec'
   gem 'rspec_junit_formatter'
+  gem 'rspec-rails', '~> 4.0.0'
   gem 'rubocop', '~> 0.79.0', require: false
   gem 'rubocop-rails', '~> 2.4.0', require: false
+  gem 'shoulda-matchers', '~> 4.0'
 end
 
 group :development do
@@ -93,8 +97,7 @@ gem 'jquery-ui-rails'
 gem 'faraday'
 
 # BigBlueButton API
-# gem 'bigbluebutton-api-ruby', git: 'https://github.com/mconf/bigbluebutton-api-ruby.git', tag: 'v1.9.0-mconf-rc1'
-gem 'bigbluebutton-api-ruby', git: 'https://github.com/mconf/bigbluebutton-api-ruby.git', branch: 'master-mconf'
+gem 'bigbluebutton-api-ruby', git: 'https://github.com/mconf/bigbluebutton-api-ruby.git', tag: 'v1.9.0-mconf'
 
 # AWS S3 API (to access Spaces API)
 gem 'aws-sdk-s3', '~> 1'
@@ -130,6 +133,9 @@ gem 'browser'
 gem 'resque', require: 'resque/server'
 gem 'resque-scheduler', require: 'resque/scheduler/server'
 gem 'active_scheduler'
+
+# Return texts I18n in .js
+gem 'i18n-js', '~> 3.9'
 
 # Asynchronous partial loading with AJAX
 gem 'render_async', '~> 2.1'

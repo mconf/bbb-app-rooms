@@ -10,7 +10,7 @@ class ScheduledMeetingsController < ApplicationController
   include BbbAppRooms
 
   # actions that can be accessed without a session, without the LTI launch
-  open_actions = %i[external wait join running]
+  open_actions = %i[external wait join running updateMeetingData]
 
   # validate the room/session only for routes that are not open
   before_action :find_room
@@ -50,13 +50,16 @@ class ScheduledMeetingsController < ApplicationController
           ScheduledMeeting.convert_time_to_duration(params[:scheduled_meeting][:custom_duration])
       end
 
-      if validate_start_at(@scheduled_meeting)
+      valid_start_at = validate_start_at(@scheduled_meeting)
+      if valid_start_at
         @scheduled_meeting.set_dates_from_params(params[:scheduled_meeting])
+      else
+        @scheduled_meeting.errors.add(:start_at, t('default.scheduled_meeting.error.invalid_start_at'))
       end
 
       room_session = get_room_session(@room)
       @scheduled_meeting.created_by_launch_nonce = room_session['launch'] if room_session.present?
-      if @scheduled_meeting.save
+      if valid_start_at && @scheduled_meeting.save
         if params[:scheduled_meeting][:create_calendar_event] == '1' && @room.can_create_moodle_calendar_event
           moodle_token = @room.consumer_config.moodle_token     
           Moodle::API.create_calendar_event(moodle_token, @scheduled_meeting, @app_launch.context_id)
@@ -76,8 +79,11 @@ class ScheduledMeetingsController < ApplicationController
 
   def update
     respond_to do |format|
-      if validate_start_at(@scheduled_meeting)
+      valid_start_at = validate_start_at(@scheduled_meeting)
+      if valid_start_at
         @scheduled_meeting.set_dates_from_params(params[:scheduled_meeting])
+      else
+        @scheduled_meeting.errors.add(:start_at, t('default.scheduled_meeting.error.invalid_start_at'))
       end
 
       if params[:scheduled_meeting]['duration'].to_i.zero?
@@ -85,7 +91,7 @@ class ScheduledMeetingsController < ApplicationController
           ScheduledMeeting.convert_time_to_duration(params[:scheduled_meeting][:custom_duration])
       end
 
-      if @scheduled_meeting.update(scheduled_meeting_params(@room))
+      if valid_start_at && @scheduled_meeting.update(scheduled_meeting_params(@room))
         format.html do
           return_path = room_path(@room), { notice: t('default.scheduled_meeting.updated') }
           redirect_if_brightspace(return_path) || redirect_to(*return_path)
@@ -111,7 +117,13 @@ class ScheduledMeetingsController < ApplicationController
         end
 
         # join as moderator (creates the meeting if not created yet)
-        redirect_to join_api_url(@scheduled_meeting, @user)
+        res = join_api_url(@scheduled_meeting, @user)
+        if res[:can_join?]
+          redirect_to res[:join_api_url]
+        else
+          flash[:error] = t("default.scheduled_meeting.error.#{res[:messageKey]}")
+          redirect_to room_path(@room)
+        end
       end
 
     # no signed in user, expects identification parameters in the url and join
@@ -131,7 +143,13 @@ class ScheduledMeetingsController < ApplicationController
       else
         # join as guest
         name = "#{params[:first_name]} #{params[:last_name]}"
-        redirect_to external_join_api_url(@scheduled_meeting, name)
+        res = external_join_api_url(@scheduled_meeting, name)
+        if res[:can_join?]
+          redirect_to res[:join_api_url]
+        else
+          flash[:error] = t("default.scheduled_meeting.error.#{res[:messageKey]}")
+          redirect_to external_room_scheduled_meeting_path(@room, @scheduled_meeting)
+        end
       end
     end
   end
@@ -182,7 +200,13 @@ class ScheduledMeetingsController < ApplicationController
 
     @scheduled_meeting.update_to_next_recurring_date
 
+    @is_running = mod_in_room?(@scheduled_meeting)
+
+    @participants_count = get_participants_count(@scheduled_meeting)
+
     @ended = !@scheduled_meeting.active? && !mod_in_room?(@scheduled_meeting)
+
+    @started_ago = get_current_duration(@scheduled_meeting)
 
     @disclaimer = ConsumerConfig
                     .select(:external_disclaimer)
@@ -197,6 +221,20 @@ class ScheduledMeetingsController < ApplicationController
                  status: :ok,
                  running: mod_in_room?(@scheduled_meeting),
                  interval: Rails.configuration.cable_polling_secs.to_i
+               }
+      }
+    end
+  end
+
+  def updateMeetingData
+    respond_to do |format|
+      format.json {
+        render json: {
+                  status: :ok,
+                  running: mod_in_room?(@scheduled_meeting),
+                  participants_count: get_participants_count(@scheduled_meeting),
+                  start_ago: get_current_duration(@scheduled_meeting),
+                  ended: !@scheduled_meeting.active? && !mod_in_room?(@scheduled_meeting)
                }
       }
     end
@@ -243,8 +281,7 @@ class ScheduledMeetingsController < ApplicationController
     begin
       ScheduledMeeting.parse_start_at(
         params[:scheduled_meeting][:date], params[:scheduled_meeting][:time]
-      )
-      true
+      ) > (DateTime.now - 5.minutes)
     rescue Date::Error
       scheduled_meeting.start_at = nil
       scheduled_meeting.errors.add(:start_at, t('default.scheduled_meeting.error.invalid_start_at'))
