@@ -1,7 +1,34 @@
 # Change Log
 
 ## [Unreleased]
-[Unreleased]: https://github.com/mconf/bbb-app-rooms/compare/v0.9.1...master-elos
+[Unreleased]: https://github.com/mconf/bbb-app-rooms/compare/v0.10.0...master-elos
+
+## 0.10.0 - 2023-12-21
+### Added
+- [LTI-123] | Ipezinho widget.
+  - PR: [#82]
+- [LTI-116] | EduPlay integration.
+  - PR: [#78]
+- [LTI-135] | Filesender integration pt. I.
+  - PR: [#77]
+- [LTI-122] | Filesender integration pt. II.
+  - PR: [#80]
+- [ELOSP-1021] | Learning dashboard access link through the history page.
+  - PR: [#75]
+
+<!-- Cards -->
+[LTI-123]:https://www.notion.so/mconf/Adicionar-widget-do-Ipezinho-no-LTI-adec9c744e26486ba31d3f4040f3b3b7?pvs=4
+[LTI-116]:https://www.notion.so/mconf/Integra-o-com-o-Eduplay-no-LTI-4186acee2eb64c6f8e034b090747386c?pvs=4
+[LTI-122]:https://www.notion.so/mconf/FileSender-no-LTI-Etapa-2-99af304973ef4da6b8024822c1151743?pvs=4
+[LTI-135]:https://www.notion.so/mconf/FileSender-no-LTI-Etapa-1-b0dffd5253684528a543f0ff095690b7?pvs=4
+[ELOSP-1021]:https://www.notion.so/mconf/Permitir-usu-rio-baixar-acessar-os-dados-do-learning-dashboard-p-s-confer-ncia-a7d47a195c214760b3c44f3da0b47ae1?pvs=4
+
+<!-- PRs -->
+[#82]: https://github.com/mconf/bbb-app-rooms/pull/82
+[#78]: https://github.com/mconf/bbb-app-rooms/pull/78
+[#80]: https://github.com/mconf/bbb-app-rooms/pull/80
+[#77]: https://github.com/mconf/bbb-app-rooms/pull/77
+[#75]: https://github.com/mconf/bbb-app-rooms/pull/75
 
 ## 0.9.1 - 2023-12-20
 ### Changed
@@ -453,6 +480,7 @@ Migration notes:
 [#52]: https://github.com/mconf/bbb-app-rooms/pull/52
 
 <!-- Compares -->
+[0.9.1]: https://github.com/mconf/bbb-app-rooms/compare/v0.9.1...v0.10.0
 [0.9.1]: https://github.com/mconf/bbb-app-rooms/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.3...v0.9.0
 [0.8.5]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.4...v0.8.5
