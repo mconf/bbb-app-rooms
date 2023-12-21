@@ -289,7 +289,7 @@ let showMeetings = (rows) => {
     openAuthWindow($(this).data('url'), 'Filesender');
   });
   $('.dropdown-opts-link').on('click', function(e) {
-    checkBucketFiles(this.getAttribute('meeting-id'), this.getAttribute('check-bucket-files-endpoint'));
+    checkBucketFiles(this.getAttribute('internal-meeting-id'), this.getAttribute('check-bucket-files-endpoint'));
   });
 };
 
