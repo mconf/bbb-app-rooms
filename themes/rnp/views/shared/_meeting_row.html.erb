@@ -86,12 +86,13 @@
       <% if recording[:state] != 'processing' && recording[:published] || can_edit?(user, room) %>
         <div class="dropdown dropdown-opts">
           <a href="#" class="dropdown-toggle d-flex text-decoration-none dropdown-opts-link"
-            meeting-id="<%= meeting[:meetingID] %>" 
+            meeting-id="<%= meeting[:meetingID] %>"
+            internal-meeting-id="<%= meeting[:internalMeetingID] %>"
             check-bucket-files-endpoint="<%= room_scheduled_meeting_internal_check_bucket_files_path(@room, meeting[:meetingID], meeting[:internalMeetingID]) %>"
             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <%= icon_options_dots %>
           </a>
-          <div class="dropdown-menu dropdown-menu-right dropdown-items" aria-labelledby="dropdown-opts-<%= meeting[:meetingID] %>">
+          <div class="dropdown-menu dropdown-menu-right dropdown-items" aria-labelledby="dropdown-opts-<%= meeting[:internalMeetingID] %>">
 
             <%# Copy playback link %>
             <% if recording[:published] %>
@@ -146,7 +147,7 @@
                   <%= link_to '#',
                   'data-url': Filesender::API.authorize_path(recording[:recordID]),
                   class: "filesender-login dropdown-item rec-edit" do %>
-                    <%= icon_eduplay %>
+                    <%= icon_filesender %>
                     <%= t("meetings.recording.filesender.share_via_filesender") %>
                   <% end %>
                 <% end %>
@@ -202,11 +203,12 @@
         <div class="dropdown dropdown-opts">
           <a href="#" class="dropdown-toggle d-flex text-decoration-none dropdown-opts-link"
             meeting-id="<%= meeting[:meetingID] %>"
+            internal-meeting-id="<%= meeting[:internalMeetingID] %>"
             check-bucket-files-endpoint="<%= room_scheduled_meeting_internal_check_bucket_files_path(@room, meeting[:meetingID], meeting[:internalMeetingID]) %>"
             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <%= icon_options_dots %>
           </a>
-          <div class="dropdown-menu dropdown-menu-right dropdown-items" aria-labelledby="dropdown-opts-<%= meeting[:meetingID] %>">
+          <div class="dropdown-menu dropdown-menu-right dropdown-items" aria-labelledby="dropdown-opts-<%= meeting[:internalMeetingID] %>">
             <div class="dropdown-item-loading">
               <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_notes') %>
               <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_participants') %>
