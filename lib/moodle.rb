@@ -25,6 +25,7 @@ module Moodle
         return false
       end
 
+      Rails.logger.info "[MOODLE API] Event created on Moodle calendar: #{result}"
       true
     end
 
