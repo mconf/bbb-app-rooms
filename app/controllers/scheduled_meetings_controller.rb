@@ -60,8 +60,9 @@ class ScheduledMeetingsController < ApplicationController
       room_session = get_room_session(@room)
       @scheduled_meeting.created_by_launch_nonce = room_session['launch'] if room_session.present?
       if valid_start_at && @scheduled_meeting.save
-        if params[:scheduled_meeting][:create_calendar_event] == '1' && @room.can_create_moodle_calendar_event
-          moodle_token = @room.consumer_config.moodle_token     
+        if params[:scheduled_meeting][:create_moodle_calendar_event] == '1' &&
+        @room.can_create_moodle_calendar_event
+          moodle_token = @room.consumer_config.moodle_token
           Moodle::API.create_calendar_event(moodle_token, @scheduled_meeting, @app_launch.context_id)
         end
         format.html do
@@ -270,7 +271,7 @@ class ScheduledMeetingsController < ApplicationController
   def scheduled_meeting_params(room)
     attrs = [
       :name, :recording, :duration, :description, :welcome, :repeat,
-      :disable_external_link, :disable_private_chat, :disable_note, :create_calendar_event
+      :disable_external_link, :disable_private_chat, :disable_note, :create_moodle_calendar_event
     ]
     attrs << [:wait_moderator] if room.allow_wait_moderator
     attrs << [:all_moderators] if room.allow_all_moderators
