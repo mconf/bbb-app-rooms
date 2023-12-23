@@ -44,7 +44,8 @@ gem 'bootsnap', '>= 1.1.0', require: false
 
 gem 'rails_admin', '~> 2.0'
 
-gem 'i18n-js', '~> 3.0.0.rc12'
+# Return texts I18n in .js
+gem 'i18n-js', '~> 3.9'
 
 gem 'awesome_print', require: 'ap'
 
@@ -133,9 +134,6 @@ gem 'browser'
 gem 'resque', require: 'resque/server'
 gem 'resque-scheduler', require: 'resque/scheduler/server'
 gem 'active_scheduler'
-
-# Return texts I18n in .js
-gem 'i18n-js', '~> 3.9'
 
 # Asynchronous partial loading with AJAX
 gem 'render_async', '~> 2.1'
