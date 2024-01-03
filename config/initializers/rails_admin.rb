@@ -51,7 +51,8 @@ RailsAdmin.config do |config|
     config.included_models = [
       "ConsumerConfig",
       "ConsumerConfigServer",
-      "ConsumerConfigBrightspaceOauth"
+      "ConsumerConfigBrightspaceOauth",
+      "MoodleToken"
     ]
   end
 end
