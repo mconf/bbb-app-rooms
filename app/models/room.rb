@@ -18,6 +18,19 @@ class Room < ApplicationRecord
     find_by(handler: param)
   end
 
+  def can_create_moodle_calendar_event
+    moodle_token = self.consumer_config&.moodle_token
+    if moodle_token
+      Moodle::API.check_token_functions(moodle_token, 'core_calendar_create_calendar_events')
+    else
+      false
+    end
+  end
+
+  def consumer_config
+    ConsumerConfig.find_by(key: self.consumer_key)
+  end
+
   def default_values
     self.handler ||= Digest::SHA1.hexdigest(SecureRandom.uuid)
     self.moderator = random_password(8) if moderator.blank?

@@ -22,6 +22,8 @@ class ScheduledMeeting < ApplicationRecord
 
   after_initialize :init
 
+  attr_accessor :create_moodle_calendar_event
+
   scope :active, -> (reverse = false) {
     # TODO: temporary, disable the timezone via cookie until it's 100%
     tolerance = Rails.application.config.force_default_timezone ? 1.hour : 0.seconds

@@ -20,6 +20,7 @@ es:
         other: "%{count} minutos"
       connector: "y"
     hint:
+      create_moodle_calendar_event: "Crea un evento correspondiente en el Calendario de Moodle para esta reunión programada. Esta opción está deshabilitada cuando la reunión programada está configurada como recurrente."
       disable_external_link: "El acceso a la sala virtual estará restringido a estudiantes autenticados."
       disable_private_chat: "El estudiante aún puede enviar mensajes privados al maestro. Esta función se puede reactivar dentro de la habitación a través de la opción \"Restringir participantes\"."
       disable_note: "El profesor aún puede usar las notas compartidas, pero los estudiantes solo pueden ver el contenido, no editarlo. Esta función se puede reactivar dentro de la habitación a través de la opción \"Restringir participantes\"."
@@ -29,6 +30,7 @@ es:
     label:
       scheduled_meeting:
         all_moderators: "Todos entran como moderadores."
+        create_moodle_calendar_event: "Replicar en el Calendario de Moodle."
         custom_duration: "Duración personalizada"
         description: "Descripción (opcional)"
         disable_external_link: "Deshabilitar enlace externo"
