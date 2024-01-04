@@ -12,6 +12,7 @@ my_secret="my-secret"
 my_internal_key="my-internal-key"
 my_internal_secret="my-internal-secret"
 
+redb=`tput setaf 1; tput setab 0`
 greenb=`tput setaf 2; tput setab 0`
 yellowb=`tput setaf 3; tput setab 0`
 reset=`tput sgr0`
@@ -70,6 +71,8 @@ start_ngrok() {
   echo "Forwarding: http://localhost:${greenb}$port0${reset} -> https://${greenb}$address0${reset}"
   echo "Forwarding: http://localhost:${yellowb}$port1${reset} ->  http://${yellowb}$address1${reset}"
   echo "Forwarding: http://localhost:${yellowb}$port1${reset} -> https://${yellowb}$address1${reset}"
+  echo
+  echo "Message URL to paste on LMS: ${redb}https://$address0/lti/rooms/messages/blti${reset}"
 }
 
 update_ngrok_addresses() {
