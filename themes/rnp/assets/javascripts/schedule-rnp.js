@@ -13,11 +13,11 @@ $(document).on('turbolinks:load', function(){
         contentCustomDuration.classList.remove('d-block')
     }
 
-    if(window.location.href.includes('/new')) {
+    if($('input[name="scheduled_meeting[create_moodle_calendar_event]"]')) {
       let recurrenceSelect = document.getElementsByName("scheduled_meeting[repeat]")[0]
-      recurrenceSelect.addEventListener('change', toggleCalendar)
+      recurrenceSelect.addEventListener('change', toggleMoodleCalendarCheckbox)
 
-      function toggleCalendar(e) {
+      function toggleMoodleCalendarCheckbox(e) {
         let valueSelectDuration = e.target.value;
         if (!!valueSelectDuration) {
           $('input[name="scheduled_meeting[create_moodle_calendar_event]"]').each(function () {
