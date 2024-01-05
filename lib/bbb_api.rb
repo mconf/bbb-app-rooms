@@ -61,13 +61,14 @@ module BbbApi
     is_moderator = user.moderator?(Abilities.moderator_roles) ||
                    scheduled_meeting.check_all_moderators
     role = is_moderator ? 'moderator' : 'viewer'
+    locale = I18n.locale == :pt ? 'pt-br' : I18n.locale
 
     join_api_url = bbb(room, false).join_meeting_url(
       scheduled_meeting.meeting_id,
       user.username(t("default.bigbluebutton.#{role}")),
       room.attributes[role],
       {
-        'userdata-bbb_override_default_locale': I18n.locale,
+        'userdata-bbb_override_default_locale': locale,
         userID: user.uid,
         redirect: false
       }
@@ -83,7 +84,7 @@ module BbbApi
       user.username(t("default.bigbluebutton.#{role}")),
       room.attributes[role],
       {
-        'userdata-bbb_override_default_locale': I18n.locale,
+        'userdata-bbb_override_default_locale': locale,
         userID: user.uid
       }
     )
@@ -95,12 +96,14 @@ module BbbApi
     return unless scheduled_meeting.present? && full_name.present?
 
     room = scheduled_meeting.room
+    locale = I18n.locale == :pt ? 'pt-br' : I18n.locale
+
     join_api_url = bbb(room, false).join_meeting_url(
       scheduled_meeting.meeting_id,
       full_name,
       room.attributes['viewer'],
       { guest: true,
-        'userdata-bbb_override_default_locale': I18n.locale,
+        'userdata-bbb_override_default_locale': locale,
         redirect: false
       }
     )
@@ -115,7 +118,7 @@ module BbbApi
       full_name,
       room.attributes['viewer'],
       { guest: true,
-        'userdata-bbb_override_default_locale': I18n.locale,
+        'userdata-bbb_override_default_locale': locale,
       }
     )
 
