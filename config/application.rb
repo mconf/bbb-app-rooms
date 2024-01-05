@@ -36,6 +36,10 @@ module BbbAppRooms
       ENV['BIGBLUEBUTTON_MODERATOR_ROLES'] ||
       'Instructor,Faculty,Teacher,Mentor,Administrator,Admin'
 
+    # Pre-open the join_api_url with `redirect=false` to check whether the user can join the meeting
+    # before actually redirecting him
+    config.check_can_join_meeting = Mconf::Env.fetch_boolean("CHECK_CAN_JOIN_MEETING", true)
+
     config.omniauth_path_prefix = if ENV['RELATIVE_URL_ROOT'].blank?
                                     '/rooms/auth'
                                   else

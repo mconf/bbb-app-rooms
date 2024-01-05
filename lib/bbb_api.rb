@@ -63,21 +63,25 @@ module BbbApi
     role = is_moderator ? 'moderator' : 'viewer'
     locale = I18n.locale == :pt ? 'pt-br' : I18n.locale
 
-    join_api_url = bbb(room, false).join_meeting_url(
-      scheduled_meeting.meeting_id,
-      user.username(t("default.bigbluebutton.#{role}")),
-      room.attributes[role],
-      {
-        'userdata-bbb_override_default_locale': locale,
-        userID: user.uid,
-        redirect: false
-      }
-    )
+    # pre-open the join_api_url with `redirect=false` to check whether the user can join the meeting
+    # before actually redirecting him
+    if Rails.configuration.check_can_join_meeting
+      join_api_url = bbb(room, false).join_meeting_url(
+        scheduled_meeting.meeting_id,
+        user.username(t("default.bigbluebutton.#{role}")),
+        room.attributes[role],
+        {
+          'userdata-bbb_override_default_locale': locale,
+          userID: user.uid,
+          redirect: false
+        }
+      )
 
-    doc = Nokogiri::XML(URI.open(join_api_url))
-    hash = Hash.from_xml(doc.to_s)
+      doc = Nokogiri::XML(URI.open(join_api_url))
+      hash = Hash.from_xml(doc.to_s)
 
-    return { can_join?: false, messageKey: hash['response']['messageKey'] } if hash['response']['returncode'] == 'FAILED'
+      return { can_join?: false, messageKey: hash['response']['messageKey'] } if hash['response']['returncode'] == 'FAILED'
+    end
 
     join_api_url = bbb(room, false).join_meeting_url(
       scheduled_meeting.meeting_id,
@@ -89,6 +93,8 @@ module BbbApi
       }
     )
 
+    puts "+++ USER JOIN API URL:", join_api_url
+
     { can_join?: true, join_api_url: join_api_url }
   end
 
@@ -98,20 +104,24 @@ module BbbApi
     room = scheduled_meeting.room
     locale = I18n.locale == :pt ? 'pt-br' : I18n.locale
 
-    join_api_url = bbb(room, false).join_meeting_url(
-      scheduled_meeting.meeting_id,
-      full_name,
-      room.attributes['viewer'],
-      { guest: true,
-        'userdata-bbb_override_default_locale': locale,
-        redirect: false
-      }
-    )
+    # pre-open the join_api_url with `redirect=false` to check whether the guest can join the meeting
+    # before actually redirecting him
+    if Rails.configuration.check_can_join_meeting
+      join_api_url = bbb(room, false).join_meeting_url(
+        scheduled_meeting.meeting_id,
+        full_name,
+        room.attributes['viewer'],
+        { guest: true,
+          'userdata-bbb_override_default_locale': locale,
+          redirect: false
+        }
+      )
 
-    doc = Nokogiri::XML(URI.open(join_api_url))
-    hash = Hash.from_xml(doc.to_s)
+      doc = Nokogiri::XML(URI.open(join_api_url))
+      hash = Hash.from_xml(doc.to_s)
 
-    return { can_join?: false, messageKey: hash['response']['messageKey'] } if hash['response']['returncode'] == 'FAILED'
+      return { can_join?: false, messageKey: hash['response']['messageKey'] } if hash['response']['returncode'] == 'FAILED'
+    end
 
     join_api_url = bbb(room, false).join_meeting_url(
       scheduled_meeting.meeting_id,
