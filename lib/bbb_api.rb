@@ -80,7 +80,12 @@ module BbbApi
       doc = Nokogiri::XML(URI.open(join_api_url))
       hash = Hash.from_xml(doc.to_s)
 
-      return { can_join?: false, messageKey: hash['response']['messageKey'] } if hash['response']['returncode'] == 'FAILED'
+      Rails.logger.info "BigBlueButtonAPI: (check_can_join_meeting) request=#{join_api_url}"
+
+      if hash['response']['returncode'] == 'FAILED'
+        Rails.logger.info "User cannot join meeting, message_key=#{hash['response']['messageKey']}"
+        return { can_join?: false, messageKey: hash['response']['messageKey'] }
+      end
     end
 
     join_api_url = bbb(room, false).join_meeting_url(
@@ -92,8 +97,6 @@ module BbbApi
         userID: user.uid
       }
     )
-
-    puts "+++ USER JOIN API URL:", join_api_url
 
     { can_join?: true, join_api_url: join_api_url }
   end
@@ -120,7 +123,12 @@ module BbbApi
       doc = Nokogiri::XML(URI.open(join_api_url))
       hash = Hash.from_xml(doc.to_s)
 
-      return { can_join?: false, messageKey: hash['response']['messageKey'] } if hash['response']['returncode'] == 'FAILED'
+      Rails.logger.info "BigBlueButtonAPI: (check_can_join_meeting) request=#{join_api_url}"
+
+      if hash['response']['returncode'] == 'FAILED'
+        Rails.logger.info "Guest cannot join meeting, message_key=#{hash['response']['messageKey']}"
+        return { can_join?: false, messageKey: hash['response']['messageKey'] }
+      end
     end
 
     join_api_url = bbb(room, false).join_meeting_url(
