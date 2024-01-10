@@ -12,10 +12,6 @@
   --bs-btn-hover-border-color: #0b67a2;
 }
 
-.form-check-input, .form-control {
-  border-color: #ced4da;
-}
-
 .table, .table > :not(caption) > * > * {
   color: #202020;
   border-top-width: var(--bs-border-width);
@@ -57,6 +53,15 @@
   @media (min-width: 1400px) {
     max-width: 1140px;
   }
+}
+
+.form-check-input, .form-control {
+  border-color: #ced4da;
+}
+
+.form-control:disabled,.form-control[readonly] {
+  background-color: #e9ecef;
+  opacity: 1
 }
 
 .form-group {
