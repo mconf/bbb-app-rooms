@@ -68,7 +68,7 @@
               <% if p[:type] == 'presentation' %>
                 <%= link_to icon_conference_play(title: t("meetings.recording.playbacks.#{p[:type]}"), class: 'fa-2x'), url, class: 'd-flex text-decoration-none', target: "_blank" %>
               <% else %>
-                <%= link_to icon_file_download(title: t("meetings.recording.playbacks.#{p[:type]}"), class: 'fa-2x'), url, class: 'd-flex text-decoration-none mr-2', target: "_blank" %>
+                <%= link_to icon_file_download(title: t("meetings.recording.playbacks.#{p[:type]}"), class: 'fa-2x'), url, class: 'd-flex text-decoration-none me-2', target: "_blank" %>
               <% end %>
             <% end %>
           <% else %>
@@ -89,7 +89,7 @@
             meeting-id="<%= meeting[:meetingID] %>"
             internal-meeting-id="<%= meeting[:internalMeetingID] %>"
             check-bucket-files-endpoint="<%= room_scheduled_meeting_internal_check_bucket_files_path(@room, meeting[:meetingID], meeting[:internalMeetingID]) %>"
-            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <%= icon_options_dots %>
           </a>
           <div class="dropdown-menu dropdown-menu-right dropdown-items" aria-labelledby="dropdown-opts-<%= meeting[:internalMeetingID] %>">
@@ -168,7 +168,7 @@
             meeting-id="<%= meeting[:meetingID] %>"
             internal-meeting-id="<%= meeting[:internalMeetingID] %>"
             check-bucket-files-endpoint="<%= room_scheduled_meeting_internal_check_bucket_files_path(room, meeting[:meetingID], meeting[:internalMeetingID]) %>"
-            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <%= icon_options_dots%>
           </a>
           <div class="dropdown-menu dropdown-menu-right dropdown-items" aria-labelledby="dropdown-opts-<%= meeting[:internalMeetingID] %>">

@@ -14,7 +14,7 @@
 %>
 
 <tr>
-  <td class="text-left">
+  <td class="text-start">
     <% if recording[:published] %>
       <% recording[:playbacks].each do |p| %>
         <%= link_to p[:type].capitalize, p[:url], class: "btn btn-sm btn-primary", target: "_blank" %>
@@ -31,32 +31,32 @@
         <% end %>
       </text>
       <% if can_edit?(@user, @room) %>
-        <a><i id="edit-record-title" class="fa fa-edit align-top ml-2" data-edit-recordid="<%= recording[:recordID] %>"></i></a>
+        <a><i id="edit-record-title" class="fa fa-edit align-top ms-2" data-edit-recordid="<%= recording[:recordID] %>"></i></a>
       <% end %>
     </div>
   </td>
-  <td class="text-left" data-search-field="1">
+  <td class="text-start" data-search-field="1">
     <div id="recording-description" class="form-inline edit_hover_class" data-recordid="<%= recording[:recordID] %>">
       <text id='recording-description-text' class="text-wrap">
         <%= recording[:metadata][:'bbb-recording-description'] ? recording[:metadata][:'bbb-recording-description'] : nil %>
       </text>
       <% if can_edit?(@user, @room) %>
-        <a><i id="edit-record-description" class="fa fa-edit align-top ml-2" data-edit-recordid="<%= recording[:recordID] %>"></i></a>
+        <a><i id="edit-record-description" class="fa fa-edit align-top ms-2" data-edit-recordid="<%= recording[:recordID] %>"></i></a>
       <% end %>
     </div>
   </td>
-  <td class="text-left">
+  <td class="text-start">
     <div class="small text-muted">
       <%= recording_date(recording[:startTime]) %>
     </div>
   </td>
-  <td class="text-left">
+  <td class="text-start">
     <%= recording_length(recording[:playbacks]) %>
   </td>
   <% if can_edit?(@user, @room) %>
     <td class="pull-right">
       <div class="item-action dropdown">
-        <a href="javascript:void(0)" data-toggle="dropdown" class="icon">
+        <a href="javascript:void(0)" data-bs-toggle="dropdown" class="icon">
           <i class="fas fa-ellipsis-v px-4"></i>
         </a>
         <div class="dropdown-menu dropdown-menu-right">

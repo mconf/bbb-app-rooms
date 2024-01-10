@@ -2,3 +2,84 @@
 @import "utilities";
 
 @import "bootstrap";
+
+.btn-primary {
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #24a4a9;
+  --bs-btn-active-border-color: #219a9f;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #24a4a9;
+  --bs-btn-hover-border-color: #219a9f;
+}
+
+.btn-secondary {
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #0b6367;
+  --bs-btn-active-border-color: #0a585b;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #0b6367;
+  --bs-btn-hover-border-color: #0a585b;
+}
+
+.form-check-input, .form-control {
+  border-color: #ced4da;
+}
+
+.table, .table > :not(caption) > * > * {
+  color: #202020;
+  border-top-width: var(--bs-border-width);
+  border-bottom: none;
+}
+
+.table th, .table td {
+  padding: 1.5rem 0;
+}
+
+.btn-primary:active, .btn-primary.active {
+  color: #fff;
+  background-color: #24a4a9;
+  border-color: #219a9f;
+}
+
+.btn-light:not(:disabled):not(.disabled):active,.btn-light.active:not(:disabled):not(.disabled),.show>.btn-light.dropdown-toggle {
+  color: #212529;
+  background-color: #d4d4d4;
+  border-color: #cdcdcd;
+}
+
+.btn-group-toggle > .btn input[type="radio"] {
+  position: absolute;
+  clip: rect(0, 0, 0, 0);
+  pointer-events: none;
+}
+
+.container {
+  padding-right: 15px;
+  padding-left: 15px;
+
+  @media (min-width: 1400px) {
+    max-width: 1140px;
+  }
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-inline .form-control {
+  display: inline-block;
+  width: auto;
+  vertical-align: middle;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -5px;
+  margin-left: -5px;
+}
+
+.form-row > .col, .form-row > [class*="col-"] {
+  padding-right: 5px;
+  padding-left: 5px
+}

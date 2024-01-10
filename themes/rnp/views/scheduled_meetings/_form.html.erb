@@ -9,7 +9,7 @@
   <% error = !@scheduled_meeting.errors[:start_at].blank? %>
   <div class="form-row">
 
-    <div class="form-group col-md-4">
+    <div class="form-group col-12 col-md-4">
       <% if error %> <div class="field_with_errors"> <% end %>
         <%= form.label :date, t('helpers.label.scheduled_meeting.start_time_date') %>
         <%= form.text_field :date, value: scheduled_meeting.start_at_date(I18n.locale), required: true, class: "form-control datepicker", data: { format: t('default.formats.flatpickr.date_js') } %>
@@ -24,7 +24,7 @@
       <% if error %> <div class="field_with_errors"> <% end %>
         <%= form.label :time do %>
           <%= t('helpers.label.scheduled_meeting.start_time_time') %>
-          <i class="icon material-icons icon-label-hint" data-toggle="tooltip" title="<%= t('helpers.hint.time', zone: current_formatted_time_zone) %>">help</i>
+          <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= t('helpers.hint.time', zone: current_formatted_time_zone) %>">help</i>
         <% end %>
         <%= form.text_field :time, value: scheduled_meeting.start_at_time(I18n.locale), required: true, class: "form-control timepicker", data: { format: t('default.formats.flatpickr.time_js') } %>
       <% if error %> </div> <% end %>
@@ -43,7 +43,7 @@
         <div class="d-flex flex-column">
           <%= form.label :custom_duration do %>
             <%= t('helpers.label.scheduled_meeting.custom_duration') %>
-            <i class="icon material-icons icon-label-hint" data-toggle="tooltip"
+            <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip"
                title="<%= t('helpers.hint.custom_duration') %>"
             >
               help
@@ -67,7 +67,7 @@
     <div class="form-group col-12">
       <%= form.label :repeat do %>
         <%= t('helpers.label.scheduled_meeting.repeat') %>
-        <i class="icon material-icons icon-label-hint" data-toggle="tooltip" title="<%= t('helpers.hint.repeat') %>">help</i>
+        <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= t('helpers.hint.repeat') %>">help</i>
       <% end %>
       <%= form.select :repeat,
           ScheduledMeeting.repeat_options_for_select(I18n.locale),
@@ -114,7 +114,7 @@
           <%= form.check_box :create_moodle_calendar_event, class: "form-check-input" %>
           <%= form.label :create_moodle_calendar_event, class: "form-check-label" do %>
             <%= t('helpers.label.scheduled_meeting.create_moodle_calendar_event') %>
-            <i class="icon material-icons icon-label-hint" data-toggle="tooltip" title="<%= t('helpers.hint.create_moodle_calendar_event') %>">help</i>
+            <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= t('helpers.hint.create_moodle_calendar_event') %>">help</i>
           <% end %>
         </div>
       </div>
@@ -136,7 +136,7 @@
           <%= form.check_box :disable_external_link, class: "form-check-input" %>
           <%= form.label :disable_external_link, class: "form-check-label" do %>
             <%= t('helpers.label.scheduled_meeting.disable_external_link') %>
-            <i class="icon material-icons icon-label-hint" data-toggle="tooltip" title="<%= t('helpers.hint.disable_external_link') %>">help</i>
+            <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= t('helpers.hint.disable_external_link') %>">help</i>
           <% end %>
         </div>
       </div>
@@ -146,7 +146,7 @@
           <%= form.check_box :disable_private_chat, class: "form-check-input" %>
           <%= form.label :disable_private_chat, class: "form-check-label" do %>
             <%= t('helpers.label.scheduled_meeting.disable_private_chat') %>
-            <i class="icon material-icons icon-label-hint" data-toggle="tooltip" title="<%= t('helpers.hint.disable_private_chat') %>">help</i>
+            <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= t('helpers.hint.disable_private_chat') %>">help</i>
           <% end %>
         </div>
       </div>
@@ -156,7 +156,7 @@
           <%= form.check_box :disable_note, class: "form-check-input" %>
           <%= form.label :disable_note, class: "form-check-label" do %>
             <%= t('helpers.label.scheduled_meeting.disable_note') %>
-            <i class="icon material-icons icon-label-hint" data-toggle="tooltip" title="<%= t('helpers.hint.disable_note') %>">help</i>
+            <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= t('helpers.hint.disable_note') %>">help</i>
           <% end %>
         </div>
       </div>

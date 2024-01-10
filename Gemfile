@@ -90,7 +90,7 @@ gem 'tzinfo-data'
 
 # Base
 gem 'json'
-gem 'bootstrap', '~> 4.5.0'
+gem 'bootstrap', '~> 5.3'
 gem 'font-awesome-rails'
 gem 'jquery-fileupload-rails'
 gem 'jquery-rails'

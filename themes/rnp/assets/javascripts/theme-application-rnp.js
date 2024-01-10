@@ -66,10 +66,14 @@ $(document).on('turbolinks:load', function(){
     filter = $('input[name=filters]:checked', '#meetings-filters').val();
     switch (filter) {
       case 'recorded-only':
+        $('#meetings-filters input[value=recorded-only]').closest('label').addClass('active');
+        $('#meetings-filters input[value=no-filters]').closest('label').removeClass('active');
         $('#meetings-table').addClass('filter-recorded-only');
         window.history.replaceState({filter: "recorded-only"}, null, '?filter=recorded-only');
         break;
       default:
+        $('#meetings-filters input[value=no-filters]').closest('label').addClass('active');
+        $('#meetings-filters input[value=recorded-only]').closest('label').removeClass('active');
         $('#meetings-table').removeClass('filter-recorded-only');
         window.history.replaceState(null, null, 'meetings');
     };
@@ -80,7 +84,9 @@ $(document).on('turbolinks:load', function(){
   // and hides non-recorded meetings.
   if ((new URL(window.location.href)).searchParams.get("filter") == 'recorded-only' ) {
     $("#meetings-filters input[value=recorded-only]").attr("checked", true);
+    $('#meetings-filters input[value=recorded-only]').closest('label').addClass('active');
     $("#meetings-filters input[value=no-filters]").attr("checked", false);
+    $('#meetings-filters input[value=no-filters]').closest('label').removeClass('active');
     $('#meetings-table').addClass('filter-recorded-only');
     window.history.replaceState({filter: "recorded-only"}, null, '?filter=recorded-only');
   }

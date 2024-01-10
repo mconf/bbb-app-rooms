@@ -18,6 +18,12 @@ body.theme-rnp {
   // override things that are set in the LTI's default theme
   //
 
+  .btn.active, :not(.btn-check) + .btn:active {
+    color: #fff !important;
+    background-color: #0c6fae !important;
+    border-color: #0b67a2 !important;
+  }
+
   line-height: var(--line-height);
   .dropdown-item:visited:not(.btn) {
     &:hover, &:active {
@@ -140,7 +146,7 @@ body.theme-rnp {
 
     .toast {
       margin-bottom: blocks(1);
-      max-width: 60%;
+      width: fit-content;
 
       // so hidden toasts don't mess with visible toasts
       height: 0;
@@ -163,6 +169,8 @@ body.theme-rnp {
 
   form {
     label {
+      margin-bottom: 0.5rem;
+
       .icon-label-hint {
         font-size: var(--font-size-md);
         cursor: pointer;
@@ -320,7 +328,7 @@ body.theme-rnp {
 
     #meetings-table {
 
-      thead tr {
+      thead tr, th {
         min-height: blocks(5);
         color: var(--color-gray-06);
       }

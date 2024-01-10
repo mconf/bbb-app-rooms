@@ -169,7 +169,7 @@ body.theme-elos {
 
     .toast {
       margin-bottom: blocks(1);
-      max-width: 60%;
+      width: fit-content;
 
       // so hidden toasts don't mess with visible toasts
       height: 0;
@@ -192,6 +192,8 @@ body.theme-elos {
 
   form {
     label {
+      margin-bottom: 0.5rem;
+
       .icon-label-hint {
         font-size: var(--font-size-md);
         cursor: pointer;
@@ -332,7 +334,7 @@ body.theme-elos {
 
     #meetings-table {
 
-      thead tr {
+      thead tr, th {
         min-height: blocks(5);
         color: var(--color-gray-06);
       }
