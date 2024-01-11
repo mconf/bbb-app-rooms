@@ -20,7 +20,7 @@ module Moodle
 
       result = post(moodle_token.url, params)
 
-      if result["exception"].present?
+      if result.nil? || result["exception"].present?
         Rails.logger.error("[+++] MOODLE API EXCEPTION [+++] #{result["message"]}")
         return false
       end
@@ -56,6 +56,7 @@ module Moodle
         JSON.parse(response.body)
       rescue Faraday::Error => e
         Rails.logger.error("Connection to Moodle API failed: #{e}")
+        return nil
       end
     end
   end
