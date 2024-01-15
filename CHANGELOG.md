@@ -1,7 +1,54 @@
 # Change Log
 
 ## [Unreleased]
-[Unreleased]: https://github.com/mconf/bbb-app-rooms/compare/v0.10.0...master-elos
+[Unreleased]: https://github.com/mconf/bbb-app-rooms/compare/v0.11.0...master-elos
+
+## 0.11.0 - 2024-01-15
+### Added
+- [LTI-138] | Moodle Calendar integration. Scheduled meetings can now be replicated on the Moodle calendar, outside the LTI environment.
+  - PR: [#83]
+- [LTI-9] | New `Join Meeting` screens.
+  - PR: [#55]
+- [LTI-115] | `ngrok_start` script to Portal COC.
+  - PR: [#66]
+
+### Fixed
+- [ELOSP-616] | Better error handling when the participants/meetings limit is reached.
+  - PR: [#67]
+- [LTI-16] | User isn't allowed to schedule meetings for a past date anymore.
+  - PR: [#54]
+- [LTI-112] | `ngrok_start` script adapted to Ngrok v3.
+  - PR: [#61]
+- [LTI-20] | Reactivated and fixed broken tests.
+  - PR: [#62]
+- [LTI-70] | `/wait` route and other small fixes after v0.5.0 update.
+  - PR: [#60]
+
+### Removed
+- [ELOSP-867] | `userdata-mconf_custom_language` from the room attributes passed on `join` BBB API calls.
+  - PR: [#72]
+
+<!-- Cards -->
+[LTI-138]: https://www.notion.so/mconf/Integra-o-com-o-calend-rio-do-Moodle-parte-1-87f8b4da26a74477b018f3672753c3f9?pvs=4
+[ELOSP-616]: https://www.notion.so/mconf/Melhorar-o-erro-no-LTI-quando-esgota-o-n-mero-de-salas-simult-neas-7e960fd9c341485583b4a68c7813929a?pvs=4
+[ELOSP-867]: https://www.notion.so/mconf/Remover-o-metadado-userdata-mconf_custom_language-dos-portais-2480706a30da4077b3c09caabde5d247?pvs=4
+[LTI-9]: https://www.notion.so/mconf/Novas-telas-de-entrada-na-confer-ncia-no-LTI-f3b275a8a985479a8628fb0898f4c028?pvs=4
+[LTI-115]: https://www.notion.so/mconf/Adicionar-script-para-start-do-Portal-COC-3042f15aec4741dda75130a64eced8c5?pvs=4
+[LTI-16]: https://www.notion.so/mconf/N-o-permitir-agendar-reuni-o-para-uma-data-passada-no-LTI-9dc1ad04ab584fc7ba96d13b9611a242?pvs=4
+[LTI-112]: https://www.notion.so/mconf/Adapta-o-do-ngrok_start-sh-para-a-vers-o-3-0-0-do-ngrok-12357f8565634bcbb434bdae6ab95d95?pvs=4
+[LTI-20]: https://www.notion.so/mconf/Reativar-os-testes-do-LTI-556cb13317c448a788278b97e6eda3e4?pvs=4
+[LTI-70]: https://www.notion.so/mconf/Corre-es-pequenas-no-LTI-ap-s-v0-5-0-3a21767fa4344ed48b64ad993d957253?pvs=4
+
+<!-- PRs -->
+[#83]: https://github.com/mconf/bbb-app-rooms/pull/83
+[#67]: https://github.com/mconf/bbb-app-rooms/pull/67
+[#72]: https://github.com/mconf/bbb-app-rooms/pull/72
+[#55]: https://github.com/mconf/bbb-app-rooms/pull/55
+[#66]: https://github.com/mconf/bbb-app-rooms/pull/66
+[#54]: https://github.com/mconf/bbb-app-rooms/pull/54
+[#61]: https://github.com/mconf/bbb-app-rooms/pull/61
+[#62]: https://github.com/mconf/bbb-app-rooms/pull/62
+[#60]: https://github.com/mconf/bbb-app-rooms/pull/60
 
 ## 0.10.0 - 2023-12-21
 ### Added
@@ -480,7 +527,8 @@ Migration notes:
 [#52]: https://github.com/mconf/bbb-app-rooms/pull/52
 
 <!-- Compares -->
-[0.9.1]: https://github.com/mconf/bbb-app-rooms/compare/v0.9.1...v0.10.0
+[0.11.0]: https://github.com/mconf/bbb-app-rooms/compare/v0.10.0...v0.11.0
+[0.10.0]: https://github.com/mconf/bbb-app-rooms/compare/v0.9.1...v0.10.0
 [0.9.1]: https://github.com/mconf/bbb-app-rooms/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.3...v0.9.0
 [0.8.5]: https://github.com/mconf/bbb-app-rooms/compare/v0.8.4...v0.8.5
