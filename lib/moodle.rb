@@ -21,7 +21,7 @@ module Moodle
       result = post(moodle_token.url, params)
 
       if result.nil? || result["exception"].present?
-        Rails.logger.error("[+++] MOODLE API EXCEPTION [+++] #{result["message"]}")
+        Rails.logger.error("[+++] MOODLE API EXCEPTION [+++] #{result["message"]}") unless result.nil?
         return false
       end
 
