@@ -66,6 +66,11 @@
 
 .form-group {
   margin-bottom: 1rem;
+
+
+  #content_custom_duration {
+    display: none;
+  }
 }
 
 .form-inline .form-control {
@@ -85,3 +90,4 @@
   padding-right: 5px;
   padding-left: 5px
 }
+
