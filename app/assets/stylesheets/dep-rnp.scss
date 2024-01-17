@@ -2,3 +2,92 @@
 @import "utilities";
 
 @import "bootstrap";
+
+.btn-primary {
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #0d76ba;
+  --bs-btn-active-border-color: #0b67a2;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #0d76ba;
+  --bs-btn-hover-border-color: #0b67a2;
+}
+
+.table, .table > :not(caption) > * > * {
+  color: #202020;
+  border-top-width: var(--bs-border-width);
+  border-bottom: none;
+}
+
+.table th, .table td {
+  padding: 1.5rem 0;
+}
+
+.btn{
+  &:hover{
+    color: inherit;
+  }
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .btn:first-child:active, .open>.dropdown-toggle.btn-primary {
+  color: #fff;
+  background-color: #0d76ba;
+  border-color: #0b67a2;
+}
+
+.btn-light:not(:disabled):not(.disabled):active,.btn-light.active:not(:disabled):not(.disabled),.show>.btn-light.dropdown-toggle {
+  color: #212529;
+  background-color: #d4d4d4;
+  border-color: #cdcdcd
+}
+
+.btn-group-toggle > .btn input[type="radio"] {
+  position: absolute;
+  clip: rect(0, 0, 0, 0);
+  pointer-events: none;
+}
+
+.container {
+  padding-right: 15px;
+  padding-left: 15px;
+
+  @media (min-width: 1400px) {
+    max-width: 1140px;
+  }
+}
+
+.form-check-input, .form-control {
+  border-color: #ced4da;
+}
+
+.form-control:disabled,.form-control[readonly] {
+  background-color: #e9ecef;
+  opacity: 1
+}
+
+.form-group {
+  margin-bottom: 1rem;
+
+
+  #content_custom_duration {
+    display: none;
+  }
+}
+
+.form-inline .form-control {
+  display: inline-block;
+  width: auto;
+  vertical-align: middle;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -5px;
+  margin-left: -5px;
+}
+
+.form-row > .col, .form-row > [class*="col-"] {
+  padding-right: 5px;
+  padding-left: 5px
+}
+
