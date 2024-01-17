@@ -39,7 +39,7 @@
       <%= form.select :duration, ScheduledMeeting.durations_for_select(I18n.locale),
         { selected: scheduled_meeting.duration }, { class: "form-control icon-input-select" }
       %>
-      <div class="d-none mt-3" id="content_custom_duration">
+      <div class="mt-3" id="content_custom_duration">
         <div class="d-flex flex-column">
           <%= form.label :custom_duration do %>
             <%= t('helpers.label.scheduled_meeting.custom_duration') %>
