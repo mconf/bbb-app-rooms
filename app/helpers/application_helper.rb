@@ -17,6 +17,7 @@ module ApplicationHelper
       grant_type: 'client_credentials',
       client_id: Rails.configuration.omniauth_key[:bbbltibroker],
       client_secret: Rails.configuration.omniauth_secret[:bbbltibroker],
+      scope: 'api'
     }
     response = RestClient.post("#{lti_broker_url}/oauth/token", oauth_options)
     JSON.parse(response)['access_token']
