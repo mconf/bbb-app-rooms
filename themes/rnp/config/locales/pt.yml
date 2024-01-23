@@ -138,6 +138,11 @@ pt:
     title: "Sessões agendadas"
     wait:
       retry: "Entrar"
+  open_app_modal:
+    title: "Utilize o app e descubra a facilidade de se conectar usando o ConferênciaWeb!"
+    open_app: "Abrir App"
+    download_app: "Baixar App"
+    continue_using_browser: "ou continue acessando pelo site."
   time:
     am: am
     formats:

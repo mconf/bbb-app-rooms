@@ -61,7 +61,9 @@
 
         <% can_join = (@user.present? && !(wait_for_mod?(@scheduled_meeting, @user) && !mod_in_room?(@scheduled_meeting))) || (!@user.present? && mod_in_room?(@scheduled_meeting)) %>
         <div id="open-modal" class="<%= (can_join && device_type? != 'desktop') ? '' : 'd-none' %>" >
-          <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Entrar</button>
+          <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+            <%= t('default.scheduled_meeting.external.join') %>
+          </button>
           <%= render "shared/app_offcanvas", submit: true, room: @room, meeting: @scheduled_meeting %>
         </div>
         <div id="browser-join" class="<%= (can_join && device_type? != 'desktop') ? 'd-none' : '' %>" >

@@ -10,19 +10,19 @@
   </div>
   <div class="offcanvas-body">
     <p>
-      <%= 'Utilize o app e descubra a facilidade de se conectar usando o ConferênciaWeb!' %>
+      <%= t('open_app_modal.title') %>
     </p>
 
     <hr class="my-4" />
 
     <%= hidden_field_tag 'join_in_app', false %>
-    <%= link_to 'Abrir App', '#', id: "open-app-btn", class: 'btn btn-primary' %>
-    <%= link_to 'Baixar App', '#', id: "download-app-btn", class: 'btn btn-primary' %>
+    <%= link_to t('open_app_modal.open_app'), '#', id: "open-app-btn", class: 'btn btn-primary' %>
+    <%= link_to t('open_app_modal.download_app'), '#', id: "download-app-btn", class: 'btn btn-primary' %>
     <div class="text-center">
       <% if submit %>
-        <%= submit_tag 'ou continue acessando pelo site.', class: "text-link" %>
+        <%= submit_tag t('open_app_modal.continue_using_browser'), class: "text-link" %>
       <% else %>
-        <%= link_to 'ou continue acessando pelo site.', join_room_scheduled_meeting_path(room, meeting),
+        <%= link_to t('open_app_modal.continue_using_browser'), join_room_scheduled_meeting_path(room, meeting),
           class: "text-link", target: "#{target_blank ? '_blank' : '_self'}" %>
       <% end %>
     </div>
