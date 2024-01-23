@@ -7,15 +7,8 @@ app_rooms_path=.  #     "$HOME/Projects/bbb-app-rooms"
 
 env="development"
 
-# This script prepares the broker db to connect to moodle.h.elos.dev using LTI 1.3
-# If you need to use the Saltire test app, update these variables
-issuer="https://moodle.h.elos.dev"
-client_id="kFQFqSRXyW88NyC"
-key_set_url="https://moodle.h.elos.dev/mod/lti/certs.php"
-auth_token_url="https://moodle.h.elos.dev/mod/lti/token.php"
-auth_login_url="https://moodle.h.elos.dev/mod/lti/auth.php"
-
-# Used on the oauth flow between broker and rooms
+my_key="my-key"
+my_secret="my-secret"
 my_internal_key="my-internal-key"
 my_internal_secret="my-internal-secret"
 
@@ -78,6 +71,8 @@ start_ngrok() {
   echo "Forwarding: http://localhost:${greenb}$port0${reset} -> https://${greenb}$address0${reset}"
   echo "Forwarding: http://localhost:${yellowb}$port1${reset} ->  http://${yellowb}$address1${reset}"
   echo "Forwarding: http://localhost:${yellowb}$port1${reset} -> https://${yellowb}$address1${reset}"
+  echo
+  echo "Message URL to paste on LMS: ${redb}https://$address0/lti/rooms/messages/blti${reset}"
 }
 
 update_ngrok_addresses() {
@@ -98,9 +93,8 @@ update_ngrok_addresses() {
     dc_file=$lti_broker_path/docker-compose.yml
     docker compose -f $dc_file run --rm app bundle exec rake db:environment:set RAILS_ENV=$env
     docker compose -f $dc_file run --rm app bundle exec rake db:reset
+    docker compose -f $dc_file run --rm app bundle exec rake "db:keys:add[$my_key,$my_secret]"
     docker compose -f $dc_file run --rm app bundle exec rake "db:apps:add[rooms,https://$address1/rooms/auth/bbbltibroker/callback,$my_internal_key,$my_internal_secret]"
-    docker compose -f $dc_file run --rm app bundle exec rake "db:registration:create[$issuer,$client_id,$key_set_url,$auth_token_url,$auth_login_url]"
-    docker compose -f $dc_file run --rm app bundle exec rake db:registration:url[rooms]
   else
     echo "exiting"
     exit 1
