@@ -20,10 +20,18 @@
     <% end %>
   </td>
   <td class="col-12 col-md-1 align-middle">
-    <%=
-      link_to join_room_scheduled_meeting_path(room, meeting), class: "btn btn-primary join-room-btn", target: '_blank' do
-    %>
-      <i class="icon material-icons">play_arrow</i>
+    <% can_join = !(wait_for_mod?(meeting, user)) %>
+    <% if can_join && device_type? != 'desktop' %>
+      <button class="btn btn-primary join-room-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+        <i class="icon material-icons">play_arrow</i>
+      </button>
+      <%= render "shared/app_offcanvas", room: room, meeting: meeting, target_blank: true %>
+    <% else %>
+      <%=
+        link_to join_room_scheduled_meeting_path(room, meeting, no_auto_join: true), class: "btn btn-primary join-room-btn", target: '_blank' do
+      %>
+        <i class="icon material-icons">play_arrow</i>
+      <% end %>
     <% end %>
   </td>
   <td class="col-2 col-md-1 align-middle td-dropdown-opts">

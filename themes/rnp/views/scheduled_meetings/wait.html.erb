@@ -4,7 +4,8 @@
      data-join-url="<%= join_room_scheduled_meeting_path(@room, @scheduled_meeting) %>"
      data-wait-url="<%= running_room_scheduled_meeting_path(@room, @scheduled_meeting) %>"
      data-is-running="<%= @is_running %>"
-     data-auto="<%= @auto_join %>">
+     data-auto="<%= @auto_join %>"
+     data-can-join="<%= @can_join_or_create %>">
 
   <div class="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3">
     <h1><%= @scheduled_meeting.name %></h1>
@@ -32,7 +33,14 @@
       </u>
     <% end %>
 
+    <%= form_with url: @post_to, id: 'join-form' do |form| %>
+      <div id="open-modal" class="" >
+        <button id="open-app-modal" class="d-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">Entrar</button>
+        <%= render "shared/app_offcanvas", submit: true %>
+      </div>
+    <% end %>
     <div id="wait-for-moderator-back" style="display: none;">
+
       <%= button_to t('scheduled_meetings.wait.retry'), @post_to,
        method: :post, class: "btn btn-secondary btn-sm disabled", disabled: true %>
     </div>

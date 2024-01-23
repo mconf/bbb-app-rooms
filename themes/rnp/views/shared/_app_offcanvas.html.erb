@@ -1,0 +1,30 @@
+<% submit ||= false %>
+<% room ||= nil %>
+<% meeting ||= nil %>
+<% target_blank ||= false %>
+
+
+<div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
+  <div id="rnp-logo" class="d-flex align-items-center">
+    <%= image_tag "conferenciaweb_logo.svg", title: "RNP", class: "mx-auto" %>
+  </div>
+  <div class="offcanvas-body">
+    <p>
+      <%= 'Utilize o app e descubra a facilidade de se conectar usando o ConferênciaWeb!' %>
+    </p>
+
+    <hr class="my-4" />
+
+    <%= hidden_field_tag 'join_in_app', false %>
+    <%= link_to 'Abrir App', '#', id: "open-app-btn", class: 'btn btn-primary' %>
+    <%= link_to 'Baixar App', '#', id: "download-app-btn", class: 'btn btn-primary' %>
+    <div class="text-center">
+      <% if submit %>
+        <%= submit_tag 'ou continue acessando pelo site.', class: "text-link" %>
+      <% else %>
+        <%= link_to 'ou continue acessando pelo site.', join_room_scheduled_meeting_path(room, meeting),
+          class: "text-link", target: "#{target_blank ? '_blank' : '_self'}" %>
+      <% end %>
+    </div>
+  </div>
+</div>

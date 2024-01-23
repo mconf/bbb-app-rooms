@@ -109,7 +109,8 @@ class ScheduledMeetingsController < ApplicationController
     if @user.present?
 
       # make user wait until moderator is in room
-      if wait_for_mod?(@scheduled_meeting, @user) && !mod_in_room?(@scheduled_meeting)
+      if wait_for_mod?(@scheduled_meeting, @user) && (!mod_in_room?(@scheduled_meeting) ||
+        (params[:no_auto_join] == 'true' && device_type? != 'desktop'))
         redirect_to wait_room_scheduled_meeting_path(@room, @scheduled_meeting)
       else
         # notify users if cable is enabled
@@ -120,7 +121,11 @@ class ScheduledMeetingsController < ApplicationController
         # join as moderator (creates the meeting if not created yet)
         res = join_api_url(@scheduled_meeting, @user)
         if res[:can_join?]
-          redirect_to res[:join_api_url]
+          if params[:join_in_app] == 'true'
+            redirect_to 'br.rnp.conferenciawebmobile://direct-join/' + res[:join_api_url].gsub(/^https?:\/\//, '')
+          else
+            redirect_to res[:join_api_url]
+          end
         else
           flash[:error] = t("default.scheduled_meeting.error.#{res[:messageKey]}")
           redirect_to room_path(@room)
@@ -146,7 +151,11 @@ class ScheduledMeetingsController < ApplicationController
         name = "#{params[:first_name]} #{params[:last_name]}"
         res = external_join_api_url(@scheduled_meeting, name)
         if res[:can_join?]
-          redirect_to res[:join_api_url]
+          if params[:join_in_app] == 'true'
+            redirect_to 'br.rnp.conferenciawebmobile://direct-join/' + res[:join_api_url].gsub(/^https?:\/\//, '')
+          else
+            redirect_to res[:join_api_url]
+          end
         else
           flash[:error] = t("default.scheduled_meeting.error.#{res[:messageKey]}")
           redirect_to external_room_scheduled_meeting_path(@room, @scheduled_meeting)
@@ -183,6 +192,7 @@ class ScheduledMeetingsController < ApplicationController
       )
     end
     @is_running = mod_in_room?(@scheduled_meeting)
+    @can_join_or_create = join_or_create?
   end
 
   def external
@@ -221,7 +231,8 @@ class ScheduledMeetingsController < ApplicationController
         render json: {
                  status: :ok,
                  running: mod_in_room?(@scheduled_meeting),
-                 interval: Rails.configuration.cable_polling_secs.to_i
+                 interval: Rails.configuration.cable_polling_secs.to_i,
+                 can_join_or_create: join_or_create?
                }
       }
     end
@@ -235,7 +246,8 @@ class ScheduledMeetingsController < ApplicationController
                   running: mod_in_room?(@scheduled_meeting),
                   participants_count: get_participants_count(@scheduled_meeting),
                   start_ago: get_current_duration(@scheduled_meeting),
-                  ended: !@scheduled_meeting.active? && !mod_in_room?(@scheduled_meeting)
+                  ended: !@scheduled_meeting.active? && !mod_in_room?(@scheduled_meeting),
+                  can_join_or_create: join_or_create?
                }
       }
     end
@@ -266,6 +278,13 @@ class ScheduledMeetingsController < ApplicationController
     if params.dig(:scheduled_meeting, :repeat)&.blank?
       params[:scheduled_meeting][:repeat] = nil
     end
+  end
+
+  def join_or_create?
+    can_join = (@user.present? && !(wait_for_mod?(@scheduled_meeting, @user) && !mod_in_room?(@scheduled_meeting))) ||
+      (!@user.present? && mod_in_room?(@scheduled_meeting))
+
+    can_join
   end
 
   def scheduled_meeting_params(room)
