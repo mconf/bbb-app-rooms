@@ -38,7 +38,7 @@ Rails.application.routes.draw do
         end
 
         # Handles launches.
-        get '/launch', to: 'rooms#launch', as: :room_launch
+        match '/launch', to: 'rooms#launch', as: :room_launch, via: [:get, :post]
 
         # Handles sessions.
         get '/sessions/create'
