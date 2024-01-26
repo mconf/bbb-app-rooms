@@ -73,6 +73,13 @@ module ApplicationHelper
     !Rails.configuration.spaces_bucket.blank?
   end
 
+  def device_type?
+    agent = request.user_agent
+    return "tablet" if agent =~ /(tablet|ipad)|(android(?!.*mobile))/i
+    return "mobile" if agent =~ /Mobile/
+    return "desktop"
+  end
+
   def theme_class
     "theme-#{Rails.configuration.theme}" if theme_defined?
   end

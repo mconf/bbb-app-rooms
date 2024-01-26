@@ -31,7 +31,11 @@ $(document).on('turbolinks:load', function(){
       error: function() { console.log('Error checking'); },
       success: function(data) {
         if (data['running'] === true) {
-          joinSession();
+          if (data['can_join_or_create'] === true && isMobile()) {
+            $("#offcanvasBottom").offcanvas('show');
+          } else {
+            joinSession();
+          }
         }
       }
     });
@@ -89,12 +93,49 @@ $(document).on('turbolinks:load', function(){
     if (data.ended) {
       form?.remove()
     }
+
+    if (isMobile() && data.can_join_or_create) {
+      $('#open-modal').removeClass('d-none')
+      $('#browser-join').addClass('d-none')
+    } else {
+      $('#open-modal').addClass('d-none')
+      $('#browser-join').removeClass('d-none')
+    }
   };
+
+  var isMobile = function() {
+    const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+    return regex.test(navigator.userAgent);
+  }
 
   var joinSession = function() {
     $('#wait-for-moderator').find('form [type=submit]').addClass('disabled');
     $('#wait-for-moderator').find('form').submit();
   };
+
+  var downloadApp = function() {
+    storeUrl = ''
+    if(/iPhone/i.test(navigator.userAgent)){
+      storeUrl = 'https://apps.apple.com/br/app/confer%C3%AAnciaweb/id1666641791'
+    } else {
+      if (/Android/i.test(navigator.userAgent)) {
+      storeUrl = 'https://play.google.com/store/apps/details?id=br.rnp.conferenciawebmobile'
+      }
+    }
+
+    window.location = storeUrl
+  };
+
+  $('#download-app-btn').on('click', function(e){
+    e.preventDefault()
+    downloadApp()
+  });
+
+  $('#open-app-btn').on('click', function(e){
+    e.preventDefault()
+    $("#join_in_app").val(true)
+    $('#join-form').trigger("submit")
+  });
 
   if (controller === 'scheduled_meetings' && action === 'external') {
     Polling.setPolling(pollStatusTeste)
@@ -108,7 +149,14 @@ $(document).on('turbolinks:load', function(){
 
     var running = $('#wait-for-moderator').data('is-running');
     if (running === true) {
-      setTimeout(function() { joinSession(); }, 200);
+      let canJoin = $('#wait-for-moderator').data('can-join');
+      if (canJoin === true && isMobile()){
+        setTimeout(function() {
+          $("#offcanvasBottom").offcanvas('show');
+        }, 200);
+      } else {
+        setTimeout(function() { joinSession(); }, 200);
+      }
       return;
     }
 
