@@ -122,7 +122,8 @@ class ScheduledMeetingsController < ApplicationController
         res = join_api_url(@scheduled_meeting, @user)
         if res[:can_join?]
           if params[:join_in_app] == 'true'
-            redirect_to 'br.rnp.conferenciawebmobile://direct-join/' + res[:join_api_url].gsub(/^https?:\/\//, '')
+            direct_join_url = 'br.rnp.conferenciawebmobile://direct-join/' + res[:join_api_url].gsub(/^https?:\/\//, '') + "&meetingName=#{@scheduled_meeting.name}"
+            redirect_to direct_join_url
           else
             redirect_to res[:join_api_url]
           end
@@ -152,7 +153,8 @@ class ScheduledMeetingsController < ApplicationController
         res = external_join_api_url(@scheduled_meeting, name)
         if res[:can_join?]
           if params[:join_in_app] == 'true'
-            redirect_to 'br.rnp.conferenciawebmobile://direct-join/' + res[:join_api_url].gsub(/^https?:\/\//, '')
+            direct_join_url = 'br.rnp.conferenciawebmobile://direct-join/' + res[:join_api_url].gsub(/^https?:\/\//, '') + "&meetingName=#{@scheduled_meeting.name}"
+            redirect_to direct_join_url
           else
             redirect_to res[:join_api_url]
           end
