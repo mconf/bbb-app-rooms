@@ -130,6 +130,11 @@ es:
     title: "Sesiones programadas"
     wait:
       retry: "Entrar"
+  open_app_modal:
+    title: "Usa la aplicación y descubra lo fácil que es conectarse con ConferênciaWeb!"
+    open_app: "Abre la App"
+    download_app: "Descargar App"
+    continue_using_browser: "seguir accediendo a través del sitio."
   time:
     am: am
     formats:

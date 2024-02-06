@@ -17,6 +17,7 @@ module ApplicationHelper
       grant_type: 'client_credentials',
       client_id: Rails.configuration.omniauth_key[:bbbltibroker],
       client_secret: Rails.configuration.omniauth_secret[:bbbltibroker],
+      scope: 'api'
     }
     response = RestClient.post("#{lti_broker_url}/oauth/token", oauth_options)
     JSON.parse(response)['access_token']
@@ -70,6 +71,13 @@ module ApplicationHelper
   def spaces_configured?
     !Rails.configuration.spaces_key.blank? && !Rails.configuration.spaces_secret.blank? &&
     !Rails.configuration.spaces_bucket.blank?
+  end
+
+  def device_type?
+    agent = request.user_agent
+    return "tablet" if agent =~ /(tablet|ipad)|(android(?!.*mobile))/i
+    return "mobile" if agent =~ /Mobile/
+    return "desktop"
   end
 
   def theme_class

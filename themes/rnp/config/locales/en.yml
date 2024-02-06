@@ -130,6 +130,11 @@ en:
     title: "Scheduled sessions"
     wait:
       retry: "Join"
+  open_app_modal:
+    title: "Use the app and discover how easy it's to connect using ConferênciaWeb!"
+    open_app: "Open App"
+    download_app: "Download App"
+    continue_using_browser: "continue join by website."
   time:
     am: am
     formats:

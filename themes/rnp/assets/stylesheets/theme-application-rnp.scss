@@ -522,6 +522,17 @@ body.theme-rnp {
     img {
       margin: 3rem 0;
     }
+
+    #open-modal {
+      text-align: right;
+      margin-top: 48px;
+
+      button {
+        @media (max-width: 768px) {
+          width: 100%;
+        }
+      }
+    }
   }
 
   &[data-controller="errors"], &[data-controller="sessions"] {
@@ -545,6 +556,47 @@ body.theme-rnp {
       p, ul {
         font-size: var(--font-size-sm);
       }
+    }
+  }
+
+  .offcanvas {
+    border-radius: 12px 12px 0 0;
+    padding: 24px;
+    height: fit-content;
+
+    #rnp-logo {
+      img {
+        margin: 0 0 8px;
+      }
+    }
+
+    p {
+      color: var(--Cinza-3, #667080) !important;
+      text-align: center;
+      line-height: normal;
+    }
+
+    a {
+      width: 100%;
+    }
+
+    .btn {
+      border-radius: 35px;
+      border: none;
+      background: #003399;
+      margin: 0 0 16px !important;
+      height: 40px;
+      line-height: 40px;
+      padding: 0;
+    }
+
+    .text-link {
+      color: #F18700;
+      font-size: 14px;
+      line-height: normal;
+      text-decoration-line: underline;
+      border: none;
+      background: none;
     }
   }
 }

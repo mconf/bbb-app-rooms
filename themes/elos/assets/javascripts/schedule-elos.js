@@ -15,7 +15,7 @@ $(document).on('turbolinks:load', function(){
 
     if($('input[name="scheduled_meeting[create_moodle_calendar_event]"]')) {
       let recurrenceSelect = document.getElementsByName("scheduled_meeting[repeat]")[0]
-      recurrenceSelect.addEventListener('change', toggleMoodleCalendarCheckbox)
+      recurrenceSelect?.addEventListener('change', toggleMoodleCalendarCheckbox)
 
       function toggleMoodleCalendarCheckbox(e) {
         let valueSelectDuration = e.target.value;

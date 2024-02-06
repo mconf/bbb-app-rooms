@@ -42,7 +42,7 @@
         <%= image_tag 'guest-wait.svg' %>
       <% end %>
 
-      <%= form_with url: join_room_scheduled_meeting_path(@room, @scheduled_meeting) do |form| %>
+      <%= form_with url: join_room_scheduled_meeting_path(@room, @scheduled_meeting), id: 'join-form' do |form| %>
         <div class="form-row">
           <div class="form-group col-12">
             <%= label_tag :first_name, t('default.scheduled_meeting.external.first_name') %>
@@ -59,8 +59,17 @@
           <%#= label_tag :terms, t("terms.message", enter_room: t("default.scheduled_meeting.external.join"), link: ext_rnp_link(:terms)).html_safe, class: "message-terms" %>
         <%# end %>
 
-        <div class="form-actions">
-          <%= submit_tag t('default.scheduled_meeting.external.join'), class: "btn btn-primary" %>
+        <% can_join = (@user.present? && !(wait_for_mod?(@scheduled_meeting, @user) && !mod_in_room?(@scheduled_meeting))) || (!@user.present? && mod_in_room?(@scheduled_meeting)) %>
+        <div id="open-modal" class="<%= (can_join && device_type? != 'desktop') ? '' : 'd-none' %>" >
+          <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+            <%= t('default.scheduled_meeting.external.join') %>
+          </button>
+          <%= render "shared/app_offcanvas", submit: true, room: @room, meeting: @scheduled_meeting %>
+        </div>
+        <div id="browser-join" class="<%= (can_join && device_type? != 'desktop') ? 'd-none' : '' %>" >
+          <div class="form-actions">
+            <%= submit_tag t('default.scheduled_meeting.external.join'), class: "btn btn-primary" %>
+          </div>
         </div>
 
         <% unless @disclaimer.blank? %>
