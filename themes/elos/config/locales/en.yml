@@ -68,6 +68,7 @@ en:
       playbacks:
         presentation: "Play"
         presentation_video: "Download"
+        video: "Download"
       processing: "Processing"
       published: "Visible"
       publish: "Make the recording visible"
