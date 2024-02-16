@@ -58,10 +58,10 @@ en:
       return: "< go back"
     load: "Load more conferences"
     meeting_data_download:
-      dashboard: "Learning dashboard"
+      dashboard: "Engagement report"
       download_notes: "Download meeting's notes"
       download_participants: "Download participants list"
-      unavailable_dashboard: "Unavailable learning dashboard"
+      unavailable_dashboard: "Unavailable engagement report"
       unavailable_notes: "Unavailable meeting's notes"
       unavailable_participants: "Unavailable participants list"
     recording:
