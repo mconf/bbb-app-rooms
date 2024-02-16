@@ -83,6 +83,7 @@ es:
       playbacks:
         presentation: "Reproducir"
         presentation_video: "Download"
+        video: "Download"
       processing: "Procesando"
       published: "Visible"
       publish: "Hacer la grabación visible"
