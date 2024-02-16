@@ -301,6 +301,7 @@ let showDropdownItems = (buttons, meeting_id) => {
 
   for (let button of buttons) {
     $(button).addClass('appended-item rec-edit');
+    $(button).attr("target", "_blank");
     $(`div[aria-labelledby="dropdown-opts-${meeting_id}"]`).append(button);
   }
 };
