@@ -11,7 +11,7 @@
     <%= stylesheet_link_tag "https://fonts.googleapis.com/icon?family=Material+Icons", rel: "stylesheet", media: "all" %>
     <%= render 'layouts/theme', theme: app_theme %>
     <%= render 'layouts/analytics' %>
-    <%= render 'shared/ipezinho' if app_theme == 'rnp' %>
+    <%= render 'shared/rnp_chat' if app_theme == 'rnp' %>
   </head>
 
   <body lang="<%= I18n.locale %>"

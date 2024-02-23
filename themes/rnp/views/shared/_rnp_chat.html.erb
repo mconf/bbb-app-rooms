@@ -1,0 +1,15 @@
+<% unless Rails.application.config.rnp_chat_id.blank? %>
+  <% chat_id = Rails.application.config.rnp_chat_id %>
+  <script src="https://unpkg.com/blip-chat-widget" type="text/javascript"></script>
+  <script>
+    (function () {
+      window.onload = function () {
+        new BlipChat()
+          .withAppKey('<%= chat_id %>')
+          .withButton({"color":"#0096fa","icon":""})
+          .withCustomCommonUrl('https://rnp.chat.blip.ai/')
+          .build();
+      }
+    })();
+  </script>
+<% end %>
