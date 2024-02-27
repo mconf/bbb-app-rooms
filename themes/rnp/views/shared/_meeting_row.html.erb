@@ -117,19 +117,44 @@
               <div class="dropdown-divider"></div>
               <% if user.moderator?(Abilities.moderator_roles) && Rails.application.config.eduplay_enabled %>
                 <% eduplay_token = EduplayToken.find_by(user_uid: user.uid)%>
-                <% if eduplay_token.present? && eduplay_token.expires_at > Time.now + 30.minutes %>
-                  <%= link_to eduplay_path(room, record_id: recording[:recordID]),
-                  method: :post,
-                  class: "dropdown-item rec-edit" do %>
-                    <%= icon_eduplay %>
-                    <%= t("meetings.recording.eduplay") %>
+                <% eduplay_uploads = EduplayUpload.recording_uploads(recording[:recordID]) if recording.present? %>
+                <% latest_upload = eduplay_uploads.max_by(&:created_at)%>
+                <% if eduplay_uploads.count == 0%>
+                  <% if eduplay_token.present? && eduplay_token.expires_at > Time.now + 30.minutes %>
+                    <%= link_to eduplay_path(room, record_id: recording[:recordID]),
+                    method: :post,
+                    class: "dropdown-item rec-edit" do %>
+                      <%= icon_eduplay %>
+                      <%= t("meetings.recording.eduplay") %>
+                    <% end %>
+                  <% else %>
+                    <%= link_to '#',
+                    'data-url': Eduplay::API.authorize_path(recording[:recordID]),
+                    class: "eduplay-login dropdown-item rec-edit" do %>
+                      <%= icon_eduplay %>
+                      <%= t("meetings.recording.eduplay") %>
+                    <% end %>
                   <% end %>
                 <% else %>
-                  <%= link_to '#',
-                  'data-url': Eduplay::API.authorize_path(recording[:recordID]),
-                  class: "eduplay-login dropdown-item rec-edit" do %>
-                    <%= icon_eduplay %>
-                    <%= t("meetings.recording.eduplay") %>
+                  <% if latest_upload.created_at <= 1.minutes.ago%>
+                    <% if eduplay_token.present? && eduplay_token.expires_at > Time.now + 30.minutes %>
+                      <%= link_to eduplay_path(room, record_id: recording[:recordID]),
+                      method: :post,
+                      class: "dropdown-item rec-edit" do %>
+                        <%= icon_eduplay %>
+                        <%= t("meetings.recording.eduplay") %>
+                      <% end %>
+                    <% else %>
+                      <%= link_to '#',
+                      'data-url': Eduplay::API.authorize_path(recording[:recordID]),
+                      class: "eduplay-login dropdown-item rec-edit" do %>
+                        <%= icon_eduplay %>
+                        <%= t("meetings.recording.eduplay") %>
+                      <% end %>
+                    <% end %>
+                  <% else %>
+                    <%# Disable eduplay button %>
+                    <span class="dropdown-item rec-edit disabled"><%= t('meetings.recording.recently_uploaded') %></span>
                   <% end %>
                 <% end %>
               <% end %>

@@ -87,6 +87,7 @@ es:
       processing: "Procesando"
       published: "Visible"
       publish: "Hacer la grabación visible"
+      recently_uploaded: "Vídeo subido a Eduplay"
       unpublished: "No visible"
       unpublish: "Hacer la grabación no visible"
     search:
