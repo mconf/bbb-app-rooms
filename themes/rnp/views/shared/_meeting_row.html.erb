@@ -136,7 +136,7 @@
                     <% end %>
                   <% end %>
                 <% else %>
-                  <% if latest_upload.created_at <= 1.minutes.ago%>
+                  <% if latest_upload.created_at <= 2.minutes.ago%>
                     <% if eduplay_token.present? && eduplay_token.expires_at > Time.now + 30.minutes %>
                       <%= link_to eduplay_path(room, record_id: recording[:recordID]),
                       method: :post,
