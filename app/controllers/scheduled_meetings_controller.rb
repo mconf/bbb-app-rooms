@@ -45,6 +45,9 @@ class ScheduledMeetingsController < ApplicationController
         )
       )
 
+      config = ConsumerConfig.find_by(key: @room.consumer_key)
+      @scheduled_meeting.disable_external_link = true if config&.force_disable_external_link
+
       if @scheduled_meeting.duration.zero?
         @scheduled_meeting[:duration] =
           ScheduledMeeting.convert_time_to_duration(params[:scheduled_meeting][:custom_duration])
