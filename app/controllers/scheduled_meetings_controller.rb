@@ -203,7 +203,9 @@ class ScheduledMeetingsController < ApplicationController
   def external
     # If the external link is disabled, users should get an error
     # if they are not signed in
-    if @scheduled_meeting.disable_external_link && @user.blank?
+
+    config = ConsumerConfig.find_by(key: @room.consumer_key)
+    if (@scheduled_meeting.disable_external_link || config&.force_disable_external_link) && @user.blank?
       redirect_to errors_path(404)
     end
 
