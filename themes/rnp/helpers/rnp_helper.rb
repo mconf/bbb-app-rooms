@@ -20,9 +20,9 @@ module RnpHelper
   def format_time(date)
     if date.present?
       if date.is_a?(Integer) && date.to_s.length == 13
-        value = Time.at(date/1000)
+        value = Time.zone.at(date/1000)
       else
-        value = Time.at(date)
+        value = Time.zone.at(date)
       end
       value.to_s(:time)
     else
