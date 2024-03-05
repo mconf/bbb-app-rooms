@@ -44,9 +44,9 @@ module ApplicationHelper
     config.present? && config[:message_reference_terms_use]
   end
 
-  def show_disable_external_link?(resource)
+  def hide_disable_external_link?(resource)
     config = ConsumerConfig.find_by(key: resource[:consumer_key])
-    config.present? && !config[:force_disable_external_link]
+    config.present? && config[:force_disable_external_link]
   end
 
   def show_external_widget?(resource)
