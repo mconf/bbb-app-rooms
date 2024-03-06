@@ -19,38 +19,57 @@
   </td>
 
   <%# Meeting creation date %>
-  <td class="col-6 col-md-1">
-    <%= format_date(meeting[:startTime].to_i, :day_month_year, false) %>
+  <td class="col-5 col-md-2">
+    <div class="meeting-info me-auto me-md-0">
+      <%= format_date(meeting[:startTime].to_i, :day_month_year, false) %>
 
-    <% scheduled_meeting_id = meeting[:metadata][:'bbb-meeting-db-id'] %>
-    <% if recurring_meeting?(scheduled_meeting_id)%>
-      <span class="badge badge-recurring-meeting">
-        <span>
-          <%= t("default.scheduled_meeting.repeat_options.#{meeting_recurrence(scheduled_meeting_id)}") %>
+      <% scheduled_meeting_id = meeting[:metadata][:'bbb-meeting-db-id'] %>
+      <% if recurring_meeting?(scheduled_meeting_id)%>
+        <span class="badge badge-recurring-meeting d-none d-md-flex">
+          <span>
+            <%= t("default.scheduled_meeting.repeat_options.#{meeting_recurrence(scheduled_meeting_id)}") %>
+          </span>
         </span>
-      </span>
-    <% end %>
+      <% end %>
+    </div>
   </td>
 
   <%# Meeting creation time %>
-  <td class="col-6 col-md-1">
-    <%= format_time(meeting[:startTime].to_i) %>
+  <td class="col-3 col-md-1">
+    <div class="meeting-info">
+      <%= format_time(meeting[:startTime].to_i) %>
+    </div>
   </td>
 
   <%# Meeting duration %>
-  <td class="col-12 col-md-2 text-center">
-    <% duration = meeting[:endTime].to_i/1000 - meeting[:startTime].to_i/1000 %>
-    <% if duration/60 > 0 %>
-      <%= duration_in_hours_and_minutes(duration).capitalize %>
-    <% else %>
-      <%= t("meetings.duration.less_than_a_minute") %>
+  <td class="col-4 col-md-1 text-center">
+    <div class="meeting-info ms-auto ms-md-0">
+      <% duration = meeting[:endTime].to_i/1000 - meeting[:startTime].to_i/1000 %>
+      <% if duration/60 > 0 %>
+        <%= duration_in_hours_and_minutes(duration, true).capitalize %>
+      <% else %>
+        <%= t("meetings.duration.less_than_a_minute") %>
+      <% end %>
+    </div>
+  </td>
+
+  <% scheduled_meeting_id = meeting[:metadata][:'bbb-meeting-db-id'] %>
+  <td class="col-5 d-flex d-md-none">
+    <% if recurring_meeting?(scheduled_meeting_id)%>
+      <div class="me-auto">
+        <span class="badge badge-recurring-meeting">
+          <span>
+            <%= t("default.scheduled_meeting.repeat_options.#{meeting_recurrence(scheduled_meeting_id)}") %>
+          </span>
+        </span>
+      </div>
     <% end %>
   </td>
 
   <%# Meeting with recording %>
   <% if recording.present? %>
     <%# Recording visibility %>
-    <td class="<%= recording[:published] ? 'col-6' : 'col-12' %> col-md-1">
+    <td class="<%= recording[:published] ? 'col-2' : 'col-12' %> col-md-1">
       <% if recording[:published] %>
         <%= icon_visibility(title: t("meetings.recording.published"), class: 'color-primary fa-2x') %>
       <% else %>
@@ -59,7 +78,7 @@
     </td>
 
     <%# Recording state/action icons %>
-    <td class="col-6 col-md-1 flex-row-reverse">
+    <td class="col-5 col-md-1 justify-content-start justify-content-md-center flex-row-reverse icon-container">
       <% if recording[:state] != 'processing' %>
         <% if recording[:published] %>
           <% if can_download_recording?(user, room)%>
@@ -198,7 +217,7 @@
     <td class="col-md-1"></td>
     <td class="col-md-1"></td>
     <%# Options dropdown %>
-    <td class="col-md-1 td-dropdown-opts">
+    <td class="col-2 col-md-1 td-dropdown-opts">
       <% if can_edit?(user, room) %>
         <div class="dropdown dropdown-opts">
           <a href="#" class="dropdown-toggle d-flex text-decoration-none dropdown-opts-link"
