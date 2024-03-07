@@ -19,6 +19,7 @@ class RoomsController < ApplicationController
   before_action :find_user
   before_action :find_app_launch, only: %i[launch]
   before_action :set_room_title, only: :show
+  before_action :set_group_variables, only: %i[show meetings]
 
   before_action only: %i[show launch close] do
     authorize_user!(:show, @room)
@@ -26,6 +27,27 @@ class RoomsController < ApplicationController
   before_action only: %i[edit update recording_publish recording_unpublish
                          recording_update recording_delete] do
     authorize_user!(:edit, @room)
+  end
+
+  def set_group_on_session
+    if @room.moodle_groups_configured?
+      if params[:group_id].present?
+        add_to_room_session(@room, 'group_id', params[:group_id])
+      else
+        remove_from_room_session(@room, 'group_id')
+      end
+    end
+  
+    redirect_to params[:redir_url]
+  end
+
+  def set_group_variables
+    if @room.moodle_groups_configured?
+      moodle_token = @room.consumer_config.moodle_token
+      @groups = Moodle::API.get_user_groups(moodle_token, @room.last_launch.params["user_id"], @room.last_launch.params["context_id"])
+      @group_select = @groups.collect { |g| g.slice('name', 'id').values }
+      @current_group_id = get_from_room_session(@room, 'group_id')
+    end
   end
 
   # GET /rooms/1
@@ -271,6 +293,18 @@ class RoomsController < ApplicationController
     set_room_session(
       @room, { launch: launch_nonce }
     )
+
+    # Adds the user first group ID in the session if the grouping
+    # feature is enabled.
+    if @room.moodle_groups_configured?
+      moodle_token = @room.consumer_config.moodle_token
+      groups = Moodle::API.get_user_groups(moodle_token, launch_params['user_id'], launch_params['context_id'])
+      if groups.any?
+        add_to_room_session(@room, 'group_id', groups.first['id'])
+      else
+        remove_from_room_session(@room, 'group_id')
+      end
+    end
   end
 
   def set_room_title

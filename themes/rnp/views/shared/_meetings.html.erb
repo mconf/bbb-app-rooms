@@ -2,6 +2,7 @@
 <% [user, room, meetings, only_public] %>
 
 <div id="meetings-list">
+<%= render "shared/group_select", redir_url: meetings_room_path(@room) %>
   <div class="row mb-md-3">
     <div id="meetings-header" class="col-12 col-sm-6 d-flex align-items-center justify-content-center justify-content-sm-start">
       <h2 class="fw-bold mb-0"><%= t('meetings.history') %></h2>

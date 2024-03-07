@@ -8,4 +8,4 @@ link_to t('meetings.index.return'),
 %>
 
 <%= hidden_field_tag 'room_path', room_path(@room) %>
-<%= render "shared/meetings", user: @user, room: @room, meetings: @meetings, only_public: false %>
+<%= render "shared/meetings", user: @user, room: @room, meetings: @meetings, groups: @groups, only_public: false %>
