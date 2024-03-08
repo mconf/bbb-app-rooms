@@ -28,6 +28,39 @@
         margin-left: 0;
         margin-right: 0;
         padding: blocks(1) 0;
+
+        .meeting-info {
+          color: #75787B;
+          background-color: #F6F6F6;
+          border-radius: 4px;
+          padding: 8px 24px;
+
+          @media (max-width: map-get($grid-breakpoints, 'sm')) {
+            padding: 8px 12px;
+          }
+        }
+
+        .meeting-info-container {
+          flex-direction: row;
+          justify-content: space-between;
+        }
+
+        .icon-container a {
+          background-color: var(--color-main);
+          color: var(--color-white);
+          border-radius: 50%;
+
+          i {
+            font-size: 24px;
+            padding: 4px;
+          }
+        }
+
+        .badge-recurring-meeting {
+          border-radius: 50px;
+          line-height: 16px;
+          padding: 2px 12px;
+        }
       }
 
       .td-titles { order: -2; }

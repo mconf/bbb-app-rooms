@@ -6,13 +6,17 @@ es:
     schedule: "Agendar"
   helpers:
     distance_of_time_in_hours_and_minutes:
-      hour:
-        one: "%{count} hora"
-        other: "%{count} horas"
-      minute:
-        one: "%{count} minuto"
-        other: "%{count} minutos"
-      connector: "y"
+      long:
+        hour:
+          one: "%{count} hora"
+          other: "%{count} horas"
+        minute:
+          one: "%{count} minuto"
+          other: "%{count} minutos"
+        connector: "y"
+      short:
+        hour: "%{count}h"
+        minute: "%{count}min"
     hint:
       create_moodle_calendar_event: "Crea un evento correspondiente en el Calendario de Moodle para esta reunión programada. Esta opción está deshabilitada cuando la reunión programada está configurada como recurrente."
       disable_external_link: "El acceso a la sala virtual estará restringido a estudiantes autenticados."
@@ -42,7 +46,7 @@ es:
   meetings:
     all_loaded: "Se han cargado todas las conferencias"
     duration:
-      less_than_a_minute: "Menos de 1 minuto"
+      less_than_a_minute: "< 1min"
     empty_list: "No hay conferencias para mostrar"
     filters:
       no_filter: "Todas"

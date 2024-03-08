@@ -12,13 +12,17 @@ pt:
     send: "Enviar"
   helpers:
     distance_of_time_in_hours_and_minutes:
-      hour:
-        one: "%{count} hora"
-        other: "%{count} horas"
-      minute:
-        one: "%{count} minuto"
-        other: "%{count} minutos"
-      connector: "e"
+      long:
+        hour:
+          one: "%{count} hora"
+          other: "%{count} horas"
+        minute:
+          one: "%{count} minuto"
+          other: "%{count} minutos"
+        connector: "e"
+      short:
+        hour: "%{count}h"
+        minute: "%{count}min"
     hint:
       create_moodle_calendar_event: "Cria um evento correspondente no Calendário do Moodle para esta sessão agendada. Esta opção é desativada quando a sessão agendada é configurada para ser recorrente."
       disable_external_link: "O acesso à sala virtual será restrito aos alunos autenticados."
@@ -48,7 +52,7 @@ pt:
   meetings:
     all_loaded: "Todas as conferências foram carregadas"
     duration:
-      less_than_a_minute: "Menos de 1 minuto"
+      less_than_a_minute: "< 1min"
     empty_list: "Não há conferências para mostrar"
     filters:
       no_filter: "Todas"
