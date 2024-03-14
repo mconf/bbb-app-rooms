@@ -238,50 +238,58 @@ class RoomsController < ApplicationController
       return
     end
 
-    # if the handler was set, try to use it
-    handler = params['handler']
-    Rails.logger.info "Found a handler in the params, will try to use it handler=#{handler}" unless handler.nil?
-    # TODO: maybe use an extra param or the session to validate the request
+    # it's null unless we get an external handler below
+    handler = nil
 
-    # TODO: ext_handler = ConsumerConfig.find_by_key(consumer_key)&.external_handler_url
-    ext_handler = "https://n8n.h.elos.dev/webhook/7d4be72f-5804-490a-99ac-0799bce98c8f"
+    # TODO: ext_handler = ConsumerConfig.find_by_key(consumer_key)&.external_context_url
+    ext_context_url = "https://n8n.h.elos.dev/webhook/7d4be72f-5804-490a-99ac-0799bce98c8f"
     # TODO: use the new API
-    if ext_handler.present? && handler.blank?
-      Rails.logger.info "Making an external request to define the handler url=#{ext_handler}"
-      begin
-        response = send_request(ext_handler, launch_params)
-        # example response:
-        # [
-        #   {
-        #     "class_name": "STRW18/Q08.01",
-        #     "handler": "61128015393ef38d7a2af97e0b80184432428c6b"
-        #   }
-        # ]
-        handlers = JSON.parse(response.body)
-      rescue JSON::ParserError => error
-        # TODO: log and render error
-        raise error
-      rescue StandardException => error
-        # TODO: log and render error
-        raise error
-      end
+    # will only try to get an external context/handler if the ConsumerConfig is configured to do so
+    if ext_context_url.present?
 
-      if handlers.size == 0
-        Rails.logger.warn "Couldn't define a handler using the external request"
-        # TODO: render error page
-      elsif handlers.size > 1
-        @handlers = handlers
-        @launch_nonce = launch_nonce
-        user_params = AppLaunch.new(params: launch_params).user_params
-        @user = BbbAppRooms::User.new(user_params)
-        set_current_locale
-        respond_to do |format|
-          format.html { render 'rooms/external_handler_selector' }
+      # if the handler was already set, try to use it
+      # this will happen in the 2nd step, after the user selects a handler/room to access
+      handler = params['handler']
+      Rails.logger.info "Found a handler in the params, will try to use it handler=#{handler}" unless handler.nil?
+      # TODO: maybe use an extra param or the session to validate the request
+
+      if handler.blank?
+        Rails.logger.info "Making a request to an external API to define the context/handler url=#{ext_context_url}"
+        begin
+          response = send_request(ext_context_url, launch_params)
+          # example response:
+          # [
+          #   {
+          #     "class_name": "STRW18/Q08.01",
+          #     "handler": "61128015393ef38d7a2af97e0b80184432428c6b"
+          #   }
+          # ]
+          handlers = JSON.parse(response.body)
+        rescue JSON::ParserError => error
+          # TODO: log and render error
+          raise error
+        rescue StandardException => error
+          # TODO: log and render error
+          raise error
         end
-        return
-      else
-        handler = handlers.first['handler']
-        Rails.logger.info "Defined a handler using the external request handler=#{handler}"
+
+        if handlers.size == 0
+          Rails.logger.warn "Couldn't define a handler using the external request"
+          # TODO: render error page
+        elsif handlers.size > 1
+          @handlers = handlers
+          @launch_nonce = launch_nonce
+          user_params = AppLaunch.new(params: launch_params).user_params
+          @user = BbbAppRooms::User.new(user_params)
+          set_current_locale
+          respond_to do |format|
+            format.html { render 'rooms/external_context_selector' }
+          end
+          return
+        else
+          handler = handlers.first['handler']
+          Rails.logger.info "Defined a handler using the external request handler=#{handler}"
+        end
       end
     end
 
