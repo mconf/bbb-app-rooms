@@ -272,6 +272,9 @@ class RoomsController < ApplicationController
       elsif handlers.size > 1
         @handlers = handlers
         @launch_nonce = launch_nonce
+        user_params = AppLaunch.new(params: launch_params).user_params
+        @user = BbbAppRooms::User.new(user_params)
+        set_current_locale
         respond_to do |format|
           format.html { render 'rooms/external_handler_selector' }
         end

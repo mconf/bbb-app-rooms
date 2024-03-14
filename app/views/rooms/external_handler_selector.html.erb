@@ -1,7 +1,0 @@
-<% @handlers.each do |handler| %>
-  <% # TODO: remove the gsub %>
-  <% path = Rails.application.routes.url_helpers.room_launch_path(launch_nonce: @launch_nonce, handler: handler['handler']).gsub(Regexp.new('^/rooms/rooms'), '/rooms') %>
-  <p>
-    <%= link_to handler['class_name'], path, method: :post %>
-  </p>
-<% end %>
