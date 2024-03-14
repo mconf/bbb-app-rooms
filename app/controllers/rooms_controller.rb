@@ -19,6 +19,7 @@ class RoomsController < ApplicationController
   before_action :validate_room, except: %i[launch close]
   before_action :find_user
   before_action :find_app_launch, only: %i[launch]
+  before_action :set_user_groups_on_session, only: %i[launch]
   before_action :set_room_title, only: :show
   before_action :set_group_variables, only: %i[show meetings]
 
@@ -30,8 +31,8 @@ class RoomsController < ApplicationController
     authorize_user!(:edit, @room)
   end
 
-  def set_group_on_session
-    if @room.moodle_groups_configured?
+  def set_current_group_on_session
+    if @app_launch.moodle_groups_configured?
       if params[:group_id].present?
         add_to_room_session(@room, 'current_group_id', params[:group_id])
       else
@@ -43,13 +44,9 @@ class RoomsController < ApplicationController
   end
 
   def set_group_variables
-    if @room.moodle_groups_configured?
-      moodle_token = @room.consumer_config.moodle_token
-      @groups = Moodle::API.get_user_groups(moodle_token, @user.uid, @app_launch.params["context_id"])
-      @group_select = @groups.collect { |g| g.slice('name', 'id').values }
+    if @app_launch.moodle_groups_configured?
+      @group_select = get_from_room_session(@room, 'user_groups')
       @current_group_id = get_from_room_session(@room, 'current_group_id')
-      # moodle_groups: {'1': 'Grupo A', '2': 'Grupo B'}
-      add_to_room_session(@room, 'moodle_groups', @group_select.to_h { |name, id| [id, name] })
     end
   end
 
@@ -87,7 +84,7 @@ class RoomsController < ApplicationController
       meetings_and_recordings = all_meetings_and_recordings
     # with groups configured, non-moderators can only see meetings that belong to the current
     # selected group
-    elsif @room.moodle_groups_configured?
+    elsif @app_launch.moodle_groups_configured?
       group_id = get_from_room_session(@room, 'current_group_id')
       meetings_and_recordings = filter_meetings_by_group_id(all_meetings_and_recordings, group_id)
     # without groups configured, non-moderators can only see the meetings that don't belong
@@ -310,17 +307,36 @@ class RoomsController < ApplicationController
     set_room_session(
       @room, { launch: launch_nonce }
     )
+  end
 
-    # Adds the user first group ID in the session if the grouping
-    # feature is enabled.
-    if @room.moodle_groups_configured?
+  # Adds the user first group ID to the session if the grouping
+  # feature is enabled.
+  # Adds the formatted user groups to the session
+  # Example:
+  # current_group_id: 1
+  # user_groups: {'1': 'Grupo A', '2': 'Grupo B'}
+  def set_user_groups_on_session
+    if @app_launch.moodle_groups_configured?
       moodle_token = @room.consumer_config.moodle_token
-      groups = Moodle::API.get_user_groups(moodle_token, launch_params['user_id'], launch_params['context_id'])
-      if groups.any?
-        add_to_room_session(@room, 'current_group_id', groups.first['id'])
+
+      if @user.moderator?(Abilities.moderator_roles)
+        # Gets all course groups except the default 'All Participants' group (id 0)
+        groups = Moodle::API.get_course_groups(moodle_token, @app_launch.context_id)
+                .delete_if{ |element| element['id'] == "0" }
       else
-        remove_from_room_session(@room, 'current_group_id')
+        groups = Moodle::API.get_user_groups(moodle_token, @user.uid, @app_launch.context_id)
       end
+
+      if groups.any?  
+        groups_hash = groups.collect{ |g| g.slice('name', 'id').values }
+        current_group_id = groups.first['id']
+      else
+        groups_hash = [['Nenhum grupo configurado', 'no_groups']]
+        current_group_id = 'no_groups'
+      end
+
+      add_to_room_session(@room, 'current_group_id', current_group_id)
+      add_to_room_session(@room, 'user_groups', groups_hash)
     end
   end
 

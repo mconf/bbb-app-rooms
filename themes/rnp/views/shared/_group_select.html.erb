@@ -1,6 +1,6 @@
-<% if @room.moodle_groups_configured? %>
-  <%= form_with url: set_group_on_session_room_path(@room, redir_url: redir_url), id: 'set-group-form' do |form| %>
-    <%= select(nil, :group_id, @group_select, {selected: @current_group_id, include_blank: true})%>
+<% if @app_launch.moodle_groups_configured? %>
+  <%= form_with url: set_current_group_on_session_room_path(@room, redir_url: redir_url), id: 'set-group-form' do |form| %>
+    <%= select(nil, :group_id, @group_select, {selected: @current_group_id})%>
   <% end %>
   <%= @current_group_id&.to_s %>
 <% end %>

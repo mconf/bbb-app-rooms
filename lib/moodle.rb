@@ -52,7 +52,85 @@ module Moodle
 
       Rails.logger.info "[MOODLE API] User groups: #{result}"
       result['groups']
-    end  
+    end
+
+    def self.get_groupmode(moodle_token, resource_id)
+      params = {
+        wstoken: moodle_token.token,
+        wsfunction: 'core_group_get_activity_groupmode',
+        moodlewsrestformat: 'json',
+        cmid: resource_id,
+      }
+
+      result = post(moodle_token.url, params)
+
+      if result.nil? || result["exception"].present?
+        Rails.logger.error("[+++] MOODLE API EXCEPTION [+++] #{result["message"]}") unless result.nil?
+        return nil
+      end
+
+      # TO-DO: Investigar melhor os warnings e como tratá-los.
+      if result["warnings"].present?
+        Rails.logger.warn("[+++] MOODLE API WARNING [+++] #{result["warnings"].inspect}")
+      end
+
+      Rails.logger.info "[MOODLE API] Activity #{resource_id} groupmode: #{result}"
+      
+      # 0 for no groups, 1 for separate groups, 2 for visible groups
+      result['groupmode']
+    end
+
+    def self.get_activity_data(moodle_token, instance_id)
+      params = {
+        wstoken: moodle_token.token,
+        wsfunction: 'core_course_get_course_module_by_instance',
+        moodlewsrestformat: 'json',
+        module: 'lti',
+        instance: instance_id,
+      }
+
+      result = post(moodle_token.url, params)
+
+      if result.nil? || result["exception"].present?
+        Rails.logger.error("[+++] MOODLE API EXCEPTION [+++] #{result["message"]}") unless result.nil?
+        return nil
+      end
+
+      # TO-DO: Investigar melhor os warnings e como tratá-los.
+      if result["warnings"].present?
+        Rails.logger.warn("[+++] MOODLE API WARNING [+++] #{result["warnings"].inspect}")
+      end
+
+      Rails.logger.info "[MOODLE API] Activity #{instance_id} data: #{result}"
+      
+      result['cm']
+    end
+
+    def self.get_course_groups(moodle_token, context_id)
+      params = {
+        wstoken: moodle_token.token,
+        wsfunction: 'core_group_get_groups_for_selector',
+        moodlewsrestformat: 'json',
+        courseid: context_id,
+      }
+
+      result = post(moodle_token.url, params)
+
+      if result.nil? || result["exception"].present?
+        Rails.logger.error("[+++] MOODLE API EXCEPTION [+++] #{result["message"]}") unless result.nil?
+        return nil
+      end
+
+      # TO-DO: Investigar melhor os warnings e como tratá-los.
+      if result["warnings"].present?
+        Rails.logger.warn("[+++] MOODLE API WARNING [+++] #{result["warnings"].inspect}")
+      end
+
+      Rails.logger.info "[MOODLE API] Activity #{context_id} groupmode: #{result}"
+      
+      # 0 for no groups, 1 for separate groups, 2 for visible groups
+      result["groups"]
+    end
 
     def self.check_token_functions(moodle_token, wsfunction)
       params = {

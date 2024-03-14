@@ -112,15 +112,15 @@ class ScheduledMeetingsController < ApplicationController
     if @user.present?
 
       opts = {}
-      if @room.moodle_groups_configured?
+      if @app_launch.moodle_groups_configured?
         # coming from an external link
         if params[:moodle_group_id].present?
           opts = { moodle_group: { id: params[:moodle_group_id] } }
         # coming from a 'play' button
         else
-          groups = get_from_room_session(@room, 'moodle_groups')
+          groups = get_from_room_session(@room, 'user_groups')
           group_id = get_from_room_session(@room, 'current_group_id').to_s
-          opts = { moodle_group: { name: groups[group_id], id: group_id } }
+          opts = { moodle_group: { name: groups[group_id], id: group_id } } unless group_id == 'no_groups'
         end
       end
 
@@ -159,7 +159,7 @@ class ScheduledMeetingsController < ApplicationController
       end
 
       opts = {}
-      if @room.moodle_groups_configured? && params[:moodle_group_id].present?
+      if @app_launch.moodle_groups_configured? && params[:moodle_group_id].present?
         opts = { moodle_group: { id: params[:moodle_group_id] } }
       end
 
@@ -215,7 +215,7 @@ class ScheduledMeetingsController < ApplicationController
       )
     end
     opts = {}
-    opts = { moodle_group: get_from_room_session(@room, 'moodle_group') } if @room.moodle_groups_configured?
+    opts = { moodle_group: { id: params[:moodle_group_id] } } if @app_launch.moodle_groups_configured?
     @is_running = mod_in_room?(@scheduled_meeting, opts)
     @can_join_or_create = join_or_create?
   end
@@ -238,7 +238,7 @@ class ScheduledMeetingsController < ApplicationController
     @scheduled_meeting.update_to_next_recurring_date
 
     opts = {}
-    if params[:moodle_group_id].present? && @room.moodle_groups_configured?
+    if params[:moodle_group_id].present? && @app_launch.moodle_groups_configured?
       opts = { moodle_group: { id: params[:moodle_group_id] } }
       # ??? testar se grupo existe aqui, pra valer tanto pra user logado quanto nao logado?
       # fazer chamada pra api do moodle ou pegar de alguma coisa no db, tipo a @room ou @scheduled?

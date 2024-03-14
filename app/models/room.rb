@@ -27,15 +27,6 @@ class Room < ApplicationRecord
     end
   end
 
-  def moodle_groups_configured?
-    moodle_token = self.consumer_config&.moodle_token
-    if moodle_token
-      Moodle::API.check_token_functions(moodle_token, 'core_group_get_course_user_groups')
-    else
-      false
-    end
-  end
-
   def consumer_config
     ConsumerConfig.find_by(key: self.consumer_key)
   end

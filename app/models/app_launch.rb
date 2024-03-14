@@ -85,6 +85,21 @@ class AppLaunch < ApplicationRecord
     return ''
   end
 
+  def moodle_groups_configured?
+    instance_id = self.params['resource_link_id']
+    moodle_token = ConsumerConfig.find_by(key: consumer_key)&.moodle_token
+    if moodle_token
+      resource_id = Moodle::API.get_activity_data(moodle_token, instance_id)['id']
+      # Testing if the token is configured with the necessary functions and the activity
+      # has it's groupmode configured for separate groups (1) or visible groups (2)
+      Moodle::API.check_token_functions(moodle_token, 'core_group_get_course_user_groups') &&
+      Moodle::API.check_token_functions(moodle_token, 'core_group_get_activity_groupmode') &&    
+      Moodle::API.get_groupmode(moodle_token, resource_id) != 0
+    else
+      false
+    end
+  end
+
   # The LTI attribute that defines which resource it is
   def context_id
     self.params['context_id']
