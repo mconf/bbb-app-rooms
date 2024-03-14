@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'net/http'
 require 'user'
 require 'bbb_api'
 require './lib/mconf/eduplay'
@@ -237,6 +238,50 @@ class RoomsController < ApplicationController
       return
     end
 
+    # if the handler was set, try to use it
+    handler = params['handler']
+    Rails.logger.info "Found a handler in the params, will try to use it handler=#{handler}" unless handler.nil?
+    # TODO: maybe use an extra param or the session to validate the request
+
+    # TODO: ext_handler = ConsumerConfig.find_by_key(consumer_key)&.external_handler_url
+    ext_handler = "https://n8n.h.elos.dev/webhook/7d4be72f-5804-490a-99ac-0799bce98c8f"
+    # TODO: use the new API
+    if ext_handler.present? && handler.blank?
+      Rails.logger.info "Making an external request to define the handler url=#{ext_handler}"
+      begin
+        response = send_request(ext_handler, launch_params)
+        # example response:
+        # [
+        #   {
+        #     "class_name": "STRW18/Q08.01",
+        #     "handler": "61128015393ef38d7a2af97e0b80184432428c6b"
+        #   }
+        # ]
+        handlers = JSON.parse(response.body)
+      rescue JSON::ParserError => error
+        # TODO: log and render error
+        raise error
+      rescue StandardException => error
+        # TODO: log and render error
+        raise error
+      end
+
+      if handlers.size == 0
+        Rails.logger.warn "Couldn't define a handler using the external request"
+        # TODO: render error page
+      elsif handlers.size > 1
+        @handlers = handlers
+        @launch_nonce = launch_nonce
+        respond_to do |format|
+          format.html { render 'rooms/external_handler_selector' }
+        end
+        return
+      else
+        handler = handlers.first['handler']
+        Rails.logger.info "Defined a handler using the external request handler=#{handler}"
+      end
+    end
+
     bbbltibroker_url = omniauth_bbbltibroker_url("/api/v1/sessions/#{launch_nonce}/invalidate")
     Rails.logger.info "Making a session request to #{bbbltibroker_url}"
     session_params = JSON.parse(
@@ -248,13 +293,15 @@ class RoomsController < ApplicationController
 
     # Store the data from this launch for easier access
     expires_at = Rails.configuration.launch_duration_mins.from_now
-    app_launch = AppLaunch.find_or_create_by(nonce: launch_nonce) do |launch|
+    app_launch = AppLaunch.create_with(room_handler: handler)
+                   .find_or_create_by(nonce: launch_nonce) do |launch|
       launch.update(
         params: launch_params,
         omniauth_auth: session['omniauth_auth']['bbbltibroker'],
         expires_at: expires_at
       )
     end
+    Rails.logger.info "Saved the AppLaunch nonce=#{app_launch.nonce} room_handler=#{app_launch.room_handler}"
 
     # Use this data only during the launch
     # From now on, take it from the AppLaunch
@@ -278,5 +325,26 @@ class RoomsController < ApplicationController
       @title = @room.name
       @subtitle = @room.description
     end
+  end
+
+  def send_request(url, data=nil)
+    url_parsed = URI.parse(url)
+    http = Net::HTTP.new(url_parsed.host, url_parsed.port)
+    http.open_timeout = 30
+    http.read_timeout = 30
+    http.use_ssl = true if url_parsed.scheme.downcase == 'https'
+
+    if data.nil?
+      Rails.logger.info "Sending a GET request to '#{url}'"
+      response = http.get(url_parsed.request_uri, @request_headers)
+    else
+      data = data.to_json
+      Rails.logger.info "Sending a POST request to '#{url}' with data='#{data.inspect}' (size=#{data.size})"
+      opts = { 'Content-Type' => 'application/json' }
+      response = http.post(url_parsed.request_uri, data, opts)
+    end
+    Rails.logger.info "Response: request=#{url} response_status=#{response.class.name} response_code=#{response.code} message_key=#{response.message} body=#{response.body}"
+
+    response
   end
 end
