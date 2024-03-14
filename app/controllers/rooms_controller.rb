@@ -32,21 +32,23 @@ class RoomsController < ApplicationController
   def set_group_on_session
     if @room.moodle_groups_configured?
       if params[:group_id].present?
-        add_to_room_session(@room, 'group_id', params[:group_id])
+        add_to_room_session(@room, 'current_group_id', params[:group_id])
       else
-        remove_from_room_session(@room, 'group_id')
+        remove_from_room_session(@room, 'current_group_id')
       end
     end
-  
+
     redirect_to params[:redir_url]
   end
 
   def set_group_variables
     if @room.moodle_groups_configured?
       moodle_token = @room.consumer_config.moodle_token
-      @groups = Moodle::API.get_user_groups(moodle_token, @room.last_launch.params["user_id"], @room.last_launch.params["context_id"])
+      @groups = Moodle::API.get_user_groups(moodle_token, @user.uid, @app_launch.params["context_id"])
       @group_select = @groups.collect { |g| g.slice('name', 'id').values }
-      @current_group_id = get_from_room_session(@room, 'group_id')
+      @current_group_id = get_from_room_session(@room, 'current_group_id')
+      # moodle_groups: {'1': 'Grupo A', '2': 'Grupo B'}
+      add_to_room_session(@room, 'moodle_groups', @group_select.to_h { |name, id| [id, name] })
     end
   end
 
@@ -300,9 +302,9 @@ class RoomsController < ApplicationController
       moodle_token = @room.consumer_config.moodle_token
       groups = Moodle::API.get_user_groups(moodle_token, launch_params['user_id'], launch_params['context_id'])
       if groups.any?
-        add_to_room_session(@room, 'group_id', groups.first['id'])
+        add_to_room_session(@room, 'current_group_id', groups.first['id'])
       else
-        remove_from_room_session(@room, 'group_id')
+        remove_from_room_session(@room, 'current_group_id')
       end
     end
   end

@@ -221,6 +221,12 @@ en:
         suggestion:    "The scheduled meeting was not found"
         explanation: "It might have been removed by the session creator."
         status_code: "404"
+      meeting_not_found:
+        code:       "NotFound"
+        message:    "Meeting not found"
+        suggestion: "The meeting was not found"
+        explanation: "The group identifier is invalid."
+        status_code: "404"
     meeting:
       learning_dashboard_url_missing: "Error: Learning dashboard URL not configured"
   bucket_api:

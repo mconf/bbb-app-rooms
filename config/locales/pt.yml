@@ -189,6 +189,12 @@ pt:
         suggestion: "O agendamento não foi encontrado."
         explanation: "Ele pode ter sido removido pelo criador da sessão."
         status_code: "404"
+      meeting_not_found:
+        code:       "NotFound"
+        message:    "Reunião não encontrada"
+        suggestion: "A reunião não foi encontrada."
+        explanation: "O identificador de grupo é inválido."
+        status_code: "404"
     meeting:
       learning_dashboard_url_missing: "Erro: URL do painel de aprendizagem não configurada"
   bucket_api:
