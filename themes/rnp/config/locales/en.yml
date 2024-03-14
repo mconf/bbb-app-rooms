@@ -75,6 +75,7 @@ en:
         unpublish: "Are you sure you want to make this recording not visible?"
       destroy: "Delete recording"
       eduplay: "Share recording via Eduplay"
+      exp_date: "Expiration Date: "
       filesender:
         description: "With FileSender@RNP you can share the recording. Your recipients will be notified by email."
         emails: "Recipients"
@@ -100,6 +101,7 @@ en:
       date: "Date"
       time: "Time"
       duration: "Duration"
+      exp_date: "Expiration Date"
       status: "Status"
       recording: "Recording"
       footnote: "Dates shown in the time zone: %{zone}"

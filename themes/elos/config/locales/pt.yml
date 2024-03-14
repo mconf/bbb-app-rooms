@@ -68,6 +68,7 @@ pt:
         publish: "Você tem certeza que deseja tornar esta gravação visível?"
         unpublish: "Você tem certeza que deseja tornar esta gravação não visível?"
       destroy: "Deletar gravação"
+      exp_date: "Data de expiração: "
       playback_link: "Copiar link de reprodução"
       playbacks:
         presentation: "Reproduzir"
@@ -85,6 +86,7 @@ pt:
       date: "Data"
       time: "Hora"
       duration: "Duração"
+      exp_date: "Data de expiração"
       status: "Status"
       recording: "Gravação"
       footnote: "Datas exibidas no fuso horário: %{zone}"

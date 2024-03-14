@@ -68,6 +68,7 @@ en:
         publish: "Are you sure you want to make this recording visible?"
         unpublish: "Are you sure you want to make this recording not visible?"
       destroy: "Delete recording"
+      exp_date: "Expiration Date: "
       playback_link: "Copy playback link"
       playbacks:
         presentation: "Play"
@@ -85,6 +86,7 @@ en:
       date: "Date"
       time: "Time"
       duration: "Duration"
+      exp_date: "Expiration Date"
       status: "Status"
       recording: "Recording"
       footnote: "Dates shown in the time zone: %{zone}"

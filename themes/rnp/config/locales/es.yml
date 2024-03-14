@@ -75,6 +75,7 @@ es:
         unpublish: "¿Estás seguro de que deseas hacer esta grabación no visible?"
       destroy: "Eliminar grabación"
       eduplay: "Compartir grabación a través de Eduplay"
+      exp_date: "Fecha de expiración: "
       filesender:
         description: "Con FileSender@RNP puedes compartir la grabación. Sus destinatarios serán notificados por correo electrónico."
         emails: "Correo electrónico de los destinatarios"
@@ -100,6 +101,7 @@ es:
       date: "Fecha"
       time: "Hora"
       duration: "Duración"
+      exp_date: "Fecha de expiración"
       status: "Status"
       recording: "Grabación"
       footnote: "Fechas mostradas en la zona horaria: %{zone}"
