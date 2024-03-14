@@ -241,11 +241,15 @@ class RoomsController < ApplicationController
     # it's null unless we get an external handler below
     handler = nil
 
-    # TODO: ext_handler = ConsumerConfig.find_by_key(consumer_key)&.external_context_url
-    ext_context_url = "https://n8n.h.elos.dev/webhook/7d4be72f-5804-490a-99ac-0799bce98c8f"
-    # TODO: use the new API
     # will only try to get an external context/handler if the ConsumerConfig is configured to do so
+    if launch_params.key?('custom_params') && launch_params['custom_params'].key?('oauth_consumer_key')
+      consumer_key = launch_params['custom_params']['oauth_consumer_key']
+      if consumer_key.present?
+        ext_context_url = ConsumerConfig.find_by(key: consumer_key)&.external_context_url
+      end
+    end
     if ext_context_url.present?
+      Rails.logger.info "The consumer is configured to use an API to fetch the context/handler consumer_key=#{consumer_key} url=#{ext_context_url}"
 
       # if the handler was already set, try to use it
       # this will happen in the 2nd step, after the user selects a handler/room to access
