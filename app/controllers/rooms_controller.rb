@@ -31,25 +31,6 @@ class RoomsController < ApplicationController
     authorize_user!(:edit, @room)
   end
 
-  def set_current_group_on_session
-    if @app_launch.moodle_groups_configured?
-      if params[:group_id].present?
-        add_to_room_session(@room, 'current_group_id', params[:group_id])
-      else
-        remove_from_room_session(@room, 'current_group_id')
-      end
-    end
-
-    redirect_to params[:redir_url]
-  end
-
-  def set_group_variables
-    if @app_launch.moodle_groups_configured?
-      @group_select = get_from_room_session(@room, 'user_groups')
-      @current_group_id = get_from_room_session(@room, 'current_group_id')
-    end
-  end
-
   # GET /rooms/1
   def show
     respond_to do |format|
@@ -241,6 +222,20 @@ class RoomsController < ApplicationController
     redirect_to(filesender_path(@room, record_id: params['record_id']))
   end
 
+  # POST /rooms/1/set_current_group_on_session
+  # expected params: [:group_id, :redir_url]
+  def set_current_group_on_session
+    if @app_launch.moodle_groups_configured?
+      if params[:group_id].present?
+        add_to_room_session(@room, 'current_group_id', params[:group_id])
+      else
+        remove_from_room_session(@room, 'current_group_id')
+      end
+    end
+
+    redirect_to params[:redir_url]
+  end
+
   helper_method :meetings, :recording_date, :recording_length
 
   private
@@ -337,6 +332,14 @@ class RoomsController < ApplicationController
 
       add_to_room_session(@room, 'current_group_id', current_group_id)
       add_to_room_session(@room, 'user_groups', groups_hash)
+    end
+  end
+
+  # Set the variables expected by the `group_select` partial
+  def set_group_variables
+    if @app_launch.moodle_groups_configured?
+      @group_select = get_from_room_session(@room, 'user_groups')
+      @current_group_id = get_from_room_session(@room, 'current_group_id')
     end
   end
 
