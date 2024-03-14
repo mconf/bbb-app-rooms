@@ -7,6 +7,7 @@ require './lib/mconf/filesender'
 
 class RoomsController < ApplicationController
   include ApplicationHelper
+  include MeetingsHelper
   include BbbApi
   include BbbAppRooms
 
@@ -79,7 +80,21 @@ class RoomsController < ApplicationController
       offset: offset,
       includeRecordings: true
     }
-    meetings_and_recordings, all_meetings_loaded = get_all_meetings(@room, options)
+    all_meetings_and_recordings, all_meetings_loaded = get_all_meetings(@room, options)
+
+    # moderators can see all meetings
+    if @user.moderator?(Abilities.moderator_roles)
+      meetings_and_recordings = all_meetings_and_recordings
+    # with groups configured, non-moderators can only see meetings that belong to the current
+    # selected group
+    elsif @room.moodle_groups_configured?
+      group_id = get_from_room_session(@room, 'current_group_id')
+      meetings_and_recordings = filter_meetings_by_group_id(all_meetings_and_recordings, group_id)
+    # without groups configured, non-moderators can only see the meetings that don't belong
+    # to any group
+    else
+      meetings_and_recordings = filter_meetings_without_group_id(all_meetings_and_recordings)
+    end
 
     args = { meetings_and_recordings: meetings_and_recordings,
              user: @user,
