@@ -281,11 +281,22 @@ class ScheduledMeetingsController < ApplicationController
   end
 
   def running
+    opts = {}
+    if @app_launch.moodle_groups_configured?
+      # coming from an external link
+      if params[:moodle_group_id].present?
+        opts = { moodle_group: { id: params[:moodle_group_id] } }
+      # coming from a 'play' button
+      else
+        group_id = get_from_room_session(@room, 'current_group_id').to_s
+        opts = { moodle_group: { id: group_id } } unless group_id == 'no_groups'
+      end
+    end
     respond_to do |format|
       format.json {
         render json: {
                  status: :ok,
-                 running: mod_in_room?(@scheduled_meeting),
+                 running: mod_in_room?(@scheduled_meeting, opts),
                  interval: Rails.configuration.cable_polling_secs.to_i,
                  can_join_or_create: join_or_create?
                }
@@ -336,8 +347,19 @@ class ScheduledMeetingsController < ApplicationController
   end
 
   def join_or_create?
-    can_join = (@user.present? && !(wait_for_mod?(@scheduled_meeting, @user) && !mod_in_room?(@scheduled_meeting))) ||
-      (!@user.present? && mod_in_room?(@scheduled_meeting))
+    opts = {}
+    if @app_launch.moodle_groups_configured?
+      # coming from an external link
+      if params[:moodle_group_id].present?
+        opts = { moodle_group: { id: params[:moodle_group_id] } }
+      # coming from a 'play' button
+      else
+        group_id = get_from_room_session(@room, 'current_group_id').to_s
+        opts = { moodle_group: { id: group_id } } unless group_id == 'no_groups'
+      end
+    end
+    can_join = (@user.present? && !(wait_for_mod?(@scheduled_meeting, @user) && !mod_in_room?(@scheduled_meeting, opts))) ||
+      (!@user.present? && mod_in_room?(@scheduled_meeting, opts))
 
     can_join
   end
