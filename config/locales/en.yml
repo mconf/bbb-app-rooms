@@ -214,6 +214,18 @@ en:
         suggestion: "The token could not be validated"
         explanation: "This problem can be caused by using an invalid key when validating the request through the LTI Provider."
         status_code: "403"
+      external_context_parse_error:
+        code: "ParseError"
+        message: "Internal error fetching data"
+        suggestion: "There might be a problem in the server"
+        explanation: "This problem is caused when the external context API returns an invalid JSON response."
+        status_code: "500"
+      external_context_no_handler:
+        code: "NoHandler"
+        message: "Unauthorized"
+        suggestion: "User not found in the external context database"
+        explanation: "The user was not found in the external context database so they won't be able to access a class."
+        status_code: "401"
     scheduled_meeting:
       not_found:
         code:       "NotFound"

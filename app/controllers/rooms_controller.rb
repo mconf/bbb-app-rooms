@@ -290,6 +290,12 @@ class RoomsController < ApplicationController
   def fetch_external_context(launch_params)
     launch_nonce = params['launch_nonce']
 
+    # this is a temporary user in case we are responding the request here and we need it (at least
+    # the locale we need to set, even for error pages)
+    user_params = AppLaunch.new(params: launch_params).user_params
+    @user = BbbAppRooms::User.new(user_params)
+    set_current_locale
+
     # will only try to get an external context/handler if the ConsumerConfig is configured to do so
     if launch_params.key?('custom_params') && launch_params['custom_params'].key?('oauth_consumer_key')
       consumer_key = launch_params['custom_params']['oauth_consumer_key']
@@ -321,24 +327,24 @@ class RoomsController < ApplicationController
       #   }
       # ]
       handlers = JSON.parse(response.body)
+      Rails.logger.warn "Got the following contexts from the API: #{handlers.inspect}"
     rescue JSON::ParserError => error
-      # TODO: log and render error
-      raise error
-    rescue StandardException => error
-      # TODO: log and render error
-      raise error
+      Rails.logger.warn "Error parsing the external context API's response"
+      set_error('room', 'external_context_parse_error', 500)
+      respond_with_error(@error)
+      return false, nil
     end
+    # in case the response is anything other than an array, consider it empty
+    handlers = [] unless handlers.is_a?(Array)
 
     if handlers.size == 0
       Rails.logger.warn "Couldn't define a handler using the external request"
-      # TODO: render error page
+      set_error('room', 'external_context_no_handler', :forbidden)
+      respond_with_error(@error)
       return false, nil
     elsif handlers.size > 1
       @handlers = handlers
       @launch_nonce = launch_nonce
-      user_params = AppLaunch.new(params: launch_params).user_params
-      @user = BbbAppRooms::User.new(user_params)
-      set_current_locale
       respond_to do |format|
         format.html { render 'rooms/external_context_selector' }
       end
