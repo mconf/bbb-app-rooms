@@ -323,7 +323,7 @@ class RoomsController < ApplicationController
       end
 
       if groups.any?  
-        groups_hash = groups.collect{ |g| g.slice('name', 'id').values }
+        groups_hash = groups.collect{ |g| g.slice('id', 'name').values }.to_h
         current_group_id = groups.first['id']
       else
         groups_hash = [['Nenhum grupo configurado', 'no_groups']]
@@ -338,7 +338,7 @@ class RoomsController < ApplicationController
   # Set the variables expected by the `group_select` partial
   def set_group_variables
     if @app_launch.moodle_groups_configured?
-      @group_select = get_from_room_session(@room, 'user_groups')
+      @group_select = get_from_room_session(@room, 'user_groups').invert
       @current_group_id = get_from_room_session(@room, 'current_group_id')
     end
   end
