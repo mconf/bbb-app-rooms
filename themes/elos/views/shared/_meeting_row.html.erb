@@ -54,7 +54,7 @@
   </td>
 
   <%# Meeting expiration date %>
-  <% if recording[:expirationDate].present? %>
+  <% if recording.present? && recording[:expirationDate].present? %>
     <td class="col-12 col-md-2">
       <div class="me-auto me-md-0 meeting-expire">
         <span class="d-md-none">
