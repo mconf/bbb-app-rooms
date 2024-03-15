@@ -215,7 +215,16 @@ class ScheduledMeetingsController < ApplicationController
       )
     end
     opts = {}
-    opts = { moodle_group: { id: params[:moodle_group_id] } } if @app_launch.moodle_groups_configured?
+    if @app_launch.moodle_groups_configured?
+      # coming from an external link
+      if params[:moodle_group_id].present?
+        opts = { moodle_group: { id: params[:moodle_group_id] } }
+      # coming from a 'play' button
+      else
+        group_id = get_from_room_session(@room, 'current_group_id').to_s
+        opts = { moodle_group: { id: group_id } } unless group_id == 'no_groups'
+      end
+    end
     @is_running = mod_in_room?(@scheduled_meeting, opts)
     @can_join_or_create = join_or_create?
   end
