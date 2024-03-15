@@ -307,15 +307,6 @@ class RoomsController < ApplicationController
 
     Rails.logger.info "The consumer is configured to use an API to fetch the context/handler consumer_key=#{consumer_key} url=#{ext_context_url}"
 
-    # if the handler was already set, try to use it
-    # this will happen in the 2nd step, after the user selects a handler/room to access
-    handler = params['handler']
-    unless handler.blank?
-      # TODO: maybe use an extra param or the session to validate the request
-      Rails.logger.info "Found a handler in the params, will try to use it handler=#{handler}"
-      return true, handler # proceed with a handler
-    end
-
     Rails.logger.info "Making a request to an external API to define the context/handler url=#{ext_context_url}"
     begin
       response = send_request(ext_context_url, launch_params)
@@ -337,6 +328,23 @@ class RoomsController < ApplicationController
     end
     # in case the response is anything other than an array, consider it empty
     handlers = [] unless handlers.is_a?(Array)
+
+    # if the handler was already set, try to use it
+    # this will happen in the 2nd step, after the user selects a handler/room to access
+    selected_handler = params['handler']
+    unless selected_handler.blank?
+      Rails.logger.info "Found a handler in the params, will try to use it handler=#{selected_handler}"
+
+      if handlers.find{ |h| h['handler'] == selected_handler }.nil?
+        Rails.logger.info "The handler found is NOT allowed, will not use it handler=#{selected_handler}"
+        set_error('room', 'external_context_invalid_handler', :forbidden)
+        respond_with_error(@error)
+        return false, nil
+      else
+        Rails.logger.info "The handler found is allowed, will use it handler=#{selected_handler}"
+        return true, selected_handler # proceed with a handler
+      end
+    end
 
     if handlers.size == 0
       Rails.logger.warn "Couldn't define a handler using the external request"

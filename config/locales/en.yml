@@ -226,6 +226,12 @@ en:
         suggestion: "User not found in the external context database"
         explanation: "The user was not found in the external context database so they won't be able to access a class."
         status_code: "401"
+      external_context_invalid_handler:
+        code: "InvalidHandler"
+        message: "Forbidden"
+        suggestion: "Unallowed context"
+        explanation: "You are trying to access a context you are not allowed to access."
+        status_code: "403"
     scheduled_meeting:
       not_found:
         code:       "NotFound"

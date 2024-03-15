@@ -194,6 +194,12 @@ pt:
         suggestion: "Usuário não encontrado no banco de dados de contexto externo"
         explanation: "O usuário não foi encontrado no banco de dados de contexto externo, portanto não possui acesso a nenhuma classe."
         status_code: "401"
+      external_context_invalid_handler:
+        code: "InvalidHandler"
+        message: "Proibido"
+        suggestion: "Contexto não permitido"
+        explanation: "Você está tentando acessar um contexto ao qual não tem permissão de acesso."
+        status_code: "403"
     scheduled_meeting:
       not_found:
         code:       "NotFound"
