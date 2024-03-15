@@ -45,6 +45,15 @@
           justify-content: space-between;
         }
 
+        .meeting-expire {
+          @media (max-width: map-get($grid-breakpoints, 'md')) {
+            color: #75787B;
+            display: flex;
+            align-items: flex-start;
+            gap: 4px;
+          }
+        }
+
         .icon-container a {
           background-color: var(--color-main);
           color: var(--color-white);

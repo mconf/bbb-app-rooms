@@ -55,6 +55,10 @@ module IconsHelper
     image_tag 'icon_eduplay.svg'
   end
 
+  def icon_info_circle(options={})
+    material_icon_constructor "info", "icon material-symbols-rounded icon icon-info", options
+  end
+
   # Base method for most of the methods above
   def icon_constructor(title=nil, cls=nil, options={})
     options[:class] = options.has_key?(:class) ? cls + " " + options[:class] : cls
