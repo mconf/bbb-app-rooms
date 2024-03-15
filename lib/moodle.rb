@@ -126,13 +126,12 @@ module Moodle
         Rails.logger.warn("[+++] MOODLE API WARNING [+++] #{result["warnings"].inspect}")
       end
 
-      Rails.logger.info "[MOODLE API] Activity #{context_id} groupmode: #{result}"
+      Rails.logger.info "[MOODLE API] Course #{context_id} groups: #{result}"
       
-      # 0 for no groups, 1 for separate groups, 2 for visible groups
       result["groups"]
     end
 
-    def self.check_token_functions(moodle_token, wsfunction)
+    def self.check_token_functions(moodle_token, wsfunctions)
       params = {
         wstoken: moodle_token.token,
         wsfunction: 'core_webservice_get_site_info',
@@ -147,7 +146,11 @@ module Moodle
         return false
       end
 
-      result["functions"].any? { |hash| hash["name"] == wsfunction }
+      # Gets all registered function names
+      function_names = result["functions"].map { |hash| hash["name"] }
+
+      # Checks if every element of wsfunctions is listed on the function_names list
+      wsfunctions.all? { |f| function_names.include?(f) }
     end
 
 

@@ -89,11 +89,20 @@ class AppLaunch < ApplicationRecord
     instance_id = self.params['resource_link_id']
     moodle_token = ConsumerConfig.find_by(key: consumer_key)&.moodle_token
     if moodle_token
-      resource_id = Moodle::API.get_activity_data(moodle_token, instance_id)['id']
+      activity_data = Moodle::API.get_activity_data(moodle_token, instance_id)
+      return false if activity_data.nil?
+      resource_id = activity_data['id']
+         
       # Testing if the token is configured with the necessary functions and the activity
       # has it's groupmode configured for separate groups (1) or visible groups (2)
-      Moodle::API.check_token_functions(moodle_token, 'core_group_get_course_user_groups') &&
-      Moodle::API.check_token_functions(moodle_token, 'core_group_get_activity_groupmode') &&    
+      wsfunctions = [
+        'core_group_get_activity_groupmode',
+        'core_group_get_course_user_groups',
+        'core_course_get_course_module_by_instance',
+        'core_group_get_groups_for_selector'
+      ]
+
+      Moodle::API.check_token_functions(moodle_token,wsfunctions) && 
       Moodle::API.get_groupmode(moodle_token, resource_id) != 0
     else
       false
