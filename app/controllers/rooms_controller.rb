@@ -322,8 +322,9 @@ class RoomsController < ApplicationController
       # example response:
       # [
       #   {
-      #     "class_name": "STRW18/Q08.01",
-      #     "handler": "61128015393ef38d7a2af97e0b80184432428c6b"
+      #      "handler": "82af745030b9e1394815e61184d50fd25dfe884a",
+      #      "name": "STRW2S/Q16.06",
+      #      "uuid": "a9a2689a-1e27-4ce8-aa91-ca488620bb89"
       #   }
       # ]
       handlers = JSON.parse(response.body)
