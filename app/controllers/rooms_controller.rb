@@ -326,7 +326,7 @@ class RoomsController < ApplicationController
         groups_hash = groups.collect{ |g| g.slice('id', 'name').values }.to_h
         current_group_id = groups.first['id']
       else
-        groups_hash = [['Nenhum grupo configurado', 'no_groups']]
+        groups_hash = {'no_groups': 'Você não pertence a nenhum grupo'}
         current_group_id = 'no_groups'
       end
 
