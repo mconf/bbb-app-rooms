@@ -86,25 +86,38 @@ class AppLaunch < ApplicationRecord
   end
 
   def moodle_groups_configured?
-    instance_id = self.params['resource_link_id']
     moodle_token = ConsumerConfig.find_by(key: consumer_key)&.moodle_token
     if moodle_token
-      activity_data = Moodle::API.get_activity_data(moodle_token, instance_id)
-      return false if activity_data.nil?
-      resource_id = activity_data['id']
-         
-      # Testing if the token is configured with the necessary functions and the activity
-      # has it's groupmode configured for separate groups (1) or visible groups (2)
+      Rails.logger.info "Moodle token found: (token #{moodle_token.token}, consumer_key #{consumer_key})"
+      # testing if the token is configured with the necessary functions
       wsfunctions = [
         'core_group_get_activity_groupmode',
         'core_group_get_course_user_groups',
         'core_course_get_course_module_by_instance',
         'core_group_get_groups_for_selector'
       ]
+      unless Moodle::API.check_token_functions(moodle_token, wsfunctions)
+        Rails.logger.warn 'Some function required for the groups feature is not configured in Moodle'
+        return false
+      end
 
-      Moodle::API.check_token_functions(moodle_token,wsfunctions) && 
-      Moodle::API.get_groupmode(moodle_token, resource_id) != 0
+      # the `resource_link_id` provided by Moodle is the `instance_id` of the activity.
+      # We use it to fetch the activity data, from where we get its `cmid` (course module id)
+      # to fetch the effective groupmode configured on the activity
+      activity_data = Moodle::API.get_activity_data(moodle_token, self.params['resource_link_id'])
+      return false if activity_data.nil?
+      groupmode = Moodle::API.get_groupmode(moodle_token, activity_data['id'])
+      # testing if the activity has its groupmode configured for separate groups (1)
+      # or visible groups (2)
+      if groupmode == 0 || groupmode.nil?
+        Rails.logger.warn 'The Moodle activity has an invalid groupmode configured'
+        return false
+      end
+
+      Rails.logger.info "Moodle groups are configured for this session (#{self.nonce})"
+      true
     else
+      # moodle token not found
       false
     end
   end
