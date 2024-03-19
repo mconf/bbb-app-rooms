@@ -9,7 +9,7 @@ class UploadRecordingToEduplayJob < ApplicationJob
   def perform(room, rec_id, user)
     @recording = get_recordings(room, recordID: rec_id).first.first
     @eduplay_token = EduplayToken.find_by(user_uid: user[:uid])
-    playback = @recording[:playbacks].find{ |f| f[:type] == 'presentation_video' }
+    playback = @recording[:playbacks].find { |f| f[:type] == 'video' } || @recording[:playbacks].find { |f| f[:type] == 'presentation_video' }
 
     if playback.nil?
       return Resque.logger.error "Recording #{rec_id} has no video playback format"
