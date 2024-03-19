@@ -129,7 +129,7 @@ class ScheduledMeeting < ApplicationRecord
 
     # will be added as meta_bbb-*
     meta_bbb = {
-      origin: launch_params&.coc_launch? ? 'Portal COC' : 'LTI',
+      origin: 'LTI',
       'recording-name': self.name,
       'recording-description': self.description,
       'room-handler': self.room.handler,

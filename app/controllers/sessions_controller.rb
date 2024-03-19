@@ -36,21 +36,11 @@ class SessionsController < ApplicationController
         redirect_to send_delete_calendar_event_room_scheduled_meeting_path(room_param, scheduled_meeting_param)
       end
     elsif provider == 'bbbltibroker'
-      if params['launch_nonce'].starts_with?('coc-')
-        redirect_to(
-          coc_launch_url(
-            launch_nonce: params['launch_nonce'],
-            provider: provider,
-            session_set: true
-          )
+      redirect_to(
+        room_launch_url(
+          launch_nonce: params['launch_nonce'], provider: provider, session_set: true
         )
-      else
-        redirect_to(
-          room_launch_url(
-            launch_nonce: params['launch_nonce'], provider: provider, session_set: true
-          )
-        )
-      end
+      )
     end
   end
 

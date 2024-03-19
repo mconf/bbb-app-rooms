@@ -1,9 +1,0 @@
-<%= render "shared/notifications" %>
-
-<%=
-link_to t('meetings.index.return'),
-  room_path(@room),
-  class: "btn btn-light btn-sm"
-%>
-
-<%= render "shared/meetings", user: @user, room: @room, meetings: @meetings, only_public: false %>
