@@ -81,6 +81,7 @@ ActiveRecord::Schema.define(version: 2024_02_27_004602) do
   end
 
   create_table "eduplay_uploads", force: :cascade do |t|
+    t.string "user_uid"
     t.string "recording_id"
     t.string "upload_url"
     t.datetime "created_at", precision: 6, null: false
