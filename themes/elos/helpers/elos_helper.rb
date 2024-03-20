@@ -20,9 +20,9 @@ module ElosHelper
   def format_time(date)
     if date.present?
       if date.is_a?(Integer) && date.to_s.length == 13
-        value = Time.at(date/1000)
+        value = Time.zone.at(date/1000)
       else
-        value = Time.at(date)
+        value = Time.zone.at(date)
       end
       value.to_s(:time)
     else
@@ -41,11 +41,11 @@ module ElosHelper
     len * 60
   end
 
-  def duration_in_hours_and_minutes(duration)
-    distance_of_time_in_hours_and_minutes(0, duration)
+  def duration_in_hours_and_minutes(duration, short=false)
+    distance_of_time_in_hours_and_minutes(0, duration, short)
   end
 
-  def distance_of_time_in_hours_and_minutes(from_time, to_time)
+  def distance_of_time_in_hours_and_minutes(from_time, to_time, short)
     from_time = from_time.to_time if from_time.respond_to?(:to_time)
     to_time = to_time.to_time if to_time.respond_to?(:to_time)
     distance_in_hours   = (((to_time - from_time).abs) / 3600).floor
@@ -54,14 +54,14 @@ module ElosHelper
     words = ''
 
     if distance_in_hours > 0
-      words << I18n.t('helpers.distance_of_time_in_hours_and_minutes.hour', count: distance_in_hours)
+      words << I18n.t("helpers.distance_of_time_in_hours_and_minutes.#{short ? 'short' : 'long'}.hour", count: distance_in_hours)
       if distance_in_minutes > 0
-        words << " #{I18n.t('helpers.distance_of_time_in_hours_and_minutes.connector')} "
+        words << (short ? '' : " #{I18n.t('helpers.distance_of_time_in_hours_and_minutes.long.connector')} ")
       end
     end
 
     if distance_in_minutes > 0
-      words << I18n.t('helpers.distance_of_time_in_hours_and_minutes.minute', count: distance_in_minutes)
+      words << I18n.t("helpers.distance_of_time_in_hours_and_minutes.#{short ? 'short' : 'long'}.minute", count: distance_in_minutes)
     end
 
     words

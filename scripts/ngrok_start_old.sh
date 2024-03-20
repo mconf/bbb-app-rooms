@@ -93,7 +93,7 @@ update_ngrok_addresses() {
     dc_file=$lti_broker_path/docker-compose.yml
     docker compose -f $dc_file run --rm app bundle exec rake db:environment:set RAILS_ENV=$env
     docker compose -f $dc_file run --rm app bundle exec rake db:reset
-    docker compose -f $dc_file run --rm app bundle exec rake "db:keys:add[$my_key,$my_secret]"
+    docker compose -f $dc_file run --rm app bundle exec rake "db:keys:add[$my_key:$my_secret]"
     docker compose -f $dc_file run --rm app bundle exec rake "db:apps:add[rooms,https://$address1/rooms/auth/bbbltibroker/callback,$my_internal_key,$my_internal_secret]"
   else
     echo "exiting"

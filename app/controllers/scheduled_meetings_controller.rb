@@ -45,6 +45,9 @@ class ScheduledMeetingsController < ApplicationController
         )
       )
 
+      config = ConsumerConfig.find_by(key: @room.consumer_key)
+      @scheduled_meeting.disable_external_link = true if config&.force_disable_external_link
+
       if @scheduled_meeting.duration.zero?
         @scheduled_meeting[:duration] =
           ScheduledMeeting.convert_time_to_duration(params[:scheduled_meeting][:custom_duration])
@@ -200,7 +203,8 @@ class ScheduledMeetingsController < ApplicationController
   def external
     # If the external link is disabled, users should get an error
     # if they are not signed in
-    if @scheduled_meeting.disable_external_link && @user.blank?
+    config = ConsumerConfig.find_by(key: @room.consumer_key)
+    if (@scheduled_meeting.disable_external_link || config&.force_disable_external_link) && @user.blank?
       redirect_to errors_path(404)
     end
 
@@ -214,17 +218,10 @@ class ScheduledMeetingsController < ApplicationController
     @scheduled_meeting.update_to_next_recurring_date
 
     @is_running = mod_in_room?(@scheduled_meeting)
-
     @participants_count = get_participants_count(@scheduled_meeting)
-
     @ended = !@scheduled_meeting.active? && !mod_in_room?(@scheduled_meeting)
-
     @started_ago = get_current_duration(@scheduled_meeting)
-
-    @disclaimer = ConsumerConfig
-                    .select(:external_disclaimer)
-                    .find_by(key: @room.consumer_key)
-                    &.external_disclaimer
+    @disclaimer = config&.external_disclaimer
   end
 
   def running

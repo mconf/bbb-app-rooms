@@ -131,15 +131,17 @@
     </div>
 
     <div class="form-group col-12 col-md-6">
-      <div class="form-group">
-        <div class="form-check">
-          <%= form.check_box :disable_external_link, class: "form-check-input" %>
-          <%= form.label :disable_external_link, class: "form-check-label" do %>
-            <%= t('helpers.label.scheduled_meeting.disable_external_link') %>
-            <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= t('helpers.hint.disable_external_link') %>">help</i>
-          <% end %>
+      <% unless hide_disable_external_link?(@room) %>
+        <div class="form-group">
+          <div class="form-check">
+            <%= form.check_box :disable_external_link, class: "form-check-input" %>
+            <%= form.label :disable_external_link, class: "form-check-label" do %>
+              <%= t('helpers.label.scheduled_meeting.disable_external_link') %>
+              <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= t('helpers.hint.disable_external_link') %>">help</i>
+            <% end %>
+          </div>
         </div>
-      </div>
+      <% end %>
 
       <div class="form-group">
         <div class="form-check">

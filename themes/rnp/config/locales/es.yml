@@ -12,13 +12,17 @@ es:
     send: "Enviar"
   helpers:
     distance_of_time_in_hours_and_minutes:
-      hour:
-        one: "%{count} hora"
-        other: "%{count} horas"
-      minute:
-        one: "%{count} minuto"
-        other: "%{count} minutos"
-      connector: "y"
+      long:
+        hour:
+          one: "%{count} hora"
+          other: "%{count} horas"
+        minute:
+          one: "%{count} minuto"
+          other: "%{count} minutos"
+        connector: "y"
+      short:
+        hour: "%{count}h"
+        minute: "%{count}min"
     hint:
       create_moodle_calendar_event: "Crea un evento correspondiente en el Calendario de Moodle para esta reunión programada. Esta opción está deshabilitada cuando la reunión programada está configurada como recurrente."
       disable_external_link: "El acceso a la sala virtual estará restringido a estudiantes autenticados."
@@ -48,7 +52,7 @@ es:
   meetings:
     all_loaded: "Se han cargado todas las conferencias"
     duration:
-      less_than_a_minute: "Menos de 1 minuto"
+      less_than_a_minute: "< 1min"
     empty_list: "No hay conferencias para mostrar"
     filters:
       no_filter: "Todas"
@@ -71,6 +75,7 @@ es:
         unpublish: "¿Estás seguro de que deseas hacer esta grabación no visible?"
       destroy: "Eliminar grabación"
       eduplay: "Compartir grabación a través de Eduplay"
+      exp_date: "Fecha de expiración: "
       filesender:
         description: "Con FileSender@RNP puedes compartir la grabación. Sus destinatarios serán notificados por correo electrónico."
         emails: "Correo electrónico de los destinatarios"
@@ -97,6 +102,7 @@ es:
       date: "Fecha"
       time: "Hora"
       duration: "Duración"
+      exp_date: "Fecha de expiración"
       status: "Status"
       recording: "Grabación"
       footnote: "Fechas mostradas en la zona horaria: %{zone}"

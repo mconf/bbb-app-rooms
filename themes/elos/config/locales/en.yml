@@ -6,13 +6,17 @@ en:
     schedule: "Schedule"
   helpers:
     distance_of_time_in_hours_and_minutes:
-      hour:
-        one: "%{count} hour"
-        other: "%{count} hours"
-      minute:
-        one: "%{count} minute"
-        other: "%{count} minutes"
-      connector:  "and"
+      long:
+        hour:
+          one: "%{count} hour"
+          other: "%{count} hours"
+        minute:
+          one: "%{count} minute"
+          other: "%{count} minutes"
+        connector:  "and"
+      short:
+        hour: "%{count}h"
+        minute: "%{count}min"
     hint:
       create_moodle_calendar_event: "Creates a corresponding event on the Moodle Calendar for this scheduled meeting. This option is disabled when the scheduled meeting is set to be recurrent."
       disable_external_link: "The access to the virtual room will be restricted to authenticated students."
@@ -42,7 +46,7 @@ en:
   meetings:
     all_loaded: "All conferences loaded"
     duration:
-      less_than_a_minute: "Less than 1 minute"
+      less_than_a_minute: "< 1min"
     empty_list: "There are no conferences to show"
     filters:
       no_filter: "All"
@@ -64,6 +68,7 @@ en:
         publish: "Are you sure you want to make this recording visible?"
         unpublish: "Are you sure you want to make this recording not visible?"
       destroy: "Delete recording"
+      exp_date: "Expiration Date: "
       playback_link: "Copy playback link"
       playbacks:
         presentation: "Play"
@@ -81,6 +86,7 @@ en:
       date: "Date"
       time: "Time"
       duration: "Duration"
+      exp_date: "Expiration Date"
       status: "Status"
       recording: "Recording"
       footnote: "Dates shown in the time zone: %{zone}"
