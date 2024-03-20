@@ -92,6 +92,7 @@ pt:
       processing: "Processando"
       published: "Visível"
       publish: "Tornar gravação visível"
+      recently_uploaded: "Vídeo carregado para o Eduplay"
       unpublished: "Não visível"
       unpublish: "Tornar gravação não visível"
     search:

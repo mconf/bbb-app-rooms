@@ -92,6 +92,7 @@ en:
       processing: "Processing"
       published: "Visible"
       publish: "Make recording visible"
+      recently_uploaded: "Video uploaded to Eduplay"
       unpublished: "Not visible"
       unpublish: "Hide recording"
     search:

@@ -81,6 +81,14 @@ ActiveRecord::Schema.define(version: 2024_02_28_094200) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "eduplay_uploads", force: :cascade do |t|
+    t.string "user_uid"
+    t.string "recording_id"
+    t.string "upload_url"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "filesender_tokens", force: :cascade do |t|
     t.string "user_uid"
     t.string "token"
