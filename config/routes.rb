@@ -45,7 +45,7 @@ Rails.application.routes.draw do
         get '/sessions/failure'
 
         # Handles Omniauth authentication.
-        get '/auth/:provider', to: 'sessions#new', as: :omniauth_authorize
+        post '/auth/:provider', to: 'sessions#new', as: :omniauth_authorize
         get '/auth/:provider/callback', to: 'sessions#create', as: :omniauth_callback
         get '/auth/:provider/failure', to: 'sessions#failure', as: :omniauth_failure
         get '/auth/:provider/retry', to: 'sessions#retry', as: :omniauth_retry

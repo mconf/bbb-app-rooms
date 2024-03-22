@@ -69,7 +69,7 @@ class ApplicationController < ActionController::Base
     end
     redirector = omniauth_authorize_path(provider, auth_args)
     Rails.logger.info "Redirecting to the authorization route #{redirector}"
-    redirect_to(redirector) and return true
+    redirect_post(redirector, options: { authenticity_token: :auto }) and return true
   end
 
   # Find the user info in the session.
