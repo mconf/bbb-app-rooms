@@ -20,10 +20,10 @@ module Moodle
       result = post(moodle_token.url, params)
 
       if result.nil? || result["exception"].present?
-        Rails.logger.error("[+++] MOODLE API EXCEPTION [+++] #{result["message"]}") unless result.nil?
+        Rails.logger.error("[MOODLE API][EXCEPTION - core_calendar_create_calendar_events]: #{result["message"]}") unless result.nil?
         return false
       end
-      Rails.logger.info "[MOODLE API] Event created on Moodle calendar: #{result}"
+      Rails.logger.info "[MOODLE API][INFO - core_calendar_create_calendar_events]: Event created on Moodle calendar: #{result}"
 
       true
     end
@@ -39,14 +39,14 @@ module Moodle
       result = post(moodle_token.url, params)
 
       if result.nil? || result["exception"].present?
-        Rails.logger.error("[+++] MOODLE API EXCEPTION [+++] #{result["message"]}") unless result.nil?
+        Rails.logger.error("[MOODLE API][EXCEPTION - core_group_get_course_user_groups]: #{result["message"]}") unless result.nil?
         return nil
       end
       # TO-DO: Investigar melhor os warnings e como tratá-los.
       if result["warnings"].present?
-        Rails.logger.warn("[+++] MOODLE API WARNING [+++] #{result["warnings"].inspect}")
+        Rails.logger.warn("[MOODLE API][WARNING - core_group_get_course_user_groups]: #{result["warnings"].inspect}")
       end
-      Rails.logger.info "[MOODLE API] User groups (userid #{user_id}, courseid #{context_id}): #{result}"
+      Rails.logger.info "[MOODLE API][INFO - core_group_get_course_user_groups]: User groups (userid #{user_id}, courseid #{context_id}): #{result}"
 
       result['groups']
     end
@@ -61,14 +61,14 @@ module Moodle
       result = post(moodle_token.url, params)
 
       if result.nil? || result["exception"].present?
-        Rails.logger.error("[+++] MOODLE API EXCEPTION [+++] #{result["message"]}") unless result.nil?
+        Rails.logger.error("[MOODLE API][EXCEPTION - core_group_get_activity_groupmode]: #{result["message"]}") unless result.nil?
         return nil
       end
       # TO-DO: Investigar melhor os warnings e como tratá-los.
       if result["warnings"].present?
-        Rails.logger.warn("[+++] MOODLE API WARNING [+++] #{result["warnings"].inspect}")
+        Rails.logger.warn("[MOODLE API][WARNING - core_group_get_activity_groupmode]: #{result["warnings"].inspect}")
       end
-      Rails.logger.info "[MOODLE API] Activity groupmode (cmid #{resource_id}): #{result}" \
+      Rails.logger.info "[MOODLE API][INFO - core_group_get_activity_groupmode]: Activity groupmode (cmid #{resource_id}): #{result}" \
       ' (0 for no groups, 1 for separate groups, 2 for visible groups)'
 
       result['groupmode']
@@ -85,14 +85,14 @@ module Moodle
       result = post(moodle_token.url, params)
 
       if result.nil? || result["exception"].present?
-        Rails.logger.error("[+++] MOODLE API EXCEPTION [+++] #{result["message"]}") unless result.nil?
+        Rails.logger.error("[MOODLE API][EXCEPTION - core_course_get_course_module_by_instance]: #{result["message"]}") unless result.nil?
         return nil
       end
       # TO-DO: Investigar melhor os warnings e como tratá-los.
       if result["warnings"].present?
-        Rails.logger.warn("[+++] MOODLE API WARNING [+++] #{result["warnings"].inspect}")
+        Rails.logger.warn("[MOODLE API][WARNING - core_course_get_course_module_by_instance]: #{result["warnings"].inspect}")
       end
-      Rails.logger.info "[MOODLE API] Activity data (instance #{instance_id}): #{result}"
+      Rails.logger.info "[MOODLE API][INFO - core_course_get_course_module_by_instance]: Activity data (instance #{instance_id}): #{result}"
       
       result['cm']
     end
@@ -129,14 +129,24 @@ module Moodle
       return false if result.nil?
 
       if result["exception"].present?
-        Rails.logger.error("[+++] MOODLE API EXCEPTION [+++] #{result["message"]}")
+        Rails.logger.error("[MOODLE API][EXCEPTION - core_webservice_get_site_info]: #{result["message"]}")
         return false
       end
 
       # Gets all registered function names
       function_names = result["functions"].map { |hash| hash["name"] }
       # Checks if every element of wsfunctions is listed on the function_names list
-      wsfunctions.all? { |f| function_names.include?(f) }
+      missing_functions = wsfunctions - function_names
+
+      if missing_functions.empty?
+        Rails.logger.info "[MOODLE API][INFO - core_webservice_get_site_info]: Every necessary " \
+        "function is correctly configured in the Moodle Token service."
+        return true
+      else
+        Rails.logger.error("[MOODLE API][EXCEPTION - core_webservice_get_site_info] The following " \
+                           "functions are not configured in the Moodle Token service: #{missing_functions}.")
+        return false
+      end
     end
 
     def self.post(host_url, params)
