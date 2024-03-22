@@ -94,7 +94,7 @@ class AppLaunch < ApplicationRecord
         'core_group_get_activity_groupmode',
         'core_group_get_course_user_groups',
         'core_course_get_course_module_by_instance',
-        'core_group_get_groups_for_selector'
+        'core_group_get_course_groups'
       ]
       unless Moodle::API.check_token_functions(moodle_token, wsfunctions)
         Rails.logger.warn 'Some function required for the groups feature is not configured in Moodle'

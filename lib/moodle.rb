@@ -100,23 +100,23 @@ module Moodle
     def self.get_course_groups(moodle_token, context_id)
       params = {
         wstoken: moodle_token.token,
-        wsfunction: 'core_group_get_groups_for_selector',
+        wsfunction: 'core_group_get_course_groups',
         moodlewsrestformat: 'json',
         courseid: context_id,
       }
       result = post(moodle_token.url, params)
 
-      if result.nil? || result["exception"].present?
-        Rails.logger.error("[+++] MOODLE API EXCEPTION [+++] #{result["message"]}") unless result.nil?
+      if result.nil? || (result.is_a?(Hash) && result["exception"].present?)
+        Rails.logger.error("[MOODLE API][EXCEPTION - core_group_get_course_groups]: #{result["message"]}") unless result.nil?
         return nil
       end
       # TO-DO: Investigar melhor os warnings e como tratá-los.
-      if result["warnings"].present?
-        Rails.logger.warn("[+++] MOODLE API WARNING [+++] #{result["warnings"].inspect}")
+      if (result.is_a?(Hash) && result["warnings"]).present?
+        Rails.logger.warn("[MOODLE API][WARNING - core_group_get_course_groups]: #{result["warnings"].inspect}")
       end
-      Rails.logger.info "[MOODLE API] Course groups (courseid #{context_id}): #{result}"
+      Rails.logger.info "[MOODLE API][INFO - core_group_get_course_groups]: Course groups (courseid #{context_id}): #{result}"
 
-      result["groups"]
+      result
     end
 
     def self.check_token_functions(moodle_token, wsfunctions)
