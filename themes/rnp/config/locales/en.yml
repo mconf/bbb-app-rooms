@@ -10,6 +10,8 @@ en:
       searching: "Searching"
       space_or_comma: "Press Space or type a comma to confirm the e-mail"
     send: "Send"
+  group_select:
+    title: "Select group"
   helpers:
     distance_of_time_in_hours_and_minutes:
       hour:
@@ -53,7 +55,9 @@ en:
     filters:
       no_filter: "All"
       recorded_only: "Recorded"
-    history: "History"
+    title: "History"
+    title_with_all_groups: "History | All groups"
+    title_with_group: "History | Group: %{group_name}"
     index:
       return: "< go back"
     load: "Load more conferences"
@@ -129,6 +133,7 @@ en:
     table:
       footnote: "Dates shown in the time zone: %{zone}"
     title: "Scheduled sessions"
+    title_with_group: "Scheduled sessions | Group: %{group_name}"
     wait:
       retry: "Join"
   open_app_modal:

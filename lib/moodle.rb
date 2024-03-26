@@ -85,7 +85,9 @@ module Moodle
       result = post(moodle_token.url, params)
 
       if result.nil? || result["exception"].present?
-        Rails.logger.error("[MOODLE API][EXCEPTION - core_course_get_course_module_by_instance]: #{result["message"]}") unless result.nil?
+        Rails.logger.error("[MOODLE API][EXCEPTION - core_course_get_course_module_by_instance]: Activity with instance id = #{instance_id} " \
+                           "-> #{result["message"]}") unless result.nil?
+        Rails.logger.error(result)
         return nil
       end
       # TO-DO: Investigar melhor os warnings e como tratá-los.

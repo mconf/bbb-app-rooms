@@ -10,6 +10,8 @@ pt:
       searching: "Buscando"
       space_or_comma: "Aperte Espaço ou digite uma vírgula para confirmar o e-mail"
     send: "Enviar"
+  group_select:
+    title: "Selecionar grupo"
   helpers:
     distance_of_time_in_hours_and_minutes:
       hour:
@@ -53,7 +55,9 @@ pt:
     filters:
       no_filter: "Todas"
       recorded_only: "Gravadas"
-    history: "Histórico"
+    title: "Histórico"
+    title_with_all_groups: "Histórico | Todos os grupos"
+    title_with_group: "Histórico | Grupo: %{group_name}"
     index:
       return: "< voltar"
     load: "Carregar mais conferências"
@@ -137,6 +141,7 @@ pt:
     table:
       footnote: "Datas exibidas no fuso horário: %{zone}"
     title: "Sessões agendadas"
+    title_with_group: "Sessões agendadas | Grupo: %{group_name}"
     wait:
       retry: "Entrar"
   open_app_modal:
