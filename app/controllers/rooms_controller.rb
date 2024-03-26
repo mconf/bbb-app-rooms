@@ -62,7 +62,7 @@ class RoomsController < ApplicationController
     # with groups configured, non-moderators only see meetings that belong to the current
     # selected group
     if @room.moodle_group_select_enabled? && !@user.moderator?(Abilities.moderator_roles)
-      options['meta_bbb-moodle-group-id'] = @current_group_id
+      options['meta_bbb-moodle-group-id'] = get_from_room_session(@room, 'current_group_id')
     end
 
     meetings_and_recordings, all_meetings_loaded = get_all_meetings(@room, options)
