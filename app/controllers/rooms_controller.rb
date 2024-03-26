@@ -21,7 +21,7 @@ class RoomsController < ApplicationController
   before_action :find_app_launch, only: %i[launch]
   before_action :set_user_groups_on_session, only: %i[launch]
   before_action :set_room_title, only: :show
-  before_action :set_group_variables, only: %i[show meetings meetings_pagination]
+  before_action :set_group_variables, only: %i[show meetings]
 
   before_action only: %i[show launch close] do
     authorize_user!(:show, @room)
@@ -60,7 +60,7 @@ class RoomsController < ApplicationController
     }
     # with groups configured, non-moderators only see meetings that belong to the current
     # selected group
-    if @current_group_id && !@user.moderator?(Abilities.moderator_roles)
+    if @room.moodle_group_select_enabled? && !@user.moderator?(Abilities.moderator_roles)
       options['meta_bbb-moodle-group-id'] = @current_group_id
     end
 
@@ -217,7 +217,7 @@ class RoomsController < ApplicationController
   # POST /rooms/1/set_current_group_on_session
   # expected params: [:group_id, :redir_url]
   def set_current_group_on_session
-    if @app_launch.moodle_groups_configured?
+    if @room.moodle_group_select_enabled?
       if params[:group_id].present?
         add_to_room_session(@room, 'current_group_id', params[:group_id])
       else
@@ -329,7 +329,7 @@ class RoomsController < ApplicationController
 
   # Set the variables expected by the `group_select` partial
   def set_group_variables
-    if @app_launch.moodle_groups_configured?
+    if @room.moodle_group_select_enabled?
       @groups_hash = get_from_room_session(@room, 'user_groups')
       @group_select = @groups_hash.invert
       @current_group_id = get_from_room_session(@room, 'current_group_id')

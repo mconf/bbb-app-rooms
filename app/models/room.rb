@@ -31,6 +31,14 @@ class Room < ApplicationRecord
     ConsumerConfig.find_by(key: self.consumer_key)
   end
 
+  def moodle_token
+    consumer_config&.moodle_token
+  end
+
+  def moodle_group_select_enabled?
+    moodle_token&.group_select_enabled?
+  end
+
   def default_values
     self.handler ||= Digest::SHA1.hexdigest(SecureRandom.uuid)
     self.moderator = random_password(8) if moderator.blank?

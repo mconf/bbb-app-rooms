@@ -112,7 +112,7 @@ class ScheduledMeetingsController < ApplicationController
     if @user.present?
 
       opts = {}
-      if @app_launch.moodle_groups_configured?
+      if @room.moodle_group_select_enabled?
         # coming from an external link
         if params[:moodle_group_id].present?
           opts = { moodle_group: { id: params[:moodle_group_id] } }
@@ -159,7 +159,7 @@ class ScheduledMeetingsController < ApplicationController
       end
 
       opts = {}
-      if @app_launch.moodle_groups_configured? && params[:moodle_group_id].present?
+      if @room.moodle_group_select_enabled? && params[:moodle_group_id].present?
         opts = { moodle_group: { id: params[:moodle_group_id] } }
       end
 
@@ -215,7 +215,7 @@ class ScheduledMeetingsController < ApplicationController
       )
     end
     opts = {}
-    if @app_launch.moodle_groups_configured?
+    if @room.moodle_group_select_enabled?
       # coming from an external link
       if params[:moodle_group_id].present?
         opts = { moodle_group: { id: params[:moodle_group_id] } }
@@ -247,7 +247,7 @@ class ScheduledMeetingsController < ApplicationController
     @scheduled_meeting.update_to_next_recurring_date
 
     opts = {}
-    if params[:moodle_group_id].present? && @app_launch.moodle_groups_configured?
+    if params[:moodle_group_id].present? && @room.moodle_group_select_enabled?
       opts = { moodle_group: { id: params[:moodle_group_id] } }
       # ??? testar se grupo existe aqui, pra valer tanto pra user logado quanto nao logado?
       # fazer chamada pra api do moodle ou pegar de alguma coisa no db, tipo a @room ou @scheduled?
@@ -282,7 +282,7 @@ class ScheduledMeetingsController < ApplicationController
 
   def running
     opts = {}
-    if @app_launch.moodle_groups_configured?
+    if @room.moodle_group_select_enabled?
       # coming from an external link
       if params[:moodle_group_id].present?
         opts = { moodle_group: { id: params[:moodle_group_id] } }
@@ -348,7 +348,7 @@ class ScheduledMeetingsController < ApplicationController
 
   def join_or_create?
     opts = {}
-    if @app_launch.moodle_groups_configured?
+    if @room.moodle_group_select_enabled?
       # coming from an external link
       if params[:moodle_group_id].present?
         opts = { moodle_group: { id: params[:moodle_group_id] } }
