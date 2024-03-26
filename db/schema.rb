@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_02_28_094200) do
+ActiveRecord::Schema.define(version: 2024_03_14_172824) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -70,6 +70,7 @@ ActiveRecord::Schema.define(version: 2024_02_28_094200) do
     t.boolean "message_reference_terms_use", default: true
     t.string "external_widget", default: ""
     t.boolean "force_disable_external_link", default: false
+    t.string "external_context_url"
     t.index ["key"], name: "index_consumer_configs_on_key", unique: true
   end
 

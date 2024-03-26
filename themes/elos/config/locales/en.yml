@@ -105,6 +105,10 @@ en:
     close:
       message: "Thank you for participating and until the next time."
       title: "Your session has ended"
+    external_handler_selector:
+      enter: "Access"
+      entering: "Acessing..."
+      title: "Classes"
   coc:
     schools: "Schools"
     classes_header:

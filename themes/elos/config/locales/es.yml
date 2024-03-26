@@ -105,6 +105,10 @@ es:
     close:
       message: "Gracias por su participación y hasta luego."
       title: "Tu sesión ha terminado"
+    external_handler_selector:
+      enter: "Acceso"
+      entering: "Accediendo..."
+      title: "Clases"
   scheduled_meetings:
     destroy: "Eliminar"
     edit:

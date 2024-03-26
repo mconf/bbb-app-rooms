@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'net/http'
 require 'user'
 require 'bbb_api'
 require './lib/mconf/eduplay'
@@ -242,6 +243,10 @@ class RoomsController < ApplicationController
       return
     end
 
+    # check if we need to fetch the context/handler from an external URL
+    proceed, handler = fetch_external_context(launch_params)
+    return unless proceed
+
     bbbltibroker_url = omniauth_bbbltibroker_url("/api/v1/sessions/#{launch_nonce}/invalidate")
     Rails.logger.info "Making a session request to #{bbbltibroker_url}"
     session_params = JSON.parse(
@@ -253,13 +258,15 @@ class RoomsController < ApplicationController
 
     # Store the data from this launch for easier access
     expires_at = Rails.configuration.launch_duration_mins.from_now
-    app_launch = AppLaunch.find_or_create_by(nonce: launch_nonce) do |launch|
+    app_launch = AppLaunch.create_with(room_handler: handler)
+                   .find_or_create_by(nonce: launch_nonce) do |launch|
       launch.update(
         params: launch_params,
         omniauth_auth: session['omniauth_auth']['bbbltibroker'],
         expires_at: expires_at
       )
     end
+    Rails.logger.info "Saved the AppLaunch nonce=#{app_launch.nonce} room_handler=#{app_launch.room_handler}"
 
     # Use this data only during the launch
     # From now on, take it from the AppLaunch
@@ -283,5 +290,104 @@ class RoomsController < ApplicationController
       @title = @room.name
       @subtitle = @room.description
     end
+  end
+
+  def fetch_external_context(launch_params)
+    launch_nonce = params['launch_nonce']
+
+    # this is a temporary user in case we are responding the request here and we need it (at least
+    # the locale we need to set, even for error pages)
+    user_params = AppLaunch.new(params: launch_params).user_params
+    @user = BbbAppRooms::User.new(user_params)
+    set_current_locale
+
+    # will only try to get an external context/handler if the ConsumerConfig is configured to do so
+    if launch_params.key?('custom_params') && launch_params['custom_params'].key?('oauth_consumer_key')
+      consumer_key = launch_params['custom_params']['oauth_consumer_key']
+      if consumer_key.present?
+        ext_context_url = ConsumerConfig.find_by(key: consumer_key)&.external_context_url
+      end
+    end
+    return true, nil if ext_context_url.blank? # proceed without a handler
+
+    Rails.logger.info "The consumer is configured to use an API to fetch the context/handler consumer_key=#{consumer_key} url=#{ext_context_url}"
+
+    Rails.logger.info "Making a request to an external API to define the context/handler url=#{ext_context_url}"
+    begin
+      response = send_request(ext_context_url, launch_params)
+      # example response:
+      # [
+      #   {
+      #      "handler": "82af745030b9e1394815e61184d50fd25dfe884a",
+      #      "name": "STRW2S/Q16.06",
+      #      "uuid": "a9a2689a-1e27-4ce8-aa91-ca488620bb89"
+      #   }
+      # ]
+      handlers = JSON.parse(response.body)
+      Rails.logger.warn "Got the following contexts from the API: #{handlers.inspect}"
+    rescue JSON::ParserError => error
+      Rails.logger.warn "Error parsing the external context API's response"
+      set_error('room', 'external_context_parse_error', 500)
+      respond_with_error(@error)
+      return false, nil
+    end
+    # in case the response is anything other than an array, consider it empty
+    handlers = [] unless handlers.is_a?(Array)
+
+    # if the handler was already set, try to use it
+    # this will happen in the 2nd step, after the user selects a handler/room to access
+    selected_handler = params['handler']
+    unless selected_handler.blank?
+      Rails.logger.info "Found a handler in the params, will try to use it handler=#{selected_handler}"
+
+      if handlers.find{ |h| h['handler'] == selected_handler }.nil?
+        Rails.logger.info "The handler found is NOT allowed, will not use it handler=#{selected_handler}"
+        set_error('room', 'external_context_invalid_handler', :forbidden)
+        respond_with_error(@error)
+        return false, nil
+      else
+        Rails.logger.info "The handler found is allowed, will use it handler=#{selected_handler}"
+        return true, selected_handler # proceed with a handler
+      end
+    end
+
+    if handlers.size == 0
+      Rails.logger.warn "Couldn't define a handler using the external request"
+      set_error('room', 'external_context_no_handler', :forbidden)
+      respond_with_error(@error)
+      return false, nil
+    elsif handlers.size > 1
+      @handlers = handlers
+      @launch_nonce = launch_nonce
+      respond_to do |format|
+        format.html { render 'rooms/external_context_selector' }
+      end
+      return false, nil
+    else
+      handler = handlers.first['handler']
+      Rails.logger.info "Defined a handler using the external request handler=#{handler}"
+      return true, handler
+    end
+  end
+
+  def send_request(url, data=nil)
+    url_parsed = URI.parse(url)
+    http = Net::HTTP.new(url_parsed.host, url_parsed.port)
+    http.open_timeout = 30
+    http.read_timeout = 30
+    http.use_ssl = true if url_parsed.scheme.downcase == 'https'
+
+    if data.nil?
+      Rails.logger.info "Sending a GET request to '#{url}'"
+      response = http.get(url_parsed.request_uri, @request_headers)
+    else
+      data = data.to_json
+      Rails.logger.info "Sending a POST request to '#{url}' with data='#{data.inspect}' (size=#{data.size})"
+      opts = { 'Content-Type' => 'application/json' }
+      response = http.post(url_parsed.request_uri, data, opts)
+    end
+    Rails.logger.info "Response: request=#{url} response_status=#{response.class.name} response_code=#{response.code} message_key=#{response.message} body=#{response.body}"
+
+    response
   end
 end
