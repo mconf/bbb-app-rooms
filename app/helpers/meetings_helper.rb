@@ -36,22 +36,4 @@ module MeetingsHelper
       nil
     end
   end
-
-  def filter_meetings_by_group_id(meetings_array, group_id)
-    filtered_meetings = meetings_array.select do |meeting|
-      metadata = meeting.dig(:meeting, :metadata)
-      metadata && metadata[:"bbb-moodle-group-id"]&.to_i == group_id.to_i
-    end
-
-    filtered_meetings
-  end
-
-  def filter_meetings_without_group_id(meetings_array)
-    filtered_meetings = meetings_array.select do |meeting|
-      metadata = meeting.dig(:meeting, :metadata)
-      metadata && metadata[:"bbb-moodle-group-id"].nil?
-    end
-
-    filtered_meetings
-  end
 end

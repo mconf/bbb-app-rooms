@@ -21,7 +21,7 @@ class RoomsController < ApplicationController
   before_action :find_app_launch, only: %i[launch]
   before_action :set_user_groups_on_session, only: %i[launch]
   before_action :set_room_title, only: :show
-  before_action :set_group_variables, only: %i[show meetings]
+  before_action :set_group_variables, only: %i[show meetings meetings_pagination]
 
   before_action only: %i[show launch close] do
     authorize_user!(:show, @room)
@@ -58,21 +58,13 @@ class RoomsController < ApplicationController
       offset: offset,
       includeRecordings: true
     }
-    all_meetings_and_recordings, all_meetings_loaded = get_all_meetings(@room, options)
-
-    # moderators can see all meetings
-    if @user.moderator?(Abilities.moderator_roles)
-      meetings_and_recordings = all_meetings_and_recordings
-    # with groups configured, non-moderators can only see meetings that belong to the current
+    # with groups configured, non-moderators only see meetings that belong to the current
     # selected group
-    elsif @app_launch.moodle_groups_configured?
-      group_id = get_from_room_session(@room, 'current_group_id')
-      meetings_and_recordings = filter_meetings_by_group_id(all_meetings_and_recordings, group_id)
-    # without groups configured, non-moderators can only see the meetings that don't belong
-    # to any group
-    else
-      meetings_and_recordings = filter_meetings_without_group_id(all_meetings_and_recordings)
+    if @current_group_id && !@user.moderator?(Abilities.moderator_roles)
+      options['meta_bbb-moodle-group-id'] = @current_group_id
     end
+
+    meetings_and_recordings, all_meetings_loaded = get_all_meetings(@room, options)
 
     args = { meetings_and_recordings: meetings_and_recordings,
              user: @user,
