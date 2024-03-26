@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_02_28_094200) do
+ActiveRecord::Schema.define(version: 2024_03_26_200202) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -95,6 +95,7 @@ ActiveRecord::Schema.define(version: 2024_02_28_094200) do
     t.string "url"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "group_select_enabled", default: false
     t.index ["consumer_config_id"], name: "index_moodle_tokens_on_consumer_config_id"
   end
 
