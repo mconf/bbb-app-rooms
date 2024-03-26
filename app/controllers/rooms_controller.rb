@@ -303,8 +303,46 @@ class RoomsController < ApplicationController
   # current_group_id: 1
   # user_groups: {'1': 'Grupo A', '2': 'Grupo B'}
   def set_user_groups_on_session
-    if @app_launch.moodle_groups_configured?
-      moodle_token = @room.consumer_config.moodle_token
+    if @room.moodle_group_select_enabled?
+      moodle_token = @room.moodle_token
+      Rails.logger.info "Moodle token #{moodle_token.token} found, group select is enabled"
+      # testing if the token is configured with the necessary functions
+      wsfunctions = [
+        'core_group_get_activity_groupmode',
+        'core_group_get_course_user_groups',
+        'core_course_get_course_module_by_instance',
+        'core_group_get_course_groups'
+      ]
+      
+      unless Moodle::API.check_token_functions(moodle_token, wsfunctions)
+        Rails.logger.error 'A function required for the groups feature is not configured in Moodle'
+        set_error('room', 'moodle_token_misconfigured', :forbidden)
+        respond_with_error(@error)
+        return
+      end
+
+      # the `resource_link_id` provided by Moodle is the `instance_id` of the activity.
+      # We use it to fetch the activity data, from where we get its `cmid` (course module id)
+      # to fetch the effective groupmode configured on the activity
+      activity_data = Moodle::API.get_activity_data(moodle_token, @app_launch.params['resource_link_id'])
+      if activity_data.nil?
+        Rails.logger.error "Could not find the necessary data for this activity (instance_id: #{@app_launch.params['resource_link_id']})"
+        set_error('room', 'moodle_token_misconfigured', :forbidden)
+        respond_with_error(@error)
+        return
+      end
+
+      groupmode = Moodle::API.get_groupmode(moodle_token, activity_data['id'])
+      # testing if the activity has its groupmode configured for separate groups (1)
+      # or visible groups (2)
+      if groupmode == 0 || groupmode.nil?
+        Rails.logger.error 'The Moodle activity has an invalid groupmode configured'
+        set_error('room', 'moodle_token_misconfigured', :forbidden)
+        respond_with_error(@error)
+        return
+      end
+
+      Rails.logger.info "Moodle groups are configured for this session (#{@app_launch.nonce})"
 
       if @user.moderator?(Abilities.moderator_roles)
         # Gets all course groups except the default 'All Participants' group (id 0)

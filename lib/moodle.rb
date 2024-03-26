@@ -20,7 +20,7 @@ module Moodle
       result = post(moodle_token.url, params)
 
       if result.nil? || result["exception"].present?
-        Rails.logger.error("[MOODLE API][EXCEPTION - core_calendar_create_calendar_events]: #{result["message"]}") unless result.nil?
+        Rails.logger.error("[MOODLE API][EXCEPTION - core_calendar_create_calendar_events]: #{result}") unless result.nil?
         return false
       end
       Rails.logger.info "[MOODLE API][INFO - core_calendar_create_calendar_events]: Event created on Moodle calendar: #{result}"
@@ -39,7 +39,7 @@ module Moodle
       result = post(moodle_token.url, params)
 
       if result.nil? || result["exception"].present?
-        Rails.logger.error("[MOODLE API][EXCEPTION - core_group_get_course_user_groups]: #{result["message"]}") unless result.nil?
+        Rails.logger.error("[MOODLE API][EXCEPTION - core_group_get_course_user_groups]: #{result}") unless result.nil?
         return nil
       end
       # TO-DO: Investigar melhor os warnings e como tratá-los.
@@ -61,7 +61,7 @@ module Moodle
       result = post(moodle_token.url, params)
 
       if result.nil? || result["exception"].present?
-        Rails.logger.error("[MOODLE API][EXCEPTION - core_group_get_activity_groupmode]: #{result["message"]}") unless result.nil?
+        Rails.logger.error("[MOODLE API][EXCEPTION - core_group_get_activity_groupmode]: #{result}") unless result.nil?
         return nil
       end
       # TO-DO: Investigar melhor os warnings e como tratá-los.
@@ -86,8 +86,7 @@ module Moodle
 
       if result.nil? || result["exception"].present?
         Rails.logger.error("[MOODLE API][EXCEPTION - core_course_get_course_module_by_instance]: Activity with instance id = #{instance_id} " \
-                           "-> #{result["message"]}") unless result.nil?
-        Rails.logger.error(result)
+                           "-> #{result}") unless result.nil?
         return nil
       end
       # TO-DO: Investigar melhor os warnings e como tratá-los.
@@ -109,7 +108,7 @@ module Moodle
       result = post(moodle_token.url, params)
 
       if result.nil? || (result.is_a?(Hash) && result["exception"].present?)
-        Rails.logger.error("[MOODLE API][EXCEPTION - core_group_get_course_groups]: #{result["message"]}") unless result.nil?
+        Rails.logger.error("[MOODLE API][EXCEPTION - core_group_get_course_groups]: #{result}") unless result.nil?
         return nil
       end
       # TO-DO: Investigar melhor os warnings e como tratá-los.
@@ -131,7 +130,7 @@ module Moodle
       return false if result.nil?
 
       if result["exception"].present?
-        Rails.logger.error("[MOODLE API][EXCEPTION - core_webservice_get_site_info]: #{result["message"]}")
+        Rails.logger.error("[MOODLE API][EXCEPTION - core_webservice_get_site_info]: #{result}")
         return false
       end
 

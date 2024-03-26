@@ -182,6 +182,12 @@ pt:
         suggestion:  "O token não pode ser validado"
         explanation: "O problema pode ser causado pela utilização de uma chave inválida na validação da requisição feita pelo provedor LTI."
         status_code: "403"
+      moodle_token_misconfigured:
+        code:       "AccessForbidden"
+        message:    "Acesso negado"
+        suggestion: "A integração com o Moodle está mal configurada"
+        explanation: "O problema pode ser causado pela configuração incorreta na integração do LTI com o seu ambiente Moodle."
+        status_code: "403"
     scheduled_meeting:
       not_found:
         code:       "NotFound"
