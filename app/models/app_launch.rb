@@ -5,7 +5,7 @@ class AppLaunch < ApplicationRecord
     name = self.params['context_title']
 
     p = {
-      handler: resource_handler,
+      handler: self.room_handler,
       name: name,
       welcome: '',
       consumer_key: self.consumer_key

@@ -51,7 +51,7 @@ services:
       MCONF_REDIS_PORT: 6379
       MCONF_REDIS_DB: 0
       PROMETHEUS_EXPORTER_HOST: prod_exporter
-      PROMETHEUS_EXPORTER_PORT: 9394
+      PROMETHEUS_EXPORTER_PORT: 9395
       PUMA_WORKERS: 1
     volumes:
       - .:/usr/src/app
@@ -93,14 +93,14 @@ services:
     tty: true
     stdin_open: true
     ports:
-      - "9394:9394"
+      - "9395:9395"
     env_file:
       - ./.env
       - ./.env.production
     volumes:
       - .:/usr/src/app
       - bundle-volume:/usr/src/bundle
-    command: bundle exec prometheus_exporter -b 0.0.0.0 -p 9394 --prefix 'rooms_app_'
+    command: bundle exec prometheus_exporter -b 0.0.0.0 -p 9395 --prefix 'rooms_app_'
 
   postgres:
     image: postgres:11-alpine

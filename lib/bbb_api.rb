@@ -124,30 +124,6 @@ module BbbApi
     meeting_id.concat("-#{opts[:moodle_group][:id]}") if opts.key?(:moodle_group)
     locale = I18n.locale == :pt ? 'pt-br' : I18n.locale
 
-    # pre-open the join_api_url with `redirect=false` to check whether the guest can join the meeting
-    # before actually redirecting him
-    if Rails.configuration.check_can_join_meeting
-      join_api_url = bbb(room, false).join_meeting_url(
-        meeting_id,
-        full_name,
-        room.attributes['viewer'],
-        { guest: true,
-          'userdata-bbb_override_default_locale': locale,
-          redirect: false
-        }
-      )
-
-      doc = Nokogiri::XML(URI.open(join_api_url))
-      hash = Hash.from_xml(doc.to_s)
-
-      Rails.logger.info "BigBlueButtonAPI: (check_can_join_meeting) request=#{join_api_url}"
-
-      if hash['response']['returncode'] == 'FAILED'
-        Rails.logger.info "Guest cannot join meeting, message_key=#{hash['response']['messageKey']}"
-        return { can_join?: false, messageKey: hash['response']['messageKey'] }
-      end
-    end
-
     join_api_url = bbb(room, false).join_meeting_url(
       meeting_id,
       full_name,

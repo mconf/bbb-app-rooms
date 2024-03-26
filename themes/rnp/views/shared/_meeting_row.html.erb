@@ -3,7 +3,7 @@
 
 <tr class="meeting-row d-flex row tr-row rec-<%= recording.present? %>">
   <%# Meeting name and description %>
-  <td class="col-10 col-md-5 td-titles" data-search-field="1">
+  <td class="col-10 col-md-3 td-titles" data-search-field="1">
     <% meeting_name = meeting[:meetingName] ? meeting[:meetingName] : recording[:metadata][:name] %>
     <div class="item-title word-break" title="<%= meeting_name %>">
       <%= meeting_name.truncate(50) %>
@@ -19,38 +19,75 @@
   </td>
 
   <%# Meeting creation date %>
-  <td class="col-6 col-md-1">
-    <%= format_date(meeting[:startTime].to_i, :day_month_year, false) %>
+  <td class="col-5 col-md-2">
+    <div class="meeting-info me-auto me-md-0">
+      <%= format_date(meeting[:startTime].to_i, :day_month_year, false) %>
 
-    <% scheduled_meeting_id = meeting[:metadata][:'bbb-meeting-db-id'] %>
-    <% if recurring_meeting?(scheduled_meeting_id)%>
-      <span class="badge badge-recurring-meeting">
-        <span>
-          <%= t("default.scheduled_meeting.repeat_options.#{meeting_recurrence(scheduled_meeting_id)}") %>
+      <% scheduled_meeting_id = meeting[:metadata][:'bbb-meeting-db-id'] %>
+      <% if recurring_meeting?(scheduled_meeting_id)%>
+        <span class="badge badge-recurring-meeting d-none d-md-flex">
+          <span>
+            <%= t("default.scheduled_meeting.repeat_options.#{meeting_recurrence(scheduled_meeting_id)}") %>
+          </span>
         </span>
-      </span>
-    <% end %>
+      <% end %>
+    </div>
   </td>
 
   <%# Meeting creation time %>
-  <td class="col-6 col-md-1">
-    <%= format_time(meeting[:startTime].to_i) %>
+  <td class="col-3 col-md-1">
+    <div class="meeting-info">
+      <%= format_time(meeting[:startTime].to_i) %>
+    </div>
   </td>
 
   <%# Meeting duration %>
-  <td class="col-12 col-md-2 text-center">
-    <% duration = meeting[:endTime].to_i/1000 - meeting[:startTime].to_i/1000 %>
-    <% if duration/60 > 0 %>
-      <%= duration_in_hours_and_minutes(duration).capitalize %>
-    <% else %>
-      <%= t("meetings.duration.less_than_a_minute") %>
+  <td class="col-4 col-md-1 text-center">
+    <div class="meeting-info ms-auto ms-md-0">
+      <% duration = meeting[:endTime].to_i/1000 - meeting[:startTime].to_i/1000 %>
+      <% if duration/60 > 0 %>
+        <%= duration_in_hours_and_minutes(duration, true).capitalize %>
+      <% else %>
+        <%= t("meetings.duration.less_than_a_minute") %>
+      <% end %>
+    </div>
+  </td>
+
+  <%# Meeting expiration date %>
+  <% if recording.present? && recording[:expirationDate].present? %>
+    <td class="col-12 col-md-2">
+      <div class="me-auto me-md-0 meeting-expire">
+        <span class="d-md-none">
+          <%= icon_info_circle(class: 'color-error') %>
+        </span>
+        <span class="d-md-none">
+          <%= t("meetings.recording.exp_date") %>
+        </span>
+        <%= format_date(recording[:expirationDate].to_i, :day_month_year, false) %>
+      </div>
+    </td>
+  <% else %>
+    <td class="col-12 col-md-2">
+    </td>
+  <% end %>
+
+  <% scheduled_meeting_id = meeting[:metadata][:'bbb-meeting-db-id'] %>
+  <td class="col-5 d-flex d-md-none">
+    <% if recurring_meeting?(scheduled_meeting_id)%>
+      <div class="me-auto">
+        <span class="badge badge-recurring-meeting">
+          <span>
+            <%= t("default.scheduled_meeting.repeat_options.#{meeting_recurrence(scheduled_meeting_id)}") %>
+          </span>
+        </span>
+      </div>
     <% end %>
   </td>
 
   <%# Meeting with recording %>
   <% if recording.present? %>
     <%# Recording visibility %>
-    <td class="<%= recording[:published] ? 'col-6' : 'col-12' %> col-md-1">
+    <td class="<%= recording[:published] ? 'col-2' : 'col-12' %> col-md-1">
       <% if recording[:published] %>
         <%= icon_visibility(title: t("meetings.recording.published"), class: 'color-primary fa-2x') %>
       <% else %>
@@ -59,7 +96,7 @@
     </td>
 
     <%# Recording state/action icons %>
-    <td class="col-6 col-md-1 flex-row-reverse">
+    <td class="col-5 col-md-1 justify-content-start justify-content-md-center flex-row-reverse icon-container">
       <% if recording[:state] != 'processing' %>
         <% if recording[:published] %>
           <% if can_download_recording?(user, room)%>
@@ -117,19 +154,44 @@
               <div class="dropdown-divider"></div>
               <% if user.moderator?(Abilities.moderator_roles) && Rails.application.config.eduplay_enabled %>
                 <% eduplay_token = EduplayToken.find_by(user_uid: user.uid)%>
-                <% if eduplay_token.present? && eduplay_token.expires_at > Time.now + 30.minutes %>
-                  <%= link_to eduplay_path(room, record_id: recording[:recordID]),
-                  method: :post,
-                  class: "dropdown-item rec-edit" do %>
-                    <%= icon_eduplay %>
-                    <%= t("meetings.recording.eduplay") %>
+                <% eduplay_uploads = EduplayUpload.recording_uploads(recording[:recordID]) if recording.present? %>
+                <% latest_upload = eduplay_uploads.max_by(&:created_at)%>
+                <% if eduplay_uploads.count == 0%>
+                  <% if eduplay_token.present? && eduplay_token.expires_at > Time.now + 30.minutes %>
+                    <%= link_to eduplay_path(room, record_id: recording[:recordID]),
+                    method: :post,
+                    class: "dropdown-item rec-edit" do %>
+                      <%= icon_eduplay %>
+                      <%= t("meetings.recording.eduplay") %>
+                    <% end %>
+                  <% else %>
+                    <%= link_to '#',
+                    'data-url': Eduplay::API.authorize_path(recording[:recordID]),
+                    class: "eduplay-login dropdown-item rec-edit" do %>
+                      <%= icon_eduplay %>
+                      <%= t("meetings.recording.eduplay") %>
+                    <% end %>
                   <% end %>
                 <% else %>
-                  <%= link_to '#',
-                  'data-url': Eduplay::API.authorize_path(recording[:recordID]),
-                  class: "eduplay-login dropdown-item rec-edit" do %>
-                    <%= icon_eduplay %>
-                    <%= t("meetings.recording.eduplay") %>
+                  <% if latest_upload.created_at <= 2.minutes.ago%>
+                    <% if eduplay_token.present? && eduplay_token.expires_at > Time.now + 30.minutes %>
+                      <%= link_to eduplay_path(room, record_id: recording[:recordID]),
+                      method: :post,
+                      class: "dropdown-item rec-edit" do %>
+                        <%= icon_eduplay %>
+                        <%= t("meetings.recording.eduplay") %>
+                      <% end %>
+                    <% else %>
+                      <%= link_to '#',
+                      'data-url': Eduplay::API.authorize_path(recording[:recordID]),
+                      class: "eduplay-login dropdown-item rec-edit" do %>
+                        <%= icon_eduplay %>
+                        <%= t("meetings.recording.eduplay") %>
+                      <% end %>
+                    <% end %>
+                  <% else %>
+                    <%# Disable eduplay button %>
+                    <span class="dropdown-item rec-edit disabled"><%= t('meetings.recording.recently_uploaded') %></span>
                   <% end %>
                 <% end %>
               <% end %>
@@ -198,7 +260,7 @@
     <td class="col-md-1"></td>
     <td class="col-md-1"></td>
     <%# Options dropdown %>
-    <td class="col-md-1 td-dropdown-opts">
+    <td class="col-2 col-md-1 td-dropdown-opts">
       <% if can_edit?(user, room) %>
         <div class="dropdown dropdown-opts">
           <a href="#" class="dropdown-toggle d-flex text-decoration-none dropdown-opts-link"

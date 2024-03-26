@@ -70,6 +70,7 @@ ActiveRecord::Schema.define(version: 2024_03_26_200202) do
     t.boolean "message_reference_terms_use", default: true
     t.string "external_widget", default: ""
     t.boolean "force_disable_external_link", default: false
+    t.string "external_context_url"
     t.index ["key"], name: "index_consumer_configs_on_key", unique: true
   end
 
@@ -77,6 +78,14 @@ ActiveRecord::Schema.define(version: 2024_03_26_200202) do
     t.string "user_uid"
     t.string "token"
     t.datetime "expires_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "eduplay_uploads", force: :cascade do |t|
+    t.string "user_uid"
+    t.string "recording_id"
+    t.string "upload_url"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

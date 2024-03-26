@@ -6,13 +6,17 @@ pt:
     schedule: "Agendar"
   helpers:
     distance_of_time_in_hours_and_minutes:
-      hour:
-        one: "%{count} hora"
-        other: "%{count} horas"
-      minute:
-        one: "%{count} minuto"
-        other: "%{count} minutos"
-      connector: "e"
+      long:
+        hour:
+          one: "%{count} hora"
+          other: "%{count} horas"
+        minute:
+          one: "%{count} minuto"
+          other: "%{count} minutos"
+        connector: "e"
+      short:
+        hour: "%{count}h"
+        minute: "%{count}min"
     hint:
       create_moodle_calendar_event: "Cria um evento correspondente no Calendário do Moodle para esta sessão agendada. Esta opção é desativada quando a sessão agendada é configurada para ser recorrente."
       disable_external_link: "O acesso à sala virtual será restrito aos alunos autenticados."
@@ -42,7 +46,7 @@ pt:
   meetings:
     all_loaded: "Todas as conferências foram carregadas"
     duration:
-      less_than_a_minute: "Menos de 1 minuto"
+      less_than_a_minute: "< 1min"
     empty_list: "Não há conferências para mostrar"
     filters:
       no_filter: "Todas"
@@ -64,6 +68,7 @@ pt:
         publish: "Você tem certeza que deseja tornar esta gravação visível?"
         unpublish: "Você tem certeza que deseja tornar esta gravação não visível?"
       destroy: "Deletar gravação"
+      exp_date: "Data de expiração: "
       playback_link: "Copiar link de reprodução"
       playbacks:
         presentation: "Reproduzir"
@@ -81,6 +86,7 @@ pt:
       date: "Data"
       time: "Hora"
       duration: "Duração"
+      exp_date: "Data de expiração"
       status: "Status"
       recording: "Gravação"
       footnote: "Datas exibidas no fuso horário: %{zone}"
@@ -99,6 +105,10 @@ pt:
     close:
       message: "Obrigado pela sua participação e até a próxima."
       title: "Sua sessão acabou"
+    external_handler_selector:
+      enter: "Acessar"
+      entering: "Acessando..."
+      title: "Turmas"
   coc:
     schools: "Escolas"
     classes_header:
