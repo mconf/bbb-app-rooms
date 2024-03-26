@@ -1,7 +1,4 @@
 <%= render "shared/notifications" %>
 <div class="container">
-  <% if @current_group_id %>
-    <%= render "shared/group_select", redir_url: room_path(@room) %>
-  <% end %>
   <%= render "shared/scheduled_meetings", user: @user, room: @room, scheduled_meetings: @scheduled_meetings %>
 </div>
