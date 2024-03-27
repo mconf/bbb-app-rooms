@@ -8,6 +8,7 @@ require './lib/mconf/filesender'
 
 class RoomsController < ApplicationController
   include ApplicationHelper
+  include MeetingsHelper
   include BbbApi
   include BbbAppRooms
 
@@ -19,7 +20,9 @@ class RoomsController < ApplicationController
   before_action :validate_room, except: %i[launch close]
   before_action :find_user
   before_action :find_app_launch, only: %i[launch]
+  before_action :set_user_groups_on_session, only: %i[launch]
   before_action :set_room_title, only: :show
+  before_action :set_group_variables, only: %i[show meetings]
 
   before_action only: %i[show launch close] do
     authorize_user!(:show, @room)
@@ -56,6 +59,12 @@ class RoomsController < ApplicationController
       offset: offset,
       includeRecordings: true
     }
+    # with groups configured, non-moderators only see meetings that belong to the current
+    # selected group
+    if @room.moodle_group_select_enabled? && !@user.moderator?(Abilities.moderator_roles)
+      options['meta_bbb-moodle-group-id'] = get_from_room_session(@room, 'current_group_id')
+    end
+
     meetings_and_recordings, all_meetings_loaded = get_all_meetings(@room, options)
 
     args = { meetings_and_recordings: meetings_and_recordings,
@@ -211,6 +220,20 @@ class RoomsController < ApplicationController
     redirect_to(filesender_path(@room, record_id: params['record_id']))
   end
 
+  # POST /rooms/1/set_current_group_on_session
+  # expected params: [:group_id, :redir_url]
+  def set_current_group_on_session
+    if @room.moodle_group_select_enabled?
+      if params[:group_id].present?
+        add_to_room_session(@room, 'current_group_id', params[:group_id])
+      else
+        remove_from_room_session(@room, 'current_group_id')
+      end
+    end
+
+    redirect_to params[:redir_url]
+  end
+
   helper_method :meetings, :recording_date, :recording_length
 
   private
@@ -283,6 +306,84 @@ class RoomsController < ApplicationController
     set_room_session(
       @room, { launch: launch_nonce }
     )
+  end
+
+  # Adds the user first group ID to the session if the grouping
+  # feature is enabled.
+  # Adds the formatted user groups to the session
+  # Example:
+  # current_group_id: 1
+  # user_groups: {'1': 'Grupo A', '2': 'Grupo B'}
+  def set_user_groups_on_session
+    if @room.moodle_group_select_enabled?
+      moodle_token = @room.moodle_token
+      Rails.logger.info "Moodle token #{moodle_token.token} found, group select is enabled"
+      # testing if the token is configured with the necessary functions
+      wsfunctions = [
+        'core_group_get_activity_groupmode',
+        'core_group_get_course_user_groups',
+        'core_course_get_course_module_by_instance',
+        'core_group_get_course_groups'
+      ]
+      
+      unless Moodle::API.check_token_functions(moodle_token, wsfunctions)
+        Rails.logger.error 'A function required for the groups feature is not configured in Moodle'
+        set_error('room', 'moodle_token_misconfigured', :forbidden)
+        respond_with_error(@error)
+        return
+      end
+
+      # the `resource_link_id` provided by Moodle is the `instance_id` of the activity.
+      # We use it to fetch the activity data, from where we get its `cmid` (course module id)
+      # to fetch the effective groupmode configured on the activity
+      activity_data = Moodle::API.get_activity_data(moodle_token, @app_launch.params['resource_link_id'])
+      if activity_data.nil?
+        Rails.logger.error "Could not find the necessary data for this activity (instance_id: #{@app_launch.params['resource_link_id']})"
+        set_error('room', 'moodle_token_misconfigured', :forbidden)
+        respond_with_error(@error)
+        return
+      end
+
+      groupmode = Moodle::API.get_groupmode(moodle_token, activity_data['id'])
+      # testing if the activity has its groupmode configured for separate groups (1)
+      # or visible groups (2)
+      if groupmode == 0 || groupmode.nil?
+        Rails.logger.error 'The Moodle activity has an invalid groupmode configured'
+        set_error('room', 'moodle_token_misconfigured', :forbidden)
+        respond_with_error(@error)
+        return
+      end
+
+      Rails.logger.info "Moodle groups are configured for this session (#{@app_launch.nonce})"
+
+      if @user.moderator?(Abilities.moderator_roles)
+        # Gets all course groups except the default 'All Participants' group (id 0)
+        groups = Moodle::API.get_course_groups(moodle_token, @app_launch.context_id)
+                .delete_if{ |element| element['id'] == "0" }
+      else
+        groups = Moodle::API.get_user_groups(moodle_token, @user.uid, @app_launch.context_id)
+      end
+
+      if groups.any?  
+        groups_hash = groups.collect{ |g| g.slice('id', 'name').values }.to_h
+        current_group_id = groups.first['id']
+      else
+        groups_hash = {'no_groups': 'Você não pertence a nenhum grupo'}
+        current_group_id = 'no_groups'
+      end
+
+      add_to_room_session(@room, 'current_group_id', current_group_id)
+      add_to_room_session(@room, 'user_groups', groups_hash)
+    end
+  end
+
+  # Set the variables expected by the `group_select` partial
+  def set_group_variables
+    if @room.moodle_group_select_enabled?
+      @groups_hash = get_from_room_session(@room, 'user_groups')
+      @group_select = @groups_hash.invert
+      @current_group_id = get_from_room_session(@room, 'current_group_id')
+    end
   end
 
   def set_room_title

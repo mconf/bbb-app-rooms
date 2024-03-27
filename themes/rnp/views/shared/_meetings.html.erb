@@ -1,10 +1,19 @@
 <%# Params passed to render partial %>
 <% [user, room, meetings, only_public] %>
 
+<% list_title = t('meetings.title') %>
+<% if @current_group_id %>
+  <% if @user.moderator?(Abilities.moderator_roles) %>
+    <% list_title = t('meetings.title_with_all_groups') %>
+  <% else %>
+    <% list_title = t('meetings.title_with_group', group_name: @groups_hash[@current_group_id.to_s]) %>
+  <% end %>
+<% end %>
+
 <div id="meetings-list">
   <div class="row mb-md-3">
     <div id="meetings-header" class="col-12 col-sm-6 d-flex align-items-center justify-content-center justify-content-sm-start">
-      <h2 class="fw-bold mb-0"><%= t('meetings.history') %></h2>
+      <h2 class="mb-0"><%= list_title %></h2>
     </div>
 
     <div id="meetings-filters" class="col-12 col-sm-6 mb-3 mb-sm-0 d-flex align-items-center justify-content-center justify-content-sm-end btn-group-toggle" data-toggle="buttons">

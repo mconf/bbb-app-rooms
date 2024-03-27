@@ -4,6 +4,8 @@ es:
     clipboard:
       link_copied: "Link copiado al clipboard!"
     schedule: "Agendar"
+  group_select:
+    title: "Seleccionar grupo"
   helpers:
     distance_of_time_in_hours_and_minutes:
       long:
@@ -51,7 +53,9 @@ es:
     filters:
       no_filter: "Todas"
       recorded_only: "Grabadas"
-    history: "Historial"
+    title: "Historial"
+    title_with_all_groups: "Historial | Todos los grupos"
+    title_with_group: "Historial | Grupo: %{group_name}"
     index:
       return: "< volver"
     load: "Cargar más conferencias"
@@ -124,6 +128,7 @@ es:
     table:
       footnote: "Fechas mostradas en la zona horaria: %{zone}"
     title: "Sesiones programadas"
+    title_with_group: "Sesiones programadas | Grupo: %{group_name}"
     wait:
       retry: "Entrar"
   time:

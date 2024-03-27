@@ -21,7 +21,7 @@ class Room < ApplicationRecord
   def can_create_moodle_calendar_event
     moodle_token = self.consumer_config&.moodle_token
     if moodle_token
-      Moodle::API.check_token_functions(moodle_token, 'core_calendar_create_calendar_events')
+      Moodle::API.check_token_functions(moodle_token, ['core_calendar_create_calendar_events'])
     else
       false
     end
@@ -29,6 +29,14 @@ class Room < ApplicationRecord
 
   def consumer_config
     ConsumerConfig.find_by(key: self.consumer_key)
+  end
+
+  def moodle_token
+    consumer_config&.moodle_token
+  end
+
+  def moodle_group_select_enabled?
+    moodle_token&.group_select_enabled?
   end
 
   def default_values

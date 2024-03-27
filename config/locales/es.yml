@@ -182,6 +182,12 @@ es:
         suggestion:  "No se puede verificar el token"
         explanation: "El problema puede deberse al uso de una clave no válida para validar la solicitud realizada por el proveedor de LTI."
         status_code: "403"
+      moodle_token_misconfigured:
+        code:       "AccessForbidden"
+        message:    "Acceso denegado"
+        suggestion: "La integración con Moodle está mal configurada"
+        explanation: "El problema puede ser causado por una configuración incorrecta en la integración de LTI con su entorno Moodle."
+        status_code: "403"
       external_context_parse_error:
         code: "ParseError"
         message: "Error interno al buscar datos"
@@ -206,6 +212,12 @@ es:
         message:     "Reunión no encontrada"
         suggestion:  "No se encontró la programación"
         explanation: "Es posible que el creador de la sesión lo haya eliminado."
+        status_code: "404"
+      meeting_not_found:
+        code:        "NotFound"
+        message:     "Reunión no encontrada"
+        suggestion:  "No se encontró la reunión"
+        explanation: "El identificador de grupo no es válido."
         status_code: "404"
     meeting:
       learning_dashboard_url_missing: "Error: URL del panel de aprendizaje no está configurada"
