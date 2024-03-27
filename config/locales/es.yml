@@ -187,6 +187,7 @@ es:
         message:    "Acceso denegado"
         suggestion: "La integración con Moodle está mal configurada"
         explanation: "El problema puede ser causado por una configuración incorrecta en la integración de LTI con su entorno Moodle."
+        status_code: "403"
       external_context_parse_error:
         code: "ParseError"
         message: "Error interno al buscar datos"

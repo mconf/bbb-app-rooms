@@ -219,6 +219,7 @@ en:
         message:    "Access denied"
         suggestion: "The Moodle integration is misconfigured"
         explanation: "The issue may be caused by incorrect configuration in the LTI integration with your Moodle environment."
+        status_code: "403"
       external_context_parse_error:
         code: "ParseError"
         message: "Internal error fetching data"
