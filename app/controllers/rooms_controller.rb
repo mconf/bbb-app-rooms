@@ -223,11 +223,13 @@ class RoomsController < ApplicationController
   # POST /rooms/1/set_current_group_on_session
   # expected params: [:group_id, :redir_url]
   def set_current_group_on_session
-    if @room.moodle_group_select_enabled?
-      if params[:group_id].present?
+    if @room.moodle_group_select_enabled? && params[:group_id].present?
+      groups_ids_list = get_from_room_session(@room, 'user_groups').keys
+      if groups_ids_list.include?(params[:group_id])
         add_to_room_session(@room, 'current_group_id', params[:group_id])
       else
-        remove_from_room_session(@room, 'current_group_id')
+        Rails.logger.warn "User #{@user.uid} tried to set an invalid group id: #{params[:group_id]}"
+        flash[:error] = t('default.room.error.invalid_group')
       end
     end
 
@@ -364,7 +366,7 @@ class RoomsController < ApplicationController
         groups = Moodle::API.get_user_groups(moodle_token, @user.uid, @app_launch.context_id)
       end
 
-      if groups.any?  
+      if groups.any?
         groups_hash = groups.collect{ |g| g.slice('id', 'name').values }.to_h
         current_group_id = groups.first['id']
       else

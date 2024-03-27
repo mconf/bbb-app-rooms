@@ -35,6 +35,7 @@ pt:
       editing:        "Editando sala"
       error:
         oauth:        "Ocorreu um erro durante a autorização via OAuth."
+        invalid_group: "O grupo selecionado é inválido."
       join:           "Entrar"
       moderator:      "Chave de moderador"
       name:           "Nome"

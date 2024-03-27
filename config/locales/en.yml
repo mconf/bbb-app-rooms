@@ -66,6 +66,7 @@ en:
       editing:        "Editing Room"
       error:
         oauth:        "An error occurred during OAuth authorization."
+        invalid_group: "The selected group is invalid."
       join:           "Join"
       moderator:      "Moderator token"
       name:           "Name"
