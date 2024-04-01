@@ -4,6 +4,8 @@ en:
     clipboard:
       link_copied: "Link copied to the clipboard!"
     schedule: "Schedule"
+  group_select:
+    title: "Select group"
   helpers:
     distance_of_time_in_hours_and_minutes:
       long:
@@ -51,7 +53,9 @@ en:
     filters:
       no_filter: "All"
       recorded_only: "Recorded"
-    history: "History"
+    title: "History"
+    title_with_all_groups: "History | All groups"
+    title_with_group: "History | Group: %{group_name}"
     index:
       return: "< go back"
     load: "Load more conferences"
@@ -105,6 +109,10 @@ en:
     close:
       message: "Thank you for participating and until the next time."
       title: "Your session has ended"
+    external_handler_selector:
+      enter: "Access"
+      entering: "Acessing..."
+      title: "Classes"
   coc:
     schools: "Schools"
     classes_header:
@@ -128,6 +136,7 @@ en:
     table:
       footnote: "Dates shown in the time zone: %{zone}"
     title: "Scheduled sessions"
+    title_with_group: "Scheduled sessions | Group: %{group_name}"
     wait:
       retry: "Join"
   time:

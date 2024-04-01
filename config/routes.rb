@@ -81,6 +81,7 @@ Rails.application.routes.draw do
         member do
           get :meetings
           get :meetings_pagination
+          post :set_current_group_on_session
           get '/error/:code', to: 'rooms#error'
         end
 

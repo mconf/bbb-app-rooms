@@ -14,40 +14,55 @@ module BbbApi
       !scheduled_meeting.check_all_moderators
   end
 
-  def mod_in_room?(scheduled_meeting)
+  def mod_in_room?(scheduled_meeting, opts = {})
     room = scheduled_meeting.room
-    bbb(room).is_meeting_running?(scheduled_meeting.meeting_id)
+    meeting_id = scheduled_meeting.meeting_id
+    meeting_id.concat("-#{opts[:moodle_group][:id]}") if opts.key?(:moodle_group)
+    bbb(room).is_meeting_running?(meeting_id)
   end
 
-  def get_participants_count(scheduled_meeting)
+  def get_participants_count(scheduled_meeting, opts = {})
     room = scheduled_meeting.room
-    return 0 unless bbb(room).is_meeting_running?(scheduled_meeting.meeting_id)
+    meeting_id = scheduled_meeting.meeting_id
+    meeting_id.concat("-#{opts[:moodle_group][:id]}") if opts.key?(:moodle_group)
 
-    res = bbb(room).get_meeting_info(scheduled_meeting.meeting_id, scheduled_meeting.hash_id)
+    return 0 unless bbb(room).is_meeting_running?(meeting_id)
+
+    res = bbb(room).get_meeting_info(meeting_id, scheduled_meeting.hash_id)
     res[:participantCount]
   end
 
-  def get_current_duration(scheduled_meeting)
+  def get_current_duration(scheduled_meeting, opts = {})
     room = scheduled_meeting.room
-    return unless bbb(room).is_meeting_running?(scheduled_meeting.meeting_id)
+    meeting_id = scheduled_meeting.meeting_id
+    meeting_id.concat("-#{opts[:moodle_group][:id]}") if opts.key?(:moodle_group)
+    return unless bbb(room).is_meeting_running?(meeting_id)
 
-    res = bbb(room).get_meeting_info(scheduled_meeting.meeting_id, scheduled_meeting.hash_id)
+    res = bbb(room).get_meeting_info(meeting_id, scheduled_meeting.hash_id)
     time_ago_in_words(res[:startTime].to_datetime)
   end
 
-  def join_api_url(scheduled_meeting, user)
+  def join_api_url(scheduled_meeting, user, opts = {})
     return unless scheduled_meeting.present? && user.present?
 
     room = scheduled_meeting.room
+    meeting_id = scheduled_meeting.meeting_id
+    meeting_id.concat("-#{opts[:moodle_group][:id]}") if opts.key?(:moodle_group)
 
-    unless bbb(room).is_meeting_running?(scheduled_meeting.meeting_id)
+    unless bbb(room).is_meeting_running?(meeting_id)
+      meeting_name = scheduled_meeting.name
+      create_options = scheduled_meeting.create_options(user).merge({ logoutURL: autoclose_url })
+
+      if opts.key?(:moodle_group)
+        meeting_name.concat(" - #{opts[:moodle_group][:name]}")
+        create_options.merge!({ 'meta_bbb-moodle-group-id': opts[:moodle_group][:id] })
+      end
+
       begin
         bbb(room).create_meeting(
-          scheduled_meeting.name,
-          scheduled_meeting.meeting_id,
-          scheduled_meeting.create_options(user).merge(
-            { logoutURL: autoclose_url }
-          )
+          meeting_name,
+          meeting_id,
+          create_options
         )
       rescue BigBlueButton::BigBlueButtonException => e
         if ['simultaneousMeetingsLimitReachedForSecret', 'simultaneousMeetingsLimitReachedForInstitution'].include? e.key.to_s
@@ -67,7 +82,7 @@ module BbbApi
     # before actually redirecting him
     if Rails.configuration.check_can_join_meeting
       join_api_url = bbb(room, false).join_meeting_url(
-        scheduled_meeting.meeting_id,
+        meeting_id,
         user.username(t("default.bigbluebutton.#{role}")),
         room.attributes[role],
         {
@@ -89,7 +104,7 @@ module BbbApi
     end
 
     join_api_url = bbb(room, false).join_meeting_url(
-      scheduled_meeting.meeting_id,
+      meeting_id,
       user.username(t("default.bigbluebutton.#{role}")),
       room.attributes[role],
       {
@@ -101,14 +116,16 @@ module BbbApi
     { can_join?: true, join_api_url: join_api_url }
   end
 
-  def external_join_api_url(scheduled_meeting, full_name)
+  def external_join_api_url(scheduled_meeting, full_name, opts = {})
     return unless scheduled_meeting.present? && full_name.present?
 
     room = scheduled_meeting.room
+    meeting_id = scheduled_meeting.meeting_id
+    meeting_id.concat("-#{opts[:moodle_group][:id]}") if opts.key?(:moodle_group)
     locale = I18n.locale == :pt ? 'pt-br' : I18n.locale
 
     join_api_url = bbb(room, false).join_meeting_url(
-      scheduled_meeting.meeting_id,
+      meeting_id,
       full_name,
       room.attributes['viewer'],
       { guest: true,

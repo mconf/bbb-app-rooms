@@ -214,12 +214,42 @@ en:
         suggestion: "The token could not be validated"
         explanation: "This problem can be caused by using an invalid key when validating the request through the LTI Provider."
         status_code: "403"
+      moodle_token_misconfigured:
+        code:       "AccessForbidden"
+        message:    "Access denied"
+        suggestion: "The Moodle integration is misconfigured"
+        explanation: "The issue may be caused by incorrect configuration in the LTI integration with your Moodle environment."
+        status_code: "403"
+      external_context_parse_error:
+        code: "ParseError"
+        message: "Internal error fetching data"
+        suggestion: "There might be a problem in the server"
+        explanation: "This problem is caused when the external context API returns an invalid JSON response."
+        status_code: "500"
+      external_context_no_handler:
+        code: "NoHandler"
+        message: "Unauthorized"
+        suggestion: "User not found in the external context database"
+        explanation: "The user was not found in the external context database so they won't be able to access a class."
+        status_code: "401"
+      external_context_invalid_handler:
+        code: "InvalidHandler"
+        message: "Forbidden"
+        suggestion: "Unallowed context"
+        explanation: "You are trying to access a context you are not allowed to access."
+        status_code: "403"
     scheduled_meeting:
       not_found:
         code:       "NotFound"
         message:    "Meeting not found"
         suggestion:    "The scheduled meeting was not found"
         explanation: "It might have been removed by the session creator."
+        status_code: "404"
+      meeting_not_found:
+        code:       "NotFound"
+        message:    "Meeting not found"
+        suggestion: "The meeting was not found"
+        explanation: "The group identifier is invalid."
         status_code: "404"
     meeting:
       learning_dashboard_url_missing: "Error: Learning dashboard URL not configured"

@@ -4,6 +4,8 @@ pt:
     clipboard:
       link_copied: "Link copiado para o clipboard!"
     schedule: "Agendar"
+  group_select:
+    title: "Selecionar grupo"
   helpers:
     distance_of_time_in_hours_and_minutes:
       long:
@@ -51,7 +53,9 @@ pt:
     filters:
       no_filter: "Todas"
       recorded_only: "Gravadas"
-    history: "Histórico"
+    title: "Histórico"
+    title_with_all_groups: "Histórico | Todos os grupos"
+    title_with_group: "Histórico | Grupo: %{group_name}"
     index:
       return: "< voltar"
     load: "Carregar mais conferências"
@@ -105,6 +109,10 @@ pt:
     close:
       message: "Obrigado pela sua participação e até a próxima."
       title: "Sua sessão acabou"
+    external_handler_selector:
+      enter: "Acessar"
+      entering: "Acessando..."
+      title: "Turmas"
   coc:
     schools: "Escolas"
     classes_header:
@@ -128,6 +136,7 @@ pt:
     table:
       footnote: "Datas exibidas no fuso horário: %{zone}"
     title: "Sessões agendadas"
+    title_with_group: "Sessões agendadas | Grupo: %{group_name}"
     wait:
       retry: "Entrar"
   time:

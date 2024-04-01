@@ -111,8 +111,21 @@ class ScheduledMeetingsController < ApplicationController
     # only way for a meeting to be created is through here
     if @user.present?
 
+      opts = {}
+      if @room.moodle_group_select_enabled?
+        # coming from an external link
+        if params[:moodle_group_id].present?
+          opts = { moodle_group: { id: params[:moodle_group_id] } }
+        # coming from a 'play' button
+        else
+          groups = get_from_room_session(@room, 'user_groups')
+          group_id = get_from_room_session(@room, 'current_group_id').to_s
+          opts = { moodle_group: { name: groups[group_id], id: group_id } } unless group_id == 'no_groups'
+        end
+      end
+
       # make user wait until moderator is in room
-      if wait_for_mod?(@scheduled_meeting, @user) && (!mod_in_room?(@scheduled_meeting) ||
+      if wait_for_mod?(@scheduled_meeting, @user) && (!mod_in_room?(@scheduled_meeting, opts) ||
         (params[:no_auto_join] == 'true' && device_type? != 'desktop'))
         redirect_to wait_room_scheduled_meeting_path(@room, @scheduled_meeting)
       else
@@ -122,7 +135,7 @@ class ScheduledMeetingsController < ApplicationController
         end
 
         # join as moderator (creates the meeting if not created yet)
-        res = join_api_url(@scheduled_meeting, @user)
+        res = join_api_url(@scheduled_meeting, @user, opts)
         if res[:can_join?]
           if params[:join_in_app] == 'true'
             direct_join_url = 'br.rnp.conferenciawebmobile://direct-join/' + res[:join_api_url].gsub(/^https?:\/\//, '') + "&meetingName=#{@scheduled_meeting.name}"
@@ -145,7 +158,12 @@ class ScheduledMeetingsController < ApplicationController
         return
       end
 
-      if !mod_in_room?(@scheduled_meeting)
+      opts = {}
+      if @room.moodle_group_select_enabled? && params[:moodle_group_id].present?
+        opts = { moodle_group: { id: params[:moodle_group_id] } }
+      end
+
+      if !mod_in_room?(@scheduled_meeting, opts)
         redirect_to wait_room_scheduled_meeting_path(
                       @room, @scheduled_meeting,
                       first_name: params[:first_name], last_name: params[:last_name]
@@ -153,7 +171,7 @@ class ScheduledMeetingsController < ApplicationController
       else
         # join as guest
         name = "#{params[:first_name]} #{params[:last_name]}"
-        res = external_join_api_url(@scheduled_meeting, name)
+        res = external_join_api_url(@scheduled_meeting, name, opts)
         if res[:can_join?]
           if params[:join_in_app] == 'true'
             direct_join_url = 'br.rnp.conferenciawebmobile://direct-join/' + res[:join_api_url].gsub(/^https?:\/\//, '') + "&meetingName=#{@scheduled_meeting.name}"
@@ -196,7 +214,18 @@ class ScheduledMeetingsController < ApplicationController
         first_name: params[:first_name], last_name: params[:last_name]
       )
     end
-    @is_running = mod_in_room?(@scheduled_meeting)
+    opts = {}
+    if @room.moodle_group_select_enabled?
+      # coming from an external link
+      if params[:moodle_group_id].present?
+        opts = { moodle_group: { id: params[:moodle_group_id] } }
+      # coming from a 'play' button
+      else
+        group_id = get_from_room_session(@room, 'current_group_id').to_s
+        opts = { moodle_group: { id: group_id } } unless group_id == 'no_groups'
+      end
+    end
+    @is_running = mod_in_room?(@scheduled_meeting, opts)
     @can_join_or_create = join_or_create?
   end
 
@@ -217,19 +246,57 @@ class ScheduledMeetingsController < ApplicationController
 
     @scheduled_meeting.update_to_next_recurring_date
 
-    @is_running = mod_in_room?(@scheduled_meeting)
-    @participants_count = get_participants_count(@scheduled_meeting)
-    @ended = !@scheduled_meeting.active? && !mod_in_room?(@scheduled_meeting)
-    @started_ago = get_current_duration(@scheduled_meeting)
+    opts = {}
+    if params[:moodle_group_id].present? && @room.moodle_group_select_enabled?
+      opts = { moodle_group: { id: params[:moodle_group_id] } }
+      # ??? testar se grupo existe aqui, pra valer tanto pra user logado quanto nao logado?
+      # fazer chamada pra api do moodle ou pegar de alguma coisa no db, tipo a @room ou @scheduled?
+
+      # if @user.present?
+        # Situações pra um user logado:
+          # grupo existe, faz parte
+            # se é moderador, pode abrir, senão fica no wait
+          # grupo existe, n faz parte
+            # fica no wait
+          # grupo n existe
+            # mostra erro 404
+
+        # testar se ele faz parte daquele grupo?
+        # ou deixa o join cuidar disso?
+      if @user.nil?
+        # meeting exists?
+        @is_running = mod_in_room?(@scheduled_meeting, opts)
+        unless @is_running
+          set_error('scheduled_meeting', 'meeting_not_found', :not_found)
+          respond_with_error(@error) and return
+        end
+      end
+    end
+
+    @is_running ||= mod_in_room?(@scheduled_meeting, opts)
+    @ended = !@scheduled_meeting.active? && !mod_in_room?(@scheduled_meeting, opts)
+    @participants_count = get_participants_count(@scheduled_meeting, opts)
+    @started_ago = get_current_duration(@scheduled_meeting, opts)
     @disclaimer = config&.external_disclaimer
   end
 
   def running
+    opts = {}
+    if @room.moodle_group_select_enabled?
+      # coming from an external link
+      if params[:moodle_group_id].present?
+        opts = { moodle_group: { id: params[:moodle_group_id] } }
+      # coming from a 'play' button
+      else
+        group_id = get_from_room_session(@room, 'current_group_id').to_s
+        opts = { moodle_group: { id: group_id } } unless group_id == 'no_groups'
+      end
+    end
     respond_to do |format|
       format.json {
         render json: {
                  status: :ok,
-                 running: mod_in_room?(@scheduled_meeting),
+                 running: mod_in_room?(@scheduled_meeting, opts),
                  interval: Rails.configuration.cable_polling_secs.to_i,
                  can_join_or_create: join_or_create?
                }
@@ -280,8 +347,19 @@ class ScheduledMeetingsController < ApplicationController
   end
 
   def join_or_create?
-    can_join = (@user.present? && !(wait_for_mod?(@scheduled_meeting, @user) && !mod_in_room?(@scheduled_meeting))) ||
-      (!@user.present? && mod_in_room?(@scheduled_meeting))
+    opts = {}
+    if @room.moodle_group_select_enabled?
+      # coming from an external link
+      if params[:moodle_group_id].present?
+        opts = { moodle_group: { id: params[:moodle_group_id] } }
+      # coming from a 'play' button
+      else
+        group_id = get_from_room_session(@room, 'current_group_id').to_s
+        opts = { moodle_group: { id: group_id } } unless group_id == 'no_groups'
+      end
+    end
+    can_join = (@user.present? && !(wait_for_mod?(@scheduled_meeting, @user) && !mod_in_room?(@scheduled_meeting, opts))) ||
+      (!@user.present? && mod_in_room?(@scheduled_meeting, opts))
 
     can_join
   end
