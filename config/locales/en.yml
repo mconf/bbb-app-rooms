@@ -221,6 +221,19 @@ en:
         suggestion: "The Moodle integration is misconfigured"
         explanation: "The issue may be caused by incorrect configuration in the LTI integration with your Moodle environment."
         status_code: "403"
+      course_without_groups:
+        code:       "AccessForbidden"
+        message:    "Access denied"
+        suggestion: "The Moodle course does not have any groups registered"
+        explanation: "The Moodle course needs to have at least one group configured to access the tool."
+        status_code: "403"
+      user_without_groups:
+        code:       "AccessForbidden"
+        message:    "Access denied"
+        suggestion: "The user does not belong to any group in the Moodle course"
+        explanation: "The user needs to belong to at least one group in the Moodle course to access the tool."
+        status_code: "403"
+
       external_context_parse_error:
         code: "ParseError"
         message: "Internal error fetching data"

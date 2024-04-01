@@ -33,6 +33,10 @@ class ScheduledMeetingsController < ApplicationController
   def new
     @scheduled_meeting = ScheduledMeeting.new(@room.attributes_for_meeting)
     @scheduled_meeting.create_moodle_calendar_event = true
+    if @room.moodle_group_select_enabled?
+      @current_group_id = get_from_room_session(@room, 'current_group_id').to_s
+      @groups_hash = get_from_room_session(@room, 'all_groups')
+    end
   end
 
   def create
@@ -47,6 +51,7 @@ class ScheduledMeetingsController < ApplicationController
 
       config = ConsumerConfig.find_by(key: @room.consumer_key)
       @scheduled_meeting.disable_external_link = true if config&.force_disable_external_link
+      @scheduled_meeting.moodle_group_id = get_from_room_session(@room, 'current_group_id').to_i if @room.moodle_group_select_enabled?
 
       if @scheduled_meeting.duration.zero?
         @scheduled_meeting[:duration] =

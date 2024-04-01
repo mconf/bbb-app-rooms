@@ -37,9 +37,13 @@ class RoomsController < ApplicationController
     respond_to do |format|
       # TODO: do this also in a worker in the future to speed up this request
       @room.update_recurring_meetings
-
       @scheduled_meetings = @room.scheduled_meetings.active
-                              .order(:start_at).page(params[:page])
+      
+      if @room.moodle_group_select_enabled?
+        @scheduled_meetings = @scheduled_meetings.where(moodle_group_id: get_from_room_session(@room, 'current_group_id'))
+      end
+
+      @scheduled_meetings = @scheduled_meetings.order(:start_at).page(params[:page])
 
       format.html { render :show }
     end
@@ -357,25 +361,40 @@ class RoomsController < ApplicationController
       end
 
       Rails.logger.info "Moodle groups are configured for this session (#{@app_launch.nonce})"
+    
+      user_groups = Moodle::API.get_user_groups(moodle_token, @user.uid, @app_launch.context_id)
 
       if @user.moderator?(Abilities.moderator_roles)
-        # Gets all course groups except the default 'All Participants' group (id 0)
-        groups = Moodle::API.get_course_groups(moodle_token, @app_launch.context_id)
-                .delete_if{ |element| element['id'] == "0" }
-      else
-        groups = Moodle::API.get_user_groups(moodle_token, @user.uid, @app_launch.context_id)
+        # Gets all course groups except the default 'All Participants' group (id 0);
+        all_groups = Moodle::API.get_course_groups(moodle_token, @app_launch.context_id)
+                     .delete_if{ |element| element['id'] == "0" }
+        
+        if all_groups.empty?
+          Rails.logger.error "There are no groups registered in this Moodle course"
+          set_error('room', 'course_without_groups', :forbidden)
+          respond_with_error(@error)
+          return
+        end
+
+        all_groups_hash = all_groups.collect{ |g| g.slice('id', 'name').values }.to_h
+        add_to_room_session(@room, 'all_groups', all_groups_hash)
+      elsif user_groups.empty?
+        Rails.logger.error "The user #{@user.uid} doesn't belong to any group in the Moodle course"
+        set_error('room', 'user_without_groups', :forbidden)
+        respond_with_error(@error)
+        return
       end
 
-      if groups.any?
-        groups_hash = groups.collect{ |g| g.slice('id', 'name').values }.to_h
-        current_group_id = groups.first['id']
+      if user_groups.any?
+        user_groups_hash = user_groups.collect{ |g| g.slice('id', 'name').values }.to_h
+        current_group_id = user_groups.first['id']
       else
-        groups_hash = {'no_groups': 'Você não pertence a nenhum grupo'}
-        current_group_id = 'no_groups'
+        user_groups_hash = {'no_groups': 'Você não pertence a nenhum grupo'}
+        current_group_id = all_groups.first['id']
       end
 
       add_to_room_session(@room, 'current_group_id', current_group_id)
-      add_to_room_session(@room, 'user_groups', groups_hash)
+      add_to_room_session(@room, 'user_groups', user_groups_hash)
     end
   end
 
@@ -383,7 +402,16 @@ class RoomsController < ApplicationController
   def set_group_variables
     if @room.moodle_group_select_enabled?
       @groups_hash = get_from_room_session(@room, 'user_groups')
-      @group_select = @groups_hash.invert
+      if @user.moderator?(Abilities.moderator_roles)
+        @all_groups_hash = get_from_room_session(@room, 'all_groups')
+        other_groups = @all_groups_hash.reject { |key, _| @groups_hash.key?(key) }
+        if other_groups.empty?
+          other_groups = {'no_groups': 'Você pertence a todos os grupos'}
+        end
+        @group_select = {"Grupos que participo": @groups_hash.invert, "Outros grupos": other_groups.invert}
+      else
+        @group_select = @groups_hash.invert
+      end
       @current_group_id = get_from_room_session(@room, 'current_group_id')
     end
   end

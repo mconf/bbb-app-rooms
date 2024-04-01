@@ -189,6 +189,18 @@ pt:
         suggestion: "A integração com o Moodle está mal configurada"
         explanation: "O problema pode ser causado pela configuração incorreta na integração do LTI com o seu ambiente Moodle."
         status_code: "403"
+      course_without_groups:
+        code:       "AccessForbidden"
+        message:    "Acesso negado"
+        suggestion: "O curso do Moodle não possui nenhum grupo cadastrado"
+        explanation: "O curso do Moodle precisa ter pelo menos um grupo configurado para poder acessar a ferramenta."
+        status_code: "403"
+      user_without_groups:
+        code:       "AccessForbidden"
+        message:    "Acesso negado"
+        suggestion: "O usuário não pertence a nenhum grupo no curso do Moodle"
+        explanation: "O usuário precisa pertencer a pelo menos um grupo no curso do Moodle para poder acessar a ferramenta."
+        status_code: "403"
       external_context_parse_error:
         code: “ParseError”
         message: "Erro interno ao buscar dados"

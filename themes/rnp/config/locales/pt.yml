@@ -143,6 +143,7 @@ pt:
     new:
       add: "+ Agendar sessão"
       title: "Agendar sessão"
+      title_with_group: "Agendar sessão | Grupo: %{group_name}"
     show:
       view_history: "Ver histórico"
     table:
