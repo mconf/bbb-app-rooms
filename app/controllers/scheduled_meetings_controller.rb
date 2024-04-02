@@ -35,7 +35,8 @@ class ScheduledMeetingsController < ApplicationController
     @scheduled_meeting.create_moodle_calendar_event = true
     if @room.moodle_group_select_enabled?
       @current_group_id = get_from_room_session(@room, 'current_group_id').to_s
-      @groups_hash = get_from_room_session(@room, 'all_groups')
+      @all_groups_hash = get_from_room_session(@room, 'all_groups')
+      @current_group_name = @all_groups_hash[@current_group_id]
     end
   end
 

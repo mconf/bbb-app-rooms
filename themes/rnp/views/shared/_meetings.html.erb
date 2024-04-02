@@ -2,11 +2,11 @@
 <% [user, room, meetings, only_public] %>
 
 <% list_title = t('meetings.title') %>
-<% if @current_group_id %>
+<% if @room.moodle_group_select_enabled? %>
   <% if @user.moderator?(Abilities.moderator_roles) %>
     <% list_title = t('meetings.title_with_all_groups') %>
   <% else %>
-    <% list_title = t('meetings.title_with_group', group_name: @groups_hash[@current_group_id.to_s]) %>
+    <% list_title = t('meetings.title_with_group', group_name: @current_group_name) %>
   <% end %>
 <% end %>
 

@@ -401,9 +401,9 @@ class RoomsController < ApplicationController
   # Set the variables expected by the `group_select` partial
   def set_group_variables
     if @room.moodle_group_select_enabled?
-      @groups_hash = get_from_room_session(@room, 'user_groups')
+      @all_groups_hash = get_from_room_session(@room, 'all_groups')
       if @user.moderator?(Abilities.moderator_roles)
-        @all_groups_hash = get_from_room_session(@room, 'all_groups')
+        @groups_hash = get_from_room_session(@room, 'user_groups')
         other_groups = @all_groups_hash.reject { |key, _| @groups_hash.key?(key) }
         if other_groups.empty?
           other_groups = {'no_groups': 'Você pertence a todos os grupos'}
@@ -413,6 +413,7 @@ class RoomsController < ApplicationController
         @group_select = @groups_hash.invert
       end
       @current_group_id = get_from_room_session(@room, 'current_group_id')
+      @current_group_name = @all_groups_hash[@current_group_id]
     end
   end
 

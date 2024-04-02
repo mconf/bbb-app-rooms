@@ -33,11 +33,11 @@
 </div>
 
 <% list_title = t('scheduled_meetings.title') %>
-<% if @current_group_id %>
-  <div class="mb-4">
+<% if @room.moodle_group_select_enabled? %>
+  <div class="mb-5">
     <%= render "shared/group_select", redir_url: room_path(room) %>
   </div>
-  <% list_title = t('scheduled_meetings.title_with_group', group_name: @groups_hash[@current_group_id.to_s]) %>
+  <% list_title = t('scheduled_meetings.title_with_group', group_name: @current_group_name) %>
 <% end %>
 
 <div id="scheduled-meetings-list" class="row">
