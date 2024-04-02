@@ -40,7 +40,7 @@ class RoomsController < ApplicationController
       @scheduled_meetings = @room.scheduled_meetings.active
       
       if @room.moodle_group_select_enabled?
-        @scheduled_meetings = @scheduled_meetings.where(moodle_group_id: get_from_room_session(@room, 'current_group_id'))
+        @scheduled_meetings = @scheduled_meetings.where(moodle_group_id: Rails.cache.read("#{@app_launch.nonce}/current_group_id"))
       end
 
       @scheduled_meetings = @scheduled_meetings.order(:start_at).page(params[:page])
@@ -66,7 +66,7 @@ class RoomsController < ApplicationController
     # with groups configured, non-moderators only see meetings that belong to the current
     # selected group
     if @room.moodle_group_select_enabled? && !@user.moderator?(Abilities.moderator_roles)
-      options['meta_bbb-moodle-group-id'] = get_from_room_session(@room, 'current_group_id')
+      options['meta_bbb-moodle-group-id'] = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
     end
 
     meetings_and_recordings, all_meetings_loaded = get_all_meetings(@room, options)
@@ -228,9 +228,9 @@ class RoomsController < ApplicationController
   # expected params: [:group_id, :redir_url]
   def set_current_group_on_session
     if @room.moodle_group_select_enabled? && params[:group_id].present?
-      groups_ids_list = get_from_room_session(@room, 'user_groups').keys
-      if groups_ids_list.include?(params[:group_id])
-        add_to_room_session(@room, 'current_group_id', params[:group_id])
+      groups_ids_list = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")[:all_groups].keys
+      if groups_ids_list.include?(params[:group_id].to_i)
+        Rails.cache.write("#{@app_launch.nonce}/current_group_id", params[:group_id].to_i)
       else
         Rails.logger.warn "User #{@user.uid} tried to set an invalid group id: #{params[:group_id]}"
         flash[:error] = t('default.room.error.invalid_group')
@@ -361,59 +361,68 @@ class RoomsController < ApplicationController
       end
 
       Rails.logger.info "Moodle groups are configured for this session (#{@app_launch.nonce})"
-    
+
       user_groups = Moodle::API.get_user_groups(moodle_token, @user.uid, @app_launch.context_id)
 
       if @user.moderator?(Abilities.moderator_roles)
         # Gets all course groups except the default 'All Participants' group (id 0);
         all_groups = Moodle::API.get_course_groups(moodle_token, @app_launch.context_id)
                      .delete_if{ |element| element['id'] == "0" }
-        
         if all_groups.empty?
           Rails.logger.error "There are no groups registered in this Moodle course"
           set_error('room', 'course_without_groups', :forbidden)
           respond_with_error(@error)
           return
         end
-
         all_groups_hash = all_groups.collect{ |g| g.slice('id', 'name').values }.to_h
-        add_to_room_session(@room, 'all_groups', all_groups_hash)
-      elsif user_groups.empty?
-        Rails.logger.error "The user #{@user.uid} doesn't belong to any group in the Moodle course"
-        set_error('room', 'user_without_groups', :forbidden)
-        respond_with_error(@error)
-        return
-      end
 
-      if user_groups.any?
-        user_groups_hash = user_groups.collect{ |g| g.slice('id', 'name').values }.to_h
-        current_group_id = user_groups.first['id']
+        if user_groups.any?
+          user_groups_hash = user_groups.collect{ |g| g.slice('id', 'name').values }.to_h
+          current_group_id = user_groups.first['id']
+        else
+          user_groups_hash = {'no_groups': 'Você não pertence a nenhum grupo'}
+          current_group_id = all_groups.first['id']
+        end
+
+        Rails.cache.write("#{@app_launch.nonce}/moodle_groups",
+          all_groups: all_groups_hash,
+          user_groups: user_groups_hash
+        )
       else
-        user_groups_hash = {'no_groups': 'Você não pertence a nenhum grupo'}
-        current_group_id = all_groups.first['id']
+        if user_groups.any?
+          user_groups_hash = user_groups.collect{ |g| g.slice('id', 'name').values }.to_h
+          current_group_id = user_groups.first['id']
+        else
+          Rails.logger.error "The user #{@user.uid} doesn't belong to any group in the Moodle course"
+          set_error('room', 'user_without_groups', :forbidden)
+          respond_with_error(@error)
+          return
+        end
+
+        Rails.cache.write("#{@app_launch.nonce}/moodle_groups", all_groups: user_groups_hash)
       end
 
-      add_to_room_session(@room, 'current_group_id', current_group_id)
-      add_to_room_session(@room, 'user_groups', user_groups_hash)
+      Rails.cache.write("#{@app_launch.nonce}/current_group_id", current_group_id)
     end
   end
 
   # Set the variables expected by the `group_select` partial
   def set_group_variables
     if @room.moodle_group_select_enabled?
-      @all_groups_hash = get_from_room_session(@room, 'all_groups')
+      all_groups_hash = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")[:all_groups]
       if @user.moderator?(Abilities.moderator_roles)
-        @groups_hash = get_from_room_session(@room, 'user_groups')
-        other_groups = @all_groups_hash.reject { |key, _| @groups_hash.key?(key) }
+        groups_hash = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")[:user_groups]
+        other_groups = all_groups_hash.reject { |key, _| groups_hash.key?(key) }
         if other_groups.empty?
           other_groups = {'no_groups': 'Você pertence a todos os grupos'}
         end
-        @group_select = {"Grupos que participo": @groups_hash.invert, "Outros grupos": other_groups.invert}
+        @group_select = {"Grupos que participo": groups_hash.invert, "Outros grupos": other_groups.invert}
       else
-        @group_select = @groups_hash.invert
+        @group_select = all_groups_hash.invert
       end
-      @current_group_id = get_from_room_session(@room, 'current_group_id')
-      @current_group_name = @all_groups_hash[@current_group_id]
+
+      @current_group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
+      @current_group_name = all_groups_hash[@current_group_id]
     end
   end
 

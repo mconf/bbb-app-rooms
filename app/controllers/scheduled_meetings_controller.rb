@@ -34,8 +34,8 @@ class ScheduledMeetingsController < ApplicationController
     @scheduled_meeting = ScheduledMeeting.new(@room.attributes_for_meeting)
     @scheduled_meeting.create_moodle_calendar_event = true
     if @room.moodle_group_select_enabled?
-      @current_group_id = get_from_room_session(@room, 'current_group_id').to_s
-      @all_groups_hash = get_from_room_session(@room, 'all_groups')
+      @current_group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
+      @all_groups_hash =  Rails.cache.read("#{@app_launch.nonce}/moodle_groups")[:all_groups]
       @current_group_name = @all_groups_hash[@current_group_id]
     end
   end
@@ -52,7 +52,7 @@ class ScheduledMeetingsController < ApplicationController
 
       config = ConsumerConfig.find_by(key: @room.consumer_key)
       @scheduled_meeting.disable_external_link = true if config&.force_disable_external_link
-      @scheduled_meeting.moodle_group_id = get_from_room_session(@room, 'current_group_id').to_i if @room.moodle_group_select_enabled?
+      @scheduled_meeting.moodle_group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id").to_i if @room.moodle_group_select_enabled?
 
       if @scheduled_meeting.duration.zero?
         @scheduled_meeting[:duration] =
@@ -124,8 +124,8 @@ class ScheduledMeetingsController < ApplicationController
           opts = { moodle_group: { id: params[:moodle_group_id] } }
         # coming from a 'play' button
         else
-          groups = get_from_room_session(@room, 'user_groups')
-          group_id = get_from_room_session(@room, 'current_group_id').to_s
+          groups =  Rails.cache.read("#{@app_launch.nonce}/moodle_groups")[:user_groups]
+          group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
           opts = { moodle_group: { name: groups[group_id], id: group_id } } unless group_id == 'no_groups'
         end
       end
@@ -227,7 +227,7 @@ class ScheduledMeetingsController < ApplicationController
         opts = { moodle_group: { id: params[:moodle_group_id] } }
       # coming from a 'play' button
       else
-        group_id = get_from_room_session(@room, 'current_group_id').to_s
+        group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
         opts = { moodle_group: { id: group_id } } unless group_id == 'no_groups'
       end
     end
@@ -294,7 +294,7 @@ class ScheduledMeetingsController < ApplicationController
         opts = { moodle_group: { id: params[:moodle_group_id] } }
       # coming from a 'play' button
       else
-        group_id = get_from_room_session(@room, 'current_group_id').to_s
+        group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
         opts = { moodle_group: { id: group_id } } unless group_id == 'no_groups'
       end
     end
@@ -360,7 +360,7 @@ class ScheduledMeetingsController < ApplicationController
         opts = { moodle_group: { id: params[:moodle_group_id] } }
       # coming from a 'play' button
       else
-        group_id = get_from_room_session(@room, 'current_group_id').to_s
+        group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
         opts = { moodle_group: { id: group_id } } unless group_id == 'no_groups'
       end
     end
