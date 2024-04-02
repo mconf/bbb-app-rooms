@@ -17,6 +17,9 @@ missing_configs[:bbbltibroker] =
   Rails.configuration.omniauth_secret[:bbbltibroker].blank?
 
 OmniAuth.config.path_prefix = "#{Rails.configuration.relative_url_root}/auth"
+# As of version 2.0 of OmniAuth, it defaults to accept only POST as the request_phase method.
+# Anyways, we set it here explicitly to remind that GET is a no-no
+OmniAuth.config.allowed_request_methods = [:post]
 
 module OmniAuth
   module Strategies

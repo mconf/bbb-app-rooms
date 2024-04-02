@@ -96,6 +96,7 @@ gem 'jquery-fileupload-rails'
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'faraday'
+gem 'repost', '~> 0.4.2'
 
 # BigBlueButton API
 gem 'bigbluebutton-api-ruby', git: 'https://github.com/mconf/bigbluebutton-api-ruby.git', tag: 'v1.9.0-mconf'
@@ -105,9 +106,10 @@ gem 'aws-sdk-s3', '~> 1'
 
 # Authentication
 gem 'rest-client'
-gem 'omniauth', '>= 1.9.1'
-gem 'omniauth-oauth2', '>= 1.6.0'
-gem 'omniauth-bbbltibroker', git: 'https://github.com/bigbluebutton/omniauth-bbbltibroker.git'
+gem 'omniauth', '~> 2.1.2'
+gem 'omniauth-oauth2', '~> 1.8.0'
+gem 'omniauth-rails_csrf_protection', '~> 1.0.1'
+gem 'omniauth-bbbltibroker', git: 'https://github.com/bigbluebutton/omniauth-bbbltibroker.git', tag: '0.1.4'
 gem 'omniauth-brightspace', git: 'https://github.com/mconf/omniauth-brightspace.git'
 
 # Logging
