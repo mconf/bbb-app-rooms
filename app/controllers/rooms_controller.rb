@@ -65,7 +65,7 @@ class RoomsController < ApplicationController
     }
     # with groups configured, non-moderators only see meetings that belong to the current
     # selected group
-    if @room.moodle_group_select_enabled? && !@user.moderator?(Abilities.moderator_roles)
+    if @room.moodle_group_select_enabled?
       options['meta_bbb-moodle-group-id'] = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
     end
 

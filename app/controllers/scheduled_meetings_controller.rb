@@ -124,9 +124,9 @@ class ScheduledMeetingsController < ApplicationController
           opts = { moodle_group: { id: params[:moodle_group_id] } }
         # coming from a 'play' button
         else
-          groups =  Rails.cache.read("#{@app_launch.nonce}/moodle_groups")[:user_groups]
+          all_groups = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")[:all_groups]
           group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
-          opts = { moodle_group: { name: groups[group_id], id: group_id } } unless group_id == 'no_groups'
+          opts = { moodle_group: { name: all_groups[group_id], id: group_id } } unless group_id == 'no_groups'
         end
       end
 
