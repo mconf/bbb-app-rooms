@@ -201,6 +201,12 @@ es:
         suggestion: "El usuario no pertenece a ningún grupo en el curso de Moodle"
         explanation: "El usuario necesita pertenecer a al menos un grupo en el curso de Moodle para poder acceder a la herramienta."
         status_code: "403"
+      missing_current_group_id:
+        code:       "AccessForbidden"
+        message:    "Acceso denegado"
+        suggestion: "Tu sesión ha expirado"
+        explanation: "Tu sesión ha expirado, por favor recarga la página."
+        status_code: "403"
       external_context_parse_error:
         code: "ParseError"
         message: "Error interno al buscar datos"

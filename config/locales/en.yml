@@ -233,6 +233,12 @@ en:
         suggestion: "The user does not belong to any group in the Moodle course"
         explanation: "The user needs to belong to at least one group in the Moodle course to access the tool."
         status_code: "403"
+      missing_current_group_id:
+        code:       "AccessForbidden"
+        message:    "Access denied"
+        suggestion: "Your session has expired"
+        explanation: "Your session has expired, please reload the page."
+        status_code: "403"
       external_context_parse_error:
         code: "ParseError"
         message: "Internal error fetching data"

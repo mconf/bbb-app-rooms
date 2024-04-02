@@ -230,7 +230,7 @@ class RoomsController < ApplicationController
     if @room.moodle_group_select_enabled? && params[:group_id].present?
       groups_ids_list = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")[:all_groups].keys
       if groups_ids_list.include?(params[:group_id].to_i)
-        Rails.cache.write("#{@app_launch.nonce}/current_group_id", params[:group_id].to_i)
+        Rails.cache.write("#{@app_launch.nonce}/current_group_id", params[:group_id].to_i, expires_in: 7.days)
       else
         Rails.logger.warn "User #{@user.uid} tried to set an invalid group id: #{params[:group_id]}"
         flash[:error] = t('default.room.error.invalid_group')
@@ -386,7 +386,8 @@ class RoomsController < ApplicationController
 
         Rails.cache.write("#{@app_launch.nonce}/moodle_groups",
           all_groups: all_groups_hash,
-          user_groups: user_groups_hash
+          user_groups: user_groups_hash,
+          expires_in: 7.days
         )
       else
         if user_groups.any?
@@ -399,16 +400,24 @@ class RoomsController < ApplicationController
           return
         end
 
-        Rails.cache.write("#{@app_launch.nonce}/moodle_groups", all_groups: user_groups_hash)
+        Rails.cache.write("#{@app_launch.nonce}/moodle_groups", all_groups: user_groups_hash, expires_in: 7.days)
       end
 
-      Rails.cache.write("#{@app_launch.nonce}/current_group_id", current_group_id)
+      Rails.cache.write("#{@app_launch.nonce}/current_group_id", current_group_id, expires_in: 7.days)
     end
   end
 
   # Set the variables expected by the `group_select` partial
   def set_group_variables
     if @room.moodle_group_select_enabled?
+      @current_group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
+      unless @current_group_id
+        Rails.logger.error 'Expected current_group_id to be present on the cache, but it was missing'
+        set_error('room', 'missing_current_group_id', :forbidden)
+        respond_with_error(@error)
+        return
+      end
+
       all_groups_hash = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")[:all_groups]
       if @user.moderator?(Abilities.moderator_roles)
         groups_hash = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")[:user_groups]
@@ -421,7 +430,6 @@ class RoomsController < ApplicationController
         @group_select = all_groups_hash.invert
       end
 
-      @current_group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
       @current_group_name = all_groups_hash[@current_group_id]
     end
   end

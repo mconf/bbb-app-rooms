@@ -201,6 +201,12 @@ pt:
         suggestion: "O usuário não pertence a nenhum grupo no curso do Moodle"
         explanation: "O usuário precisa pertencer a pelo menos um grupo no curso do Moodle para poder acessar a ferramenta."
         status_code: "403"
+      missing_current_group_id:
+        code:       "AccessForbidden"
+        message:    "Acesso negado"
+        suggestion: "Sua sessão expirou"
+        explanation: "Sua sessão expirou, por favor recarregue a página."
+        status_code: "403"
       external_context_parse_error:
         code: “ParseError”
         message: "Erro interno ao buscar dados"
