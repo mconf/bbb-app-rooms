@@ -108,7 +108,11 @@ class ScheduledMeeting < ApplicationRecord
   end
 
   def meeting_id
-    "#{room.meeting_id}-#{self.id}"
+    if room.moodle_group_select_enabled? && self.moodle_group_id.present?
+      "#{room.meeting_id}-#{self.id}-#{self.moodle_group_id}"
+    else
+      "#{room.meeting_id}-#{self.id}"
+    end
   end
 
   def create_options(user)
@@ -155,6 +159,10 @@ class ScheduledMeeting < ApplicationRecord
           'oauth-consumer-key': launch_params.oauth_consumer_key,
         }
       )
+    end
+
+    if room.moodle_group_select_enabled? && self.moodle_group_id.present?
+      meta_bbb['moodle-group-id'] = self.moodle_group_id
     end
 
     meta_bbb.each { |k, v| opts["meta_bbb-#{k}"]= v }

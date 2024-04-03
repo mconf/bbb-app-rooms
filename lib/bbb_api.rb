@@ -14,17 +14,14 @@ module BbbApi
       !scheduled_meeting.check_all_moderators
   end
 
-  def mod_in_room?(scheduled_meeting, opts = {})
+  def mod_in_room?(scheduled_meeting)
     room = scheduled_meeting.room
-    meeting_id = scheduled_meeting.meeting_id
-    meeting_id.concat("-#{opts[:moodle_group][:id]}") if opts.key?(:moodle_group)
-    bbb(room).is_meeting_running?(meeting_id)
+    bbb(room).is_meeting_running?(scheduled_meeting.meeting_id)
   end
 
-  def get_participants_count(scheduled_meeting, opts = {})
+  def get_participants_count(scheduled_meeting)
     room = scheduled_meeting.room
     meeting_id = scheduled_meeting.meeting_id
-    meeting_id.concat("-#{opts[:moodle_group][:id]}") if opts.key?(:moodle_group)
 
     return 0 unless bbb(room).is_meeting_running?(meeting_id)
 
@@ -32,10 +29,9 @@ module BbbApi
     res[:participantCount]
   end
 
-  def get_current_duration(scheduled_meeting, opts = {})
+  def get_current_duration(scheduled_meeting)
     room = scheduled_meeting.room
     meeting_id = scheduled_meeting.meeting_id
-    meeting_id.concat("-#{opts[:moodle_group][:id]}") if opts.key?(:moodle_group)
     return unless bbb(room).is_meeting_running?(meeting_id)
 
     res = bbb(room).get_meeting_info(meeting_id, scheduled_meeting.hash_id)
@@ -47,22 +43,19 @@ module BbbApi
 
     room = scheduled_meeting.room
     meeting_id = scheduled_meeting.meeting_id
-    meeting_id.concat("-#{opts[:moodle_group][:id]}") if opts.key?(:moodle_group)
 
     unless bbb(room).is_meeting_running?(meeting_id)
       meeting_name = scheduled_meeting.name
-      create_options = scheduled_meeting.create_options(user).merge({ logoutURL: autoclose_url })
 
       if opts.key?(:moodle_group)
         meeting_name.concat(" - #{opts[:moodle_group][:name]}")
-        create_options.merge!({ 'meta_bbb-moodle-group-id': opts[:moodle_group][:id] })
       end
 
       begin
         bbb(room).create_meeting(
           meeting_name,
           meeting_id,
-          create_options
+          scheduled_meeting.create_options(user).merge({ logoutURL: autoclose_url })
         )
       rescue BigBlueButton::BigBlueButtonException => e
         if ['simultaneousMeetingsLimitReachedForSecret', 'simultaneousMeetingsLimitReachedForInstitution'].include? e.key.to_s
@@ -116,16 +109,14 @@ module BbbApi
     { can_join?: true, join_api_url: join_api_url }
   end
 
-  def external_join_api_url(scheduled_meeting, full_name, opts = {})
+  def external_join_api_url(scheduled_meeting, full_name)
     return unless scheduled_meeting.present? && full_name.present?
 
     room = scheduled_meeting.room
-    meeting_id = scheduled_meeting.meeting_id
-    meeting_id.concat("-#{opts[:moodle_group][:id]}") if opts.key?(:moodle_group)
     locale = I18n.locale == :pt ? 'pt-br' : I18n.locale
 
     join_api_url = bbb(room, false).join_meeting_url(
-      meeting_id,
+      scheduled_meeting.meeting_id,
       full_name,
       room.attributes['viewer'],
       { guest: true,
