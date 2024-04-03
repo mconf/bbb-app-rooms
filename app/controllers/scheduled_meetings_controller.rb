@@ -119,9 +119,10 @@ class ScheduledMeetingsController < ApplicationController
 
       opts = {}
       if @room.moodle_group_select_enabled?
-        all_groups = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")[:all_groups]
+        # Concat the group name to the meeting name
         group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
-        opts = { moodle_group: { name: all_groups[group_id] } }
+        group_name = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")[:all_groups][group_id]
+        opts[:meeting_name] = "#{@scheduled_meeting.name} - #{group_name}"
       end
 
       # make user wait until moderator is in room
