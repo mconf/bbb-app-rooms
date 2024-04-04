@@ -3,11 +3,7 @@
 
 <% list_title = t('meetings.title') %>
 <% if @room.moodle_group_select_enabled? %>
-  <% if @user.moderator?(Abilities.moderator_roles) %>
-    <% list_title = t('meetings.title_with_all_groups') %>
-  <% else %>
-    <% list_title = t('meetings.title_with_group', group_name: @current_group_name) %>
-  <% end %>
+  <% list_title = t('meetings.title_with_group', group_name: @current_group_name) %>
 <% end %>
 
 <div id="meetings-list">
