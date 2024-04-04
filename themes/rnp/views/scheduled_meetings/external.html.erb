@@ -42,7 +42,7 @@
         <%= image_tag 'guest-wait.svg' %>
       <% end %>
 
-      <%= form_with url: join_room_scheduled_meeting_path(@room, @scheduled_meeting, moodle_group_id: params[:moodle_group_id]), id: 'join-form' do |form| %>
+      <%= form_with url: join_room_scheduled_meeting_path(@room, @scheduled_meeting), id: 'join-form' do |form| %>
         <div class="form-row">
           <div class="form-group col-12">
             <%= label_tag :first_name, t('default.scheduled_meeting.external.first_name') %>

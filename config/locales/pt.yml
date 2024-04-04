@@ -35,6 +35,7 @@ pt:
       editing:        "Editando sala"
       error:
         oauth:        "Ocorreu um erro durante a autorização via OAuth."
+        invalid_group: "O grupo selecionado é inválido."
       join:           "Entrar"
       moderator:      "Chave de moderador"
       name:           "Nome"
@@ -187,6 +188,24 @@ pt:
         message:    "Acesso negado"
         suggestion: "A integração com o Moodle está mal configurada"
         explanation: "O problema pode ser causado pela configuração incorreta na integração do LTI com o seu ambiente Moodle."
+        status_code: "403"
+      course_without_groups:
+        code:       "AccessForbidden"
+        message:    "Acesso negado"
+        suggestion: "O curso do Moodle não possui nenhum grupo cadastrado"
+        explanation: "O curso do Moodle precisa ter pelo menos um grupo configurado para poder acessar a ferramenta."
+        status_code: "403"
+      user_without_groups:
+        code:       "AccessForbidden"
+        message:    "Acesso negado"
+        suggestion: "O usuário não pertence a nenhum grupo no curso do Moodle"
+        explanation: "O usuário precisa pertencer a pelo menos um grupo no curso do Moodle para poder acessar a ferramenta."
+        status_code: "403"
+      missing_current_group_id:
+        code:       "AccessForbidden"
+        message:    "Acesso negado"
+        suggestion: "Sua sessão expirou"
+        explanation: "Sua sessão expirou, por favor recarregue a página."
         status_code: "403"
       external_context_parse_error:
         code: “ParseError”

@@ -3,8 +3,12 @@
   expected partial variables: [redir_url]
 %>
 <div class="group_select_component mb-2">
-  <h2><%= t('group_select.title') %></h2>
+  <label class="mb-2"><%= t('group_select.title') %></label>
   <%= form_with url: set_current_group_on_session_room_path(@room, redir_url: redir_url), id: 'set-group-form' do |form| %>
-    <%= select(nil, :group_id, @group_select, {selected: @current_group_id}, {class: 'form-select'})%>
+    <% if @user.moderator?(Abilities.moderator_roles) %>
+      <%= select_tag(:group_id, grouped_options_for_select(@group_select, selected: @current_group_id, disabled: 'no_groups'), class: 'form-select') %>
+    <% else %>
+      <%= select(nil, :group_id, @group_select, {selected: @current_group_id}, {class: 'form-select'})%>
+    <% end %>
   <% end %>
 </div>

@@ -7,7 +7,7 @@ link_to t('meetings.index.return'),
   class: "btn btn-light btn-sm mb-4"
 %>
 
-<% if @current_group_id && !@user.moderator?(Abilities.moderator_roles) %>
+<% if @room.moodle_group_select_enabled? %>
   <%= render "shared/group_select", redir_url: meetings_room_path(@room) %>
 <% end %>
 

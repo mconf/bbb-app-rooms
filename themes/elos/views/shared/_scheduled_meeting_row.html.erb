@@ -37,7 +37,7 @@
             <%=
             link_to t('scheduled_meetings.external_link'), '#',
             data: {
-              'clipboard-text': external_room_scheduled_meeting_url(room, meeting, moodle_group_id: @current_group_id),
+              'clipboard-text': external_room_scheduled_meeting_url(room, meeting),
               turbolinks: false,
               'toast-id': '#external-link-copied-toast'
             },

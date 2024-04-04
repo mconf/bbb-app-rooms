@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_03_26_200202) do
+ActiveRecord::Schema.define(version: 2024_04_01_181530) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -144,6 +144,7 @@ ActiveRecord::Schema.define(version: 2024_03_26_200202) do
     t.boolean "disable_private_chat", default: false
     t.boolean "disable_note", default: false
     t.string "hash_id"
+    t.integer "moodle_group_id"
     t.index ["created_by_launch_nonce"], name: "index_scheduled_meetings_on_created_by_launch_nonce"
     t.index ["hash_id"], name: "index_scheduled_meetings_on_hash_id", unique: true
     t.index ["repeat"], name: "index_scheduled_meetings_on_repeat"

@@ -111,19 +111,22 @@ Rails.application.configure do
 
   # configure redis for ActionCable
   config.cache_store = if ENV['REDIS_URL'].present?
-                         # Set up Redis cache store
-                         [:redis_cache_store, { url: ENV['REDIS_URL'],
-
-                                                connect_timeout: 30, # Defaults to 20 seconds
-                                                read_timeout: 0.2, # Defaults to 1 second
-                                                write_timeout: 0.2, # Defaults to 1 second
-                                                reconnect_attempts: 1, # Defaults to 0
-
-                                                error_handler: lambda { |method:, returning:, exception:|
-                                                                 config.logger.warn("Support: Redis cache action #{method} failed and returned '#{returning}': #{exception}")
-                                                               }, },]
+                        # Set up Redis cache store
+                        [:redis_cache_store,
+                          {
+                            url: ENV['REDIS_URL'],
+                            expires_in: 1.day,
+                            connect_timeout: 30, # Defaults to 20 seconds
+                            read_timeout: 0.2, # Defaults to 1 second
+                            write_timeout: 0.2, # Defaults to 1 second
+                            reconnect_attempts: 1, # Defaults to 0
+                            error_handler: lambda { |method:, returning:, exception:|
+                                              config.logger.warn("Support: Redis cache action #{method} failed and returned '#{returning}': #{exception}")
+                                            }
+                          }
+                        ]
                        else
-                         :memory_store
+                          :memory_store
                        end
 
   config.hosts = ENV['WHITELIST_HOST'].presence || nil
