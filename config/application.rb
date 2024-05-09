@@ -161,5 +161,8 @@ module BbbAppRooms
 
     # RNP CHAT
     config.rnp_chat_id = Mconf::Env.fetch('RNP_CHAT_ID', '')
+
+    # Moodle API
+    config.moodle_api_timeout = Mconf::Env.fetch_int('MCONF_MOODLE_API_TIMEOUT', 5)
   end
 end
