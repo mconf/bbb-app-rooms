@@ -35,6 +35,7 @@ es:
       editing:        "Editando sala"
       error:
         oauth:        "Se produjo un error al autorizar a través de OAuth."
+        invalid_group: "El grupo seleccionado no es válido."
       join:           "Iniciar sesión"
       moderator:      "Clave de moderador"
       name:           "Nombre"
@@ -182,12 +183,60 @@ es:
         suggestion:  "No se puede verificar el token"
         explanation: "El problema puede deberse al uso de una clave no válida para validar la solicitud realizada por el proveedor de LTI."
         status_code: "403"
+      moodle_token_misconfigured:
+        code:       "AccessForbidden"
+        message:    "Acceso denegado"
+        suggestion: "La integración con Moodle está mal configurada"
+        explanation: "El problema puede ser causado por una configuración incorrecta en la integración de LTI con su entorno Moodle."
+        status_code: "403"
+      course_without_groups:
+        code:       "AccessForbidden"
+        message:    "Acceso denegado"
+        suggestion: "El curso de Moodle no tiene ningún grupo registrado"
+        explanation: "El curso de Moodle necesita tener al menos un grupo configurado para poder acceder a la herramienta."
+        status_code: "403"
+      user_without_groups:
+        code:       "AccessForbidden"
+        message:    "Acceso denegado"
+        suggestion: "El usuario no pertenece a ningún grupo en el curso de Moodle"
+        explanation: "El usuario necesita pertenecer a al menos un grupo en el curso de Moodle para poder acceder a la herramienta."
+        status_code: "403"
+      missing_current_group_id:
+        code:       "AccessForbidden"
+        message:    "Acceso denegado"
+        suggestion: "Tu sesión ha expirado"
+        explanation: "Tu sesión ha expirado, por favor recarga la página."
+        status_code: "403"
+      external_context_parse_error:
+        code: "ParseError"
+        message: "Error interno al buscar datos"
+        suggestion: "Se produjo un error en el servidor"
+        explanation: "Este problema ocurre cuando la API de contexto externo devuelve una respuesta JSON no válida."
+        status_code: "500"
+      external_context_no_handler:
+        code: "NoHandler"
+        message: "No autorizado"
+        suggestion: "Usuario no encontrado en la base de datos de contexto externo"
+        explanation: "El usuario no se encontró en la base de datos de contexto externo, por lo tanto, no tiene acceso a ninguna clase."
+        status_code: "401"
+      external_context_invalid_handler:
+        code: "InvalidHandler"
+        message: "Prohibido"
+        suggestion: "Contexto no permitido"
+        explanation: "Estás intentando acceder a un contexto al que no tienes permiso de acceso."
+        status_code: "403"
     scheduled_meeting:
       not_found:
         code:        "NotFound"
         message:     "Reunión no encontrada"
         suggestion:  "No se encontró la programación"
         explanation: "Es posible que el creador de la sesión lo haya eliminado."
+        status_code: "404"
+      meeting_not_found:
+        code:        "NotFound"
+        message:     "Reunión no encontrada"
+        suggestion:  "No se encontró la reunión"
+        explanation: "El identificador de grupo no es válido."
         status_code: "404"
     meeting:
       learning_dashboard_url_missing: "Error: URL del panel de aprendizaje no está configurada"

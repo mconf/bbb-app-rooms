@@ -10,6 +10,10 @@ $(document).on('turbolinks:load', function(){
 
   $('[data-toggle="tooltip"]').tooltip();
 
+  $("#group_id").on('change', function() {
+    $("#set-group-form").trigger('submit')
+  });
+
   $(".datepicker").each(function() {
     var format = $(this).data('format');
     $(this).flatpickr({

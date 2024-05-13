@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_02_28_094200) do
+ActiveRecord::Schema.define(version: 2024_04_01_181530) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -70,6 +70,7 @@ ActiveRecord::Schema.define(version: 2024_02_28_094200) do
     t.boolean "message_reference_terms_use", default: true
     t.string "external_widget", default: ""
     t.boolean "force_disable_external_link", default: false
+    t.string "external_context_url"
     t.index ["key"], name: "index_consumer_configs_on_key", unique: true
   end
 
@@ -77,6 +78,14 @@ ActiveRecord::Schema.define(version: 2024_02_28_094200) do
     t.string "user_uid"
     t.string "token"
     t.datetime "expires_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "eduplay_uploads", force: :cascade do |t|
+    t.string "user_uid"
+    t.string "recording_id"
+    t.string "upload_url"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -95,6 +104,7 @@ ActiveRecord::Schema.define(version: 2024_02_28_094200) do
     t.string "url"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "group_select_enabled", default: false
     t.index ["consumer_config_id"], name: "index_moodle_tokens_on_consumer_config_id"
   end
 
@@ -134,6 +144,7 @@ ActiveRecord::Schema.define(version: 2024_02_28_094200) do
     t.boolean "disable_private_chat", default: false
     t.boolean "disable_note", default: false
     t.string "hash_id"
+    t.integer "moodle_group_id"
     t.index ["created_by_launch_nonce"], name: "index_scheduled_meetings_on_created_by_launch_nonce"
     t.index ["hash_id"], name: "index_scheduled_meetings_on_hash_id", unique: true
     t.index ["repeat"], name: "index_scheduled_meetings_on_repeat"

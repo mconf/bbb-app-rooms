@@ -10,6 +10,8 @@ en:
       searching: "Searching"
       space_or_comma: "Press Space or type a comma to confirm the e-mail"
     send: "Send"
+  group_select:
+    title: "Select group"
   helpers:
     distance_of_time_in_hours_and_minutes:
       long:
@@ -57,7 +59,9 @@ en:
     filters:
       no_filter: "All"
       recorded_only: "Recorded"
-    history: "History"
+    title: "History"
+    title_with_all_groups: "History | All groups"
+    title_with_group: "History | Group: %{group_name}"
     index:
       return: "< go back"
     load: "Load more conferences"
@@ -92,6 +96,7 @@ en:
       processing: "Processing"
       published: "Visible"
       publish: "Make recording visible"
+      recently_uploaded: "Video uploaded to Eduplay"
       unpublished: "Not visible"
       unpublish: "Hide recording"
     search:
@@ -135,6 +140,7 @@ en:
     table:
       footnote: "Dates shown in the time zone: %{zone}"
     title: "Scheduled sessions"
+    title_with_group: "Scheduled sessions | Group: %{group_name}"
     wait:
       retry: "Join"
   open_app_modal:

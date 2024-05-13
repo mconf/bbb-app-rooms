@@ -11,7 +11,7 @@ class UploadRecordingToFilesenderJob < ApplicationJob
     @recording = get_recordings(room, recordID: rec_id).first.first
     # @user = User.find(user_id)
     @filesender_token = FilesenderToken.find_by(user_uid: user[:uid])
-    @playback = @recording[:playbacks].find{ |f| f[:type] == 'presentation_video' }
+    @playback = @recording[:playbacks].find { |f| f[:type] == 'video' } || @recording[:playbacks].find { |f| f[:type] == 'presentation_video' }
 
     if @playback.nil?
       return Resque.logger.error "Recording #{rec_id} has no video playback format"

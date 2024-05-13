@@ -33,6 +33,11 @@ class ScheduledMeetingsController < ApplicationController
   def new
     @scheduled_meeting = ScheduledMeeting.new(@room.attributes_for_meeting)
     @scheduled_meeting.create_moodle_calendar_event = true
+    if @room.moodle_group_select_enabled?
+      @current_group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
+      @all_groups_hash =  Rails.cache.read("#{@app_launch.nonce}/moodle_groups")[:all_groups]
+      @current_group_name = @all_groups_hash[@current_group_id]
+    end
   end
 
   def create
@@ -47,6 +52,7 @@ class ScheduledMeetingsController < ApplicationController
 
       config = ConsumerConfig.find_by(key: @room.consumer_key)
       @scheduled_meeting.disable_external_link = true if config&.force_disable_external_link
+      @scheduled_meeting.moodle_group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id").to_i if @room.moodle_group_select_enabled?
 
       if @scheduled_meeting.duration.zero?
         @scheduled_meeting[:duration] =
@@ -111,6 +117,14 @@ class ScheduledMeetingsController < ApplicationController
     # only way for a meeting to be created is through here
     if @user.present?
 
+      opts = {}
+      if @room.moodle_group_select_enabled?
+        # Concat the group name to the meeting name
+        group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
+        group_name = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")[:all_groups][group_id]
+        opts[:meeting_name] = "#{@scheduled_meeting.name} - #{group_name}"
+      end
+
       # make user wait until moderator is in room
       if wait_for_mod?(@scheduled_meeting, @user) && (!mod_in_room?(@scheduled_meeting) ||
         (params[:no_auto_join] == 'true' && device_type? != 'desktop'))
@@ -122,7 +136,7 @@ class ScheduledMeetingsController < ApplicationController
         end
 
         # join as moderator (creates the meeting if not created yet)
-        res = join_api_url(@scheduled_meeting, @user)
+        res = join_api_url(@scheduled_meeting, @user, opts)
         if res[:can_join?]
           if params[:join_in_app] == 'true'
             direct_join_url = 'br.rnp.conferenciawebmobile://direct-join/' + res[:join_api_url].gsub(/^https?:\/\//, '') + "&meetingName=#{@scheduled_meeting.name}"
@@ -218,8 +232,8 @@ class ScheduledMeetingsController < ApplicationController
     @scheduled_meeting.update_to_next_recurring_date
 
     @is_running = mod_in_room?(@scheduled_meeting)
-    @participants_count = get_participants_count(@scheduled_meeting)
     @ended = !@scheduled_meeting.active? && !mod_in_room?(@scheduled_meeting)
+    @participants_count = get_participants_count(@scheduled_meeting)
     @started_ago = get_current_duration(@scheduled_meeting)
     @disclaimer = config&.external_disclaimer
   end
@@ -280,8 +294,8 @@ class ScheduledMeetingsController < ApplicationController
   end
 
   def join_or_create?
-    can_join = (@user.present? && !(wait_for_mod?(@scheduled_meeting, @user) && !mod_in_room?(@scheduled_meeting))) ||
-      (!@user.present? && mod_in_room?(@scheduled_meeting))
+    can_join = (@user.present? && !(wait_for_mod?(@scheduled_meeting, @user) &&
+      !mod_in_room?(@scheduled_meeting))) || (!@user.present? && mod_in_room?(@scheduled_meeting))
 
     can_join
   end

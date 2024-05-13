@@ -10,6 +10,8 @@ pt:
       searching: "Buscando"
       space_or_comma: "Aperte Espaço ou digite uma vírgula para confirmar o e-mail"
     send: "Enviar"
+  group_select:
+    title: "Selecionar grupo"
   helpers:
     distance_of_time_in_hours_and_minutes:
       long:
@@ -57,7 +59,9 @@ pt:
     filters:
       no_filter: "Todas"
       recorded_only: "Gravadas"
-    history: "Histórico"
+    title: "Histórico"
+    title_with_all_groups: "Histórico | Todos os grupos"
+    title_with_group: "Histórico | Grupo: %{group_name}"
     index:
       return: "< voltar"
     load: "Carregar mais conferências"
@@ -92,6 +96,7 @@ pt:
       processing: "Processando"
       published: "Visível"
       publish: "Tornar gravação visível"
+      recently_uploaded: "Vídeo carregado para o Eduplay"
       unpublished: "Não visível"
       unpublish: "Tornar gravação não visível"
     search:
@@ -130,11 +135,13 @@ pt:
     new:
       add: "+ Agendar sessão"
       title: "Agendar sessão"
+      title_with_group: "Agendar sessão | Grupo: %{group_name}"
     show:
       view_history: "Ver histórico"
     table:
       footnote: "Datas exibidas no fuso horário: %{zone}"
     title: "Sessões agendadas"
+    title_with_group: "Sessões agendadas | Grupo: %{group_name}"
     wait:
       retry: "Entrar"
   open_app_modal:

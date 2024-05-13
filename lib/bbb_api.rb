@@ -21,33 +21,37 @@ module BbbApi
 
   def get_participants_count(scheduled_meeting)
     room = scheduled_meeting.room
-    return 0 unless bbb(room).is_meeting_running?(scheduled_meeting.meeting_id)
+    meeting_id = scheduled_meeting.meeting_id
 
-    res = bbb(room).get_meeting_info(scheduled_meeting.meeting_id, scheduled_meeting.hash_id)
+    return 0 unless bbb(room).is_meeting_running?(meeting_id)
+
+    res = bbb(room).get_meeting_info(meeting_id, scheduled_meeting.hash_id)
     res[:participantCount]
   end
 
   def get_current_duration(scheduled_meeting)
     room = scheduled_meeting.room
-    return unless bbb(room).is_meeting_running?(scheduled_meeting.meeting_id)
+    meeting_id = scheduled_meeting.meeting_id
+    return unless bbb(room).is_meeting_running?(meeting_id)
 
-    res = bbb(room).get_meeting_info(scheduled_meeting.meeting_id, scheduled_meeting.hash_id)
+    res = bbb(room).get_meeting_info(meeting_id, scheduled_meeting.hash_id)
     time_ago_in_words(res[:startTime].to_datetime)
   end
 
-  def join_api_url(scheduled_meeting, user)
+  def join_api_url(scheduled_meeting, user, opts = {})
     return unless scheduled_meeting.present? && user.present?
 
     room = scheduled_meeting.room
+    meeting_id = scheduled_meeting.meeting_id
 
-    unless bbb(room).is_meeting_running?(scheduled_meeting.meeting_id)
+    unless bbb(room).is_meeting_running?(meeting_id)
+      meeting_name = opts[:meeting_name] || scheduled_meeting.name
+
       begin
         bbb(room).create_meeting(
-          scheduled_meeting.name,
-          scheduled_meeting.meeting_id,
-          scheduled_meeting.create_options(user).merge(
-            { logoutURL: autoclose_url }
-          )
+          meeting_name,
+          meeting_id,
+          scheduled_meeting.create_options(user).merge({ logoutURL: autoclose_url })
         )
       rescue BigBlueButton::BigBlueButtonException => e
         if ['simultaneousMeetingsLimitReachedForSecret', 'simultaneousMeetingsLimitReachedForInstitution'].include? e.key.to_s
@@ -67,7 +71,7 @@ module BbbApi
     # before actually redirecting him
     if Rails.configuration.check_can_join_meeting
       join_api_url = bbb(room, false).join_meeting_url(
-        scheduled_meeting.meeting_id,
+        meeting_id,
         user.username(t("default.bigbluebutton.#{role}")),
         room.attributes[role],
         {
@@ -89,7 +93,7 @@ module BbbApi
     end
 
     join_api_url = bbb(room, false).join_meeting_url(
-      scheduled_meeting.meeting_id,
+      meeting_id,
       user.username(t("default.bigbluebutton.#{role}")),
       room.attributes[role],
       {
@@ -106,30 +110,6 @@ module BbbApi
 
     room = scheduled_meeting.room
     locale = I18n.locale == :pt ? 'pt-br' : I18n.locale
-
-    # pre-open the join_api_url with `redirect=false` to check whether the guest can join the meeting
-    # before actually redirecting him
-    if Rails.configuration.check_can_join_meeting
-      join_api_url = bbb(room, false).join_meeting_url(
-        scheduled_meeting.meeting_id,
-        full_name,
-        room.attributes['viewer'],
-        { guest: true,
-          'userdata-bbb_override_default_locale': locale,
-          redirect: false
-        }
-      )
-
-      doc = Nokogiri::XML(URI.open(join_api_url))
-      hash = Hash.from_xml(doc.to_s)
-
-      Rails.logger.info "BigBlueButtonAPI: (check_can_join_meeting) request=#{join_api_url}"
-
-      if hash['response']['returncode'] == 'FAILED'
-        Rails.logger.info "Guest cannot join meeting, message_key=#{hash['response']['messageKey']}"
-        return { can_join?: false, messageKey: hash['response']['messageKey'] }
-      end
-    end
 
     join_api_url = bbb(room, false).join_meeting_url(
       scheduled_meeting.meeting_id,

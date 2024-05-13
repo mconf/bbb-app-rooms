@@ -4,8 +4,12 @@
 link_to t('meetings.index.return'),
   room_path(@room),
   method: :get,
-  class: "btn btn-light btn-sm"
+  class: "btn btn-light btn-sm mb-4"
 %>
+
+<% if @room.moodle_group_select_enabled? %>
+  <%= render "shared/group_select", redir_url: meetings_room_path(@room) %>
+<% end %>
 
 <%= hidden_field_tag 'room_path', room_path(@room) %>
 <%= render "shared/meetings", user: @user, room: @room, meetings: @meetings, only_public: false %>
