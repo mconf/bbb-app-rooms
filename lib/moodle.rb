@@ -152,12 +152,15 @@ module Moodle
 
     def self.post(host_url, params)
       begin
+        start_time = Time.now
         response = Faraday.post(host_url) do |req|
           req.headers['Content-Type'] = 'application/x-www-form-urlencoded'
           req.body = params
           req.options.timeout = Rails.application.config.moodle_api_timeout
         end
-        
+
+        Rails.logger.info "[MOODLE API - url: #{host_url}][INFO - #{params[:wsfunction]}]: POST request took #{(Time.now - start_time).round(3)} seconds."
+
         JSON.parse(response.body)
 
       rescue Faraday::Error => e
