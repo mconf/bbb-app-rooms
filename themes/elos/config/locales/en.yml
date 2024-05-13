@@ -113,14 +113,6 @@ en:
       enter: "Access"
       entering: "Acessing..."
       title: "Classes"
-  coc:
-    schools: "Schools"
-    classes_header:
-      name: "Name"
-      serie: "Grades"
-      segment: "Segment"
-    classes:
-      schedules: "Schedules"
   scheduled_meetings:
     destroy: "Remove"
     edit:

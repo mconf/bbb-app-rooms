@@ -54,14 +54,6 @@ Rails.application.routes.draw do
         get '/errors/:code', to: 'errors#index', as: :errors
 
         scope module: :clients do
-          scope module: :coc do
-            scope module: :controllers do
-              get '/coc/launch', to: 'classes#launch'
-              get '/coc/classes/:handler', to: 'classes#index', as: :coc_classes
-              get '/coc/:handler/:class_id', to: 'classes#show', as: :coc_classes_show
-            end
-          end
-
           scope module: :rnp do
             scope module: :controllers do
               get '/eduplay/callback', to: 'callbacks#eduplay_callback'

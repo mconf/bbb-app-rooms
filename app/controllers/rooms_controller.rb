@@ -21,7 +21,6 @@ class RoomsController < ApplicationController
   before_action :find_user
   before_action :find_app_launch, only: %i[launch]
   before_action :set_user_groups_on_session, only: %i[launch]
-  before_action :set_room_title, only: :show
   before_action :set_group_variables, only: %i[show meetings]
 
   before_action only: %i[show launch close] do
@@ -431,13 +430,6 @@ class RoomsController < ApplicationController
       end
 
       @current_group_name = all_groups_hash[@current_group_id]
-    end
-  end
-
-  def set_room_title
-    if @app_launch&.coc_launch?
-      @title = @room.name
-      @subtitle = @room.description
     end
   end
 

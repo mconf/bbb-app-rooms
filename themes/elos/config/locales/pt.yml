@@ -113,14 +113,6 @@ pt:
       enter: "Acessar"
       entering: "Acessando..."
       title: "Turmas"
-  coc:
-    schools: "Escolas"
-    classes_header:
-      name: "Nome"
-      serie: "Serie"
-      segment: "Segmento"
-    classes:
-      schedules: "Agendamentos"
   scheduled_meetings:
     destroy: "Remover"
     edit:
