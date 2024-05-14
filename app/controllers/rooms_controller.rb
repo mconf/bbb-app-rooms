@@ -228,7 +228,16 @@ class RoomsController < ApplicationController
   # expected params: [:group_id, :redir_url]
   def set_current_group_on_session
     if @room.moodle_group_select_enabled? && params[:group_id].present?
-      groups_ids_list = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")[:all_groups].keys
+      moodle_groups = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")
+      if moodle_groups.nil? || moodle_groups[:all_groups].nil?
+        Rails.logger.error "[nonce: #{@app_launch.nonce}, action: set_current_group_on_session] Error fetching Moodle groups from cache " \
+        "(moodle_groups: #{moodle_groups})"
+        set_error('room', 'cache_read_error', 500)
+        respond_with_error(@error)
+        return
+      end
+
+      groups_ids_list = moodle_groups[:all_groups].keys
       if groups_ids_list.include?(params[:group_id].to_i)
         Rails.cache.write("#{@app_launch.nonce}/current_group_id", params[:group_id].to_i, expires_in: 7.days)
       else
@@ -411,21 +420,31 @@ class RoomsController < ApplicationController
   def set_group_variables
     if @room.moodle_group_select_enabled?
       @current_group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
-      unless @current_group_id
-        Rails.logger.error 'Expected current_group_id to be present on the cache, but it was missing'
-        set_error('room', 'missing_current_group_id', :forbidden)
+      moodle_groups = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")
+      all_groups_hash = moodle_groups.to_h[:all_groups]
+      if @current_group_id.nil? || moodle_groups.nil? || all_groups_hash.nil?
+        Rails.logger.error "[nonce: #{@app_launch.nonce}] Error fetching Moodle groups from cache " \
+        "(current_group_id: #{@current_group_id}, moodle_groups: #{moodle_groups})"
+        set_error('room', 'cache_read_error', 500)
         respond_with_error(@error)
         return
       end
 
-      all_groups_hash = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")[:all_groups]
       if @user.moderator?(Abilities.moderator_roles)
-        groups_hash = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")[:user_groups]
-        other_groups = all_groups_hash.reject { |key, _| groups_hash.key?(key) }
+        user_groups_hash = moodle_groups[:user_groups]
+        if user_groups_hash.nil?
+          Rails.logger.error "[nonce: #{@app_launch.nonce}] Error fetching user_groups from cache " \
+          "(current_group_id: #{@current_group_id}, moodle_groups: #{moodle_groups})"
+          set_error('room', 'cache_read_error', 500)
+          respond_with_error(@error)
+          return
+        end
+
+        other_groups = all_groups_hash.reject { |key, _| user_groups_hash.key?(key) }
         if other_groups.empty?
           other_groups = {'no_groups': 'Você pertence a todos os grupos'}
         end
-        @group_select = {"Grupos que participo": groups_hash.invert, "Outros grupos": other_groups.invert}
+        @group_select = {"Grupos que participo": user_groups_hash.invert, "Outros grupos": other_groups.invert}
       else
         @group_select = all_groups_hash.invert
       end

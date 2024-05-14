@@ -201,12 +201,12 @@ pt:
         suggestion: "O usuário não pertence a nenhum grupo no curso do Moodle"
         explanation: "O usuário precisa pertencer a pelo menos um grupo no curso do Moodle para poder acessar a ferramenta."
         status_code: "403"
-      missing_current_group_id:
-        code:       "AccessForbidden"
-        message:    "Acesso negado"
-        suggestion: "Sua sessão expirou"
-        explanation: "Sua sessão expirou, por favor recarregue a página."
-        status_code: "403"
+      cache_read_error:
+        code: "CacheReadError"
+        message: "Erro interno ao buscar dados dos grupos do Moodle"
+        suggestion: "Ocorreu um erro no servidor"
+        explanation: "Erro na leitura dos dados de grupos do Moodle. Por favor, recarregue a página."
+        status_code: "500"
       external_context_parse_error:
         code: “ParseError”
         message: "Erro interno ao buscar dados"

@@ -1,4 +1,10 @@
 <%= form_with model: [@room, scheduled_meeting] do |form| %>
+  <% if @room.moodle_group_select_enabled? && @scheduled_meeting.errors[:moodle_group_data_not_found].any? %>
+    <div class="alert alert-danger">
+      <p class="error-description"><%= @scheduled_meeting.errors[:moodle_group_data_not_found].first %></p>
+    </div>
+  <% end %>
+
   <div class="form-row">
     <div class="form-group col-12">
       <%= form.label :name %>

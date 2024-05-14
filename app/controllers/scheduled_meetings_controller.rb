@@ -34,9 +34,32 @@ class ScheduledMeetingsController < ApplicationController
     @scheduled_meeting = ScheduledMeeting.new(@room.attributes_for_meeting)
     @scheduled_meeting.create_moodle_calendar_event = true
     if @room.moodle_group_select_enabled?
-      @current_group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
-      @all_groups_hash =  Rails.cache.read("#{@app_launch.nonce}/moodle_groups")[:all_groups]
-      @current_group_name = @all_groups_hash[@current_group_id]
+      current_group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
+      moodle_groups = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")
+      if current_group_id.nil? || moodle_groups.nil?
+        Rails.logger.warn "[nonce: #{@app_launch.nonce}, action: new] Attempt #1 fetching Moodle groups from cache " \
+        "(current_group_id: #{current_group_id}, moodle_groups: #{moodle_groups}). Trying again"
+
+        current_group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
+        moodle_groups = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")
+        if current_group_id.nil? || moodle_groups.nil?
+          Rails.logger.error "[nonce: #{@app_launch.nonce}, action: new] Attempt #2 fetching Moodle groups from cache " \
+          "(current_group_id: #{current_group_id}, moodle_groups: #{moodle_groups})"
+          set_error('room', 'cache_read_error', 500)
+          respond_with_error(@error)
+          return
+        end
+      end
+
+      all_groups_hash = moodle_groups[:all_groups]
+      @current_group_name = all_groups_hash.to_h[current_group_id]
+      if all_groups_hash.nil? || @current_group_name.nil?
+        Rails.logger.error "[nonce: #{@app_launch.nonce}, action: new] Error fetching group_name from cache " \
+        "(current_group_id: #{current_group_id}, all_groups: #{all_groups_hash}, group_name: #{@current_group_name})"
+        set_error('room', 'cache_read_error', 500)
+        respond_with_error(@error)
+        return
+      end
     end
   end
 
@@ -52,7 +75,36 @@ class ScheduledMeetingsController < ApplicationController
 
       config = ConsumerConfig.find_by(key: @room.consumer_key)
       @scheduled_meeting.disable_external_link = true if config&.force_disable_external_link
-      @scheduled_meeting.moodle_group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id").to_i if @room.moodle_group_select_enabled?
+
+      if @room.moodle_group_select_enabled?
+        current_group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
+        moodle_groups = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")
+        if current_group_id.nil? || moodle_groups.nil?
+          Rails.logger.warn "[nonce: #{@app_launch.nonce}, action: create] Attempt #1 fetching Moodle groups from cache " \
+          "(current_group_id: #{current_group_id}, moodle_groups: #{moodle_groups}). Trying again"
+
+          current_group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
+          moodle_groups = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")
+          if current_group_id.nil? || moodle_groups.nil?
+            Rails.logger.error "[nonce: #{@app_launch.nonce}, action: create] Attempt #2 fetching Moodle groups from cache " \
+            "(current_group_id: #{current_group_id}, moodle_groups: #{moodle_groups})"
+            @scheduled_meeting.errors.add(:moodle_group_data_not_found, t('scheduled_meetings.error.moodle_group_data_not_found'))
+            render :new and return
+          end
+        end
+
+        all_groups_hash = moodle_groups[:all_groups]
+        group_name = all_groups_hash.to_h[current_group_id]
+        if all_groups_hash.nil? || group_name.nil?
+          Rails.logger.error "[nonce: #{@app_launch.nonce}, action: create] Error fetching group_name from cache " \
+          "(current_group_id: #{current_group_id}, all_groups: #{all_groups_hash}, group_name: #{group_name})"
+          flash[:error] = t('scheduled_meetings.error.moodle_group_data_not_found')
+          redirect_to room_path(@room) and return
+        end
+
+        @scheduled_meeting.moodle_group_id = current_group_id.to_i
+        @scheduled_meeting.moodle_group_name = group_name
+      end
 
       if @scheduled_meeting.duration.zero?
         @scheduled_meeting[:duration] =
@@ -118,10 +170,37 @@ class ScheduledMeetingsController < ApplicationController
     if @user.present?
 
       opts = {}
-      if @room.moodle_group_select_enabled?
-        # Concat the group name to the meeting name
-        group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
-        group_name = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")[:all_groups][group_id]
+      # Fallback to fetch the Moodle group name from the cache and concatenate it to the meeting name
+      # when `moodle_group_name` is blank
+      if @room.moodle_group_select_enabled? && @scheduled_meeting.moodle_group_name.blank?
+        Rails.logger.info "This scheduled_meeting (#{params[:id]}) has a blank moodle_group_name, fetching it from the cache"
+        current_group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
+        moodle_groups = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")
+        if current_group_id.nil? || moodle_groups.nil?
+          Rails.logger.warn "[nonce: #{@app_launch.nonce}, action: join] Attempt #1 fetching Moodle groups from cache " \
+          "(current_group_id: #{current_group_id}, moodle_groups: #{moodle_groups}). Trying again"
+
+          current_group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
+          moodle_groups = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")
+          if current_group_id.nil? || moodle_groups.nil?
+            Rails.logger.error "[nonce: #{@app_launch.nonce}, action: join] Attempt #2 fetching Moodle groups from cache " \
+            "(current_group_id: #{current_group_id}, moodle_groups: #{moodle_groups})"
+            set_error('room', 'cache_read_error', 500)
+            respond_with_error(@error)
+            return
+          end
+        end
+
+        all_groups_hash = moodle_groups[:all_groups]
+        group_name = all_groups_hash.to_h[current_group_id]
+        if all_groups_hash.nil? || group_name.nil?
+          Rails.logger.error "[nonce: #{@app_launch.nonce}, action: join] Error fetching group_name from cache " \
+          "(current_group_id: #{current_group_id}, all_groups: #{all_groups_hash}, group_name: #{group_name})"
+          set_error('room', 'cache_read_error', 500)
+          respond_with_error(@error)
+          return
+        end
+
         opts[:meeting_name] = "#{@scheduled_meeting.name} - #{group_name}"
       end
 
