@@ -183,7 +183,7 @@ module Moodle
         "function is correctly configured in the Moodle Token service.\"")
         return true
       else
-        Rails.logger.error(log_labels + "message=\"The following functions are not configured " \
+        Rails.logger.warn(log_labels + "message=\"The following functions are not configured " \
                            "in the Moodle Token service: #{missing_functions}.\"")
         return false
       end
