@@ -221,6 +221,18 @@ en:
         suggestion: "The Moodle integration is misconfigured"
         explanation: "The issue may be caused by incorrect configuration in the LTI integration with your Moodle environment."
         status_code: "403"
+      moodle_request_error:
+        code:       "MoodleRequestError"
+        message:    "Internal error"
+        suggestion: "An error occurred on the server"
+        explanation: "Communication error with Moodle. Please reload the page."
+        status_code: "500"
+      moodle_url_not_found:
+        code:       "InvalidMoodleUrl"
+        message:    "Internal error"
+        suggestion: "The Moodle integration is misconfigured"
+        explanation: "The registered Moodle URL seems to be incorrect."
+        status_code: "500"
       course_without_groups:
         code:       "AccessForbidden"
         message:    "Access denied"
@@ -235,7 +247,7 @@ en:
         status_code: "403"
       cache_read_error:
         code: "CacheReadError"
-        message: "Internal error fetching groups data from Moodle"
+        message: "Internal error"
         suggestion: "A problem occurred in the server"
         explanation: "Error reading the Moodle groups data. Please, reload the page."
         status_code: "500"

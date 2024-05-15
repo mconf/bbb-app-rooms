@@ -340,7 +340,7 @@ class RoomsController < ApplicationController
         'core_course_get_course_module_by_instance',
         'core_group_get_course_groups'
       ]
-      
+
       unless Moodle::API.check_token_functions(moodle_token, wsfunctions)
         Rails.logger.error 'A function required for the groups feature is not configured in Moodle'
         set_error('room', 'moodle_token_misconfigured', :forbidden)
@@ -376,7 +376,7 @@ class RoomsController < ApplicationController
       if @user.moderator?(Abilities.moderator_roles)
         # Gets all course groups except the default 'All Participants' group (id 0);
         all_groups = Moodle::API.get_course_groups(moodle_token, @app_launch.context_id)
-                     .delete_if{ |element| element['id'] == "0" }
+                    .delete_if{ |element| element['id'] == "0" }
         if all_groups.empty?
           Rails.logger.error "There are no groups registered in this Moodle course"
           set_error('room', 'course_without_groups', :forbidden)
@@ -414,6 +414,14 @@ class RoomsController < ApplicationController
 
       Rails.cache.write("#{@app_launch.nonce}/current_group_id", current_group_id, expires_in: 7.days)
     end
+  rescue Moodle::UrlNotFoundError => e
+    set_error('room', 'moodle_url_not_found', 500)
+    respond_with_error(@error)
+    return
+  rescue Moodle::RequestError => e
+    set_error('room', 'moodle_request_error', 500)
+    respond_with_error(@error)
+    return
   end
 
   # Set the variables expected by the `group_select` partial

@@ -124,7 +124,17 @@ class ScheduledMeetingsController < ApplicationController
         if params[:scheduled_meeting][:create_moodle_calendar_event] == '1' &&
         @room.can_create_moodle_calendar_event
           moodle_token = @room.consumer_config.moodle_token
-          Moodle::API.create_calendar_event(moodle_token, @scheduled_meeting, @app_launch.context_id)
+          begin
+            Moodle::API.create_calendar_event(moodle_token, @scheduled_meeting, @app_launch.context_id)
+          rescue Moodle::UrlNotFoundError => e
+            set_error('room', 'moodle_url_not_found', 500)
+            respond_with_error(@error)
+            return
+          rescue Moodle::RequestError => e
+            set_error('room', 'moodle_request_error', 500)
+            respond_with_error(@error)
+            return
+          end
         end
         format.html do
           return_path = room_path(@room), { notice: t('default.scheduled_meeting.created') }

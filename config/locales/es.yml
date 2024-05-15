@@ -189,6 +189,18 @@ es:
         suggestion: "La integración con Moodle está mal configurada"
         explanation: "El problema puede ser causado por una configuración incorrecta en la integración de LTI con su entorno Moodle."
         status_code: "403"
+      moodle_request_error:
+        code:       "MoodleRequestError"
+        message:    "Error interno"
+        suggestion: "Se produjo un error en el servidor"
+        explanation: "Error en la comunicación con Moodle. Por favor, recarga la página."
+        status_code: "500"
+      moodle_url_not_found:
+        code:       "InvalidMoodleUrl"
+        message:    "Error interno"
+        suggestion: "La integración con Moodle está mal configurada"
+        explanation: "La URL del Moodle registrada parece ser incorrecta."
+        status_code: "500"
       course_without_groups:
         code:       "AccessForbidden"
         message:    "Acceso denegado"
@@ -203,7 +215,7 @@ es:
         status_code: "403"
       cache_read_error:
         code: "CacheReadError"
-        message: "Error interno al recuperar datos de grupos de Moodle"
+        message: "Error interno"
         suggestion: "Ocurrió un error en el servidor"
         explanation: "Error al leer los datos del grupo de Moodle. Por favor, recarga la página."
         status_code: "500"
