@@ -20,7 +20,7 @@ class RoomsController < ApplicationController
   before_action :validate_room, except: %i[launch close]
   before_action :find_user
   before_action :find_app_launch, only: %i[launch]
-  before_action :set_user_groups_on_session, only: %i[launch]
+  before_action :setup_moodle_groups, only: %i[launch]
   before_action :set_room_title, only: :show
   before_action :set_group_variables, only: %i[show meetings]
 
@@ -323,13 +323,10 @@ class RoomsController < ApplicationController
     )
   end
 
-  # Adds the user first group ID to the session if the grouping
-  # feature is enabled.
-  # Adds the formatted user groups to the session
-  # Example:
-  # current_group_id: 1
-  # user_groups: {'1': 'Grupo A', '2': 'Grupo B'}
-  def set_user_groups_on_session
+  # Initial setup for Moodle groups feature:
+  # - check for necessary functions
+  # - fetch groups data and store it in the cache
+  def setup_moodle_groups
     if @room.moodle_group_select_enabled?
       moodle_token = @room.moodle_token
       Rails.logger.info "Moodle token #{moodle_token.token} found, group select is enabled"
@@ -343,7 +340,7 @@ class RoomsController < ApplicationController
 
       unless Moodle::API.check_token_functions(moodle_token, wsfunctions)
         Rails.logger.error 'A function required for the groups feature is not configured in Moodle'
-        set_error('room', 'moodle_token_misconfigured', :forbidden)
+        set_error('room', 'moodle_token_function_missing', :forbidden)
         respond_with_error(@error)
         return
       end
@@ -354,7 +351,7 @@ class RoomsController < ApplicationController
       activity_data = Moodle::API.get_activity_data(moodle_token, @app_launch.params['resource_link_id'])
       if activity_data.nil?
         Rails.logger.error "Could not find the necessary data for this activity (instance_id: #{@app_launch.params['resource_link_id']})"
-        set_error('room', 'moodle_token_misconfigured', :forbidden)
+        set_error('room', 'moodle_activity_not_found', :forbidden)
         respond_with_error(@error)
         return
       end
@@ -364,7 +361,7 @@ class RoomsController < ApplicationController
       # or visible groups (2)
       if groupmode == 0 || groupmode.nil?
         Rails.logger.error 'The Moodle activity has an invalid groupmode configured'
-        set_error('room', 'moodle_token_misconfigured', :forbidden)
+        set_error('room', 'moodle_invalid_groupmode', :forbidden)
         respond_with_error(@error)
         return
       end
@@ -373,19 +370,21 @@ class RoomsController < ApplicationController
 
       user_groups = Moodle::API.get_user_groups(moodle_token, @user.uid, @app_launch.context_id)
 
+      # moderators see all course groups
       if @user.moderator?(Abilities.moderator_roles)
         # Gets all course groups except the default 'All Participants' group (id 0);
         all_groups = Moodle::API.get_course_groups(moodle_token, @app_launch.context_id)
                     .delete_if{ |element| element['id'] == "0" }
         if all_groups.empty?
           Rails.logger.error "There are no groups registered in this Moodle course"
-          set_error('room', 'course_without_groups', :forbidden)
+          set_error('room', 'moodle_course_without_groups', :forbidden)
           respond_with_error(@error)
           return
         end
         all_groups_hash = all_groups.collect{ |g| g.slice('id', 'name').values }.to_h
 
         if user_groups.any?
+          # user_groups_hash => {'1': 'Grupo A', '2': 'Grupo B'}
           user_groups_hash = user_groups.collect{ |g| g.slice('id', 'name').values }.to_h
           current_group_id = user_groups.first['id']
         else
@@ -399,12 +398,13 @@ class RoomsController < ApplicationController
           expires_in: 7.days
         )
       else
+        # non-moderators only see groups they belong to
         if user_groups.any?
           user_groups_hash = user_groups.collect{ |g| g.slice('id', 'name').values }.to_h
           current_group_id = user_groups.first['id']
         else
           Rails.logger.error "The user #{@user.uid} doesn't belong to any group in the Moodle course"
-          set_error('room', 'user_without_groups', :forbidden)
+          set_error('room', 'moodle_user_without_groups', :forbidden)
           respond_with_error(@error)
           return
         end

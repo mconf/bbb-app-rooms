@@ -183,11 +183,23 @@ es:
         suggestion:  "No se puede verificar el token"
         explanation: "El problema puede deberse al uso de una clave no válida para validar la solicitud realizada por el proveedor de LTI."
         status_code: "403"
-      moodle_token_misconfigured:
-        code:       "AccessForbidden"
+      moodle_token_function_missing:
+        code:       "MoodleTokenFunctionMissing"
         message:    "Acceso denegado"
         suggestion: "La integración con Moodle está mal configurada"
-        explanation: "El problema puede ser causado por una configuración incorrecta en la integración de LTI con su entorno Moodle."
+        explanation: "Alguna función requerida para la funcionalidad de grupos no está configurada en el token de Moodle."
+        status_code: "403"
+      moodle_activity_not_found:
+        code:       "MoodleActivityNotFound"
+        message:    "Acceso denegado"
+        suggestion: "La integración con Moodle está mal configurada"
+        explanation: "No se encontró la actividad de Moodle."
+        status_code: "403"
+      moodle_invalid_groupmode:
+        code:       "MoodleInvalidGroupmode"
+        message:    "Acceso denegado"
+        suggestion: "La integración con Moodle está mal configurada"
+        explanation: "El curso de Moodle está configurado con un modo de grupos no válido."
         status_code: "403"
       moodle_request_error:
         code:       "MoodleRequestError"
@@ -196,19 +208,19 @@ es:
         explanation: "Error en la comunicación con Moodle. Por favor, recarga la página."
         status_code: "500"
       moodle_url_not_found:
-        code:       "InvalidMoodleUrl"
+        code:       "MoodleUrlNotFound"
         message:    "Error interno"
         suggestion: "La integración con Moodle está mal configurada"
         explanation: "La URL del Moodle registrada parece ser incorrecta."
         status_code: "500"
-      course_without_groups:
-        code:       "AccessForbidden"
+      moodle_course_without_groups:
+        code:       "MoodleCourseWithoutGroups"
         message:    "Acceso denegado"
         suggestion: "El curso de Moodle no tiene ningún grupo registrado"
         explanation: "El curso de Moodle necesita tener al menos un grupo configurado para poder acceder a la herramienta."
         status_code: "403"
-      user_without_groups:
-        code:       "AccessForbidden"
+      moodle_user_without_groups:
+        code:       "MoodleUserWithoutGroups"
         message:    "Acceso denegado"
         suggestion: "El usuario no pertenece a ningún grupo en el curso de Moodle"
         explanation: "El usuario necesita pertenecer a al menos un grupo en el curso de Moodle para poder acceder a la herramienta."
