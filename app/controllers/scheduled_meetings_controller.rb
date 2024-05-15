@@ -125,7 +125,7 @@ class ScheduledMeetingsController < ApplicationController
         @room.can_create_moodle_calendar_event
           moodle_token = @room.consumer_config.moodle_token
           begin
-            Moodle::API.create_calendar_event(moodle_token, @scheduled_meeting, @app_launch.context_id)
+            Moodle::API.create_calendar_event(moodle_token, @scheduled_meeting, @app_launch.context_id, {nonce: @app_launch.nonce})
           rescue Moodle::UrlNotFoundError => e
             set_error('room', 'moodle_url_not_found', 500)
             respond_with_error(@error)

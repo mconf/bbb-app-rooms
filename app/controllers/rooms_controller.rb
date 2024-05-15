@@ -338,7 +338,7 @@ class RoomsController < ApplicationController
         'core_group_get_course_groups'
       ]
 
-      unless Moodle::API.check_token_functions(moodle_token, wsfunctions)
+      unless Moodle::API.check_token_functions(moodle_token, wsfunctions, {nonce: @app_launch.nonce})
         Rails.logger.error 'A function required for the groups feature is not configured in Moodle'
         set_error('room', 'moodle_token_function_missing', :forbidden)
         respond_with_error(@error)
@@ -348,7 +348,7 @@ class RoomsController < ApplicationController
       # the `resource_link_id` provided by Moodle is the `instance_id` of the activity.
       # We use it to fetch the activity data, from where we get its `cmid` (course module id)
       # to fetch the effective groupmode configured on the activity
-      activity_data = Moodle::API.get_activity_data(moodle_token, @app_launch.params['resource_link_id'])
+      activity_data = Moodle::API.get_activity_data(moodle_token, @app_launch.params['resource_link_id'], {nonce: @app_launch.nonce})
       if activity_data.nil?
         Rails.logger.error "Could not find the necessary data for this activity (instance_id: #{@app_launch.params['resource_link_id']})"
         set_error('room', 'moodle_activity_not_found', :forbidden)
@@ -356,7 +356,7 @@ class RoomsController < ApplicationController
         return
       end
 
-      groupmode = Moodle::API.get_groupmode(moodle_token, activity_data['id'])
+      groupmode = Moodle::API.get_groupmode(moodle_token, activity_data['id'], {nonce: @app_launch.nonce})
       # testing if the activity has its groupmode configured for separate groups (1)
       # or visible groups (2)
       if groupmode == 0 || groupmode.nil?
@@ -368,12 +368,12 @@ class RoomsController < ApplicationController
 
       Rails.logger.info "Moodle groups are configured for this session (#{@app_launch.nonce})"
 
-      user_groups = Moodle::API.get_user_groups(moodle_token, @user.uid, @app_launch.context_id)
+      user_groups = Moodle::API.get_user_groups(moodle_token, @user.uid, @app_launch.context_id, {nonce: @app_launch.nonce})
 
       # moderators see all course groups
       if @user.moderator?(Abilities.moderator_roles)
         # Gets all course groups except the default 'All Participants' group (id 0);
-        all_groups = Moodle::API.get_course_groups(moodle_token, @app_launch.context_id)
+        all_groups = Moodle::API.get_course_groups(moodle_token, @app_launch.context_id, {nonce: @app_launch.nonce})
                     .delete_if{ |element| element['id'] == "0" }
         if all_groups.empty?
           Rails.logger.error "There are no groups registered in this Moodle course"
