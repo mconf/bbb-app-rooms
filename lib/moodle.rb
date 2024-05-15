@@ -151,25 +151,32 @@ module Moodle
     end
 
     def self.post(host_url, params)
-      begin
-        start_time = Time.now
-        response = Faraday.post(host_url) do |req|
-          req.headers['Content-Type'] = 'application/x-www-form-urlencoded'
-          req.body = params
-          req.options.timeout = Rails.application.config.moodle_api_timeout
-        end
+      options = {
+        headers: { 'Content-Type' => 'application/x-www-form-urlencoded' },
+        request: { timeout: Rails.application.config.moodle_api_timeout },
+        params: params
+      }
 
-        Rails.logger.info "[MOODLE API - url: #{host_url}][INFO - #{params[:wsfunction]}]: POST request took #{(Time.now - start_time).round(3)} seconds."
-
-        JSON.parse(response.body)
-
-      rescue Faraday::Error => e
-        Rails.logger.error("[MOODLE API - url: #{host_url}][EXCEPTION - Faraday error]: POST request failed: #{e}")
-        return nil
-      rescue StandardError => e
-        Rails.logger.error("[MOODLE API - url: #{host_url}][EXCEPTION - POST] Error parsing JSON response: #{e}")
-        return nil
+      conn = Faraday.new(url: host_url, **options) do |config|
+        config.response :json
+        config.response :raise_error
+        config.adapter :net_http
       end
+
+      start_time = Time.now
+      res = conn.post(host_url)
+      duration = Time.now - start_time
+
+      res.body.is_a?(Hash) ? res.body.merge({duration: duration}) : { body: res.body, duration: duration }
+    rescue Faraday::ResourceNotFound => e
+      Rails.logger.error("[MOODLE API - POST #{host_url}, duration: #{(Time.now - start_time).round(3)}s][#{params[:wsfunction]}] request failed (Faraday::ResourceNotFound): #{e}")
+      raise UrlNotFoundError, e
+    rescue Faraday::Error => e
+      Rails.logger.error("[MOODLE API - POST #{host_url}, duration: #{(Time.now - start_time).round(3)}s][#{params[:wsfunction]}] request failed (Faraday::Error): #{e}")
+      raise RequestError, e
     end
   end
+
+  class UrlNotFoundError < StandardError; end
+  class RequestError < StandardError; end
 end
