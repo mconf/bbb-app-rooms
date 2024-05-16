@@ -236,8 +236,14 @@ en:
       moodle_request_error:
         code:       "MoodleRequestError"
         message:    "Internal error"
-        suggestion: "An error occurred on the server"
-        explanation: "Communication error with Moodle. Please reload the page."
+        suggestion: "An error occurred on the Moodle server"
+        explanation: "The Moodle server responded incorrectly to the group configuration. Please reload the page."
+        status_code: "500"
+      moodle_timeout_error:
+        code:       "MoodleTimeoutError"
+        message:    "Internal error"
+        suggestion: "An error occurred on the Moodle server"
+        explanation: "The Moodle server took too long to respond to group configuration. Please reload the page."
         status_code: "500"
       moodle_url_not_found:
         code:       "MoodleUrlNotFound"

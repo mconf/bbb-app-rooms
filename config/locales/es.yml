@@ -204,8 +204,14 @@ es:
       moodle_request_error:
         code:       "MoodleRequestError"
         message:    "Error interno"
-        suggestion: "Se produjo un error en el servidor"
-        explanation: "Error en la comunicación con Moodle. Por favor, recarga la página."
+        suggestion: "Se produjo un error en el servidor Moodle"
+        explanation: "El servidor Moodle respondió incorrectamente a la configuración del grupo. Por favor recarga la página."
+        status_code: "500"
+      moodle_timeout_error:
+        code:       "MoodleTimeoutError"
+        message:    "Error interno"
+        suggestion: "Se produjo un error en el servidor Moodle"
+        explanation: "El servidor Moodle tardó mucho en responder a la configuración del grupo. Por favor recarga la página."
         status_code: "500"
       moodle_url_not_found:
         code:       "MoodleUrlNotFound"

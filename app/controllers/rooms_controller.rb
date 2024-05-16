@@ -418,6 +418,10 @@ class RoomsController < ApplicationController
     set_error('room', 'moodle_url_not_found', 500)
     respond_with_error(@error)
     return
+  rescue Moodle::TimeoutError => e
+    set_error('room', 'moodle_timeout_error', 500)
+    respond_with_error(@error)
+    return
   rescue Moodle::RequestError => e
     set_error('room', 'moodle_request_error', 500)
     respond_with_error(@error)

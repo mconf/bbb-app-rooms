@@ -215,6 +215,12 @@ module Moodle
                           "wsfunction=#{params[:wsfunction]} " \
                           "message=\"Request failed (Faraday::ResourceNotFound): #{e}\"")
       raise UrlNotFoundError, e
+    rescue Faraday::TimeoutError => e
+      Rails.logger.error( "[MOODLE API] url=#{host_url} " \
+                          "duration=#{(Time.now - start_time).round(3)}s " \
+                          "wsfunction=#{params[:wsfunction]} " \
+                          "message=\"Request failed (Faraday::TimeoutError): #{e}\"")
+      raise TimeoutError, e
     rescue Faraday::Error => e
       Rails.logger.error( "[MOODLE API] url=#{host_url} " \
                           "duration=#{(Time.now - start_time).round(3)}s " \
@@ -225,5 +231,6 @@ module Moodle
   end
 
   class UrlNotFoundError < StandardError; end
+  class TimeoutError < StandardError; end
   class RequestError < StandardError; end
 end
