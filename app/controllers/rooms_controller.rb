@@ -20,7 +20,7 @@ class RoomsController < ApplicationController
   before_action :validate_room, except: %i[launch close]
   before_action :find_user
   before_action :find_app_launch, only: %i[launch]
-  before_action :set_user_groups_on_session, only: %i[launch]
+  before_action :setup_moodle_groups, only: %i[launch]
   before_action :set_room_title, only: :show
   before_action :set_group_variables, only: %i[show meetings]
 
@@ -228,7 +228,16 @@ class RoomsController < ApplicationController
   # expected params: [:group_id, :redir_url]
   def set_current_group_on_session
     if @room.moodle_group_select_enabled? && params[:group_id].present?
-      groups_ids_list = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")[:all_groups].keys
+      moodle_groups = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")
+      if moodle_groups.nil? || moodle_groups[:all_groups].nil?
+        Rails.logger.error "[nonce: #{@app_launch.nonce}, action: set_current_group_on_session] Error fetching Moodle groups from cache " \
+        "(moodle_groups: #{moodle_groups})"
+        set_error('room', 'cache_read_error', 500)
+        respond_with_error(@error)
+        return
+      end
+
+      groups_ids_list = moodle_groups[:all_groups].keys
       if groups_ids_list.include?(params[:group_id].to_i)
         Rails.cache.write("#{@app_launch.nonce}/current_group_id", params[:group_id].to_i, expires_in: 7.days)
       else
@@ -314,13 +323,10 @@ class RoomsController < ApplicationController
     )
   end
 
-  # Adds the user first group ID to the session if the grouping
-  # feature is enabled.
-  # Adds the formatted user groups to the session
-  # Example:
-  # current_group_id: 1
-  # user_groups: {'1': 'Grupo A', '2': 'Grupo B'}
-  def set_user_groups_on_session
+  # Initial setup for Moodle groups feature:
+  # - check for necessary functions
+  # - fetch groups data and store it in the cache
+  def setup_moodle_groups
     if @room.moodle_group_select_enabled?
       moodle_token = @room.moodle_token
       Rails.logger.info "Moodle token #{moodle_token.token} found, group select is enabled"
@@ -331,10 +337,10 @@ class RoomsController < ApplicationController
         'core_course_get_course_module_by_instance',
         'core_group_get_course_groups'
       ]
-      
-      unless Moodle::API.check_token_functions(moodle_token, wsfunctions)
+
+      unless Moodle::API.check_token_functions(moodle_token, wsfunctions, {nonce: @app_launch.nonce})
         Rails.logger.error 'A function required for the groups feature is not configured in Moodle'
-        set_error('room', 'moodle_token_misconfigured', :forbidden)
+        set_error('room', 'moodle_token_function_missing', :forbidden)
         respond_with_error(@error)
         return
       end
@@ -342,41 +348,43 @@ class RoomsController < ApplicationController
       # the `resource_link_id` provided by Moodle is the `instance_id` of the activity.
       # We use it to fetch the activity data, from where we get its `cmid` (course module id)
       # to fetch the effective groupmode configured on the activity
-      activity_data = Moodle::API.get_activity_data(moodle_token, @app_launch.params['resource_link_id'])
+      activity_data = Moodle::API.get_activity_data(moodle_token, @app_launch.params['resource_link_id'], {nonce: @app_launch.nonce})
       if activity_data.nil?
         Rails.logger.error "Could not find the necessary data for this activity (instance_id: #{@app_launch.params['resource_link_id']})"
-        set_error('room', 'moodle_token_misconfigured', :forbidden)
+        set_error('room', 'moodle_activity_not_found', :forbidden)
         respond_with_error(@error)
         return
       end
 
-      groupmode = Moodle::API.get_groupmode(moodle_token, activity_data['id'])
+      groupmode = Moodle::API.get_groupmode(moodle_token, activity_data['id'], {nonce: @app_launch.nonce})
       # testing if the activity has its groupmode configured for separate groups (1)
       # or visible groups (2)
       if groupmode == 0 || groupmode.nil?
         Rails.logger.error 'The Moodle activity has an invalid groupmode configured'
-        set_error('room', 'moodle_token_misconfigured', :forbidden)
+        set_error('room', 'moodle_invalid_groupmode', :forbidden)
         respond_with_error(@error)
         return
       end
 
       Rails.logger.info "Moodle groups are configured for this session (#{@app_launch.nonce})"
 
-      user_groups = Moodle::API.get_user_groups(moodle_token, @user.uid, @app_launch.context_id)
+      user_groups = Moodle::API.get_user_groups(moodle_token, @user.uid, @app_launch.context_id, {nonce: @app_launch.nonce})
 
+      # moderators see all course groups
       if @user.moderator?(Abilities.moderator_roles)
         # Gets all course groups except the default 'All Participants' group (id 0);
-        all_groups = Moodle::API.get_course_groups(moodle_token, @app_launch.context_id)
-                     .delete_if{ |element| element['id'] == "0" }
+        all_groups = Moodle::API.get_course_groups(moodle_token, @app_launch.context_id, {nonce: @app_launch.nonce})
+                    .delete_if{ |element| element['id'] == "0" }
         if all_groups.empty?
           Rails.logger.error "There are no groups registered in this Moodle course"
-          set_error('room', 'course_without_groups', :forbidden)
+          set_error('room', 'moodle_course_without_groups', :forbidden)
           respond_with_error(@error)
           return
         end
         all_groups_hash = all_groups.collect{ |g| g.slice('id', 'name').values }.to_h
 
         if user_groups.any?
+          # user_groups_hash => {'1': 'Grupo A', '2': 'Grupo B'}
           user_groups_hash = user_groups.collect{ |g| g.slice('id', 'name').values }.to_h
           current_group_id = user_groups.first['id']
         else
@@ -390,12 +398,13 @@ class RoomsController < ApplicationController
           expires_in: 7.days
         )
       else
+        # non-moderators only see groups they belong to
         if user_groups.any?
           user_groups_hash = user_groups.collect{ |g| g.slice('id', 'name').values }.to_h
           current_group_id = user_groups.first['id']
         else
           Rails.logger.error "The user #{@user.uid} doesn't belong to any group in the Moodle course"
-          set_error('room', 'user_without_groups', :forbidden)
+          set_error('room', 'moodle_user_without_groups', :forbidden)
           respond_with_error(@error)
           return
         end
@@ -405,27 +414,49 @@ class RoomsController < ApplicationController
 
       Rails.cache.write("#{@app_launch.nonce}/current_group_id", current_group_id, expires_in: 7.days)
     end
+  rescue Moodle::UrlNotFoundError => e
+    set_error('room', 'moodle_url_not_found', 500)
+    respond_with_error(@error)
+    return
+  rescue Moodle::TimeoutError => e
+    set_error('room', 'moodle_timeout_error', 500)
+    respond_with_error(@error)
+    return
+  rescue Moodle::RequestError => e
+    set_error('room', 'moodle_request_error', 500)
+    respond_with_error(@error)
+    return
   end
 
   # Set the variables expected by the `group_select` partial
   def set_group_variables
     if @room.moodle_group_select_enabled?
       @current_group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
-      unless @current_group_id
-        Rails.logger.error 'Expected current_group_id to be present on the cache, but it was missing'
-        set_error('room', 'missing_current_group_id', :forbidden)
+      moodle_groups = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")
+      all_groups_hash = moodle_groups.to_h[:all_groups]
+      if @current_group_id.nil? || moodle_groups.nil? || all_groups_hash.nil?
+        Rails.logger.error "[nonce: #{@app_launch.nonce}] Error fetching Moodle groups from cache " \
+        "(current_group_id: #{@current_group_id}, moodle_groups: #{moodle_groups})"
+        set_error('room', 'cache_read_error', 500)
         respond_with_error(@error)
         return
       end
 
-      all_groups_hash = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")[:all_groups]
       if @user.moderator?(Abilities.moderator_roles)
-        groups_hash = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")[:user_groups]
-        other_groups = all_groups_hash.reject { |key, _| groups_hash.key?(key) }
+        user_groups_hash = moodle_groups[:user_groups]
+        if user_groups_hash.nil?
+          Rails.logger.error "[nonce: #{@app_launch.nonce}] Error fetching user_groups from cache " \
+          "(current_group_id: #{@current_group_id}, moodle_groups: #{moodle_groups})"
+          set_error('room', 'cache_read_error', 500)
+          respond_with_error(@error)
+          return
+        end
+
+        other_groups = all_groups_hash.reject { |key, _| user_groups_hash.key?(key) }
         if other_groups.empty?
           other_groups = {'no_groups': 'Você pertence a todos os grupos'}
         end
-        @group_select = {"Grupos que participo": groups_hash.invert, "Outros grupos": other_groups.invert}
+        @group_select = {"Grupos que participo": user_groups_hash.invert, "Outros grupos": other_groups.invert}
       else
         @group_select = all_groups_hash.invert
       end

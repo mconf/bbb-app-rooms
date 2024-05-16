@@ -215,30 +215,60 @@ en:
         suggestion: "The token could not be validated"
         explanation: "This problem can be caused by using an invalid key when validating the request through the LTI Provider."
         status_code: "403"
-      moodle_token_misconfigured:
-        code:       "AccessForbidden"
+      moodle_token_function_missing:
+        code:       "MoodleTokenFunctionMissing"
         message:    "Access denied"
         suggestion: "The Moodle integration is misconfigured"
-        explanation: "The issue may be caused by incorrect configuration in the LTI integration with your Moodle environment."
+        explanation: "A function required for the groups feature is not configured in the Moodle token."
         status_code: "403"
-      course_without_groups:
-        code:       "AccessForbidden"
+      moodle_activity_not_found:
+        code:       "MoodleActivityNotFound"
+        message:    "Access denied"
+        suggestion: "The Moodle integration is misconfigured"
+        explanation: "The Moodle activity was not found."
+        status_code: "403"
+      moodle_invalid_groupmode:
+        code:       "MoodleInvalidGroupmode"
+        message:    "Access denied"
+        suggestion: "The Moodle integration is misconfigured"
+        explanation: "The Moodle course has an invalid groupmode configured."
+        status_code: "403"
+      moodle_request_error:
+        code:       "MoodleRequestError"
+        message:    "Internal error"
+        suggestion: "An error occurred on the Moodle server"
+        explanation: "The Moodle server responded incorrectly to the group configuration. Please reload the page."
+        status_code: "500"
+      moodle_timeout_error:
+        code:       "MoodleTimeoutError"
+        message:    "Internal error"
+        suggestion: "An error occurred on the Moodle server"
+        explanation: "The Moodle server took too long to respond to group configuration. Please reload the page."
+        status_code: "500"
+      moodle_url_not_found:
+        code:       "MoodleUrlNotFound"
+        message:    "Internal error"
+        suggestion: "The Moodle integration is misconfigured"
+        explanation: "The registered Moodle URL seems to be incorrect."
+        status_code: "500"
+      moodle_course_without_groups:
+        code:       "MoodleCourseWithoutGroups"
         message:    "Access denied"
         suggestion: "The Moodle course does not have any groups registered"
         explanation: "The Moodle course needs to have at least one group configured to access the tool."
         status_code: "403"
-      user_without_groups:
-        code:       "AccessForbidden"
+      moodle_user_without_groups:
+        code:       "MoodleUserWithoutGroups"
         message:    "Access denied"
         suggestion: "The user does not belong to any group in the Moodle course"
         explanation: "The user needs to belong to at least one group in the Moodle course to access the tool."
         status_code: "403"
-      missing_current_group_id:
-        code:       "AccessForbidden"
-        message:    "Access denied"
-        suggestion: "Your session has expired"
-        explanation: "Your session has expired, please reload the page."
-        status_code: "403"
+      cache_read_error:
+        code: "CacheReadError"
+        message: "Internal error"
+        suggestion: "A problem occurred in the server"
+        explanation: "Error reading the Moodle groups data. Please, reload the page."
+        status_code: "500"
       external_context_parse_error:
         code: "ParseError"
         message: "Internal error fetching data"

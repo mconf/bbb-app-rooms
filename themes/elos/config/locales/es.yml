@@ -119,6 +119,8 @@ es:
       action: "Editar"
       title: "Editar sesión"
     empty_list: "No hay sesiones programadas para mostrar"
+    error:
+      moodle_group_data_not_found: "Error al leer los datos del grupo de Moodle. Por favor, intente de nuevo"
     external_link: "Copiar enlace externo"
     new:
       add: "+ Programar sesión"

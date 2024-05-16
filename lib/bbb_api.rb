@@ -45,7 +45,7 @@ module BbbApi
     meeting_id = scheduled_meeting.meeting_id
 
     unless bbb(room).is_meeting_running?(meeting_id)
-      meeting_name = opts[:meeting_name] || scheduled_meeting.name
+      meeting_name = opts[:meeting_name] || scheduled_meeting.meeting_name
 
       begin
         bbb(room).create_meeting(

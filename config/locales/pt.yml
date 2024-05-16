@@ -183,30 +183,60 @@ pt:
         suggestion:  "O token não pode ser validado"
         explanation: "O problema pode ser causado pela utilização de uma chave inválida na validação da requisição feita pelo provedor LTI."
         status_code: "403"
-      moodle_token_misconfigured:
-        code:       "AccessForbidden"
+      moodle_token_function_missing:
+        code:       "MoodleTokenFunctionMissing"
         message:    "Acesso negado"
         suggestion: "A integração com o Moodle está mal configurada"
-        explanation: "O problema pode ser causado pela configuração incorreta na integração do LTI com o seu ambiente Moodle."
+        explanation: "Alguma função necessária para a funcionalidade de grupos não está configurada no token do Moodle."
         status_code: "403"
-      course_without_groups:
-        code:       "AccessForbidden"
+      moodle_activity_not_found:
+        code:       "MoodleActivityNotFound"
+        message:    "Acesso negado"
+        suggestion: "A integração com o Moodle está mal configurada"
+        explanation: "A atividade do Moodle não foi encontrada."
+        status_code: "403"
+      moodle_invalid_groupmode:
+        code:       "MoodleInvalidGroupmode"
+        message:    "Acesso negado"
+        suggestion: "A integração com o Moodle está mal configurada"
+        explanation: "O curso do Moodle está configurado com um modo de grupos inválido."
+        status_code: "403"
+      moodle_request_error:
+        code:       "MoodleRequestError"
+        message:    "Erro interno"
+        suggestion: "Ocorreu um erro no servidor do Moodle"
+        explanation: "O servidor do Moodle forneceu uma resposta inválida para a configuração de grupos. Por favor, recarregue a página."
+        status_code: "500"
+      moodle_timeout_error:
+        code:       "MoodleTimeoutError"
+        message:    "Erro interno"
+        suggestion: "Ocorreu um erro no servidor do Moodle"
+        explanation: "O servidor do Moodle demorou muito para responder a configuração de grupos. Por favor, recarregue a página."
+        status_code: "500"
+      moodle_url_not_found:
+        code:       "MoodleUrlNotFound"
+        message:    "Erro interno"
+        suggestion: "A integração com o Moodle está mal configurada"
+        explanation: "A URL do Moodle cadastrada parece estar incorreta."
+        status_code: "500"
+      moodle_course_without_groups:
+        code:       "MoodleCourseWithoutGroups"
         message:    "Acesso negado"
         suggestion: "O curso do Moodle não possui nenhum grupo cadastrado"
         explanation: "O curso do Moodle precisa ter pelo menos um grupo configurado para poder acessar a ferramenta."
         status_code: "403"
-      user_without_groups:
-        code:       "AccessForbidden"
+      moodle_user_without_groups:
+        code:       "MoodleUserWithoutGroups"
         message:    "Acesso negado"
         suggestion: "O usuário não pertence a nenhum grupo no curso do Moodle"
         explanation: "O usuário precisa pertencer a pelo menos um grupo no curso do Moodle para poder acessar a ferramenta."
         status_code: "403"
-      missing_current_group_id:
-        code:       "AccessForbidden"
-        message:    "Acesso negado"
-        suggestion: "Sua sessão expirou"
-        explanation: "Sua sessão expirou, por favor recarregue a página."
-        status_code: "403"
+      cache_read_error:
+        code: "CacheReadError"
+        message: "Erro interno"
+        suggestion: "Ocorreu um erro no servidor"
+        explanation: "Erro na leitura dos dados de grupos do Moodle. Por favor, recarregue a página."
+        status_code: "500"
       external_context_parse_error:
         code: “ParseError”
         message: "Erro interno ao buscar dados"

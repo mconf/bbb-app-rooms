@@ -115,6 +115,14 @@ class ScheduledMeeting < ApplicationRecord
     end
   end
 
+  def meeting_name
+    if room.moodle_group_select_enabled? && self.moodle_group_name.present?
+      "#{self.name} - #{self.moodle_group_name}"
+    else
+      self.name
+    end
+  end
+
   def create_options(user)
     # standard API params
     opts = {
@@ -161,8 +169,9 @@ class ScheduledMeeting < ApplicationRecord
       )
     end
 
-    if room.moodle_group_select_enabled? && self.moodle_group_id.present?
-      meta_bbb['moodle-group-id'] = self.moodle_group_id
+    if room.moodle_group_select_enabled?
+      meta_bbb['moodle-group-id'] = self.moodle_group_id if self.moodle_group_id.present?
+      meta_bbb['moodle-group-name'] = self.moodle_group_name if self.moodle_group_name.present?
     end
 
     meta_bbb.each { |k, v| opts["meta_bbb-#{k}"]= v }
