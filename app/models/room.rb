@@ -21,7 +21,7 @@ class Room < ApplicationRecord
   def can_create_moodle_calendar_event
     moodle_token = self.consumer_config&.moodle_token
     if moodle_token
-      Moodle::API.check_token_functions(moodle_token, ['core_calendar_create_calendar_events'])
+      Moodle::API.token_functions_configured?(moodle_token, ['core_calendar_create_calendar_events'])
     else
       false
     end

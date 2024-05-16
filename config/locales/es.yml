@@ -187,7 +187,7 @@ es:
         code:       "MoodleTokenFunctionMissing"
         message:    "Acceso denegado"
         suggestion: "La integración con Moodle está mal configurada"
-        explanation: "Alguna función requerida para la funcionalidad de grupos no está configurada en el token de Moodle."
+        explanation: "Las siguientes funciones requeridas para la configuración de grupos no están habilitadas en el servicio de Moodle: %{missing_functions}"
         status_code: "403"
       moodle_activity_not_found:
         code:       "MoodleActivityNotFound"
