@@ -8,13 +8,13 @@ app_rooms_path=.  #     "$HOME/Projects/bbb-app-rooms"
 env="development"
 dc_service="app"
 
-# to connect to moodle.h.elos.dev using LTI 1.3
+# to connect to moodle.h.mconf.dev using LTI 1.3
 # If you need to use the Saltire test app, update these variables
-issuer="https://moodle.h.elos.dev"
+issuer="https://moodle.h.mconf.dev"
 client_id="kFQFqSRXyW88NyC"
-key_set_url="https://moodle.h.elos.dev/mod/lti/certs.php"
-auth_token_url="https://moodle.h.elos.dev/mod/lti/token.php"
-auth_login_url="https://moodle.h.elos.dev/mod/lti/auth.php"
+key_set_url="https://moodle.h.mconf.dev/mod/lti/certs.php"
+auth_token_url="https://moodle.h.mconf.dev/mod/lti/token.php"
+auth_login_url="https://moodle.h.mconf.dev/mod/lti/auth.php"
 
 # to connect to any app using LTI 1.0
 my_key="my-key"
