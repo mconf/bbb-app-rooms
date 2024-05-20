@@ -131,6 +131,8 @@ en:
       action: "Edit"
       title: "Edit session"
     empty_list: "There are no scheduled sessions to show"
+    error:
+      moodle_group_data_not_found: "Error reading the Moodle groups data. Please, try again"
     external_link: "Copy external link"
     new:
       add: "+ Schedule session"

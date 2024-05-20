@@ -199,76 +199,85 @@ en:
         status_code: "500"
     room:
       forbidden:
-        code:       "AccessForbidden"
         message:    "Forbidden"
         suggestion: "The session has expired"
         explanation: "If you are using this room through LTI try launching the app again by using the link or refreshing the browser."
         status_code: "403"
       not_found:
-        code:       "NotFound"
         message:    "Room not found"
         suggestion: "The room you tried to access doesn't exist."
         status_code: "404"
       invalid_secret:
-        code:       "InvalidSecret"
         message:    "Forbidden"
         suggestion: "The token could not be validated"
         explanation: "This problem can be caused by using an invalid key when validating the request through the LTI Provider."
         status_code: "403"
-      moodle_token_misconfigured:
-        code:       "AccessForbidden"
+      moodle_token_function_missing:
         message:    "Access denied"
         suggestion: "The Moodle integration is misconfigured"
-        explanation: "The issue may be caused by incorrect configuration in the LTI integration with your Moodle environment."
+        explanation: "The following functions required for groups configuration are not enabled in the Moodle service: %{missing_functions}"
         status_code: "403"
-      course_without_groups:
-        code:       "AccessForbidden"
+      moodle_activity_not_found:
+        message:    "Access denied"
+        suggestion: "The Moodle integration is misconfigured"
+        explanation: "The Moodle activity was not found."
+        status_code: "403"
+      moodle_invalid_groupmode:
+        message:    "Access denied"
+        suggestion: "The Moodle integration is misconfigured"
+        explanation: "The Moodle course has an invalid groupmode configured."
+        status_code: "403"
+      moodle_request_error:
+        message:    "Internal error"
+        suggestion: "An error occurred on the Moodle server"
+        explanation: "The Moodle server responded incorrectly to the group configuration. Please reload the page."
+        status_code: "500"
+      moodle_timeout_error:
+        message:    "Internal error"
+        suggestion: "An error occurred on the Moodle server"
+        explanation: "The Moodle server took too long to respond to group configuration. Please reload the page."
+        status_code: "500"
+      moodle_url_not_found:
+        message:    "Internal error"
+        suggestion: "The Moodle integration is misconfigured"
+        explanation: "The registered Moodle URL seems to be incorrect."
+        status_code: "500"
+      moodle_course_without_groups:
         message:    "Access denied"
         suggestion: "The Moodle course does not have any groups registered"
         explanation: "The Moodle course needs to have at least one group configured to access the tool."
         status_code: "403"
-      user_without_groups:
-        code:       "AccessForbidden"
+      moodle_user_without_groups:
+        code:       "MoodleUserWithoutGroups"
         message:    "Access denied"
         suggestion: "The user does not belong to any group in the Moodle course"
         explanation: "The user needs to belong to at least one group in the Moodle course to access the tool."
         status_code: "403"
-      missing_current_group_id:
-        code:       "AccessForbidden"
-        message:    "Access denied"
-        suggestion: "Your session has expired"
-        explanation: "Your session has expired, please reload the page."
-        status_code: "403"
+      cache_read_error:
+        message: "Internal error"
+        suggestion: "A problem occurred in the server"
+        explanation: "Error reading the Moodle groups data. Please, reload the page."
+        status_code: "500"
       external_context_parse_error:
-        code: "ParseError"
         message: "Internal error fetching data"
         suggestion: "There might be a problem in the server"
         explanation: "This problem is caused when the external context API returns an invalid JSON response."
         status_code: "500"
       external_context_no_handler:
-        code: "NoHandler"
         message: "Unauthorized"
         suggestion: "User not found in the external context database"
         explanation: "The user was not found in the external context database so they won't be able to access a class."
         status_code: "401"
       external_context_invalid_handler:
-        code: "InvalidHandler"
         message: "Forbidden"
         suggestion: "Unallowed context"
         explanation: "You are trying to access a context you are not allowed to access."
         status_code: "403"
     scheduled_meeting:
       not_found:
-        code:       "NotFound"
         message:    "Meeting not found"
         suggestion:    "The scheduled meeting was not found"
         explanation: "It might have been removed by the session creator."
-        status_code: "404"
-      meeting_not_found:
-        code:       "NotFound"
-        message:    "Meeting not found"
-        suggestion: "The meeting was not found"
-        explanation: "The group identifier is invalid."
         status_code: "404"
     meeting:
       learning_dashboard_url_missing: "Error: Learning dashboard URL not configured"

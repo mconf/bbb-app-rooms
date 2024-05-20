@@ -161,7 +161,7 @@ class ApplicationController < ActionController::Base
     @user = nil
     instance_variable_set("@#{model}".to_sym, nil)
     @error = {
-      key: t("error.#{model}.#{error}.code"),
+      internal_key: error,
       message: t("error.#{model}.#{error}.message"),
       suggestion: t("error.#{model}.#{error}.suggestion"),
       explanation: t("error.#{model}.#{error}.status_code") == '404' ? nil : t("error.#{model}.#{error}.explanation"),
