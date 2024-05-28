@@ -3,6 +3,7 @@ es:
     cancel: "Cancelar"
     clipboard:
       link_copied: "Link copiado al clipboard!"
+    empty_list: "Esta página aún no tiene ningún contenido."
     schedule: "Agendar"
   group_select:
     title: "Seleccionar grupo"
@@ -49,7 +50,6 @@ es:
     all_loaded: "Se han cargado todas las conferencias"
     duration:
       less_than_a_minute: "< 1min"
-    empty_list: "No hay conferencias para mostrar"
     filters:
       no_filter: "Todas"
       recorded_only: "Grabadas"
@@ -99,7 +99,6 @@ es:
     download_options:
       csv: "Planilla de reuniones (CSV)"
       xls: "Planilla de reuniones (Excel XLS)"
-    empty_list: "No se encontraron informes :("
     index:
       return: "< volver"
     table_footnote: "Los informes del mes actual se actualizan diariamente."
@@ -118,7 +117,6 @@ es:
     edit:
       action: "Editar"
       title: "Editar sesión"
-    empty_list: "No hay sesiones programadas para mostrar"
     error:
       moodle_group_data_not_found: "Error al leer los datos del grupo de Moodle. Por favor, intente de nuevo"
     external_link: "Copiar enlace externo"
