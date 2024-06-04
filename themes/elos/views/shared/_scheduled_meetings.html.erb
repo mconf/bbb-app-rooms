@@ -59,7 +59,7 @@
         <%= paginate scheduled_meetings %>
       </div>
     <% else %>
-      <p><%= t('scheduled_meetings.empty_list') %></p>
+      <%= render "shared/empty_list" %>
     <% end %>
 
   </div>

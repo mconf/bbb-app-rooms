@@ -3,6 +3,7 @@ en:
     cancel: "Cancel"
     clipboard:
       link_copied: "Link copied to the clipboard!"
+    empty_list: "This page does not have any content yet."
     schedule: "Schedule"
   group_select:
     title: "Select group"
@@ -49,7 +50,6 @@ en:
     all_loaded: "All conferences loaded"
     duration:
       less_than_a_minute: "< 1min"
-    empty_list: "There are no conferences to show"
     filters:
       no_filter: "All"
       recorded_only: "Recorded"
@@ -99,7 +99,6 @@ en:
     download_options:
       csv: "Spreadsheet of meetings (CSV)"
       xls: "Spreadsheet of meetings (Excel XLS)"
-    empty_list: "No reports found :("
     index:
       return: "< go back"
     table_footnote: "The reports for the current month are updated daily."
@@ -118,7 +117,6 @@ en:
     edit:
       action: "Edit"
       title: "Edit session"
-    empty_list: "There are no scheduled sessions to show"
     error:
       moodle_group_data_not_found: "Error reading the Moodle groups data. Please, try again"
     external_link: "Copy external link"
