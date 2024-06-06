@@ -4,9 +4,17 @@
     <p><%= t('default.session.retry.description') %></p>
 
     <%=
+    link_to t('default.session.retry.grant_storage_access_btn'),
+      room_launch_path(launch_nonce: @launch_nonce),
+      class: 'btn btn-secondary btn-session-retry'
+    %>
+
+    <p class="mt-4"><%= t('default.session.retry.open_new_window') %></p>
+
+    <%=
     link_to t('default.session.retry.launch_btn'), '#',
-     'data-launch': room_launch_path(launch_nonce: @launch_nonce),
-     target: '_blank', class: 'btn btn-secondary btn-retry'
+      'data-launch': room_launch_path(launch_nonce: @launch_nonce),
+      target: '_blank', class: 'btn btn-secondary btn-retry'
     %>
 
     <div id="retry-alternatives" class="text-muted">

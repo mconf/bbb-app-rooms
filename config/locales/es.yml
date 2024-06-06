@@ -119,8 +119,10 @@ es:
           a: "Utilice su navegador en modo normal (no anónimo)"
           b: "Compruebe si su navegador tiene habilitadas las cookies."
           c: "Deshabilite los plugins, especialmente los bloqueadores de anuncios."
-        description: "Esto suele ocurrir porque su navegador está bloqueando el acceso. Intente acceder en una nueva ventana usando el botón de abajo:"
+        description: "Esto suele ocurrir porque su navegador está bloqueando el acceso. Haga clic en el botón de abajo:"
+        grant_storage_access_btn: "Permitir acceso a cookies"
         launch_btn: "Abrir en nueva ventana"
+        open_new_window: "Si aún no puedes, intenta acceder en una nueva ventana usando el botón de abajo:"
         title: "No pudimos autenticar su acceso"
     formats:
       flatpickr:

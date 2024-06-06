@@ -150,8 +150,10 @@ en:
           a: "Use your browser in the normal mode (not anonymous)."
           b: "Verify if you have cookies enabled in your browser."
           c: "Disable plugins, especially ad-blockers."
-        description: "This usually happens because your browser is blocking access. Try to access in a new window using the button below:"
+        description: "This usually happens because your browser is blocking access. Click the button below:"
+        grant_storage_access_btn: "Allow access to cookies"
         launch_btn: "Open in a new window"
+        open_new_window: "If you still can't, try accessing it in a new window using the button below:"
         title: "It was not possible to authenticate your access"
     formats:
       flatpickr:
