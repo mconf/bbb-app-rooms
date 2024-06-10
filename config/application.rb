@@ -121,8 +121,8 @@ module BbbAppRooms
     config.meetings_per_page =
       ENV['MEETINGS_PER_PAGE'].blank? ? 25 : ENV['MEETINGS_PER_PAGE'].to_i
 
-    # Integration with Analytics
-    config.gta_id = ENV['MCONF_GTA_ID'] || ''
+    # Integration with Google Tag Manager
+    config.gtm_id = Mconf::Env.fetch('MCONF_GTM_ID', '')
 
     config.active_job.queue_adapter = :resque
 

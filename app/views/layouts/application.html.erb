@@ -11,7 +11,7 @@
     <%= stylesheet_link_tag "https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200", rel: "stylesheet", media: "all" %>
     <%= stylesheet_link_tag "https://fonts.googleapis.com/icon?family=Material+Icons", rel: "stylesheet", media: "all" %>
     <%= render 'layouts/theme', theme: app_theme %>
-    <%= render 'layouts/analytics' %>
+    <%= render 'layouts/gtm_head' if app_theme == 'elos' %>
     <%= render 'shared/rnp_chat' if app_theme == 'rnp' %>
   </head>
 
@@ -21,6 +21,7 @@
         data-action="<%= params[:action] %>"
         data-use-cable="<%= Rails.configuration.cable_enabled %>"
         class="<%= theme_class %>">
+    <%= render 'layouts/gtm_body' if app_theme == 'elos' %>
     <div class="container">
       <%= yield %>
     </div>
