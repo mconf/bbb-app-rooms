@@ -23,7 +23,6 @@ async function handleCookieAccess() {
         name: "storage-access",
       });
 
-
       console.debug(`storage-access permission.state = ${permission.state}`);
       if (permission.state === "granted") {
         // If so, you can just call requestStorageAccess() without a user interaction,
@@ -45,6 +44,8 @@ async function handleCookieAccess() {
             return true;
           } catch (err) {
             // If there is an error obtaining storage access.
+            // Either because the user denied it, or the browser denied the request due to lack
+            // of prior interaction with app-rooms in a top-level context
             console.warn(`Storage access was not granted: ${err}.`);
             $(this).text('Permissão negada. Por favor, redefina no navegador');
             return;
