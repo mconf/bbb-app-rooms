@@ -66,9 +66,18 @@
           </button>
           <%= render "shared/app_offcanvas", submit: true, room: @room, meeting: @scheduled_meeting %>
         </div>
+
         <div id="browser-join" class="<%= (can_join && device_type? != 'desktop') ? 'd-none' : '' %>" >
-          <div class="form-actions">
-            <%= submit_tag t('default.scheduled_meeting.external.join'), class: "btn btn-primary" %>
+          <div class="guest-logout">
+            <% if is_guest = @guest.present? %>
+              <div class="form-actions">
+                <%= link_to t('default.scheduled_meeting.external.guest_name_change'), guest_logout_room_scheduled_meeting_path, class: "btn-secondary" %>
+              </div>
+            <% end %>
+
+            <div class="form-actions">
+              <%= submit_tag t('default.scheduled_meeting.external.join'), class: "btn btn-primary" %>
+            </div>
           </div>
         </div>
 

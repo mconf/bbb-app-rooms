@@ -91,6 +91,7 @@ pt:
         ended:        "Esta sessão já encerrou."
         first_name:   "Primeiro nome"
         join:         "Entrar"
+        guest_name_change: "Trocar o nome"
         last_name:    "Sobrenome"
         not_started:  "Esta sessão ainda não começou"
         running:      "Começou há %{duration}"

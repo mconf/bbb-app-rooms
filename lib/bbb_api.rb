@@ -105,7 +105,7 @@ module BbbApi
     { can_join?: true, join_api_url: join_api_url }
   end
 
-  def external_join_api_url(scheduled_meeting, full_name)
+  def external_join_api_url(scheduled_meeting, full_name, uid)
     return unless scheduled_meeting.present? && full_name.present?
 
     room = scheduled_meeting.room
@@ -117,6 +117,7 @@ module BbbApi
       room.attributes['viewer'],
       { guest: true,
         'userdata-bbb_override_default_locale': locale,
+        userID: uid
       }
     )
 

@@ -442,6 +442,19 @@ body.theme-rnp {
   }
 
   #external-join {
+    .guest-logout {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      @media (max-width: 768px) {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column-reverse;
+        align-content: center;
+      }
+    }
+
     .meeting-date {
       margin-bottom: blocks(6);
     }
