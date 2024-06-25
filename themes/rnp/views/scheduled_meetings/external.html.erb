@@ -61,15 +61,22 @@
 
         <% can_join = (@user.present? && !(wait_for_mod?(@scheduled_meeting, @user) && !mod_in_room?(@scheduled_meeting))) || (!@user.present? && mod_in_room?(@scheduled_meeting)) %>
         <div id="open-modal" class="<%= (can_join && device_type? != 'desktop') ? '' : 'd-none' %>" >
-          <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
-            <%= t('default.scheduled_meeting.external.join') %>
-          </button>
+          <div class="guest-logout">
+            <% if @guest.present? %>
+              <div class="form-actions">
+                <%= link_to t('default.scheduled_meeting.external.guest_name_change'), guest_logout_room_scheduled_meeting_path, class: "btn-secondary" %>
+              </div>
+            <% end %>
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+              <%= t('default.scheduled_meeting.external.join') %>
+            </button>
+          </div>
           <%= render "shared/app_offcanvas", submit: true, room: @room, meeting: @scheduled_meeting %>
         </div>
 
         <div id="browser-join" class="<%= (can_join && device_type? != 'desktop') ? 'd-none' : '' %>" >
           <div class="guest-logout">
-            <% if is_guest = @guest.present? %>
+            <% if @guest.present? %>
               <div class="form-actions">
                 <%= link_to t('default.scheduled_meeting.external.guest_name_change'), guest_logout_room_scheduled_meeting_path, class: "btn-secondary" %>
               </div>
