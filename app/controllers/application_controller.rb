@@ -102,6 +102,28 @@ class ApplicationController < ActionController::Base
     @app_launch = AppLaunch.find_by(nonce: room_session['launch']) if room_session.present?
   end
 
+  # Validates a `session_token`, if it is present as a param, and restores the associated session
+  def validate_session_token_and_restore_session
+    return unless params[:session_token]
+
+    if Rails.cache.exist?("session_token/#{params[:session_token]}")
+      launch_nonce = Rails.cache.read("session_token/#{params[:session_token]}")
+      # restore the session
+      set_room_session(@room, { launch: launch_nonce })
+      Rails.logger.info "Successfully restored session nonce=#{launch_nonce} " \
+      "with session_token=#{params[:session_token]}"
+      # Invalidate the session_token after use
+      Rails.cache.delete("session_token/#{params[:session_token]}")
+
+    # exit with error if the session_token is invalid
+    else
+      Rails.logger.info 'The session_token was not found, returning a 401'
+      set_error('session_token', 'token_not_found', 401)
+      respond_with_error(@error)
+      return
+    end
+  end
+
   def authorize_user!(action, resource)
     redirect_to errors_path(401) unless Abilities.can?(@user, action, resource)
   end

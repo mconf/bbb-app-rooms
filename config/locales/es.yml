@@ -246,6 +246,12 @@ es:
         suggestion:  "No se encontró la programación"
         explanation: "Es posible que el creador de la sesión lo haya eliminado."
         status_code: "404"
+    session_token:
+      token_not_found:
+        message: "No autorizado"
+        suggestion: "Token de sesión inválido"
+        explanation: "El token de sesión proporcionado no es válido. Intente acceder al enlace nuevamente."
+        status_code: "401"
     meeting:
       learning_dashboard_url_missing: "Error: URL del panel de aprendizaje no está configurada"
   bucket_api:
