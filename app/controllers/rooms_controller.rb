@@ -435,6 +435,7 @@ class RoomsController < ApplicationController
       @current_group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
       moodle_groups = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")
       all_groups_hash = moodle_groups.to_h[:all_groups]
+      user_groups_hash = moodle_groups[:user_groups]
       if @current_group_id.nil? || moodle_groups.nil? || all_groups_hash.nil?
         Rails.logger.error "[nonce: #{@app_launch.nonce}] Error fetching Moodle groups from cache " \
         "(current_group_id: #{@current_group_id}, moodle_groups: #{moodle_groups})"
@@ -443,8 +444,7 @@ class RoomsController < ApplicationController
         return
       end
 
-      if @user.moderator?(Abilities.moderator_roles)
-        user_groups_hash = moodle_groups[:user_groups]
+      if @user.moderator?(Abilities.moderator_roles) && @room.show_all_groups?
         if user_groups_hash.nil?
           Rails.logger.error "[nonce: #{@app_launch.nonce}] Error fetching user_groups from cache " \
           "(current_group_id: #{@current_group_id}, moodle_groups: #{moodle_groups})"
@@ -459,7 +459,7 @@ class RoomsController < ApplicationController
         end
         @group_select = {"Grupos que participo": user_groups_hash.invert, "Outros grupos": other_groups.invert}
       else
-        @group_select = all_groups_hash.invert
+        @group_select = user_groups_hash.invert
       end
 
       @current_group_name = all_groups_hash[@current_group_id]

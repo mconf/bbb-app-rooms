@@ -39,6 +39,10 @@ class Room < ApplicationRecord
     moodle_token&.group_select_enabled?
   end
 
+  def show_all_groups?
+    moodle_token&.show_all_groups
+  end
+
   def default_values
     self.handler ||= Digest::SHA1.hexdigest(SecureRandom.uuid)
     self.moderator = random_password(8) if moderator.blank?
