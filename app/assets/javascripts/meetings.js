@@ -236,7 +236,7 @@ window.addEventListener('message', function(event) {
     $.ajax({
       url: room_path + '/recording/' + event.data['record_id'] + '/' + event.data['service_name'],
       type: "POST",
-      data: { access_token: event.data['access_token'], expires_at: event.data['expires_at'],  }
+      data: { access_token: event.data['access_token'], refresh_token: event.data['refresh_token'], expires_at: event.data['expires_at']  }
     });
   }
 });
