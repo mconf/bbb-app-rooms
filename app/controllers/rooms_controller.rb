@@ -181,9 +181,21 @@ class RoomsController < ApplicationController
   # GET	/rooms/:id/recording/:record_id/filesender
   def filesender
     filesender_token = FilesenderToken.find_by(user_uid: @user.uid)
-    if filesender_token.nil? || filesender_token.expires_at < Time.now + 5
+    if filesender_token.nil?
       flash[:notice] = t('default.eduplay.error')
       redirect_to(meetings_room_path(@room)) and return
+    end
+
+    if filesender_token.expires_at.nil? || filesender_token.expires_at < Time.now
+      new_token = Filesender::API.refresh_token(filesender_token.refresh_token)
+
+      if new_token['error'].present?
+        flash[:notice] = t('default.eduplay.error')
+        redirect_to(meetings_room_path(@room)) and return
+      end
+
+      filesender_token.update(token: new_token['access_token'], refresh_token: new_token['refresh_token'],
+                              expires_at: Time.now - 24.hours + new_token['expires_in'].to_i)
     end
 
     recording = get_recordings(@room, recordID: params[:record_id]).first
@@ -209,9 +221,10 @@ class RoomsController < ApplicationController
     old_filesender_token = FilesenderToken.find_by(user_uid: @user.uid)
     if params['access_token'].present?
       if old_filesender_token.nil?
-        FilesenderToken.create!(user_uid: @user.uid, token: params['access_token'], expires_at: params['expires_at'])
+        FilesenderToken.create!(user_uid: @user.uid, token: params['access_token'],
+                                refresh_token: params['refresh_token'], expires_at: params['expires_at'])
       else
-        old_filesender_token.update(token: params['access_token'], expires_at: params['expires_at'])
+        old_filesender_token.update(token: params['access_token'], refresh_token: params['refresh_token'], expires_at: params['expires_at'])
       end
     else
       if old_filesender_token.nil?
