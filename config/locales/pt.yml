@@ -246,6 +246,13 @@ pt:
         suggestion: "O agendamento não foi encontrado."
         explanation: "Ele pode ter sido removido pelo criador da sessão."
         status_code: "404"
+    session_token:
+      token_not_found:
+        message: "Não autorizado"
+        suggestion: "Token de sessão inválido"
+        explanation: "O token de sessão informado não é válido. Tente acessar o link novamente."
+        status_code: "401"
+      request_failed: "Falha na criação do token de sessão. Por favor recarregue a página"
     meeting:
       learning_dashboard_url_missing: "Erro: URL do painel de aprendizagem não configurada"
   bucket_api:

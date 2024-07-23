@@ -15,6 +15,7 @@ class ScheduledMeetingsController < ApplicationController
   # validate the room/session only for routes that are not open
   before_action :find_room
   before_action :validate_room, except: open_actions
+  before_action :validate_session_token_and_restore_session, only: :join
   before_action :find_user
   before_action :find_app_launch, only: %i[create update destroy]
 

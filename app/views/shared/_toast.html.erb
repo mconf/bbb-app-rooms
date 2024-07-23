@@ -1,0 +1,10 @@
+<%# expected partial variables: [toast_id, text] %>
+
+<div id="<%= toast_id %>" aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center toast-area">
+  <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="40000">
+    <div class="toast-header">
+      <%= text %>
+      <button type="button" class="ms-2 my-1 btn-close" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>

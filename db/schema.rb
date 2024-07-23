@@ -96,6 +96,7 @@ ActiveRecord::Schema.define(version: 2024_07_19_181154) do
     t.datetime "expires_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.text "refresh_token"
   end
 
   create_table "moodle_tokens", force: :cascade do |t|
