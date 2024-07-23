@@ -444,7 +444,7 @@ class RoomsController < ApplicationController
         return
       end
 
-      if @user.moderator?(Abilities.moderator_roles) && @room.show_all_groups?
+      if @user.moderator?(Abilities.moderator_roles) && @room.show_all_moodle_groups?
         if user_groups_hash.nil?
           Rails.logger.error "[nonce: #{@app_launch.nonce}] Error fetching user_groups from cache " \
           "(current_group_id: #{@current_group_id}, moodle_groups: #{moodle_groups})"

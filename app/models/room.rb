@@ -39,7 +39,7 @@ class Room < ApplicationRecord
     moodle_token&.group_select_enabled?
   end
 
-  def show_all_groups?
+  def show_all_moodle_groups?
     moodle_token&.show_all_groups
   end
 
