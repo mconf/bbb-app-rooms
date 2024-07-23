@@ -384,8 +384,14 @@ class RoomsController < ApplicationController
 
       user_groups = Moodle::API.get_user_groups(moodle_token, @user.uid, @app_launch.context_id, {nonce: @app_launch.nonce})
 
-      # moderators see all course groups
-      if @user.moderator?(Abilities.moderator_roles)
+      # Example of the final hash stored in the cache for a user that belongs to groups 1 and 2,
+      # from a course that has groups 1, 2 and 3
+      # moderator, show_all_groups=true   {all_groups: {1: 'abc', 2: 'def', 3: 'ghi'}, user_groups: {1: 'abc', 2: 'def'}}
+      # moderator, show_all_groups=false 	{all_groups: {1: 'abc', 2: 'def'}}
+      # student		 	                      {all_groups: {1: 'abc', 2: 'def'}}
+      #
+      # moderators may need to see all groups, depending on the moodle_token's `show_all_groups` flag
+      if @user.moderator?(Abilities.moderator_roles) && @room.show_all_moodle_groups?
         # Gets all course groups except the default 'All Participants' group (id 0);
         all_groups = Moodle::API.get_course_groups(moodle_token, @app_launch.context_id, {nonce: @app_launch.nonce})
                     .delete_if{ |element| element['id'] == "0" }
@@ -448,6 +454,7 @@ class RoomsController < ApplicationController
       @current_group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
       moodle_groups = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")
       all_groups_hash = moodle_groups.to_h[:all_groups]
+      # check for errors fetching from cache
       if @current_group_id.nil? || moodle_groups.nil? || all_groups_hash.nil?
         Rails.logger.error "[nonce: #{@app_launch.nonce}] Error fetching Moodle groups from cache " \
         "(current_group_id: #{@current_group_id}, moodle_groups: #{moodle_groups})"
@@ -456,8 +463,9 @@ class RoomsController < ApplicationController
         return
       end
 
-      if @user.moderator?(Abilities.moderator_roles)
+      if @user.moderator?(Abilities.moderator_roles) && @room.show_all_moodle_groups?
         user_groups_hash = moodle_groups[:user_groups]
+        # check for errors fetching from cache
         if user_groups_hash.nil?
           Rails.logger.error "[nonce: #{@app_launch.nonce}] Error fetching user_groups from cache " \
           "(current_group_id: #{@current_group_id}, moodle_groups: #{moodle_groups})"
