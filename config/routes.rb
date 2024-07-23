@@ -43,6 +43,7 @@ Rails.application.routes.draw do
         # Handles sessions.
         get '/sessions/create'
         get '/sessions/failure'
+        get '/sessions/create_session_token', as: :create_session_token
 
         # Handles Omniauth authentication.
         post '/auth/:provider', to: 'sessions#new', as: :omniauth_authorize

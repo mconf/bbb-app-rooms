@@ -62,6 +62,42 @@ $(document).on('turbolinks:load', function(){
     return true;
   });
 
+  // Links that open in a new tab need a session token to access the
+  // user session in an external context, where the Rails cookie cannot be used.
+  // Makes an AJAX request to obtain a session token, and then opens a new window
+  // with the URL that includes the session token as a query parameter
+  $(".create-session-token").on('click.sessionToken', function(e) {
+    e.preventDefault();
+
+    let url;
+    try {
+      url = new URL($(this).attr('href'));
+    } catch (error) {
+      console.error('Invalid URL:', error);
+      return;
+    }
+    const sessionTokenUrl = $('body').data('session-token-url');
+    // e.g. ['', 'rooms', '883a883477bd260c46d7d87a1553204f1d7a620c']
+    const roomId = window.location.pathname.split('/')[2];
+    if (!sessionTokenUrl || !roomId) {
+      console.error('Missing required data attributes for create-session-token AJAX call.');
+      return;
+    }
+
+    const params = { room_id: roomId };
+    $.getJSON(sessionTokenUrl, params)
+      .done(function(data) {
+        url.searchParams.set('session_token', data.token);
+        window.open(url);
+      })
+      .fail(function(jqXHR) {
+        $toast = $('.toast', '#session-token-req-failed-toast');
+        $toast.toast('dispose');
+        $toast.toast('show');
+        console.warn('Request to create session_token failed:', jqXHR.responseText);
+      });
+  });
+
   // When the #meetings-filters radio input changes, adds or removes a class to
   // #meetings-table, which will hide or show meetings depending on the filter.
   // Also adds the filter to the current URL, so it can be kept between page reloads.
