@@ -252,6 +252,7 @@ es:
         suggestion: "Token de sesión inválido"
         explanation: "El token de sesión proporcionado no es válido. Intente acceder al enlace nuevamente."
         status_code: "401"
+      request_failed: "No se ha podido crear el token de sesión. Vuelva a cargar la página"
     meeting:
       learning_dashboard_url_missing: "Error: URL del panel de aprendizaje no está configurada"
   bucket_api:

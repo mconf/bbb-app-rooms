@@ -92,6 +92,9 @@ $(document).on('turbolinks:load', function(){
         window.open(url);
       })
       .fail(function(jqXHR) {
+        $toast = $('.toast', '#session-token-req-failed-toast');
+        $toast.toast('dispose');
+        $toast.toast('show');
         console.warn('Request to create session_token failed:', jqXHR.responseText);
       });
   });

@@ -285,6 +285,7 @@ en:
         suggestion: "Invalid session token"
         explanation: "The provided session token is not valid. Please try accessing the link again."
         status_code: "401"
+      request_failed: "Failed to create the session token. Please reload the page"
     meeting:
       learning_dashboard_url_missing: "Error: Learning dashboard URL not configured"
   bucket_api:
