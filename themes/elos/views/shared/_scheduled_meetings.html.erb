@@ -73,11 +73,4 @@
   <%= render "shared/external_widget" %>
 <% end %>
 
-<div id="external-link-copied-toast" aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center toast-area">
-  <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="40000">
-    <div class="toast-header">
-      <%= t('_all.clipboard.link_copied') %>
-      <button type="button" class="ms-2 my-1 btn-close" data-bs-dismiss="toast"></button>
-    </div>
-  </div>
-</div>
+<%= render "shared/toast", {toast_id: 'external-link-copied-toast', text: t('_all.clipboard.link_copied')} %>
