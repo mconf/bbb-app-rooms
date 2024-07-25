@@ -125,7 +125,21 @@ class ApplicationController < ActionController::Base
   end
 
   def authorize_user!(action, resource)
-    redirect_to errors_path(401) unless Abilities.can?(@user, action, resource)
+    if @user.nil?
+      Rails.logger.info "No @user found to authorize action '#{action}' " \
+      "on resource '#{resource.class.name}', returning a 401"
+      set_error('http', '_401', 401)
+      respond_with_error(@error)
+      return
+    end
+
+    unless Abilities.can?(@user, action, resource)
+      Rails.logger.info "User #{@user.email} is not authorized to perform " \
+      "action '#{action}' on resource '#{resource.class.name}', returning a 401"
+      set_error('http', '_401', 401)
+      respond_with_error(@error)
+      return
+    end
   end
 
   def find_room
@@ -244,6 +258,7 @@ class ApplicationController < ActionController::Base
   def render_error(status)
     model = 'generic'
     @error = {
+      internal_key: t("error.#{model}.#{status}.code"),
       key: t("error.#{model}.#{status}.code"),
       message: t("error.#{model}.#{status}.message"),
       suggestion: t("error.#{model}.#{status}.suggestion"),

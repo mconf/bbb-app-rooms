@@ -15,11 +15,21 @@ module MeetingsHelper
     meeting[:room] = room
     if self.bucket_configured? && self.has_required_info_for_bucket?(meeting)
       file = self.filename_for_datafile(file_type)
-      return false if file.nil?
+      if file.nil?
+        Rails.logger.warn "[meetings_helper] Invalid file type '#{file_type}'"
+        return false
+      end
 
       key = Mconf::BucketApi.gen_key(meeting, file)
+
+      Rails.logger.info "[meetings_helper] meeting=#{meeting.except(:room)}, " \
+      "room_handler=#{room&.handler}, key=#{key}"
+
       Mconf::BucketApi.file_exists?(meeting, key)
     else
+      Rails.logger.warn '[meetings_helper] The bucket is configured but some ' \
+      'required info is missing' if self.bucket_configured?
+
       false
     end
   end
