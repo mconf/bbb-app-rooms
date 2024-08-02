@@ -74,10 +74,10 @@ module Mconf
 
     end
 
-    def self.list_objects()
+    def self.list_objects(prefix = '')
       ret = client.list_objects_v2(
         bucket: Rails.application.config.meetings_bucket_name,
-        prefix: ''
+        prefix: prefix
       )
       ret.contents.each do |r|
         puts r
