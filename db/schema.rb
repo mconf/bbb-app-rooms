@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_05_10_113330) do
+ActiveRecord::Schema.define(version: 2024_07_19_181154) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -96,6 +96,7 @@ ActiveRecord::Schema.define(version: 2024_05_10_113330) do
     t.datetime "expires_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.text "refresh_token"
   end
 
   create_table "moodle_tokens", force: :cascade do |t|
@@ -105,6 +106,7 @@ ActiveRecord::Schema.define(version: 2024_05_10_113330) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "group_select_enabled", default: false
+    t.boolean "show_all_groups", default: true
     t.index ["consumer_config_id"], name: "index_moodle_tokens_on_consumer_config_id"
   end
 

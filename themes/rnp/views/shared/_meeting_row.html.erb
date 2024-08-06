@@ -198,7 +198,7 @@
               <%# Filesender %>
               <% if user.moderator?(Abilities.moderator_roles) && Rails.application.config.filesender_enabled %>
                 <% filesender_token = FilesenderToken.find_by(user_uid: user.uid)%>
-                <% if filesender_token.present? && filesender_token.expires_at > Time.now + 30.minutes %>
+                <% if filesender_token.present? %>
                   <%= link_to filesender_path(room, record_id: recording[:recordID]),
                   method: :get,
                   class:"dropdown-item" do %>

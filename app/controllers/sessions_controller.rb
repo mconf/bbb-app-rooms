@@ -6,6 +6,10 @@ class SessionsController < ApplicationController
   include ApplicationHelper
   include BbbApi
 
+  before_action :find_room, only: %i[create_session_token]
+  before_action :validate_room, only: %i[create_session_token]
+  before_action :find_app_launch, only: %i[create_session_token]
+
   def new; end
 
   def create
@@ -42,6 +46,24 @@ class SessionsController < ApplicationController
         )
       )
     end
+  end
+
+  # Generates a single-use token to retrieve the user session (`app_launch`) in external contexts
+  # (e.g., joining a meeting in a new tab) where the original cookie can no longer be accessed.
+  # Responds with JSON
+  def create_session_token
+    # exit with error if app_launch is not present
+    if @app_launch.blank?
+      Rails.logger.info "The session is not valid, returning a 403"
+      set_error('room', 'forbidden', :forbidden)
+      respond_with_error(@error)
+      return
+    end
+
+    nonce = SecureRandom.hex(16)
+    Rails.cache.write("session_token/#{nonce}", @app_launch.nonce, expires_in: 2.minutes)
+
+    render json: { token: nonce }
   end
 
   def failure

@@ -30,7 +30,7 @@
       <% end %>
     <% else %>
       <%=
-        link_to join_room_scheduled_meeting_path(room, meeting, no_auto_join: true), class: "btn btn-primary join-room-btn", target: '_blank' do
+        link_to join_room_scheduled_meeting_url(room, meeting, no_auto_join: true), class: "btn btn-primary join-room-btn create-session-token", target: '_blank' do
       %>
         <i class="icon material-icons">play_arrow</i>
       <% end %>

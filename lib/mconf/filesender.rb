@@ -49,7 +49,7 @@ module Filesender
       }.to_query
 
       authorize_url = "#{Rails.application.config.filesender_service_url}/oauth/authorize"
-     
+
       "#{authorize_url}?#{query}"
     end
 
@@ -66,6 +66,23 @@ module Filesender
         client_secret: Rails.application.config.filesender_client_secret,
         redirect_uri: Rails.application.config.filesender_redirect_callback,
         code: code
+      }, {'Content-Type': 'application/x-www-form-urlencoded'})
+
+      JSON.parse(response.body)
+    end
+
+    # Take the refresh token to get new access token
+    def self.refresh_token(refresh_token)
+      Rails.logger.info("[GET_ACCESS_TOKEN] pass")
+      token_url = "#{Rails.application.config.filesender_service_url}/oauth/token"
+
+      ssl_verifying = ENV['OAUTH_CLIENT_SSL_VERIFYING'] == '1'
+
+      response = Faraday.post(token_url, {
+        grant_type: 'refresh_token',
+        client_id: Rails.application.config.filesender_client_id,
+        client_secret: Rails.application.config.filesender_client_secret,
+        refresh_token: refresh_token
       }, {'Content-Type': 'application/x-www-form-urlencoded'})
 
       JSON.parse(response.body)

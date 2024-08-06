@@ -181,9 +181,21 @@ class RoomsController < ApplicationController
   # GET	/rooms/:id/recording/:record_id/filesender
   def filesender
     filesender_token = FilesenderToken.find_by(user_uid: @user.uid)
-    if filesender_token.nil? || filesender_token.expires_at < Time.now + 5
+    if filesender_token.nil?
       flash[:notice] = t('default.eduplay.error')
       redirect_to(meetings_room_path(@room)) and return
+    end
+
+    if filesender_token.expires_at.nil? || filesender_token.expires_at < Time.now
+      new_token = Filesender::API.refresh_token(filesender_token.refresh_token)
+
+      if new_token['error'].present?
+        flash[:notice] = t('default.eduplay.error')
+        redirect_to(meetings_room_path(@room)) and return
+      end
+
+      filesender_token.update(token: new_token['access_token'], refresh_token: new_token['refresh_token'],
+                              expires_at: Time.now - 24.hours + new_token['expires_in'].to_i)
     end
 
     recording = get_recordings(@room, recordID: params[:record_id]).first
@@ -209,9 +221,10 @@ class RoomsController < ApplicationController
     old_filesender_token = FilesenderToken.find_by(user_uid: @user.uid)
     if params['access_token'].present?
       if old_filesender_token.nil?
-        FilesenderToken.create!(user_uid: @user.uid, token: params['access_token'], expires_at: params['expires_at'])
+        FilesenderToken.create!(user_uid: @user.uid, token: params['access_token'],
+                                refresh_token: params['refresh_token'], expires_at: params['expires_at'])
       else
-        old_filesender_token.update(token: params['access_token'], expires_at: params['expires_at'])
+        old_filesender_token.update(token: params['access_token'], refresh_token: params['refresh_token'], expires_at: params['expires_at'])
       end
     else
       if old_filesender_token.nil?
@@ -371,8 +384,14 @@ class RoomsController < ApplicationController
 
       user_groups = Moodle::API.get_user_groups(moodle_token, @user.uid, @app_launch.context_id, {nonce: @app_launch.nonce})
 
-      # moderators see all course groups
-      if @user.moderator?(Abilities.moderator_roles)
+      # Example of the final hash stored in the cache for a user that belongs to groups 1 and 2,
+      # from a course that has groups 1, 2 and 3
+      # moderator, show_all_groups=true   {all_groups: {1: 'abc', 2: 'def', 3: 'ghi'}, user_groups: {1: 'abc', 2: 'def'}}
+      # moderator, show_all_groups=false 	{all_groups: {1: 'abc', 2: 'def'}}
+      # student		 	                      {all_groups: {1: 'abc', 2: 'def'}}
+      #
+      # moderators may need to see all groups, depending on the moodle_token's `show_all_groups` flag
+      if @user.moderator?(Abilities.moderator_roles) && @room.show_all_moodle_groups?
         # Gets all course groups except the default 'All Participants' group (id 0);
         all_groups = Moodle::API.get_course_groups(moodle_token, @app_launch.context_id, {nonce: @app_launch.nonce})
                     .delete_if{ |element| element['id'] == "0" }
@@ -435,6 +454,7 @@ class RoomsController < ApplicationController
       @current_group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
       moodle_groups = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")
       all_groups_hash = moodle_groups.to_h[:all_groups]
+      # check for errors fetching from cache
       if @current_group_id.nil? || moodle_groups.nil? || all_groups_hash.nil?
         Rails.logger.error "[nonce: #{@app_launch.nonce}] Error fetching Moodle groups from cache " \
         "(current_group_id: #{@current_group_id}, moodle_groups: #{moodle_groups})"
@@ -443,8 +463,9 @@ class RoomsController < ApplicationController
         return
       end
 
-      if @user.moderator?(Abilities.moderator_roles)
+      if @user.moderator?(Abilities.moderator_roles) && @room.show_all_moodle_groups?
         user_groups_hash = moodle_groups[:user_groups]
+        # check for errors fetching from cache
         if user_groups_hash.nil?
           Rails.logger.error "[nonce: #{@app_launch.nonce}] Error fetching user_groups from cache " \
           "(current_group_id: #{@current_group_id}, moodle_groups: #{moodle_groups})"
