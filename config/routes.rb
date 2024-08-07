@@ -93,6 +93,7 @@ Rails.application.routes.draw do
             get :send_create_calendar_event, to: 'brightspace#send_create_calendar_event'
             get :send_update_calendar_event, to: 'brightspace#send_update_calendar_event'
             get :send_delete_calendar_event, to: 'brightspace#send_delete_calendar_event'
+            get :guest_logout, to: 'guest_logout'
           end
 
           resources :meetings, as: :internal, only: [] do

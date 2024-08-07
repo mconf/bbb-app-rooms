@@ -8,9 +8,10 @@ class ScheduledMeetingsController < ApplicationController
   include ApplicationHelper
   include BbbApi
   include BbbAppRooms
+  include GuestUserModule
 
   # actions that can be accessed without a session, without the LTI launch
-  open_actions = %i[external wait join running updateMeetingData]
+  open_actions = %i[external wait join running updateMeetingData guest_logout]
 
   # validate the room/session only for routes that are not open
   before_action :find_room
@@ -249,6 +250,12 @@ class ScheduledMeetingsController < ApplicationController
         return
       end
 
+      unless guest_user_signed_in?
+        sign_in_guest(params[:first_name], params[:last_name], Time.now + 8.hours)
+      end
+
+      current_guest_user
+
       if !mod_in_room?(@scheduled_meeting)
         redirect_to wait_room_scheduled_meeting_path(
                       @room, @scheduled_meeting,
@@ -257,7 +264,7 @@ class ScheduledMeetingsController < ApplicationController
       else
         # join as guest
         name = "#{params[:first_name]} #{params[:last_name]}"
-        res = external_join_api_url(@scheduled_meeting, name)
+        res = external_join_api_url(@scheduled_meeting, name, @guest[:uid])
         if res[:can_join?]
           if params[:join_in_app] == 'true'
             direct_join_url = 'br.rnp.conferenciawebmobile://direct-join/' + res[:join_api_url].gsub(/^https?:\/\//, '') + "&meetingName=#{@scheduled_meeting.name}"
@@ -319,6 +326,11 @@ class ScheduledMeetingsController < ApplicationController
       @last_name = @user.last_name
     end
 
+    if current_guest_user.present?
+      @first_name=@guest[:first_name]
+      @last_name=@guest[:last_name]
+    end
+
     @scheduled_meeting.update_to_next_recurring_date
 
     @is_running = mod_in_room?(@scheduled_meeting)
@@ -371,6 +383,11 @@ class ScheduledMeetingsController < ApplicationController
       end
     end
     @scheduled_meeting.destroy
+  end
+
+  def guest_logout
+    logout_guest
+    redirect_to external_room_scheduled_meeting_path(@room, @scheduled_meeting)
   end
 
   private

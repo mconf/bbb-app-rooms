@@ -122,6 +122,7 @@ en:
         ended:        "This session has already ended."
         first_name:   "First name"
         join:         "Join"
+        guest_name_change: "Change name"
         last_name:    "Last name"
         running:      "Started %{duration} ago"
         not_started:  "This session has not started yet"
