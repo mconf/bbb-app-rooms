@@ -59,8 +59,11 @@
           <%= label_tag :terms, t("terms.message", enter_room: t("default.scheduled_meeting.external.join"), link: ext_elos_link(:terms)).html_safe, class: "message-terms" %>
         <% end %>
 
-        <div class="form-actions">
-          <%= submit_tag t('default.scheduled_meeting.external.join'), class: "btn btn-secondary" %>
+        <div class="form-actions d-flex justify-content-between align-items-center flex-column-reverse flex-sm-row">
+          <% if @guest.present? %>
+              <%= link_to t('default.scheduled_meeting.external.guest_name_change'), guest_logout_room_scheduled_meeting_path, class: "mt-4 mt-sm-0" %>
+          <% end %>
+          <%= submit_tag t('default.scheduled_meeting.external.join'), class: "btn btn-secondary ms-auto" %>
         </div>
 
         <% unless @disclaimer.blank? %>
