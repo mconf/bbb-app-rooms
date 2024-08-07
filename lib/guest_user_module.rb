@@ -28,6 +28,7 @@ module GuestUserModule
 
   def sign_in_guest(first_name, last_name, expires=nil)
     expires ||= Time.now + COOKIE_DURATION
+    Rails.logger.info("Creating cookie for guest '#{first_name} #{last_name}'")
     cookies.encrypted[GuestUserModule::COOKIE_KEY] = {
       value: {
         uid: SecureRandom.uuid.gsub(/\D+/,"").first(7).to_i,
