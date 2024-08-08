@@ -299,8 +299,9 @@ let showDropdownItems = (buttons, meeting_id) => {
   // Remove only the items appended previously
   $(`div[aria-labelledby="dropdown-opts-${meeting_id}"] .appended-item`).remove();
 
+  // these buttons open in a new tab, so they must include a session token
   for (let button of buttons) {
-    $(button).addClass('appended-item rec-edit');
+    $(button).addClass('appended-item rec-edit create-session-token');
     $(button).attr("target", "_blank");
     $(`div[aria-labelledby="dropdown-opts-${meeting_id}"]`).append(button);
   }

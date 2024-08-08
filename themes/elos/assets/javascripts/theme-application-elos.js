@@ -65,13 +65,20 @@ $(document).on('turbolinks:load', function(){
   // Links that open in a new tab need a session token to access the
   // user session in an external context, where the Rails cookie cannot be used.
   // Makes an AJAX request to obtain a session token, and then opens a new window
-  // with the URL that includes the session token as a query parameter
-  $(".create-session-token").on('click.sessionToken', function(e) {
+  // with the URL that includes the session token as a query parameter.
+  // Delegates the event listener to body and check if the click target has the expected class,
+  // to listen even for dinamically created elements
+  $('body').on('click', '.create-session-token', function(e) {
     e.preventDefault();
 
+    const elem = $(this);
     let url;
     try {
-      url = new URL($(this).attr('href'));
+      if (elem.is('a')) {
+        url = new URL(elem.attr('href'), window.location.origin);
+      } else if (elem.is('form')) {
+        url = new URL(elem.attr('action'), window.location.origin);
+      }
     } catch (error) {
       console.error('Invalid URL:', error);
       return;
