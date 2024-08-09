@@ -251,7 +251,7 @@ class RoomsController < ApplicationController
 
       groups_ids_list = moodle_groups[:all_groups].keys
       if groups_ids_list.include?(params[:group_id].to_i)
-        Rails.cache.write("#{@app_launch.nonce}/current_group_id", params[:group_id].to_i, expires_in: 7.days)
+        Rails.cache.write("#{@app_launch.nonce}/current_group_id", params[:group_id].to_i)
       else
         Rails.logger.warn "User #{@user.uid} tried to set an invalid group id: #{params[:group_id]}"
         flash[:error] = t('default.room.error.invalid_group')
@@ -414,8 +414,7 @@ class RoomsController < ApplicationController
 
         Rails.cache.write("#{@app_launch.nonce}/moodle_groups",
           all_groups: all_groups_hash,
-          user_groups: user_groups_hash,
-          expires_in: 7.days
+          user_groups: user_groups_hash
         )
       else
         # non-moderators only see groups they belong to
@@ -429,10 +428,10 @@ class RoomsController < ApplicationController
           return
         end
 
-        Rails.cache.write("#{@app_launch.nonce}/moodle_groups", all_groups: user_groups_hash, expires_in: 7.days)
+        Rails.cache.write("#{@app_launch.nonce}/moodle_groups", all_groups: user_groups_hash)
       end
 
-      Rails.cache.write("#{@app_launch.nonce}/current_group_id", current_group_id, expires_in: 7.days)
+      Rails.cache.write("#{@app_launch.nonce}/current_group_id", current_group_id)
     end
   rescue Moodle::UrlNotFoundError => e
     set_error('room', 'moodle_url_not_found', 500)
