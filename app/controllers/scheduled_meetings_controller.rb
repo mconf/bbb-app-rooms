@@ -24,7 +24,7 @@ class ScheduledMeetingsController < ApplicationController
   before_action :validate_scheduled_meeting, only: (%i[edit update destroy] + open_actions)
 
   before_action only: %i[join external wait] do
-    authorize_user!(:show, @scheduled_meeting)
+    authorize_user!(:show, @scheduled_meeting) if @user.present?
   end
   before_action only: %i[new create edit update destroy] do
     authorize_user!(:edit, @room)

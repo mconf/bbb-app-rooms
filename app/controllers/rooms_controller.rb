@@ -23,7 +23,7 @@ class RoomsController < ApplicationController
   before_action :setup_moodle_groups, only: %i[launch]
   before_action :set_group_variables, only: %i[show meetings]
 
-  before_action only: %i[show launch close] do
+  before_action only: %i[show launch] do
     authorize_user!(:show, @room)
   end
   before_action only: %i[edit update recording_publish recording_unpublish
