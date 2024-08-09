@@ -117,11 +117,10 @@ es:
       retry:
         alternatives:
           title: "Si desea probar otras alternativas, puede:"
-          a: "Utilice su navegador en modo normal (no anónimo)"
-          b: "Compruebe si su navegador tiene habilitadas las cookies."
-          c: "Deshabilite los plugins, especialmente los bloqueadores de anuncios."
-        description: "Esto suele ocurrir porque su navegador está bloqueando el acceso. Intente acceder en una nueva ventana usando el botón de abajo:"
-        launch_btn: "Abrir en nueva ventana"
+          a: "Limpiar las cookies."
+          b: "Vuelva a iniciar sesión en el LMS."
+          c: "Póngase en contacto con el soporte."
+        description: "Error al intentar acceder a la sesión, por favor recarga la página."
         title: "No pudimos autenticar su acceso"
     formats:
       flatpickr:

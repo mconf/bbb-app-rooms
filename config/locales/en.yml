@@ -148,11 +148,10 @@ en:
       retry:
         alternatives:
           title: "If you want to try alternatives, you can:"
-          a: "Use your browser in the normal mode (not anonymous)."
-          b: "Verify if you have cookies enabled in your browser."
-          c: "Disable plugins, especially ad-blockers."
-        description: "This usually happens because your browser is blocking access. Try to access in a new window using the button below:"
-        launch_btn: "Open in a new window"
+          a: "Reset your cookies."
+          b: "Log in to the LMS again."
+          c: "Contact our support."
+        description: "Error trying to access the session, please reload the page."
         title: "It was not possible to authenticate your access"
     formats:
       flatpickr:
