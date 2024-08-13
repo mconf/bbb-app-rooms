@@ -5,7 +5,8 @@
 attrs = {
   key: '_app_rooms_session',
   secure: ENV['COOKIES_SECURE_OFF'].blank?,
-  same_site: ENV['COOKIES_SAME_SITE'].blank? ? 'None' : ENV['COOKIES_SAME_SITE']
+  same_site: ENV['COOKIES_SAME_SITE'].blank? ? 'None' : ENV['COOKIES_SAME_SITE'],
+  partitioned: true
 }
 Rails.application.config.session_store(:cookie_store, **attrs)
 
@@ -39,7 +40,7 @@ module RackUtilsMonkeypatch
         else
           raise ArgumentError, "Invalid SameSite value: #{value[:same_site].inspect}"
         end
-      partitioned = "; partitioned" # adding the attribute to all cookies, whether it's present on value or not
+      partitioned = "; partitioned" if value[:partitioned] # adding the attribute
       value = value[:value]
     end
     value = [value] unless Array === value
