@@ -96,6 +96,7 @@ gem 'jquery-fileupload-rails'
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'faraday'
+gem 'faraday-multipart'
 gem 'repost', '~> 0.4.2'
 
 # BigBlueButton API
