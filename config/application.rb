@@ -13,7 +13,7 @@ Bundler.require(*Rails.groups)
 
 module BbbAppRooms
   class Application < Rails::Application
-    VERSION = "0.18.0"
+    VERSION = "0.18.1"
 
     config.eager_load_paths << Rails.root.join('lib')
 
@@ -123,6 +123,7 @@ module BbbAppRooms
 
     # Integration with Google Tag Manager
     config.gtm_id = Mconf::Env.fetch('MCONF_GTM_ID', '')
+    config.gtm_enabled_keys = Mconf::Env.fetch('MCONF_GTM_ENABLED_KEYS', '')
 
     config.active_job.queue_adapter = :resque
 
