@@ -123,6 +123,7 @@ module BbbAppRooms
 
     # Integration with Google Tag Manager
     config.gtm_id = Mconf::Env.fetch('MCONF_GTM_ID', '')
+    config.gtm_enabled_keys = Mconf::Env.fetch('MCONF_GTM_ENABLED_KEYS', '')
 
     config.active_job.queue_adapter = :resque
 

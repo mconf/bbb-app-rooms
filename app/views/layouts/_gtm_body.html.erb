@@ -1,7 +1,10 @@
 <% unless Rails.application.config.gtm_id.blank? %>
-  <% gtm_id = Rails.application.config.gtm_id %>
+  <% gtm_enabled_keys = Rails.application.config.gtm_enabled_keys.split(',') %>
+  <% if ( gtm_enabled_keys.present? && gtm_enabled_keys.include?(@room.consumer_key) ) || gtm_enabled_keys.blank? %>
+    <% gtm_id = Rails.application.config.gtm_id %>
 
-  <noscript>
-    <iframe src="https://www.googletagmanager.com/ns.html?id=<%= gtm_id %>" height="0" width="0" style="display:none;visibility:hidden"></iframe>
-  </noscript>
+    <noscript>
+      <iframe src="https://www.googletagmanager.com/ns.html?id=<%= gtm_id %>" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+  <% end %>
 <% end %>
