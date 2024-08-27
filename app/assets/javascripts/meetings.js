@@ -301,7 +301,10 @@ let showDropdownItems = (buttons, meeting_id) => {
 
   // these buttons open in a new tab, so they must include a session token
   for (let button of buttons) {
-    $(button).addClass('appended-item rec-edit create-session-token');
+    if(!$(button).find('button:disabled').length > 0)
+      $(button).addClass('create-session-token');
+
+    $(button).addClass('appended-item rec-edit');
     $(button).attr("target", "_blank");
     $(`div[aria-labelledby="dropdown-opts-${meeting_id}"]`).append(button);
   }
