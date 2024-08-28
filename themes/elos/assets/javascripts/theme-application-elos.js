@@ -54,6 +54,15 @@ $(document).on('turbolinks:load', function(){
     $toast.toast('show');
   });
 
+  $(".btn-retry").on('click', function(event) {
+    event.preventDefault();
+    window.open($(this).data('launch'));
+    $(this).addClass('disabled');
+    $(this).attr('disabled', '1');
+    $(this).removeData('launch');
+    return true;
+  });
+
   // Links that open in a new tab need a session token to access the
   // user session in an external context, where the Rails cookie cannot be used.
   // Makes an AJAX request to obtain a session token, and then opens a new window

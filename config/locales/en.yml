@@ -153,6 +153,9 @@ en:
           c: "Contact our support."
         description: "Error trying to access the session, please reload the page."
         title: "It was not possible to authenticate your access"
+        new_tab:
+          description: "Your browser is blocking access to third-party cookies. Try accessing in a new window using the button below:"
+          launch_btn: "Open in a new window"
     formats:
       flatpickr:
         date_js: "m/d/Y"

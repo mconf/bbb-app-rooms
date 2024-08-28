@@ -122,6 +122,9 @@ es:
           c: "Póngase en contacto con el soporte."
         description: "Error al intentar acceder a la sesión, por favor recarga la página."
         title: "No pudimos autenticar su acceso"
+        new_tab:
+          description: "Su navegador está bloqueando el acceso a cookies de terceros. Intente acceder a él en una nueva ventana usando el botón a continuación:"
+          launch_btn: "Abrir en una nueva ventana"
     formats:
       flatpickr:
         date_js: "d/m/Y"
