@@ -20,10 +20,14 @@
     <% end %>
   </td>
   <td class="col-12 col-md-1 align-middle">
-    <%=
-      link_to join_room_scheduled_meeting_url(room, meeting), class: "btn btn-primary join-room-btn create-session-token", target: '_blank' do
-    %>
-      <i class="icon material-icons">play_arrow</i>
+    <% if browser.safari? || browser.safari_webapp_mode? %>
+      <%= link_to join_room_scheduled_meeting_url(room, meeting), class: "btn btn-primary join-room-btn" do %>
+        <i class="icon material-icons">play_arrow</i>
+      <% end %>
+    <% else %>
+      <%= link_to join_room_scheduled_meeting_url(room, meeting), class: "btn btn-primary join-room-btn create-session-token", target: '_blank' do %>
+        <i class="icon material-icons">play_arrow</i>
+      <% end %>
     <% end %>
   </td>
   <td class="col-2 col-md-1 align-middle td-dropdown-opts">
