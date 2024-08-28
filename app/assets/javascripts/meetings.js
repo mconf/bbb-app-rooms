@@ -299,10 +299,17 @@ let showDropdownItems = (buttons, meeting_id) => {
   // Remove only the items appended previously
   $(`div[aria-labelledby="dropdown-opts-${meeting_id}"] .appended-item`).remove();
 
-  // these buttons open in a new tab, so they must include a session token
   for (let button of buttons) {
+    // these buttons open in a new tab, so they must include a session token
     $(button).addClass('appended-item rec-edit create-session-token');
     $(button).attr("target", "_blank");
+
+    // Safari blocks all links opened in new tabs (popups), so we need to open them in the same tab
+    if (!!$("body").data('browser-is-safari')) {
+      $(button).removeClass('create-session-token');
+      $(button).attr("target", "_self");
+    }
+
     $(`div[aria-labelledby="dropdown-opts-${meeting_id}"]`).append(button);
   }
 };
