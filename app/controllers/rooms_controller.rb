@@ -18,6 +18,7 @@ class RoomsController < ApplicationController
 
   before_action :find_room, except: %i[launch close]
   before_action :validate_room, except: %i[launch close]
+  before_action :validate_session_token_and_restore_session, only: %i[recording_playback]
   before_action :find_user
   before_action :find_app_launch, only: %i[launch]
   before_action :setup_moodle_groups, only: %i[launch]
