@@ -156,9 +156,11 @@ en:
           c: "Contact our support."
         description: "Error trying to access the session, please reload the page."
         title: "It was not possible to authenticate your access"
-        new_tab:
-          description: "Your browser is blocking access to third-party cookies. Try accessing in a new window using the button below:"
-          launch_btn: "Open in a new window"
+        safari:
+          description: "We detected that you are using Safari as your browser. Please click the button below to open this session in a new tab:"
+          launch_btn: "Open session in a new tab"
+          suggestions: "If you need to open the session embedded in this activity, please use the latest version of Google Chrome or Mozilla Firefox."
+          title: "Start session"
     formats:
       flatpickr:
         date_js: "m/d/Y"

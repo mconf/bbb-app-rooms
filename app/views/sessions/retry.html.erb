@@ -1,28 +1,35 @@
 <div class="row">
   <div class="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3">
-    <h1><%= t('default.session.retry.title') %></h1>
-
+    <%# content for Safari browser %>
     <% if browser.safari? || browser.safari_webapp_mode? %>
-      <p class="fs-5"><%= t('default.session.retry.new_tab.description') %></p>
-      <%=
-        link_to t('default.session.retry.new_tab.launch_btn'), '#',
-        'data-launch': room_launch_path(launch_nonce: @launch_nonce),
-        class: 'btn btn-primary btn-retry'
-      %>
+      <h1><%= t('default.session.retry.safari.title') %></h1>
+      <p class="fs-5 mb-0"><%= t('default.session.retry.safari.description') %></p>
+      <div class="row">
+        <%=
+          link_to t('default.session.retry.safari.launch_btn'), '#',
+          'data-launch': room_launch_path(launch_nonce: @launch_nonce),
+          class: 'btn btn-primary room-launch-new-tab my-5 p-3'
+        %>
+      </div>
+      <p class="text-muted"><%= t('default.session.retry.safari.suggestions') %></p>
+
+
     <% else %>
+      <%# content for all other browsers %>
+      <h1><%= t('default.session.retry.title') %></h1>
       <p class="fs-5"><%= t('default.session.retry.description') %></p>
       <div class="error-description">
         <div class="error-logo-all" id="error500-logo"></div>
       </div>
-    <% end %>
 
-    <div id="retry-alternatives" class="text-muted">
-      <p><%= t('default.session.retry.alternatives.title') %></p>
-      <ul>
-        <li><%= t('default.session.retry.alternatives.a') %></li>
-        <li><%= t('default.session.retry.alternatives.b') %></li>
-        <li><%= t('default.session.retry.alternatives.c') %></li>
-      </ul>
-    </div>
+      <div id="retry-alternatives" class="text-muted">
+        <p><%= t('default.session.retry.alternatives.title') %></p>
+        <ul>
+          <li><%= t('default.session.retry.alternatives.a') %></li>
+          <li><%= t('default.session.retry.alternatives.b') %></li>
+          <li><%= t('default.session.retry.alternatives.c') %></li>
+        </ul>
+      </div>
+    <% end %>
   </div>
 </div>

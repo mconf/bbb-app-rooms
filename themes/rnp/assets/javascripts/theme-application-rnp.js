@@ -55,7 +55,7 @@ $(document).on('turbolinks:load', function(){
     $toast.toast('show');
   });
 
-  $(".btn-retry").on('click', function(event) {
+  $(".room-launch-new-tab").on('click', function(event) {
     event.preventDefault();
     window.open($(this).data('launch'));
     $(this).addClass('disabled');
