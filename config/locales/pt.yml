@@ -40,6 +40,9 @@ pt:
       moderator:      "Chave de moderador"
       name:           "Nome"
       recordings:     "Gravações"
+      safari_close:
+        return_to_scheduled_meetings: "Voltar para sessões agendadas"
+        title:        "Sua sessão acabou"
       scheduled_meetings: "Sessões agendadas"
       show:           "Exibir"
       showing:        "Exibindo sala"

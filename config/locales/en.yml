@@ -71,6 +71,9 @@ en:
       moderator:      "Moderator token"
       name:           "Name"
       recordings:     "Recordings"
+      safari_close:
+        return_to_scheduled_meetings: "Back to scheduled meetings"
+        title:        "Your session has ended"
       scheduled_meetings: "Scheduled sessions"
       show:           "Show"
       showing:        "Showing Room"

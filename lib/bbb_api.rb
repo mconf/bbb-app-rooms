@@ -46,12 +46,13 @@ module BbbApi
 
     unless bbb(room).is_meeting_running?(meeting_id)
       meeting_name = opts[:meeting_name] || scheduled_meeting.meeting_name
+      logout_url = opts[:autoclose_url] || autoclose_url
 
       begin
         bbb(room).create_meeting(
           meeting_name,
           meeting_id,
-          scheduled_meeting.create_options(user).merge({ logoutURL: autoclose_url })
+          scheduled_meeting.create_options(user).merge({ logoutURL: logout_url })
         )
       rescue BigBlueButton::BigBlueButtonException => e
         if ['simultaneousMeetingsLimitReachedForSecret', 'simultaneousMeetingsLimitReachedForInstitution'].include? e.key.to_s

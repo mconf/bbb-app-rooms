@@ -226,6 +226,11 @@ class ScheduledMeetingsController < ApplicationController
           NotifyRoomWatcherJob.set(wait: 10.seconds).perform_later(@scheduled_meeting)
         end
 
+        if browser.safari? || browser.safari_webapp_mode?
+          opts[:autoclose_url] = safari_close_room_url(@room)
+          Rails.logger.debug "User's browser is Safari, autoclose_url: #{opts[:autoclose_url]}"
+        end
+
         # join as moderator (creates the meeting if not created yet)
         res = join_api_url(@scheduled_meeting, @user, opts)
         if res[:can_join?]

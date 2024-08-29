@@ -99,6 +99,13 @@ class RoomsController < ApplicationController
     end
   end
 
+  # GET /rooms/:id/safari_close
+  # A page with a button to return to the room's scheduled meetings
+  # Users of Safari join meetings in the same tab, so they need some way to return
+  def safari_close
+    render :safari_close
+  end
+
   # GET /rooms/:id/recording/:record_id/playback/:playback_type
   def recording_playback
     # get_recordings returns [[{rec_hash}], boolean]

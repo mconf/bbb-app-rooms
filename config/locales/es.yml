@@ -40,6 +40,9 @@ es:
       moderator:      "Clave de moderador"
       name:           "Nombre"
       recordings:     "Grabaciones"
+      safari_close:
+        return_to_scheduled_meetings: "Regresar a las sesiones programadas"
+        title:        "Tu sesión ha terminado"
       scheduled_meetings: "Sesiones programadas"
       show:           "Exhibir"
       showing:        "Visualización de sala"
