@@ -56,7 +56,7 @@ en:
     filesender:
       success: "Your video is being uploaded to Filesender"
       error:   "An error has occurred. Please try again"
-    rooms:
+    room:
       cancel:         "Cancel"
       created:        "Room was successfully created"
       description:    "Description"
