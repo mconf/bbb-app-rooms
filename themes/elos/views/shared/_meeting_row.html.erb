@@ -99,18 +99,19 @@
     <td class="col-5 col-md-1 justify-content-start justify-content-md-center flex-row-reverse icon-container">
       <% if recording[:state] != 'processing' %>
         <% if recording[:published] %>
+          <% browser_safari = browser.safari? || browser.safari_webapp_mode? %>
           <% if can_download_recording?(user, room)%>
             <% recording[:playbacks].each do |p| %>
               <% url = playback_url(room, recording[:recordID], p) %>
               <% if p[:type] == 'presentation' %>
-                <%= link_to icon_conference_play(title: t("meetings.recording.playbacks.#{p[:type]}"), class: 'fa-2x'), url, class: 'd-flex text-decoration-none', target: "_blank" %>
+                <%= link_to icon_conference_play(title: t("meetings.recording.playbacks.#{p[:type]}"), class: 'fa-2x'), url, class: 'd-flex text-decoration-none', target: browser_safari ? '_self' : '_blank' %>
               <% else %>
-                <%= link_to icon_file_download(title: t("meetings.recording.playbacks.#{p[:type]}"), class: 'fa-2x'), url, class: 'd-flex text-decoration-none me-2', target: "_blank" %>
+                <%= link_to icon_file_download(title: t("meetings.recording.playbacks.#{p[:type]}"), class: 'fa-2x'), url, class: 'd-flex text-decoration-none me-2', target: browser_safari ? '_self' : '_blank' %>
               <% end %>
             <% end %>
           <% else %>
             <% url = playback_url(room, recording[:recordID], recording[:playbacks].find { |p| p[:type] == 'presentation' }) %>
-            <%= link_to icon_conference_play(title: t("meetings.recording.playbacks.presentation"), class: 'fa-2x'), url, class: 'd-flex text-decoration-none', target: "_blank" %>
+            <%= link_to icon_conference_play(title: t("meetings.recording.playbacks.presentation"), class: 'fa-2x'), url, class: 'd-flex text-decoration-none', target: browser_safari ? '_self' : '_blank' %>
           <% end %>
         <% end %>
       <% else %>

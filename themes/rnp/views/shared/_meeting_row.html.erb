@@ -99,10 +99,10 @@
     <td class="col-5 col-md-1 justify-content-start justify-content-md-center flex-row-reverse icon-container">
       <% if recording[:state] != 'processing' %>
         <% if recording[:published] %>
+          <% browser_safari = browser.safari? || browser.safari_webapp_mode? %>
           <% if can_download_recording?(user, room)%>
             <% recording[:playbacks].each do |p| %>
               <% url = playback_url(room, recording[:recordID], p) %>
-              <% browser_safari = browser.safari? || browser.safari_webapp_mode? %>
               <% if p[:type] == 'presentation' %>
                 <%= link_to icon_conference_play(title: t("meetings.recording.playbacks.#{p[:type]}"), class: 'fa-2x'), url, class: "d-flex text-decoration-none color-primary #{'create-session-token' unless browser_safari}", target: browser_safari ? '_self' : '_blank' %>
               <% else %>
