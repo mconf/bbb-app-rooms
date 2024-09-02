@@ -177,11 +177,15 @@ class ScheduledMeetingsController < ApplicationController
   end
 
   def join
+    opts = {}
+    if browser.safari? || browser.safari_webapp_mode?
+      opts[:logout_url] = safari_close_room_url(@room)
+      Rails.logger.debug "User's browser is Safari, logout_url: #{opts[:logout_url]}"
+    end
+
     # if there's a user signed in, always use their info
     # only way for a meeting to be created is through here
     if @user.present?
-
-      opts = {}
       # Fallback to fetch the Moodle group name from the cache and concatenate it to the meeting name
       # when `moodle_group_name` is blank
       if @room.moodle_group_select_enabled? && @scheduled_meeting.moodle_group_name.blank?
@@ -226,11 +230,6 @@ class ScheduledMeetingsController < ApplicationController
           NotifyRoomWatcherJob.set(wait: 10.seconds).perform_later(@scheduled_meeting)
         end
 
-        if browser.safari? || browser.safari_webapp_mode?
-          opts[:autoclose_url] = safari_close_room_url(@room)
-          Rails.logger.debug "User's browser is Safari, autoclose_url: #{opts[:autoclose_url]}"
-        end
-
         # join as moderator (creates the meeting if not created yet)
         res = join_api_url(@scheduled_meeting, @user, opts)
         if res[:can_join?]
@@ -269,7 +268,7 @@ class ScheduledMeetingsController < ApplicationController
       else
         # join as guest
         name = "#{params[:first_name]} #{params[:last_name]}"
-        res = external_join_api_url(@scheduled_meeting, name, @guest[:uid])
+        res = external_join_api_url(@scheduled_meeting, name, @guest[:uid], opts)
         if res[:can_join?]
           if params[:join_in_app] == 'true'
             direct_join_url = 'br.rnp.conferenciawebmobile://direct-join/' + res[:join_api_url].gsub(/^https?:\/\//, '') + "&meetingName=#{@scheduled_meeting.name}"

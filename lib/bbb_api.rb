@@ -43,16 +43,16 @@ module BbbApi
 
     room = scheduled_meeting.room
     meeting_id = scheduled_meeting.meeting_id
+    logout_url = opts[:logout_url] || autoclose_url
 
     unless bbb(room).is_meeting_running?(meeting_id)
       meeting_name = opts[:meeting_name] || scheduled_meeting.meeting_name
-      logout_url = opts[:autoclose_url] || autoclose_url
 
       begin
         bbb(room).create_meeting(
           meeting_name,
           meeting_id,
-          scheduled_meeting.create_options(user).merge({ logoutURL: logout_url })
+          scheduled_meeting.create_options(user)
         )
       rescue BigBlueButton::BigBlueButtonException => e
         if ['simultaneousMeetingsLimitReachedForSecret', 'simultaneousMeetingsLimitReachedForInstitution'].include? e.key.to_s
@@ -77,6 +77,7 @@ module BbbApi
         room.attributes[role],
         {
           'userdata-bbb_override_default_locale': locale,
+          'userdata-mconf_custom_logout_url': logout_url,
           userID: user.uid,
           redirect: false
         }
@@ -99,6 +100,7 @@ module BbbApi
       room.attributes[role],
       {
         'userdata-bbb_override_default_locale': locale,
+        'userdata-mconf_custom_logout_url': logout_url,
         userID: user.uid
       }
     )
@@ -106,11 +108,12 @@ module BbbApi
     { can_join?: true, join_api_url: join_api_url }
   end
 
-  def external_join_api_url(scheduled_meeting, full_name, uid)
+  def external_join_api_url(scheduled_meeting, full_name, uid, opts = {})
     return unless scheduled_meeting.present? && full_name.present?
 
     room = scheduled_meeting.room
     locale = I18n.locale == :pt ? 'pt-br' : I18n.locale
+    logout_url = opts[:logout_url] || autoclose_url
 
     join_api_url = bbb(room, false).join_meeting_url(
       scheduled_meeting.meeting_id,
@@ -118,6 +121,7 @@ module BbbApi
       room.attributes['viewer'],
       { guest: true,
         'userdata-bbb_override_default_locale': locale,
+        'userdata-mconf_custom_logout_url': logout_url,
         userID: uid
       }
     )
