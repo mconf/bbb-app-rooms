@@ -148,40 +148,42 @@
                   <%= t('meetings.recording.playback_link') %>
                 <% end %>
               <% end %>
+              <div class="dropdown-divider"></div>
             <% end %>
 
             <% if can_edit?(user, room) %>
-              <%# Unpublish recording %>
-              <% if recording[:published] %>
+              <% unless recording[:state] == 'processing' || recording[:state] == 'deleted'  %>
+                <%# Unpublish recording %>
+                <% if recording[:published] %>
+                  <%= link_to recording_unpublish_path(room, record_id: recording[:recordID]),
+                  method: :post,
+                  data: { confirm: t('meetings.recording.confirm.unpublish') },
+                  class: "dropdown-item rec-edit" do %>
+                    <%= icon_hide_recording %>
+                    <%= t("meetings.recording.unpublish") %>
+                  <% end %>
+                <%# Publish recording %>
+                <% else %>
+                  <%= link_to recording_publish_path(room, record_id: recording[:recordID]),
+                  method: :post,
+                  data: { confirm: t('meetings.recording.confirm.publish') },
+                  class: "dropdown-item rec-edit" do %>
+                    <%= icon_show_recording %>
+                    <%= t("meetings.recording.publish") %>
+                  <% end %>
+                <% end %>
+                <%# Delete recording %>
+                <%= link_to recording_delete_path(room, record_id: recording[:recordID]),
+                method: :post,
+                data: { confirm: t('meetings.recording.confirm.destroy') },
+                class: "dropdown-item rec-edit" do %>
+                  <%= icon_delete %>
+                  <%= t("meetings.recording.destroy") %>
+                <% end %>
                 <div class="dropdown-divider"></div>
-                <%= link_to recording_unpublish_path(room, record_id: recording[:recordID]),
-                method: :post,
-                data: { confirm: t('meetings.recording.confirm.unpublish') },
-                class: "dropdown-item rec-edit" do %>
-                  <%= icon_hide_recording %>
-                  <%= t("meetings.recording.unpublish") %>
-                <% end %>
-              <%# Publish recording %>
-              <% else %>
-                <%= link_to recording_publish_path(room, record_id: recording[:recordID]),
-                method: :post,
-                data: { confirm: t('meetings.recording.confirm.publish') },
-                class: "dropdown-item rec-edit" do %>
-                  <%= icon_show_recording %>
-                  <%= t("meetings.recording.publish") %>
-                <% end %>
-              <% end %>
-              <%# Delete recording %>
-              <%= link_to recording_delete_path(room, record_id: recording[:recordID]),
-              method: :post,
-              data: { confirm: t('meetings.recording.confirm.destroy') },
-              class: "dropdown-item rec-edit" do %>
-                <%= icon_delete %>
-                <%= t("meetings.recording.destroy") %>
               <% end %>
 
               <%# Download notes and participants, access learning dashboard %>
-              <div class="dropdown-divider"></div>
               <div class="dropdown-item-loading">
                 <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_notes') %>
                 <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_participants') %>
