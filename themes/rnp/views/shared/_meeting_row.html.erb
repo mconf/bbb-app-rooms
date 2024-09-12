@@ -1,11 +1,14 @@
 <%# Params passed to render partial %>
 <% [user, room, meeting, recording] %>
 
+<%# For deleted recordings, adds the class `color-gray-04` to their texts to to signal that it has been deleted %>
+<% deleted_class = (recording.present? && recording[:state] == 'deleted') ? 'color-gray-04' : ''%>
+
 <tr class="meeting-row d-flex row tr-row rec-<%= recording.present? %>">
   <%# Meeting name and description %>
   <td class="col-10 col-md-3 td-titles" data-search-field="1">
     <% meeting_name = meeting[:meetingName] ? meeting[:meetingName] : recording[:metadata][:name] %>
-    <div class="item-title word-break" title="<%= meeting_name %>">
+    <div class="item-title word-break <%= deleted_class %>" title="<%= meeting_name %>">
       <%= meeting_name.truncate(50) %>
     </div>
     <% if recording.present? %>
@@ -20,7 +23,7 @@
 
   <%# Meeting creation date %>
   <td class="col-5 col-md-2">
-    <div class="meeting-info me-auto me-md-0">
+    <div class="meeting-info me-auto me-md-0 <%= deleted_class %>">
       <%= format_date(meeting[:startTime].to_i, :day_month_year, false) %>
 
       <% scheduled_meeting_id = meeting[:metadata][:'bbb-meeting-db-id'] %>
@@ -36,14 +39,14 @@
 
   <%# Meeting creation time %>
   <td class="col-3 col-md-1">
-    <div class="meeting-info">
+    <div class="meeting-info <%= deleted_class %>">
       <%= format_time(meeting[:startTime].to_i) %>
     </div>
   </td>
 
   <%# Meeting duration %>
   <td class="col-4 col-md-1 text-center">
-    <div class="meeting-info ms-auto ms-md-0">
+    <div class="meeting-info ms-auto ms-md-0 <%= deleted_class %>">
       <% duration = meeting[:endTime].to_i/1000 - meeting[:startTime].to_i/1000 %>
       <% if duration/60 > 0 %>
         <%= duration_in_hours_and_minutes(duration, true).capitalize %>
@@ -56,7 +59,7 @@
   <%# Meeting expiration date %>
   <% if recording.present? && recording[:expirationDate].present? %>
     <td class="col-12 col-md-2">
-      <div class="me-auto me-md-0 meeting-expire">
+      <div class="me-auto me-md-0 meeting-expire <%= deleted_class %>">
         <span class="d-md-none">
           <%= icon_info_circle(class: 'color-error') %>
         </span>
@@ -90,6 +93,8 @@
     <td class="<%= recording[:published] ? 'col-2' : 'col-12' %> col-md-1">
       <% if recording[:published] %>
         <%= icon_visibility(title: t("meetings.recording.published"), class: 'color-primary fa-2x') %>
+      <% elsif recording[:state] == 'deleted' %>
+        <%= icon_deleted(title: t("meetings.recording.deleted"), class: 'color-gray-04 fa-2x') %>
       <% else %>
         <%= icon_visibility_off(title: t("meetings.recording.unpublished"), class: 'color-gray-04 fa-2x') %>
       <% end %>
@@ -120,7 +125,7 @@
 
     <%# Options dropdown %>
     <td class="col-2 col-md-1 td-dropdown-opts">
-      <% if recording[:state] != 'processing' && recording[:published] || can_edit?(user, room) %>
+      <% if recording[:state] != 'processing' && (recording[:published] || can_edit?(user, room)) %>
         <div class="dropdown dropdown-opts">
           <a href="#" class="dropdown-toggle d-flex text-decoration-none dropdown-opts-link"
             meeting-id="<%= meeting[:meetingID] %>"
@@ -148,32 +153,17 @@
                   <%= t('meetings.recording.playback_link') %>
                 <% end %>
               <% end %>
+              <div class="dropdown-divider"></div>
             <% end %>
 
             <% if can_edit?(user, room) %>
-              <div class="dropdown-divider"></div>
-              <% if user.moderator?(Abilities.moderator_roles) && Rails.application.config.eduplay_enabled %>
-                <% eduplay_token = EduplayToken.find_by(user_uid: user.uid)%>
-                <% eduplay_uploads = EduplayUpload.recording_uploads(recording[:recordID]) if recording.present? %>
-                <% latest_upload = eduplay_uploads.max_by(&:created_at)%>
-                <% if eduplay_uploads.count == 0%>
-                  <% if eduplay_token.present? && eduplay_token.expires_at > Time.now + 30.minutes %>
-                    <%= link_to eduplay_path(room, record_id: recording[:recordID]),
-                    method: :post,
-                    class: "dropdown-item rec-edit" do %>
-                      <%= icon_eduplay %>
-                      <%= t("meetings.recording.eduplay") %>
-                    <% end %>
-                  <% else %>
-                    <%= link_to '#',
-                    'data-url': Eduplay::API.authorize_path(recording[:recordID]),
-                    class: "eduplay-login dropdown-item rec-edit" do %>
-                      <%= icon_eduplay %>
-                      <%= t("meetings.recording.eduplay") %>
-                    <% end %>
-                  <% end %>
-                <% else %>
-                  <% if latest_upload.created_at <= 2.minutes.ago%>
+              <% unless recording[:state] == 'deleted'  %>
+                <%# Eduplay %>
+                <% if user.moderator?(Abilities.moderator_roles) && Rails.application.config.eduplay_enabled %>
+                  <% eduplay_token = EduplayToken.find_by(user_uid: user.uid)%>
+                  <% eduplay_uploads = EduplayUpload.recording_uploads(recording[:recordID]) if recording.present? %>
+                  <% latest_upload = eduplay_uploads.max_by(&:created_at)%>
+                  <% if eduplay_uploads.count == 0%>
                     <% if eduplay_token.present? && eduplay_token.expires_at > Time.now + 30.minutes %>
                       <%= link_to eduplay_path(room, record_id: recording[:recordID]),
                       method: :post,
@@ -190,60 +180,78 @@
                       <% end %>
                     <% end %>
                   <% else %>
-                    <%# Disable eduplay button %>
-                    <span class="dropdown-item rec-edit disabled"><%= t('meetings.recording.recently_uploaded') %></span>
+                    <% if latest_upload.created_at <= 2.minutes.ago%>
+                      <% if eduplay_token.present? && eduplay_token.expires_at > Time.now + 30.minutes %>
+                        <%= link_to eduplay_path(room, record_id: recording[:recordID]),
+                        method: :post,
+                        class: "dropdown-item rec-edit" do %>
+                          <%= icon_eduplay %>
+                          <%= t("meetings.recording.eduplay") %>
+                        <% end %>
+                      <% else %>
+                        <%= link_to '#',
+                        'data-url': Eduplay::API.authorize_path(recording[:recordID]),
+                        class: "eduplay-login dropdown-item rec-edit" do %>
+                          <%= icon_eduplay %>
+                          <%= t("meetings.recording.eduplay") %>
+                        <% end %>
+                      <% end %>
+                    <% else %>
+                      <%# Disable eduplay button %>
+                      <span class="dropdown-item rec-edit disabled"><%= t('meetings.recording.recently_uploaded') %></span>
+                    <% end %>
                   <% end %>
                 <% end %>
-              <% end %>
-              <%# Filesender %>
-              <% if user.moderator?(Abilities.moderator_roles) && Rails.application.config.filesender_enabled %>
-                <% filesender_token = FilesenderToken.find_by(user_uid: user.uid)%>
-                <% if filesender_token.present? %>
-                  <%= link_to filesender_path(room, record_id: recording[:recordID]),
-                  method: :get,
-                  class:"dropdown-item" do %>
-                    <%= icon_filesender %>
-                    <%= t("meetings.recording.filesender.share_via_filesender") %>
+                <%# Filesender %>
+                <% if user.moderator?(Abilities.moderator_roles) && Rails.application.config.filesender_enabled %>
+                  <% filesender_token = FilesenderToken.find_by(user_uid: user.uid)%>
+                  <% if filesender_token.present? %>
+                    <%= link_to filesender_path(room, record_id: recording[:recordID]),
+                    method: :get,
+                    class:"dropdown-item" do %>
+                      <%= icon_filesender %>
+                      <%= t("meetings.recording.filesender.share_via_filesender") %>
+                    <% end %>
+                  <% else %>
+                    <%= link_to '#',
+                    'data-url': Filesender::API.authorize_path(recording[:recordID]),
+                    class: "filesender-login dropdown-item rec-edit" do %>
+                      <%= icon_filesender %>
+                      <%= t("meetings.recording.filesender.share_via_filesender") %>
+                    <% end %>
                   <% end %>
+                <% end %>
+                <%# Unpublish recording %>
+                <% if recording[:published] %>
+                  <%= link_to recording_unpublish_path(room, record_id: recording[:recordID]),
+                  method: :post,
+                  data: { confirm: t('meetings.recording.confirm.unpublish') },
+                  class: "dropdown-item rec-edit" do %>
+                    <%= icon_hide_recording %>
+                    <%= t("meetings.recording.unpublish")%>
+                  <% end %>
+                <%# Publish recording %>
                 <% else %>
-                  <%= link_to '#',
-                  'data-url': Filesender::API.authorize_path(recording[:recordID]),
-                  class: "filesender-login dropdown-item rec-edit" do %>
-                    <%= icon_filesender %>
-                    <%= t("meetings.recording.filesender.share_via_filesender") %>
+                  <%= link_to recording_publish_path(room, record_id: recording[:recordID]),
+                  method: :post,
+                  data: { confirm: t('meetings.recording.confirm.publish') },
+                  class: "dropdown-item rec-edit" do %>
+                    <%= icon_show_recording %>
+                    <%= t("meetings.recording.publish") %>
                   <% end %>
                 <% end %>
-              <% end %>
-              <%# Unpublish recording %>
-              <% if recording[:published] %>
-                <%= link_to recording_unpublish_path(room, record_id: recording[:recordID]),
+                <%# Delete recording %>
+                <%= link_to recording_delete_path(room, record_id: recording[:recordID]),
                 method: :post,
-                data: { confirm: t('meetings.recording.confirm.unpublish') },
+                data: { confirm: t('meetings.recording.confirm.destroy') },
                 class: "dropdown-item rec-edit" do %>
-                  <%= icon_hide_recording %>
-                  <%= t("meetings.recording.unpublish")%>
+                  <%= icon_delete %>
+                  <%= t("meetings.recording.destroy") %>
                 <% end %>
-              <%# Publish recording %>
-              <% else %>
-                <%= link_to recording_publish_path(room, record_id: recording[:recordID]),
-                method: :post,
-                data: { confirm: t('meetings.recording.confirm.publish') },
-                class: "dropdown-item rec-edit" do %>
-                  <%= icon_show_recording %>
-                  <%= t("meetings.recording.publish") %>
-                <% end %>
-              <% end %>
-              <%# Delete recording %>
-              <%= link_to recording_delete_path(room, record_id: recording[:recordID]),
-              method: :post,
-              data: { confirm: t('meetings.recording.confirm.destroy') },
-              class: "dropdown-item rec-edit" do %>
-                <%= icon_delete %>
-                <%= t("meetings.recording.destroy") %>
+                <div class="dropdown-divider"></div>
               <% end %>
 
               <%# Download notes and participants, access learning dashboard %>
-              <div class="dropdown-divider"></div>
               <div class="dropdown-item-loading">
                 <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_notes') %>
                 <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_participants') %>

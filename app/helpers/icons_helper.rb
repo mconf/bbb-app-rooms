@@ -7,6 +7,10 @@ module IconsHelper
     material_icon_constructor "visibility_off", "icon material-icons icon-visibility-off", options
   end
 
+  def icon_deleted(options={})
+    material_icon_constructor "delete_forever", "icon material-icons icon-deleted", options
+  end
+
   def icon_file_download(options={})
     material_icon_constructor "file_download", "icon material-icons icon-file-download", options
   end
