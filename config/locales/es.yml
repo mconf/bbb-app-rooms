@@ -40,6 +40,9 @@ es:
       moderator:      "Clave de moderador"
       name:           "Nombre"
       recordings:     "Grabaciones"
+      safari_close:
+        return_to_scheduled_meetings: "Regresar a las sesiones programadas"
+        title:        "Tu sesión ha terminado"
       scheduled_meetings: "Sesiones programadas"
       show:           "Exhibir"
       showing:        "Visualización de sala"
@@ -122,6 +125,11 @@ es:
           c: "Póngase en contacto con el soporte."
         description: "Error al intentar acceder a la sesión, por favor recarga la página."
         title: "No pudimos autenticar su acceso"
+        safari:
+          description: "Detectamos que estás utilizando Safari como navegador. Por favor, haga clic en el botón de abajo para abrir esta sesión en una nueva pestaña:"
+          launch_btn: "Abrir sesión en una nueva pestaña"
+          suggestions: "Si necesita abrir la sesión de forma integrada en esta actividad, por favor utilice la versión más actualizada de Google Chrome o Mozilla Firefox."
+          title: "Iniciar sesión"
     formats:
       flatpickr:
         date_js: "d/m/Y"

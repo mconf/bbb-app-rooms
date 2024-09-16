@@ -21,6 +21,7 @@
         data-action="<%= params[:action] %>"
         data-use-cable="<%= Rails.configuration.cable_enabled %>"
         data-session-token-url="<%= create_session_token_url %>"
+        data-browser-is-safari="<%= browser.safari? || browser.safari_webapp_mode? %>"
         class="<%= theme_class %>">
     <%= render 'layouts/gtm_body' if app_theme == 'elos' %>
     <div class="container">

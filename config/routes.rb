@@ -75,6 +75,7 @@ Rails.application.routes.draw do
           get :meetings
           get :meetings_pagination
           post :set_current_group_on_session
+          get :safari_close
           get '/error/:code', to: 'rooms#error'
         end
 

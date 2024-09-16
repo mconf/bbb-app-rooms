@@ -1,6 +1,6 @@
 <% if @notes_exist %>
   <%= button_to room_scheduled_meeting_internal_download_notes_path(@room, @meeting[:meetingID], @meeting[:internalMeetingID]),
-    method: :get, target: '_blank', class: "dropdown-item rec-edit" do %>
+    method: :get, target: (browser.safari? ? '_self' : '_blank'), class: "dropdown-item rec-edit" do %>
     <%= icon_download %>
     <%= t('meetings.meeting_data_download.download_notes') %>
   <% end %>
@@ -12,7 +12,7 @@
 
 <% if @participants_exist %>
   <%= button_to room_scheduled_meeting_internal_download_participants_path(@room, @meeting[:meetingID], @meeting[:internalMeetingID]),
-    method: :get, target: '_blank', class: "dropdown-item rec-edit" do %>
+    method: :get, target: (browser.safari? ? '_self' : '_blank'), class: "dropdown-item rec-edit" do %>
     <%= icon_download %>
     <%= t('meetings.meeting_data_download.download_participants') %>
   <% end %>
@@ -24,7 +24,7 @@
 
 <% if @dashboard_exist && Rails.configuration.meeting_learning_dashboard_url.present? %>
   <%= button_to room_scheduled_meeting_internal_learning_dashboard_path(@room, @meeting[:meetingID], @meeting[:internalMeetingID]),
-    method: :get, target: '_blank', class: "dropdown-item rec-edit" do %>
+    method: :get, target: (browser.safari? ? '_self' : '_blank'), class: "dropdown-item rec-edit" do %>
     <%= icon_learning_dashboard %>
     <%= t('meetings.meeting_data_download.dashboard') %>
   <% end %>

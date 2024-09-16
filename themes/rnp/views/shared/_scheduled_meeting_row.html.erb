@@ -26,12 +26,14 @@
         <button class="btn btn-primary join-room-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
           <i class="icon material-icons">play_arrow</i>
         </button>
-        <%= render "shared/app_offcanvas", room: room, meeting: meeting, target_blank: true %>
+        <%= render "shared/app_offcanvas", room: room, meeting: meeting, target_blank: !(browser.safari? || browser.safari_webapp_mode?) %>
+      <% end %>
+    <% elsif browser.safari? || browser.safari_webapp_mode? %>
+      <%= link_to join_room_scheduled_meeting_url(room, meeting, no_auto_join: true), class: "btn btn-primary join-room-btn" do %>
+        <i class="icon material-icons">play_arrow</i>
       <% end %>
     <% else %>
-      <%=
-        link_to join_room_scheduled_meeting_url(room, meeting, no_auto_join: true), class: "btn btn-primary join-room-btn create-session-token", target: '_blank' do
-      %>
+      <%= link_to join_room_scheduled_meeting_url(room, meeting, no_auto_join: true), class: "btn btn-primary join-room-btn create-session-token", target: '_blank' do %>
         <i class="icon material-icons">play_arrow</i>
       <% end %>
     <% end %>

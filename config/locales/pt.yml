@@ -40,6 +40,9 @@ pt:
       moderator:      "Chave de moderador"
       name:           "Nome"
       recordings:     "Gravações"
+      safari_close:
+        return_to_scheduled_meetings: "Voltar para sessões agendadas"
+        title:        "Sua sessão acabou"
       scheduled_meetings: "Sessões agendadas"
       show:           "Exibir"
       showing:        "Exibindo sala"
@@ -122,6 +125,11 @@ pt:
           c: "Entrar em contato com o suporte."
         description: "Erro ao tentar acessar a sessão, por favor recarregue a página."
         title: "Não foi possível autenticar o seu acesso"
+        safari:
+          description: "Detectamos que você está usando o Safari como navegador. Por favor, clique no botão abaixo para abrir essa sessão em uma nova aba:"
+          launch_btn: "Abrir sessão em nova aba"
+          suggestions: "Caso precise abrir a sessão de forma embutida nessa atividade, por favor utilize a versão mais atualizada do Google Chrome ou Mozilla Firefox."
+          title: "Iniciar sessão"
     formats:
       flatpickr:
         date_js: "d/m/Y"

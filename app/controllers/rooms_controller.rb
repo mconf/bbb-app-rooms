@@ -17,6 +17,7 @@ class RoomsController < ApplicationController
   before_action :set_launch_room, only: %i[launch]
 
   before_action :find_room, except: %i[launch close]
+  before_action :validate_session_token_and_restore_session, only: %i[recording_playback]
   before_action :validate_room, except: %i[launch close]
   before_action :find_user
   before_action :find_app_launch, only: %i[launch]
@@ -97,6 +98,13 @@ class RoomsController < ApplicationController
     respond_to do |format|
       format.html { render :autoclose }
     end
+  end
+
+  # GET /rooms/:id/safari_close
+  # A page with a button to return to the room's scheduled meetings
+  # Users of Safari join meetings in the same tab, so they need some way to return
+  def safari_close
+    render :safari_close
   end
 
   # GET /rooms/:id/recording/:record_id/playback/:playback_type
