@@ -300,8 +300,10 @@ let showDropdownItems = (buttons, meeting_id) => {
   $(`div[aria-labelledby="dropdown-opts-${meeting_id}"] .appended-item`).remove();
 
   for (let button of buttons) {
-    // these buttons open in a new tab, so they must include a session token
-    $(button).addClass('appended-item rec-edit create-session-token');
+    if(!$(button).find('button:disabled').length > 0)
+      $(button).addClass('create-session-token');
+
+    $(button).addClass('appended-item rec-edit');
     $(button).attr("target", "_blank");
 
     // Safari blocks all links opened in new tabs (popups), so we need to open them in the same tab
