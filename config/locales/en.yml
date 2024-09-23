@@ -235,6 +235,11 @@ en:
         suggestion: "The Moodle integration is misconfigured"
         explanation: "The Moodle course has an invalid groupmode configured."
         status_code: "403"
+      moodle_invalid_token:
+        message:    "Internal error"
+        suggestion: "The Moodle integration is misconfigured"
+        explanation: "The moodle token is not valid or was not found."
+        status_code: "500"
       moodle_request_error:
         message:    "Internal error"
         suggestion: "An error occurred on the Moodle server"
@@ -243,7 +248,7 @@ en:
       moodle_timeout_error:
         message:    "Internal error"
         suggestion: "An error occurred on the Moodle server"
-        explanation: "The Moodle server took too long to respond to group configuration. Please reload the page."
+        explanation: "The Moodle server %{server_url} took too long to respond to group configuration. Please reload the page."
         status_code: "500"
       moodle_url_not_found:
         message:    "Internal error"

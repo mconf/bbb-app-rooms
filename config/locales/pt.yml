@@ -203,6 +203,11 @@ pt:
         suggestion: "A integração com o Moodle está mal configurada"
         explanation: "O curso do Moodle está configurado com um modo de grupos inválido."
         status_code: "403"
+      moodle_invalid_token:
+        message:    "Erro interno"
+        suggestion: "A integração com o Moodle está mal configurada"
+        explanation: "O token do moodle não é válido ou não foi encontrado."
+        status_code: "500"
       moodle_request_error:
         message:    "Erro interno"
         suggestion: "Ocorreu um erro no servidor do Moodle"
@@ -211,7 +216,7 @@ pt:
       moodle_timeout_error:
         message:    "Erro interno"
         suggestion: "Ocorreu um erro no servidor do Moodle"
-        explanation: "O servidor do Moodle demorou muito para responder a configuração de grupos. Por favor, recarregue a página."
+        explanation: "O servidor do Moodle %{server_url} demorou muito para responder à configuração de grupos. Por favor, recarregue a página."
         status_code: "500"
       moodle_url_not_found:
         message:    "Erro interno"
