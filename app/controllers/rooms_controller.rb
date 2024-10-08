@@ -360,7 +360,7 @@ class RoomsController < ApplicationController
 
       valid_moodle_token = Moodle::API.valid_token?(moodle_token, {nonce: @app_launch.nonce})
       unless valid_moodle_token
-        Rails.logger.error 'Invalid or not found moodle token'
+        Rails.logger.error 'Invalid or not found Moodle token'
         set_error('room', 'moodle_invalid_token', 500)
         @error[:explanation] = t("error.room.moodle_invalid_token.explanation")
         respond_with_error(@error)

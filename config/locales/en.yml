@@ -238,7 +238,7 @@ en:
       moodle_invalid_token:
         message:    "Internal error"
         suggestion: "The Moodle integration is misconfigured"
-        explanation: "The moodle token is not valid or was not found."
+        explanation: "The Moodle token is not valid or was not found."
         status_code: "500"
       moodle_request_error:
         message:    "Internal error"

@@ -206,7 +206,7 @@ pt:
       moodle_invalid_token:
         message:    "Erro interno"
         suggestion: "A integração com o Moodle está mal configurada"
-        explanation: "O token do moodle não é válido ou não foi encontrado."
+        explanation: "O token do Moodle não é válido ou não foi encontrado."
         status_code: "500"
       moodle_request_error:
         message:    "Erro interno"
