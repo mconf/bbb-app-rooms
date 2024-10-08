@@ -92,14 +92,14 @@ class AppLaunch < ApplicationRecord
 
     if id.blank?
       Rails.logger.warn "Empty oauth_consumer_key when calculating the handler on " \
-                        "consumer_id=#{self.consumer_id}, context_id=#{self.context_id} " \
+                        "consumer_id=#{id}, context_id=#{self.context_id} " \
                         "oauth_consumer_key=#{self.oauth_consumer_key}"
       id = self.params['tool_consumer_instance_guid']
     end
 
     if id.blank?
       Rails.logger.warn "Empty tool_consumer_instance_guid when calculating the handler on " \
-                        "consumer_id=#{self.consumer_id}, context_id=#{self.context_id} " \
+                        "consumer_id=#{id}, context_id=#{self.context_id} " \
                         "oauth_consumer_key=#{self.oauth_consumer_key}"
       id = self.consumer_domain
     end
