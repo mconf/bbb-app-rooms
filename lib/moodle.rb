@@ -224,6 +224,28 @@ module Moodle
       missing_functions
     end
 
+    def self.valid_token?(moodle_token, opts={})
+      params = {
+        wstoken: moodle_token.token,
+        wsfunction: 'core_webservice_get_site_info',
+        moodlewsrestformat: 'json',
+      }
+      result = post(moodle_token.url, params)
+
+      log_labels =  "[MOODLE API] url=#{moodle_token.url} " \
+                    "token_id=#{moodle_token.id} " \
+                    "duration=#{result['duration']&.round(3)}s " \
+                    "wsfunction=core_webservice_get_site_info " \
+                    "#{('nonce=' + opts[:nonce].to_s + ' ') if opts[:nonce]}"
+
+      if result['exception'].present? && result['errorcode'] == 'invalidtoken'
+        Rails.logger.error(log_labels + "message=\"#{result}\"")
+        return false
+      else
+        return true
+      end
+    end
+
     def self.post(host_url, params)
       options = {
         headers: { 'Content-Type' => 'application/x-www-form-urlencoded' },

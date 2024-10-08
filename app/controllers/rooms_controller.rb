@@ -358,6 +358,15 @@ class RoomsController < ApplicationController
         'core_group_get_course_groups'
       ]
 
+      valid_moodle_token = Moodle::API.valid_token?(moodle_token, {nonce: @app_launch.nonce})
+      unless valid_moodle_token
+        Rails.logger.error 'Invalid or not found Moodle token'
+        set_error('room', 'moodle_invalid_token', 500)
+        @error[:explanation] = t("error.room.moodle_invalid_token.explanation")
+        respond_with_error(@error)
+        return
+      end
+
       missing_functions = Moodle::API.missing_token_functions(moodle_token, wsfunctions, {nonce: @app_launch.nonce})
       if missing_functions.any?
         Rails.logger.error 'A function required for the groups feature is not configured in the Moodle service'
@@ -446,7 +455,9 @@ class RoomsController < ApplicationController
     respond_with_error(@error)
     return
   rescue Moodle::TimeoutError => e
+    uri = @room.moodle_token ? URI.parse(@room.moodle_token.url).host : ''
     set_error('room', 'moodle_timeout_error', 500)
+    @error[:explanation] = t("error.room.moodle_timeout_error.explanation", server_url: uri)
     respond_with_error(@error)
     return
   rescue Moodle::RequestError => e
