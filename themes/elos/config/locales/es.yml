@@ -71,6 +71,7 @@ es:
         destroy: "¿Estás seguro de que deseas eliminar esta grabación?"
         publish: "¿Estás seguro de que deseas hacer esta grabación visible?"
         unpublish: "¿Estás seguro de que deseas hacer esta grabación no visible?"
+      deleted: "Eliminada"
       destroy: "Eliminar grabación"
       exp_date: "Fecha de expiración: "
       playback_link: "Copiar enlace de reproducción"

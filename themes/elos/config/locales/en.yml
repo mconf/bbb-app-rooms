@@ -71,6 +71,7 @@ en:
         destroy: "Are you sure you want to delete this recording?"
         publish: "Are you sure you want to make this recording visible?"
         unpublish: "Are you sure you want to make this recording not visible?"
+      deleted: "Deleted"
       destroy: "Delete recording"
       exp_date: "Expiration Date: "
       playback_link: "Copy playback link"

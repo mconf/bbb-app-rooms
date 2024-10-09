@@ -71,6 +71,7 @@ pt:
         destroy: "Você tem certeza que deseja deletar esta gravação?"
         publish: "Você tem certeza que deseja tornar esta gravação visível?"
         unpublish: "Você tem certeza que deseja tornar esta gravação não visível?"
+      deleted: "Deletada"
       destroy: "Deletar gravação"
       exp_date: "Data de expiração: "
       playback_link: "Copiar link de reprodução"
