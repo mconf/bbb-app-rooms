@@ -358,20 +358,20 @@ class RoomsController < ApplicationController
         'core_group_get_course_groups'
       ]
 
-      valid_moodle_token = Moodle::API.valid_token?(moodle_token, {nonce: @app_launch.nonce})
-      unless valid_moodle_token
+      # Validates the configured Moodle Token and checks for missing functions
+      # - token_validation_result[:valid_token] indicates if the token is valid (`true`) or not (`false`)
+      # - token_validation_result[:missing_functions] has a list of missing function (if there is any)
+      token_validation_result = Moodle::API.validate_token_and_check_missing_functions(moodle_token, wsfunctions, {nonce: @app_launch.nonce})
+      if token_validation_result[:valid_token] == false
         Rails.logger.error 'Invalid or not found Moodle token'
         set_error('room', 'moodle_invalid_token', 500)
         @error[:explanation] = t("error.room.moodle_invalid_token.explanation")
         respond_with_error(@error)
         return
-      end
-
-      missing_functions = Moodle::API.missing_token_functions(moodle_token, wsfunctions, {nonce: @app_launch.nonce})
-      if missing_functions.any?
+      elsif token_validation_result[:missing_functions].any?
         Rails.logger.error 'A function required for the groups feature is not configured in the Moodle service'
         set_error('room', 'moodle_token_function_missing', :forbidden)
-        @error[:explanation] = t("error.room.moodle_token_function_missing.explanation", missing_functions: missing_functions)
+        @error[:explanation] = t("error.room.moodle_token_function_missing.explanation", missing_functions: token_validation_result[:missing_functions])
         respond_with_error(@error)
         return
       end
