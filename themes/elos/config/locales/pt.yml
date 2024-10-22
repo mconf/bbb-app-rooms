@@ -21,7 +21,7 @@ pt:
         hour: "%{count}h"
         minute: "%{count}min"
     hint:
-      create_moodle_calendar_event: "Cria um evento correspondente no Calendário do Moodle para esta sessão agendada. Esta opção é desativada quando a sessão agendada é configurada para ser recorrente."
+      create_moodle_calendar_event: "Cria um evento correspondente no Calendário do Moodle para esta sessão agendada."
       disable_external_link: "O acesso à sala virtual será restrito aos alunos autenticados."
       disable_private_chat: "O aluno ainda poderá enviar mensagens privadas para o professor. Este recurso pode ser reativado dentro da sala através da opção \"Restringir participantes\"."
       disable_note: "O professor ainda poderá utilizar as notas compartilhadas, mas os alunos poderão apenas visualizar o conteúdo, não editar. Este recurso pode ser reativado dentro da sala através da opção \"Restringir participantes\"."

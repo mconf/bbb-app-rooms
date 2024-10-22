@@ -28,6 +28,12 @@ module Moodle
       if result["exception"].present?
         Rails.logger.error(log_labels + "message=\"#{result}\"")
         return false
+      else
+        # Create a new Moodle Calendar Event
+        event_params = { event_id: result["events"].first['id'],
+                         scheduled_meeting_hash_id: scheduled_meeting.hash_id }
+        puts("Event params: #{event_params.inspect}")
+        MoodleCalendarEvent.create!(event_params)
       end
 
       if result["warnings"].present?
@@ -36,6 +42,38 @@ module Moodle
       Rails.logger.info(log_labels + "message=\"Event created on Moodle calendar: #{result}\"")
 
       true
+    end
+
+    def self.generate_recurring_events(moodle_token, scheduled_meeting, context_id, opts)
+      start_at = scheduled_meeting.start_at
+      recurrence_type = scheduled_meeting.repeat
+      defaut_period = Rails.application.config.moodle_recurring_events_month_period
+      if recurrence_type == 'weekly'
+        event_count = defaut_period*4
+        cycle = 1
+      else
+        event_count = defaut_period*2
+        cycle = 2
+      end
+
+      Rails.logger.info "Generating recurring events"
+      recurring_events = []
+      event_count.times do |i|
+        next_start_at = start_at + (i * cycle).weeks
+        recurring_events << ScheduledMeeting.new(
+          hash_id: scheduled_meeting.hash_id,
+          name: scheduled_meeting.name,
+          description: scheduled_meeting.description,
+          start_at: next_start_at,
+          duration: scheduled_meeting.duration,
+        )
+      end
+  
+      Rails.logger.info "#{event_count} recurring events generated. Calling Moodle API create_calendar_event"
+      recurring_events.each do |event|
+        self.create_calendar_event(moodle_token, event, context_id, opts)
+      end
+
     end
 
     def self.get_user_groups(moodle_token, user_id, context_id, opts={})
