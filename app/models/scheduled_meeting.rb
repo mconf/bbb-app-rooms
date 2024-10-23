@@ -107,6 +107,14 @@ class ScheduledMeeting < ApplicationRecord
     repeat.present?
   end
 
+  def weekly?
+    recurring? && repeat == "weekly"
+  end
+
+  def every_two_weeks?
+    recurring? && repeat == "every_two_weeks"
+  end
+
   def meeting_id
     if room.moodle_group_select_enabled? && self.moodle_group_id.present?
       "#{room.meeting_id}-#{self.id}-#{self.moodle_group_id}"
