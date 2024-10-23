@@ -156,6 +156,7 @@ class ScheduledMeetingsController < ApplicationController
   end
 
   def update
+    old_start_at = @scheduled_meeting.start_at
     respond_to do |format|
       valid_start_at = validate_start_at(@scheduled_meeting)
       if valid_start_at
@@ -170,6 +171,16 @@ class ScheduledMeetingsController < ApplicationController
       end
 
       if valid_start_at && @scheduled_meeting.update(scheduled_meeting_params(@room))
+        moodle_calendar_events = MoodleCalendarEvent.where(scheduled_meeting_hash_id: @scheduled_meeting.hash_id)
+        changed_start_day = (old_start_at.to_date != @scheduled_meeting.start_at.to_date)
+        if @room.can_update_moodle_calendar_event && moodle_calendar_events.any? && changed_start_day
+          moodle_token = @room.consumer_config.moodle_token
+          if @scheduled_meeting.recurring?
+            Moodle::API.handle_recurring_events_update(moodle_token, @scheduled_meeting, moodle_calendar_events, @app_launch.context_id, {nonce: @app_launch.nonce})
+          else
+            Moodle::API.update_calendar_event_day(moodle_token, moodle_calendar_events, @app_launch.context_id, {nonce: @app_launch.nonce})
+          end
+        end
         format.html do
           return_path = room_path(@room), { notice: t('default.scheduled_meeting.updated') }
           redirect_if_brightspace(return_path) || redirect_to(*return_path)
@@ -388,6 +399,19 @@ class ScheduledMeetingsController < ApplicationController
       respond_to do |format|
         format.html { redirect_to room_path(@room), notice: t('default.scheduled_meeting.destroyed') }
         format.json { head :no_content }
+      end
+    end
+    moodle_calendar_events = MoodleCalendarEvent.where(scheduled_meeting_hash_id: @scheduled_meeting.hash_id)
+    if @room.can_delete_moodle_calendar_event && moodle_calendar_events.any?
+      moodle_token = @room.consumer_config.moodle_token
+      if @scheduled_meeting.recurring?
+        moodle_calendar_events.each do |event|
+          Moodle::API.delete_calendar_event(moodle_token, event.event_id, @app_launch.context_id, {nonce: @app_launch.nonce})
+          event.destroy
+        end
+      else
+        Moodle::API.delete_calendar_event(moodle_token, moodle_calendar_events.first.event_id, @app_launch.context_id, {nonce: @app_launch.nonce})
+        moodle_calendar_events.first.destroy
       end
     end
     @scheduled_meeting.destroy
