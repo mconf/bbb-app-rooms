@@ -128,9 +128,9 @@ class ScheduledMeetingsController < ApplicationController
           moodle_token = @room.consumer_config.moodle_token
           begin
             if @scheduled_meeting.recurring?
-              Moodle::API.generate_recurring_events(moodle_token, @scheduled_meeting, @app_launch.context_id, {nonce: @app_launch.nonce})
+              CreateRecurringEventsInMoodleCalendarJob.perform_later(moodle_token, @scheduled_meeting, @app_launch.context_id, {nonce: @app_launch.nonce})
             else
-              Moodle::API.create_calendar_event(moodle_token, @scheduled_meeting, @app_launch.context_id, {nonce: @app_launch.nonce})
+              Moodle::API.create_calendar_event(moodle_token, @scheduled_meeting.hash_id, @scheduled_meeting, @app_launch.context_id, {nonce: @app_launch.nonce})
             end
           rescue Moodle::UrlNotFoundError => e
             set_error('room', 'moodle_url_not_found', 500)
@@ -171,14 +171,15 @@ class ScheduledMeetingsController < ApplicationController
       end
 
       if valid_start_at && @scheduled_meeting.update(scheduled_meeting_params(@room))
-        moodle_calendar_events = MoodleCalendarEvent.where(scheduled_meeting_hash_id: @scheduled_meeting.hash_id)
+        moodle_calendar_events_ids = {}
+        moodle_calendar_events_ids = MoodleCalendarEvent.where(scheduled_meeting_hash_id: @scheduled_meeting.hash_id).pluck(:event_id)
         changed_start_day = (old_start_at.to_date != @scheduled_meeting.start_at.to_date)
-        if @room.can_update_moodle_calendar_event && moodle_calendar_events.any? && changed_start_day
+        if @room.can_update_moodle_calendar_event && moodle_calendar_events_ids.any? && changed_start_day
           moodle_token = @room.consumer_config.moodle_token
           if @scheduled_meeting.recurring?
-            Moodle::API.handle_recurring_events_update(moodle_token, @scheduled_meeting, moodle_calendar_events, @app_launch.context_id, {nonce: @app_launch.nonce})
+            UpdateRecurringEventsInMoodleCalendarJob.perform_later(moodle_token, @scheduled_meeting, moodle_calendar_events_ids, @app_launch.context_id, {nonce: @app_launch.nonce})
           else
-            Moodle::API.update_calendar_event_day(moodle_token, moodle_calendar_events, @app_launch.context_id, {nonce: @app_launch.nonce})
+            Moodle::API.update_calendar_event_day(moodle_token, moodle_calendar_events_ids.first, @scheduled_meeting.start_at, @app_launch.context_id, {nonce: @app_launch.nonce})
           end
         end
         format.html do
@@ -401,17 +402,15 @@ class ScheduledMeetingsController < ApplicationController
         format.json { head :no_content }
       end
     end
-    moodle_calendar_events = MoodleCalendarEvent.where(scheduled_meeting_hash_id: @scheduled_meeting.hash_id)
-    if @room.can_delete_moodle_calendar_event && moodle_calendar_events.any?
+    moodle_calendar_events_ids = {}
+    moodle_calendar_events_ids = MoodleCalendarEvent.where(scheduled_meeting_hash_id: @scheduled_meeting.hash_id).pluck(:event_id)
+    if @room.can_delete_moodle_calendar_event && moodle_calendar_events_ids.any?
       moodle_token = @room.consumer_config.moodle_token
       if @scheduled_meeting.recurring?
-        moodle_calendar_events.each do |event|
-          Moodle::API.delete_calendar_event(moodle_token, event.event_id, @app_launch.context_id, {nonce: @app_launch.nonce})
-          event.destroy
-        end
+        DeleteRecurringEventsInMoodleCalendarJob.perform_later(moodle_token, moodle_calendar_events_ids, @app_launch.context_id, {nonce: @app_launch.nonce})
       else
-        Moodle::API.delete_calendar_event(moodle_token, moodle_calendar_events.first.event_id, @app_launch.context_id, {nonce: @app_launch.nonce})
-        moodle_calendar_events.first.destroy
+        Moodle::API.delete_calendar_event(moodle_token, moodle_calendar_events_ids.first, @app_launch.context_id, {nonce: @app_launch.nonce})
+        MoodleCalendarEvent.find_by(event_id: moodle_calendar_events_ids.first).destroy
       end
     end
     @scheduled_meeting.destroy

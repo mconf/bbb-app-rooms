@@ -3,7 +3,7 @@ require 'faraday'
 
 module Moodle
   class API
-    def self.create_calendar_event(moodle_token, scheduled_meeting, context_id, opts={})
+    def self.create_calendar_event(moodle_token, sched_meeting_hash_id, scheduled_meeting, context_id, opts={})
       params = {
         wstoken: moodle_token.token,
         wsfunction: 'core_calendar_create_calendar_events',
@@ -31,7 +31,7 @@ module Moodle
       else
         # Create a new Moodle Calendar Event
         event_params = { event_id: result["events"].first['id'],
-                         scheduled_meeting_hash_id: scheduled_meeting.hash_id }
+                         scheduled_meeting_hash_id: sched_meeting_hash_id }
         MoodleCalendarEvent.create!(event_params)
       end
 
@@ -43,14 +43,13 @@ module Moodle
       true
     end
 
-    def self.update_calendar_event_day(moodle_token, event, new_start_at, context_id, opts={})
-      Rails.logger.info "Updating event `#{event.event_id}`"
+    def self.update_calendar_event_day(moodle_token, event_id, new_start_at, context_id, opts={})
 
       params = {
         wstoken: moodle_token.token,
         wsfunction: 'core_calendar_update_event_start_day',
         moodlewsrestformat: 'json',
-        eventid: event.event_id,
+        eventid: event_id,
         daytimestamp: new_start_at.to_i
       }
 
@@ -69,7 +68,7 @@ module Moodle
       if result["warnings"].present?
         Rails.logger.warn(log_labels + "message=\"#{result["warnings"].inspect}\"")
       end
-      Rails.logger.info(log_labels + "message=\"Event updated on Moodle calendar: #{result["events"].first['id']}\"")
+      Rails.logger.info(log_labels + "message=\"Event updated on Moodle calendar: event_id=#{result.dig('event', 'id')}, name='#{result.dig('event', 'name')}'\"")
 
       true
     end
@@ -103,49 +102,6 @@ module Moodle
       Rails.logger.info(log_labels + "message=\"Event deleted on Moodle calendar: #{result}\"")
 
       true
-    end
-
-    def self.handle_recurring_events_update(moodle_token, scheduled_meeting, calendar_events, context_id, opts={})
-      start_at = scheduled_meeting.start_at
-      cycle = scheduled_meeting.weekly? ? 4 : 2
-
-      Rails.logger.info "Calling Moodle API update_calendar_event_day for #{calendar_events.count} recurring events. "
-      calendar_events.each_with_index do |event, i|
-        next_start_at = start_at + (i * cycle).weeks
-        self.update_calendar_event_day(moodle_token, event, next_start_at, context_id, opts)
-      end
-    end
-
-    def self.generate_recurring_events(moodle_token, scheduled_meeting, context_id, opts)
-      start_at = scheduled_meeting.start_at
-      recurrence_type = scheduled_meeting.repeat
-      defaut_period = Rails.application.config.moodle_recurring_events_month_period
-      if recurrence_type == 'weekly'
-        event_count = defaut_period*4
-        cycle = 1
-      else
-        event_count = defaut_period*2
-        cycle = 2
-      end
-
-      Rails.logger.info "Generating recurring events"
-      recurring_events = []
-      event_count.times do |i|
-        next_start_at = start_at + (i * cycle).weeks
-        recurring_events << ScheduledMeeting.new(
-          hash_id: scheduled_meeting.hash_id,
-          name: scheduled_meeting.name,
-          description: scheduled_meeting.description,
-          start_at: next_start_at,
-          duration: scheduled_meeting.duration,
-        )
-      end
-  
-      Rails.logger.info "Calling Moodle API create_calendar_event for the #{event_count} recurring events generated. "
-      recurring_events.each do |event|
-        self.create_calendar_event(moodle_token, event, context_id, opts)
-      end
-
     end
 
     def self.get_user_groups(moodle_token, user_id, context_id, opts={})
