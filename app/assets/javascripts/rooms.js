@@ -32,7 +32,7 @@ $(document).on('turbolinks:load', function(){
       success: function(data) {
         if (data['running'] === true) {
           if (data['can_join_or_create'] === true && isMobile()) {
-            $("#offcanvasBottom").offcanvas('show');
+            $(".offcanvas-bottom").offcanvas('show');
           } else {
             joinSession();
           }
@@ -152,7 +152,7 @@ $(document).on('turbolinks:load', function(){
       let canJoin = $('#wait-for-moderator').data('can-join');
       if (canJoin === true && isMobile()){
         setTimeout(function() {
-          $("#offcanvasBottom").offcanvas('show');
+          $(".offcanvas-bottom").offcanvas('show');
         }, 200);
       } else {
         setTimeout(function() { joinSession(); }, 200);

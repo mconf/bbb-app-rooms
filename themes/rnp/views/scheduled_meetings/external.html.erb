@@ -67,7 +67,7 @@
                 <%= link_to t('default.scheduled_meeting.external.guest_name_change'), guest_logout_room_scheduled_meeting_path, class: "btn-secondary" %>
               </div>
             <% end %>
-            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target=<%="#offcanvasBottom-#{@scheduled_meeting.hash_id}"%> aria-controls="offcanvasBottom">
               <%= t('default.scheduled_meeting.external.join') %>
             </button>
           </div>
