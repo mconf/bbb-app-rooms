@@ -31,7 +31,8 @@ module Moodle
       else
         # Create a new Moodle Calendar Event
         event_params = { event_id: result["events"].first['id'],
-                         scheduled_meeting_hash_id: sched_meeting_hash_id }
+                         scheduled_meeting_hash_id: sched_meeting_hash_id,
+                         start_at: scheduled_meeting.start_at }
         MoodleCalendarEvent.create!(event_params)
       end
 
