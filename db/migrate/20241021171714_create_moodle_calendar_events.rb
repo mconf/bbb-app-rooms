@@ -3,6 +3,7 @@ class CreateMoodleCalendarEvents < ActiveRecord::Migration[6.1]
     create_table :moodle_calendar_events do |t|
       t.integer :event_id
       t.string :scheduled_meeting_hash_id
+      t.datetime :start_at
 
       t.timestamps
     end

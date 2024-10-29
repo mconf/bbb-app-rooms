@@ -102,6 +102,7 @@ ActiveRecord::Schema.define(version: 2024_10_21_171714) do
   create_table "moodle_calendar_events", force: :cascade do |t|
     t.integer "event_id"
     t.string "scheduled_meeting_hash_id"
+    t.datetime "start_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
