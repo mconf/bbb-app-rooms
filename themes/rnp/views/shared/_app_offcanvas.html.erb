@@ -4,7 +4,7 @@
 <% target_blank ||= false %>
 
 
-<div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
+<div class="offcanvas offcanvas-bottom" tabindex="-1" id=<%="offcanvasBottom-#{meeting.hash_id}"%> aria-labelledby="offcanvasBottomLabel">
   <div id="rnp-logo" class="d-flex align-items-center">
     <%= image_tag "conferenciaweb_logo.svg", title: "RNP", class: "mx-auto" %>
   </div>

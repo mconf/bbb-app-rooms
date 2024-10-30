@@ -35,10 +35,10 @@
 
     <%= form_with url: @post_to, id: 'join-form' do |form| %>
       <div id="open-modal" class="" >
-        <button id="open-app-modal" class="d-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+        <button id="open-app-modal" class="d-none" type="button" data-bs-toggle="offcanvas" data-bs-target=<%="#offcanvasBottom-#{@scheduled_meeting.hash_id}"%> aria-controls="offcanvasBottom">
           <%= t('scheduled_meetings.wait.retry') %>
         </button>
-        <%= render "shared/app_offcanvas", submit: true %>
+        <%= render "shared/app_offcanvas", submit: true, room: @room, meeting: @scheduled_meeting %>
       </div>
     <% end %>
     <div id="wait-for-moderator-back" style="display: none;">
