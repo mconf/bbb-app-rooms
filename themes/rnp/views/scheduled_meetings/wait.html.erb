@@ -33,7 +33,7 @@
       </u>
     <% end %>
 
-    <%= form_with url: @post_to, id: 'join-form' do |form| %>
+    <%= form_with url: @post_to, id: "join-form-#{@scheduled_meeting.hash_id}" do |form| %>
       <div id="open-modal" class="" >
         <button id="open-app-modal" class="d-none" type="button" data-bs-toggle="offcanvas" data-bs-target=<%="#offcanvasBottom-#{@scheduled_meeting.hash_id}"%> aria-controls="offcanvasBottom">
           <%= t('scheduled_meetings.wait.retry') %>
