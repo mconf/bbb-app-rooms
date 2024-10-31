@@ -126,15 +126,16 @@ $(document).on('turbolinks:load', function(){
     window.location = storeUrl
   };
 
-  $('#download-app-btn').on('click', function(e){
+  $('.download-app-btn').on('click', function(e){
     e.preventDefault()
     downloadApp()
   });
 
-  $('#open-app-btn').on('click', function(e){
+  $('.open-app-btn').on('click', function(e){
     e.preventDefault()
-    $("#join_in_app").val(true)
-    $('#join-form').trigger("submit")
+    hash_id = $(e.target).data('meeting-hash-id')
+    $(`#join_in_app-${hash_id}`).val(true)
+    $(`#join-form-${hash_id}`).trigger("submit")
   });
 
   if (controller === 'scheduled_meetings' && action === 'external') {

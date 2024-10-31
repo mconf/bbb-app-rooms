@@ -15,9 +15,9 @@
 
     <hr class="my-4" />
 
-    <%= hidden_field_tag 'join_in_app', false %>
-    <%= link_to t('open_app_modal.open_app'), '#', id: "open-app-btn", class: 'btn btn-primary' %>
-    <%= link_to t('open_app_modal.download_app'), '#', id: "download-app-btn", class: 'btn btn-primary' %>
+    <%= hidden_field_tag 'join_in_app', false, id: "join_in_app-#{meeting.hash_id}" %>
+    <%= link_to t('open_app_modal.open_app'), '#', id: "open-app-btn-#{meeting.hash_id}", class: 'btn btn-primary open-app-btn', 'data-meeting-hash-id': meeting.hash_id %>
+    <%= link_to t('open_app_modal.download_app'), '#', id: "download-app-btn-#{meeting.hash_id}", class: 'btn btn-primary download-app-btn' %>
     <div class="text-center">
       <% if submit %>
         <%= submit_tag t('open_app_modal.continue_using_browser'), class: "text-link" %>
