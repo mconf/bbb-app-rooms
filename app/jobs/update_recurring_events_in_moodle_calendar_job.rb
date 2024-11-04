@@ -12,6 +12,8 @@ class UpdateRecurringEventsInMoodleCalendarJob < ApplicationJob
     calendar_events_ids.each_with_index do |event_id, i|
       next_start_at = start_at + (i * cycle).weeks
       Moodle::API.update_calendar_event_day(moodle_token, event_id, next_start_at, context_id, opts)
+      MoodleCalendarEvent.find_by(event_id: event_id).update(start_at: next_start_at)
+      sleep(1)
     end
   end
 end

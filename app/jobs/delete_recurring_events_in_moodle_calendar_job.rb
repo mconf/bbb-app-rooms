@@ -10,6 +10,7 @@ class DeleteRecurringEventsInMoodleCalendarJob < ApplicationJob
 
       Moodle::API.delete_calendar_event(moodle_token, event_id, context_id, opts)
       MoodleCalendarEvent.find_by(event_id: event_id).destroy
+      sleep(1)
     end
   end
 end

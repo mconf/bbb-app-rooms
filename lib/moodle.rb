@@ -75,7 +75,7 @@ module Moodle
     end
 
     def self.delete_calendar_event(moodle_token, event_id, context_id, opts)
-      Rails.logger.info("Deleting event `#{event_id}`")
+      Rails.logger.info("[MOODLE API] Deleting event=`#{event_id}`")
 
       params = {
         wstoken: moodle_token.token,
