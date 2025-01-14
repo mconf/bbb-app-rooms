@@ -16,6 +16,7 @@
         link_to t("reports.download_options.#{format}"),
         download_room_reports_path(room, period: report, file_format: format.to_s),
         class: "dropdown-item",
+        data: { 'tracking-id': "download-report-#{format.to_s}" },
         target: '_blank'
         %>
       <% end %>

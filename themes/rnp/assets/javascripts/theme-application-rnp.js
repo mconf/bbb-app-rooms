@@ -169,6 +169,13 @@ $(document).on('turbolinks:load', function(){
     formatNoMatches: function () { return I18n.t('_all.select2.no_results') }
   });
 
+  $("#meeting-recurrence-select").on('change', function(e) {
+    value = e.target.value;
+    prefix = $("#meeting-recurrence-select").attr('data-prefix');
+    trackingId = `${prefix}-meeting-recurrence-${value ? value : 'does_not_repeat'}`;
+    e.target.setAttribute("data-tracking-id", trackingId);
+  });
+
 });
 
 $DOCUMENT.on('turbolinks:load',  () => {

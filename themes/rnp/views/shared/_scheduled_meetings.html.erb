@@ -4,6 +4,7 @@
       <%=
       link_to t('reports.view_reports'),
       room_reports_path(room),
+      data: { 'tracking-id': 'view-reports' },
       method: :get,
       class: "btn btn-light"
       %>
@@ -19,6 +20,7 @@
     link_to t('scheduled_meetings.show.view_history'),
     meetings_room_path(room),
     method: :get,
+    data: { 'tracking-id': 'view-history' },
     class: "btn btn-light"
     %>
   </div>
@@ -29,7 +31,8 @@
       link_to t('scheduled_meetings.new.add'),
       new_room_scheduled_meeting_path(room),
       method: :get,
-      class: "btn btn-primary"
+      class: "btn btn-primary",
+      data: { 'tracking-id': 'create-scheduled-meeting' }
       %>
     </div>
   <% end %>

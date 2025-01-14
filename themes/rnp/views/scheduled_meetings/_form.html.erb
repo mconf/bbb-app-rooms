@@ -76,9 +76,10 @@
         <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= t('helpers.hint.repeat') %>">help</i>
       <% end %>
       <%= form.select :repeat,
-          ScheduledMeeting.repeat_options_for_select(I18n.locale),
-       { selected: scheduled_meeting.repeat },
-       { class: "form-control icon-input-select" } %>
+      ScheduledMeeting.repeat_options_for_select(I18n.locale),
+      { selected: scheduled_meeting.repeat },
+      { class: "form-control icon-input-select",
+      data: { prefix: scheduled_meeting.new_record? ? 'set' : 'edit'} } %>
     </div>
   </div>
 
@@ -100,7 +101,7 @@
     <div class="form-group col-12 col-md-6">
       <div class="form-group">
         <div class="form-check">
-          <%= form.check_box :recording, class: "form-check-input" %>
+          <%= form.check_box :recording, class: "form-check-input", data: { 'tracking-id': 'check-allow-recording' }%>
           <%= form.label :recording, class: "form-check-label" %>
         </div>
       </div>
@@ -108,7 +109,7 @@
       <% if @room.allow_wait_moderator %>
         <div class="form-group">
           <div class="form-check">
-            <%= form.check_box :wait_moderator, class: "form-check-input" %>
+            <%= form.check_box :wait_moderator, class: "form-check-input", data: { 'tracking-id': 'check-wait-moderator' } %>
             <%= form.label :wait_moderator, class: "form-check-label" %>
           </div>
         </div>
@@ -129,7 +130,7 @@
       <% if @room.allow_all_moderators %>
         <div class="form-group">
           <div class="form-check">
-            <%= form.check_box :all_moderators, class: "form-check-input" %>
+            <%= form.check_box :all_moderators, class: "form-check-input", data: { 'tracking-id': 'check-join-moderator' } %>
             <%= form.label :all_moderators, class: "form-check-label" %>
           </div>
         </div>
@@ -140,7 +141,7 @@
       <% unless hide_disable_external_link?(@room) %>
         <div class="form-group">
           <div class="form-check">
-            <%= form.check_box :disable_external_link, class: "form-check-input" %>
+            <%= form.check_box :disable_external_link, class: "form-check-input", data: { 'tracking-id': 'check-disable-external-link' } %>
             <%= form.label :disable_external_link, class: "form-check-label" do %>
               <%= t('helpers.label.scheduled_meeting.disable_external_link') %>
               <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= t('helpers.hint.disable_external_link') %>">help</i>
@@ -151,7 +152,7 @@
 
       <div class="form-group">
         <div class="form-check">
-          <%= form.check_box :disable_private_chat, class: "form-check-input" %>
+          <%= form.check_box :disable_private_chat, class: "form-check-input", data: { 'tracking-id': 'check-disable-private-chat' } %>
           <%= form.label :disable_private_chat, class: "form-check-label" do %>
             <%= t('helpers.label.scheduled_meeting.disable_private_chat') %>
             <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= t('helpers.hint.disable_private_chat') %>">help</i>
@@ -161,7 +162,7 @@
 
       <div class="form-group">
         <div class="form-check">
-          <%= form.check_box :disable_note, class: "form-check-input" %>
+          <%= form.check_box :disable_note, class: "form-check-input", data: { 'tracking-id': 'check-disable-shared-notes' } %>
           <%= form.label :disable_note, class: "form-check-label" do %>
             <%= t('helpers.label.scheduled_meeting.disable_note') %>
             <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= t('helpers.hint.disable_note') %>">help</i>
