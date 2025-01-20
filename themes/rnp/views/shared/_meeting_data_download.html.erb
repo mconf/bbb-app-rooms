@@ -1,7 +1,7 @@
 <% if @notes_exist %>
   <%= button_to room_scheduled_meeting_internal_download_notes_path(@room, @meeting[:meetingID], @meeting[:internalMeetingID]),
     method: :get, target: (browser.safari? ? '_self' : '_blank'), class: "dropdown-item rec-edit",
-    data: { 'tracking-id': 'download-shared-notes' } do %>
+    data: { 'tracking-id': 'lti-download-shared-notes' } do %>
     <%= icon_download %>
     <%= t('meetings.meeting_data_download.download_notes') %>
   <% end %>
@@ -14,7 +14,7 @@
 <% if @participants_exist %>
   <%= button_to room_scheduled_meeting_internal_download_participants_path(@room, @meeting[:meetingID], @meeting[:internalMeetingID]),
     method: :get, target: (browser.safari? ? '_self' : '_blank'), class: "dropdown-item rec-edit",
-    data: { 'tracking-id': 'download-participants-list' } do %>
+    data: { 'tracking-id': 'lti-download-participants-list' } do %>
     <%= icon_download %>
     <%= t('meetings.meeting_data_download.download_participants') %>
   <% end %>
@@ -27,7 +27,7 @@
 <% if @dashboard_exist && Rails.configuration.meeting_learning_dashboard_url.present? %>
   <%= button_to room_scheduled_meeting_internal_learning_dashboard_path(@room, @meeting[:meetingID], @meeting[:internalMeetingID]),
     method: :get, target: (browser.safari? ? '_self' : '_blank'), class: "dropdown-item rec-edit",
-    data: { 'tracking-id': 'download-learning-dashboard' } do %>
+    data: { 'tracking-id': 'lti-download-learning-dashboard' } do %>
     <%= icon_learning_dashboard %>
     <%= t('meetings.meeting_data_download.dashboard') %>
   <% end %>

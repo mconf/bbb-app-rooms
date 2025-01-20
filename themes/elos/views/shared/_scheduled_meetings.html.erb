@@ -4,7 +4,7 @@
       <%=
       link_to t('reports.view_reports'),
       room_reports_path(room),
-      data: { 'tracking-id': 'view-reports' },
+      data: { 'tracking-id': 'lti-view-reports' },
       class: "btn btn-light"
       %>
     </div>
@@ -18,7 +18,7 @@
     <%=
     link_to t('scheduled_meetings.show.view_history'),
      meetings_room_path(room),
-     data: { 'tracking-id': 'view-history' },
+     data: { 'tracking-id': 'lti-view-history' },
      class: "btn btn-light"
     %>
   </div>
@@ -29,7 +29,7 @@
       link_to t('scheduled_meetings.new.add'),
       new_room_scheduled_meeting_path(room),
       class: "btn btn-secondary",
-      data: { 'tracking-id': 'create-scheduled-meeting' }
+      data: { 'tracking-id': 'lti-create-scheduled-meeting' }
       %>
     </div>
   <% end %>

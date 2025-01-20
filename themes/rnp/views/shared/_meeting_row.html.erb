@@ -111,14 +111,14 @@
               <% if p[:type] == 'presentation' %>
                 <%=
                 link_to icon_conference_play(title: t("meetings.recording.playbacks.#{p[:type]}"), class: 'fa-2x'), url,
-                data: { 'tracking-id': 'play-record' },
+                data: { 'tracking-id': 'lti-play-record' },
                 class: "d-flex text-decoration-none color-primary #{'create-session-token' unless browser_safari}",
                 target: browser_safari ? '_self' : '_blank'
                 %>
               <% else %>
                 <%=
                 link_to icon_file_download(title: t("meetings.recording.playbacks.#{p[:type]}"), class: 'fa-2x'), url,
-                data: { 'tracking-id': 'download-recording' },
+                data: { 'tracking-id': 'lti-download-recording' },
                 class: "d-flex text-decoration-none me-2 color-primary #{'create-session-token' unless browser_safari}",
                 target: browser_safari ? '_self' : '_blank'
                 %>
@@ -128,7 +128,7 @@
             <% url = playback_url(room, recording[:recordID], recording[:playbacks].find { |p| p[:type] == 'presentation' }) %>
             <%=
             link_to icon_conference_play(title: t("meetings.recording.playbacks.presentation"), class: 'fa-2x'), url,
-            data: { 'tracking-id': 'play-record' },
+            data: { 'tracking-id': 'lti-play-record' },
             class: "d-flex text-decoration-none #{'create-session-token' unless browser_safari}",
             target: browser_safari ? '_self' : '_blank'
             %>
@@ -162,7 +162,7 @@
                   'clipboard-text': playback_url(room, recording[:recordID], playback),
                   turbolinks: false,
                   'toast-id': '#playback-link-copied-toast',
-                  'tracking-id': 'copy-playback-link'
+                  'tracking-id': 'lti-copy-playback-link'
                 },
                 class: "dropdown-item copy-to-clipboard" do
                 %>
@@ -242,7 +242,7 @@
                 <% if recording[:published] %>
                   <%= link_to recording_unpublish_path(room, record_id: recording[:recordID]),
                   method: :post,
-                  data: { confirm: t('meetings.recording.confirm.unpublish'), 'tracking-id': 'unpublish-recording' },
+                  data: { confirm: t('meetings.recording.confirm.unpublish'), 'tracking-id': 'lti-unpublish-recording' },
                   class: "dropdown-item rec-edit" do %>
                     <%= icon_hide_recording %>
                     <%= t("meetings.recording.unpublish")%>
@@ -251,7 +251,7 @@
                 <% else %>
                   <%= link_to recording_publish_path(room, record_id: recording[:recordID]),
                   method: :post,
-                  data: { confirm: t('meetings.recording.confirm.publish'), 'tracking-id': 'publish-recording' },
+                  data: { confirm: t('meetings.recording.confirm.publish'), 'tracking-id': 'lti-publish-recording' },
                   class: "dropdown-item rec-edit" do %>
                     <%= icon_show_recording %>
                     <%= t("meetings.recording.publish") %>
@@ -260,7 +260,7 @@
                 <%# Delete recording %>
                 <%= link_to recording_delete_path(room, record_id: recording[:recordID]),
                 method: :post,
-                data: { confirm: t('meetings.recording.confirm.destroy'), 'tracking-id': 'delete-recording' },
+                data: { confirm: t('meetings.recording.confirm.destroy'), 'tracking-id': 'lti-delete-recording' },
                 class: "dropdown-item rec-edit" do %>
                   <%= icon_delete %>
                   <%= t("meetings.recording.destroy") %>
