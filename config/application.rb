@@ -165,5 +165,8 @@ module BbbAppRooms
 
     # Moodle API
     config.moodle_api_timeout = Mconf::Env.fetch_int('MCONF_MOODLE_API_TIMEOUT', 5)
+
+    # Data API url
+    config.data_api_url = Mconf::Env.fetch('MCONF_DATA_API_URL', '')
   end
 end
