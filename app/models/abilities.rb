@@ -21,7 +21,7 @@ class Abilities
       else
         user.present?
       end
-    when :download_notes, :download_participants, :learning_dashboard
+    when :download_artifacts
       user.present? && self.full_permission?(user)
     else
       false

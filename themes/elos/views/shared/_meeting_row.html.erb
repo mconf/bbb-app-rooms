@@ -131,7 +131,7 @@
           <a href="#" class="dropdown-toggle d-flex text-decoration-none dropdown-opts-link"
             meeting-id="<%= meeting[:meetingID] %>"
             internal-meeting-id="<%= meeting[:internalMeetingID] %>"
-            check-bucket-files-endpoint="<%= room_scheduled_meeting_internal_check_bucket_files_path(@room, meeting[:meetingID], meeting[:internalMeetingID]) %>"
+            download-artifacts-endpoint="<%= room_scheduled_meeting_internal_download_artifacts_path(@room, meeting[:meetingID], meeting[:internalMeetingID]) %>"
             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <%= icon_options_dots %>
           </a>
@@ -212,7 +212,7 @@
           <a href="#" class="dropdown-toggle d-flex text-decoration-none dropdown-opts-link"
             meeting-id="<%= meeting[:meetingID] %>"
             internal-meeting-id="<%= meeting[:internalMeetingID] %>"
-            check-bucket-files-endpoint="<%= room_scheduled_meeting_internal_check_bucket_files_path(room, meeting[:meetingID], meeting[:internalMeetingID]) %>"
+            download-artifacts-endpoint="<%= room_scheduled_meeting_internal_download_artifacts_path(room, meeting[:meetingID], meeting[:internalMeetingID]) %>"
             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <%= icon_options_dots%>
           </a>

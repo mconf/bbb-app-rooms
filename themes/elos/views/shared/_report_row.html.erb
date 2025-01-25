@@ -15,9 +15,7 @@
         <%=
         link_to t("reports.download_options.#{format}"),
         download_room_reports_path(room, period: report, file_format: format.to_s),
-        class: "dropdown-item",
-        target: '_blank'
-        %>
+        class: "dropdown-item" %>
       <% end %>
     </div>
   </td>
