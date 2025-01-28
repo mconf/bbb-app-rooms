@@ -10,6 +10,7 @@ class MeetingsController < ApplicationController
   before_action :get_scheduled_meeting_info
   before_action :check_data_api_config, only: [:download_artifacts]
   before_action :find_app_launch
+  before_action :find_user, only: [:download_artifacts]
   before_action only: :download_artifacts do
     authorize_user!(:download_artifacts, @room)
   end
