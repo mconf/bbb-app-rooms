@@ -5,7 +5,7 @@
     <%= t('meetings.meeting_data_download.download_notes') %>
   <% end %>
 <% else %>
-  <%= link_to room_scheduled_meetings_path(@room), disabled: true, class: "dropdown-item rec-edit" do %>
+  <%= link_to '#', class: "dropdown-item rec-edit disabled_link" do %>
     <%= t('meetings.meeting_data_download.unavailable_notes') %>
   <% end %>
 <% end %>
@@ -16,7 +16,7 @@
     <%= t('meetings.meeting_data_download.download_participants') %>
   <% end %>
 <% else %>
-  <%= link_to room_scheduled_meetings_path(@room), disabled: true, class: "dropdown-item rec-edit" do %>
+  <%= link_to '#', class: "dropdown-item rec-edit disabled_link" do %>
     <%= t('meetings.meeting_data_download.unavailable_participants') %>
   <% end %>
 <% end %>
@@ -27,7 +27,7 @@
     <%= t('meetings.meeting_data_download.dashboard') %>
   <% end %>
 <% else %>
-  <%= link_to room_scheduled_meetings_path(@room), disabled: true, class: "dropdown-item rec-edit" do %>
+  <%= link_to '#', class: "dropdown-item rec-edit disabled_link" do %>
     <%= t('meetings.meeting_data_download.unavailable_dashboard') %>
   <% end %>
 <% end %>
