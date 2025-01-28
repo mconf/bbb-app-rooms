@@ -60,27 +60,44 @@ module Mconf
       files = ['participants_list', 'shared_notes', 'engagement_report']
       artifact_download_links = {}
 
-      threads = files.map do |file|
-        Thread.new do
-          url = "#{Rails.application.config.data_api_url}/institutions/#{guid}/artifacts/meetings/#{internal_meeting_id}/#{file}"
+      meeting_objects = list_objects(guid, internal_meeting_id)
 
-          conn = Faraday.new(url: url) do |config|
-            config.response :json
+      if meeting_objects.present?
+        artifact_download_links = meeting_objects.each_with_object({}) do |artifact, result|
+          if key_mapping.key?(artifact["file_name"])
+            artifact_file = key_mapping[artifact["file_name"]]
+            result[artifact_file] = artifact["link"]
           end
-
-          response = conn.get(url)
-
-          if response.status == 400
-            Rails.logger.error "[Data API] Bad request (guid: #{guid} and date: #{date})"
-          end
-
-          artifact_download_links[file] = response.body['link']
         end
       end
 
-      # Wait for all threads to finish
-      threads.each(&:join)
       artifact_download_links
+    end
+
+    # Calls the API to get the objects of a meeting
+    # Returns a hash with the links from the API's response
+    #
+    # @return [Hash] with all artifacts related to that meeting
+    def self.list_objects(guid, internal_meeting_id)
+      check_api_url
+
+      return nil if guid.blank?
+
+      url = "#{Rails.application.config.data_api_url}/institutions/#{guid}/artifacts/meetings/#{internal_meeting_id}/list_objects"
+
+      conn = Faraday.new(url: url) do |config|
+        config.response :json
+      end
+
+      response = conn.get(url)
+
+      if response.status == 400
+        Rails.logger.error "[Data API] Bad request (guid: #{guid} and internal_meeting_id: #{internal_meeting_id})"
+      elsif response.status == 404
+        Rails.logger.error "[Data API] Meeting or file not found (guid: #{guid} and internal_meeting_id: #{internal_meeting_id})"
+      end
+
+      response.body["objects"]
     end
 
     private
