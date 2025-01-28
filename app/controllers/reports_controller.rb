@@ -1,12 +1,10 @@
-require 'spaces_api'
-
 class ReportsController < ApplicationController
   include ApplicationHelper
-  include SpacesApi
 
   before_action :find_room
-  before_action :check_spaces_credentials
+  before_action :check_data_api_config
   before_action :find_user
+  before_action :find_app_launch
   before_action do
     authorize_user!(:edit, @room)
   end
@@ -14,24 +12,33 @@ class ReportsController < ApplicationController
   # GET /rooms/:id/reports
   def index
     respond_to do |format|
-      @reports = get_room_reports(@room)
+      start_date = @room.consumer_config.created_at
+      current_date = Date.today
+      periods = []
+
+      while current_date >= start_date
+        periods << current_date.strftime("%Y-%m")
+        current_date = current_date.prev_month
+      end
+
+      @reports = periods
       format.html { render 'rooms/reports' }
     end
   end
 
   # GET /rooms/:id/report/download
   def download
-    url = get_report_download_url(@room, params[:period], params[:file_format])
-    redirect_to url
+    report_artifacts = Mconf::DataApi.get_report_artifacts(@app_launch.params['custom_params']['institution_guid'], params[:period], I18n.locale)
+    redirect_to report_artifacts["#{params[:file_format]}"]
   end
 
   private
 
-  def check_spaces_credentials
-    unless spaces_configured?
-      Rails.logger.error "A Spaces credential is missing from the .env file"
+  def check_data_api_config
+    if Rails.application.config.data_api_url.blank?
+      Rails.logger.error "Data API url is missing from the .env file"
       redirect_back(fallback_location: room_path(@room),
-                      notice: t('default.app.spaces_error'))
+                      notice: t('default.app.data_api_config_error'))
     end
   end
 end
