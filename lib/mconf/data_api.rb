@@ -5,7 +5,7 @@ module Mconf
     # Calls the API to get the link for artifacts of given month
     # Returns a hash with the links from the API's response
     #
-    # @return [Hash] with 3 keys: pdf, csv and xls
+    # @return [Hash] with 2 keys: csv and xls
     def self.get_report_artifacts(guid, date, locale = 'pt')
       check_api_url
 
@@ -46,8 +46,8 @@ module Mconf
       report_download_links
     end
 
-    # Calls the API to get the link for artifacts of of a recording
-    # Returns a hash with the links from the API's response
+    # Calls the method `list_objects` to get the link for artifacts of meeting
+    # Returns a hash with the links from the response
     #
     # @return [Hash] with 3 keys: participants_list, shared_notes, engagement_report
     def self.get_meeting_artifacts_files(guid, internal_meeting_id)
@@ -55,9 +55,12 @@ module Mconf
 
       return nil if guid.blank?
 
-      Rails.logger.info "[Data API] Get meeting artifact files"
+      key_mapping = {
+        "activities.txt" => "participants_list",
+        "notes.txt" => "shared_notes",
+        "learning_dashboard.json" => "engagement_report"
+      }
 
-      files = ['participants_list', 'shared_notes', 'engagement_report']
       artifact_download_links = {}
 
       meeting_objects = list_objects(guid, internal_meeting_id)
