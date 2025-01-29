@@ -50,15 +50,14 @@ module Mconf
     # Returns a hash with the links from the response
     #
     # @return [Hash] with 3 keys: participants_list, shared_notes, engagement_report
-    def self.get_meeting_artifacts_files(guid, internal_meeting_id)
+    def self.get_meeting_artifacts_files(guid, internal_meeting_id, locale = 'pt-BR')
       check_api_url
 
       return nil if guid.blank?
 
       key_mapping = {
         "activities.txt" => "participants_list",
-        "notes.txt" => "shared_notes",
-        "learning_dashboard.json" => "engagement_report"
+        "notes.txt" => "shared_notes"
       }
 
       artifact_download_links = {}
@@ -74,6 +73,7 @@ module Mconf
         end
       end
 
+      artifact_download_links['engagement_report'] = get_engagement_report(guid, internal_meeting_id, locale)
       artifact_download_links
     end
 
@@ -97,10 +97,41 @@ module Mconf
       if response.status == 400
         Rails.logger.error "[Data API] Bad request (guid: #{guid} and internal_meeting_id: #{internal_meeting_id})"
       elsif response.status == 404
-        Rails.logger.error "[Data API] Meeting or file not found (guid: #{guid} and internal_meeting_id: #{internal_meeting_id})"
+        Rails.logger.error "[Data API] Meeting or files not found (guid: #{guid} and internal_meeting_id: #{internal_meeting_id})"
       end
 
       response.body["objects"]
+    end
+
+    # Calls the API to get the engagement report of a meeting
+    # Returns the link from the API's response
+    #
+    # @return Meeting's engagement report link
+    def self.get_engagement_report(guid, internal_meeting_id, locale = 'pt-BR')
+      check_api_url
+
+      return nil if guid.blank?
+
+      url = "#{Rails.application.config.data_api_url}/institutions/#{guid}/artifacts/meetings/#{internal_meeting_id}/engagement_report?ld_redirect=true"
+
+      conn = Faraday.new(url: url) do |config|
+        config.response :json
+      end
+
+      response = conn.get(url)
+
+      if response.status == 400
+        Rails.logger.error "[Data API] Bad request (guid: #{guid} and internal_meeting_id: #{internal_meeting_id})"
+      elsif response.status == 404
+        Rails.logger.error "[Data API] Meeting or file not found (guid: #{guid} and internal_meeting_id: #{internal_meeting_id})"
+      end
+
+      locale = 'pt-BR' if locale.eql?('pt')
+
+      response_link = response.body['link']
+      response_link = "#{response_link}&lang=#{locale}" if response_link.present?
+
+      response_link
     end
 
     private
