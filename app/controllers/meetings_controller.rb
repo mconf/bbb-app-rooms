@@ -17,6 +17,9 @@ class MeetingsController < ApplicationController
 
   # GET /rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/meetings/:internal_id/download_artifacts
   def download_artifacts
+    institution_guid = @app_launch.params['custom_params']['institution_guid']
+    @artifact_files = Mconf::DataApi.get_meeting_artifacts_files(institution_guid, @meeting[:internalMeetingID], I18n.locale.to_s)
+
     render partial: "shared/meeting_data_download"
   end
 

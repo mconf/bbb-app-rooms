@@ -1,6 +1,5 @@
-<% artifact_files = Mconf::DataApi.get_meeting_artifacts_files(@app_launch.params['custom_params']['institution_guid'], @meeting[:internalMeetingID])%>
-<% if artifact_files['shared_notes'].present? %>
-  <%= link_to artifact_files['shared_notes'], target: (browser.safari? ? '_self' : '_blank'), class: "dropdown-item rec-edit" do %>
+<% if @artifact_files.present? && @artifact_files['shared_notes'].present? %>
+  <%= link_to @artifact_files['shared_notes'], target: (browser.safari? ? '_self' : '_blank'), class: "dropdown-item rec-edit" do %>
     <%= icon_download %>
     <%= t('meetings.meeting_data_download.download_notes') %>
   <% end %>
@@ -10,8 +9,8 @@
   <% end %>
 <% end %>
 
-<% if artifact_files['participants_list'].present? %>
-  <%= link_to artifact_files['participants_list'], target: (browser.safari? ? '_self' : '_blank'), class: "dropdown-item rec-edit" do %>
+<% if @artifact_files.present? && @artifact_files['participants_list'].present? %>
+  <%= link_to @artifact_files['participants_list'], target: (browser.safari? ? '_self' : '_blank'), class: "dropdown-item rec-edit" do %>
     <%= icon_download %>
     <%= t('meetings.meeting_data_download.download_participants') %>
   <% end %>
@@ -21,8 +20,8 @@
   <% end %>
 <% end %>
 
-<% if artifact_files['engagement_report'].present? %>
-  <%= link_to artifact_files['engagement_report'], target: (browser.safari? ? '_self' : '_blank'), class: "dropdown-item rec-edit" do %>
+<% if @artifact_files.present? && @artifact_files['engagement_report'].present? %>
+  <%= link_to @artifact_files['engagement_report'], target: (browser.safari? ? '_self' : '_blank'), class: "dropdown-item rec-edit" do %>
     <%= icon_learning_dashboard %>
     <%= t('meetings.meeting_data_download.dashboard') %>
   <% end %>
