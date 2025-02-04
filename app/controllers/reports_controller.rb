@@ -12,23 +12,14 @@ class ReportsController < ApplicationController
   # GET /rooms/:id/reports
   def index
     respond_to do |format|
-      start_date = @room.consumer_config.created_at
-      current_date = Date.today
-      periods = []
-
-      while current_date >= start_date
-        periods << current_date.strftime("%Y-%m")
-        current_date = current_date.prev_month
-      end
-
-      @reports = periods
+      @reports = Mconf::DataApi.reports_available(@room.consumer_config.key, @room.handler)
       format.html { render 'rooms/reports' }
     end
   end
 
   # GET /rooms/:id/report/download
   def download
-    report_artifacts = Mconf::DataApi.get_report_artifacts(@app_launch.params['custom_params']['institution_guid'], params[:period], I18n.locale)
+    @report_artifacts = Mconf::DataApi.get_report_artifacts(@room.consumer_config.key, @room.handler, params[:period], I18n.locale)
     redirect_to report_artifacts["#{params[:file_format]}"]
   end
 

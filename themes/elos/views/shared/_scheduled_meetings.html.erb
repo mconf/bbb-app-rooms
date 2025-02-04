@@ -1,5 +1,5 @@
 <div id="action-buttons" class="row">
-  <% if can_edit?(user, room) && @app_launch.params['custom_params']['institution_guid'].present? && @room.consumer_config.present? %>
+  <% if can_edit?(user, room) && @room.consumer_config.present? && @room.handler.present? %>
     <div id="view-reports" class="col-12 col-sm-12 col-md-4 col-lg-4">
       <%=
       link_to t('reports.view_reports'),

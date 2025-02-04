@@ -6,15 +6,15 @@ module Mconf
     # Returns a hash with the links from the API's response
     #
     # @return [Hash] with 2 keys: csv and xls
-    def self.get_report_artifacts(guid, date, locale = 'pt')
+    def self.get_report_artifacts(consumer_key, handler, date, locale = 'pt')
       check_api_url
 
-      if guid.blank?
-        Rails.logger.error "[Data API] Guid is missing: guid=`#{guid}`"
+      if consumer_key.blank? || handler.blank?
+        Rails.logger.error "[Data API] Consumer key or Room handler is missing: consumer_key=`#{consumer_key}`, handler=`#{handler}`"
         return nil
       end
 
-      url = "#{Rails.application.config.data_api_url}/institutions/#{guid}/artifacts/report/#{date}"
+      url = "#{Rails.application.config.data_api_url}/lti/#{consumer_key}/#{handler}/artifacts/report/#{date}"
       locale = locale.to_s.downcase.start_with?('en') ? 'en' : 'pt'
 
       formats = ['csv', 'xls']
@@ -34,7 +34,9 @@ module Mconf
           response = conn.get(url, query)
 
           if response.status == 400
-            Rails.logger.info "[Data API] Bad request (guid: #{guid} and date: #{date})"
+            Rails.logger.error "[Data API] Bad request (consumer_key: #{consumer_key} and handler: #{handler})"
+          elsif response.status == 404
+            Rails.logger.error "[Data API] File not found"
           end
 
           report_download_links[format] = response.body['link']
@@ -44,6 +46,31 @@ module Mconf
       # Wait for all threads to finish
       threads.each(&:join)
       report_download_links
+    end
+
+    def self.reports_available(consumer_key, handler)
+      check_api_url
+
+      if consumer_key.blank? || handler.blank?
+        Rails.logger.error "[Data API] Consumer key or Room handler is missing: consumer_key=`#{consumer_key}`, handler=`#{handler}`"
+        return nil
+      end
+
+      url = "#{Rails.application.config.data_api_url}/lti/#{consumer_key}/#{handler}/artifacts/reports_available"
+
+      conn = Faraday.new(url: url) do |config|
+        config.response :json
+      end
+
+      response = conn.get(url)
+
+      if response.status == 400
+        Rails.logger.error "[Data API] Bad request (consumer_key: #{consumer_key} and handler: #{handler})"
+      elsif response.status == 404
+        Rails.logger.error "[Data API] No reports found"
+      end
+
+      response.body
     end
 
     # Calls the method `list_objects` to get the link for artifacts of meeting
