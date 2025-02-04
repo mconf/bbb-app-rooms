@@ -20,7 +20,8 @@ class ReportsController < ApplicationController
   # GET /rooms/:id/report/download
   def download
     @report_artifacts = Mconf::DataApi.get_report_artifacts(@room.consumer_config.key, @room.handler, params[:period], I18n.locale)
-    redirect_to report_artifacts["#{params[:file_format]}"]
+
+    render partial: "shared/report_data_download"
   end
 
   private
