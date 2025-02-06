@@ -100,7 +100,9 @@ module Mconf
         end
       end
 
-      artifact_download_links['engagement_report'] = get_engagement_report(guid, internal_meeting_id, locale)
+      engagement_report = get_engagement_report(guid, internal_meeting_id, locale)
+      artifact_download_links['engagement_report'] = engagement_report if engagement_report.present?
+
       artifact_download_links
     end
 
@@ -154,6 +156,8 @@ module Mconf
       end
 
       locale = 'pt-BR' if locale.eql?('pt')
+
+      return nil if response.body["error"].present?
 
       response_link = response.body['link']
       response_link = "#{response_link}&lang=#{locale}" if response_link.present?
