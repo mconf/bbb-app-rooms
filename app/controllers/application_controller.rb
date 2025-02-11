@@ -35,12 +35,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  rescue_from Aws::S3::Errors::ServiceError do |e|
-    Rails.logger.error "Exception caught trying to contact Spaces bucket: message='#{e.message}'"
-    redirect_back(fallback_location: room_path(@room),
-                      notice: t('default.app.spaces_error'))
-  end
-
   # Check if the user authentication exists in the session and is valid (didn't expire).
   # On launch, go get the credentials needed.
   def authenticate_with_oauth!(provider, auth_args = {})
