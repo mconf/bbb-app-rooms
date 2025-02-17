@@ -179,7 +179,7 @@ class ScheduledMeetingsController < ApplicationController
   def join
     opts = {}
     if browser.safari? || browser.safari_webapp_mode?
-      opts[:logout_url] = safari_close_room_url(@room)
+      opts[:logout_url] = @user.present? ? safari_close_room_url(@room) : autoclose_url
       Rails.logger.debug "User's browser is Safari, logout_url: #{opts[:logout_url]}"
     end
 
