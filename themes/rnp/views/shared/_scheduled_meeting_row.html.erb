@@ -29,11 +29,11 @@
         <%= render "shared/app_offcanvas", room: room, meeting: meeting, target_blank: !(browser.safari? || browser.safari_webapp_mode?) %>
       <% end %>
     <% elsif browser.safari? || browser.safari_webapp_mode? %>
-      <%= link_to join_room_scheduled_meeting_url(room, meeting, no_auto_join: true), class: "btn btn-primary join-room-btn" do %>
+      <%= link_to join_room_scheduled_meeting_url(room, meeting, no_auto_join: true), class: "btn btn-primary join-room-btn", data: { 'tracking-id': 'lti-join-session' } do %>
         <i class="icon material-icons">play_arrow</i>
       <% end %>
     <% else %>
-      <%= link_to join_room_scheduled_meeting_url(room, meeting, no_auto_join: true), class: "btn btn-primary join-room-btn create-session-token", target: '_blank' do %>
+      <%= link_to join_room_scheduled_meeting_url(room, meeting, no_auto_join: true), class: "btn btn-primary join-room-btn create-session-token", data: { 'tracking-id': 'lti-join-session' }, target: '_blank' do %>
         <i class="icon material-icons">play_arrow</i>
       <% end %>
     <% end %>
@@ -51,7 +51,8 @@
             data: {
               'clipboard-text': external_room_scheduled_meeting_url(room, meeting),
               turbolinks: false,
-              'toast-id': '#external-link-copied-toast'
+              'toast-id': '#external-link-copied-toast',
+              'tracking-id': 'lti-copy-external-link'
             },
             class: "dropdown-item copy-to-clipboard"
             %>
@@ -60,14 +61,15 @@
           <%=
           link_to t('scheduled_meetings.edit.action'),
            edit_room_scheduled_meeting_path(room, meeting),
-           class: "dropdown-item"
+           class: "dropdown-item",
+           data: { 'tracking-id': 'lti-edit-scheduled-meeting' }
           %>
           <%=
           link_to t('scheduled_meetings.destroy'),
            room_scheduled_meeting_path(room, meeting),
            class: "dropdown-item",
            method: :delete,
-           data: { confirm: t('default.scheduled_meeting.destroy.confirmation') }
+           data: { confirm: t('default.scheduled_meeting.destroy.confirmation'), 'tracking-id': 'lti-delete-scheduled-meeting' }
           %>
         </div>
       </div>

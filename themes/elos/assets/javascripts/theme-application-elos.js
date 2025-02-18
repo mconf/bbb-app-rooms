@@ -146,4 +146,11 @@ $(document).on('turbolinks:load', function(){
         e.target.href += '?filter=recorded-only';
     }
   });
+
+  $("#meeting-recurrence-select").on('change', function(e) {
+    value = e.target.value;
+    prefix = $("#meeting-recurrence-select").attr('data-prefix');
+    trackingId = `lti-${prefix}-meeting-recurrence-${value ? value : 'does_not_repeat'}`;
+    e.target.setAttribute("data-tracking-id", trackingId);
+  });
 });
