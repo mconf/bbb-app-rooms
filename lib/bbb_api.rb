@@ -78,6 +78,7 @@ module BbbApi
         {
           'userdata-bbb_override_default_locale': locale,
           'userdata-mconf_custom_logout_url': logout_url,
+          'userdata-bbb_feedback_redirect_url': logout_url,
           userID: user.uid,
           redirect: false
         }
@@ -101,6 +102,7 @@ module BbbApi
       {
         'userdata-bbb_override_default_locale': locale,
         'userdata-mconf_custom_logout_url': logout_url,
+        'userdata-bbb_feedback_redirect_url': logout_url,
         userID: user.uid
       }
     )
@@ -122,6 +124,7 @@ module BbbApi
       { guest: true,
         'userdata-bbb_override_default_locale': locale,
         'userdata-mconf_custom_logout_url': logout_url,
+        'userdata-bbb_feedback_redirect_url': logout_url,
         userID: uid
       }
     )
