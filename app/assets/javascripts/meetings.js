@@ -240,29 +240,29 @@ window.addEventListener('message', function(event) {
     });
   }
 });
-/* Request the bucket files partial to the server.
+/* Request the meeting artifacts to Data API.
 */
-let doAjaxBucket = async (check_bucket_endpoint) => {
+let doAjaxDownloadArtifacts = async (download_artifacts_endpoint) => {
   return $.ajax({
-    url: check_bucket_endpoint,
+    url: download_artifacts_endpoint,
     type: "GET",
     timeout: ajaxTimeout
   });
 }
 
-/* Fetch the files from bucket and process the response
+/* Fetch the files from Data API and process the response
  *
  * In case of success, it will display the received partial.
  * In case of timeout, the timeout value will increase in 1 second.
 */
-let checkBucketFiles = async(meeting_id, check_bucket_endpoint) => {
+let downloadArtifacts = async(meeting_id, download_artifacts_endpoint) => {
   if (loadedMeetingId != meeting_id) {
     try {
-      let response = await doAjaxBucket(check_bucket_endpoint);
+      let response = await doAjaxDownloadArtifacts(download_artifacts_endpoint);
       response = $(response);
   
       loadedMeetingId = meeting_id;
-      let buttons = response.filter('.button_to')
+      let buttons = response.filter('a')
       showDropdownItems(buttons, meeting_id);
     } catch(err) {
       if (err.statusText == 'timeout') {
@@ -288,8 +288,9 @@ let showMeetings = (rows) => {
     e.preventDefault()
     openAuthWindow($(this).data('url'), 'Filesender');
   });
+
   $('.dropdown-opts-link').on('click', function(e) {
-    checkBucketFiles(this.getAttribute('internal-meeting-id'), this.getAttribute('check-bucket-files-endpoint'));
+    downloadArtifacts(this.getAttribute('internal-meeting-id'), this.getAttribute('download-artifacts-endpoint'));
   });
 };
 
@@ -304,7 +305,6 @@ let showDropdownItems = (buttons, meeting_id) => {
       $(button).addClass('create-session-token');
 
     $(button).addClass('appended-item rec-edit');
-    $(button).attr("target", "_blank");
 
     // Safari blocks all links opened in new tabs (popups), so we need to open them in the same tab
     if (!!$("body").data('browser-is-safari')) {
@@ -313,6 +313,7 @@ let showDropdownItems = (buttons, meeting_id) => {
     }
 
     $(`div[aria-labelledby="dropdown-opts-${meeting_id}"]`).append(button);
+    $(button).removeClass('create-session-token');
   }
 };
 
