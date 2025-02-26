@@ -35,7 +35,6 @@ class RoomsController < ApplicationController
   # GET /rooms/1
   def show
     respond_to do |format|
-      # TODO: do this also in a worker in the future to speed up this request
       @room.update_recurring_meetings
       @scheduled_meetings = @room.scheduled_meetings.active
       
