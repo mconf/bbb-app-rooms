@@ -1,35 +1,35 @@
-<% if @notes_exist %>
-  <%= button_to room_scheduled_meeting_internal_download_notes_path(@room, @meeting[:meetingID], @meeting[:internalMeetingID]),
-    method: :get, target: (browser.safari? ? '_self' : '_blank'), class: "dropdown-item rec-edit" do %>
+<% if @artifact_files.present? && @artifact_files['shared_notes'].present? %>
+  <%= link_to @artifact_files['shared_notes'], target: (browser.safari? ? '_self' : '_blank'),
+  class: "dropdown-item rec-edit", data: { 'tracking-id': 'lti-download-participants-list' } do %>
     <%= icon_download %>
     <%= t('meetings.meeting_data_download.download_notes') %>
   <% end %>
 <% else %>
-  <%= button_to room_scheduled_meetings_path(@room), disabled: true, class: "dropdown-item rec-edit" do %>
+  <%= link_to '#', class: "dropdown-item rec-edit disabled_link" do %>
     <%= t('meetings.meeting_data_download.unavailable_notes') %>
   <% end %>
 <% end %>
 
-<% if @participants_exist %>
-  <%= button_to room_scheduled_meeting_internal_download_participants_path(@room, @meeting[:meetingID], @meeting[:internalMeetingID]),
-    method: :get, target: (browser.safari? ? '_self' : '_blank'), class: "dropdown-item rec-edit" do %>
+<% if @artifact_files.present? && @artifact_files['participants_list'].present? %>
+  <%= link_to @artifact_files['participants_list'], target: (browser.safari? ? '_self' : '_blank'),
+  class: "dropdown-item rec-edit", data: { 'tracking-id': 'lti-download-participants-list' } do %>
     <%= icon_download %>
     <%= t('meetings.meeting_data_download.download_participants') %>
   <% end %>
 <% else %>
-  <%= button_to room_scheduled_meetings_path(@room), disabled: true, class: "dropdown-item rec-edit" do %>
+  <%= link_to '#', class: "dropdown-item rec-edit disabled_link" do %>
     <%= t('meetings.meeting_data_download.unavailable_participants') %>
   <% end %>
 <% end %>
 
-<% if @dashboard_exist && Rails.configuration.meeting_learning_dashboard_url.present? %>
-  <%= button_to room_scheduled_meeting_internal_learning_dashboard_path(@room, @meeting[:meetingID], @meeting[:internalMeetingID]),
-    method: :get, target: (browser.safari? ? '_self' : '_blank'), class: "dropdown-item rec-edit" do %>
+<% if @artifact_files.present? && @artifact_files['engagement_report'].present? %>
+  <%= link_to @artifact_files['engagement_report'], target: (browser.safari? ? '_self' : '_blank'),
+  class: "dropdown-item rec-edit", data: { 'tracking-id': 'lti-download-participants-list' } do %>
     <%= icon_learning_dashboard %>
     <%= t('meetings.meeting_data_download.dashboard') %>
   <% end %>
 <% else %>
-  <%= button_to room_scheduled_meetings_path(@room), disabled: true, class: "dropdown-item rec-edit" do %>
+  <%= link_to '#', class: "dropdown-item rec-edit disabled_link" do %>
     <%= t('meetings.meeting_data_download.unavailable_dashboard') %>
   <% end %>
 <% end %>

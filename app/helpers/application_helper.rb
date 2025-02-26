@@ -73,11 +73,6 @@ module ApplicationHelper
     Rails.configuration.theme
   end
 
-  def spaces_configured?
-    !Rails.configuration.spaces_key.blank? && !Rails.configuration.spaces_secret.blank? &&
-    !Rails.configuration.spaces_bucket.blank?
-  end
-
   def device_type?
     agent = request.user_agent
     return "tablet" if agent =~ /(tablet|ipad)|(android(?!.*mobile))/i

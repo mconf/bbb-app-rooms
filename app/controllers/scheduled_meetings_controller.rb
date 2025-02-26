@@ -299,7 +299,7 @@ class ScheduledMeetingsController < ApplicationController
       else
         # join as guest
         name = "#{params[:first_name]} #{params[:last_name]}"
-        res = external_join_api_url(@scheduled_meeting, name, @guest[:uid], opts)
+        res = external_join_api_url(@scheduled_meeting, name, "guest_#{@guest[:uid]}", opts)
         if res[:can_join?]
           if params[:join_in_app] == 'true'
             direct_join_url = 'br.rnp.conferenciawebmobile://direct-join/' + res[:join_api_url].gsub(/^https?:\/\//, '') + "&meetingName=#{@scheduled_meeting.name}"

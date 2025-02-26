@@ -2,7 +2,8 @@ es:
   default:
     app:
       bigbluebutton_error: "Error de comunicación con el servidor de conferencias. Inténtelo de nuevo o contáctenos. (%{status})"
-      spaces_error:   "Error de comunicación con el servidor de almacenamiento de informes. Inténtelo de nuevo o contáctenos."
+      data_api_error:   "Error de comunicación con la API de Datos. Vuelva a intentarlo o póngase en contacto con el servicio de asistencia."
+      data_api_config_error: "Error de configuración de la API de Datos. Póngase en contacto con el servicio de asistencia."
       error:          "Error"
     admin:
       back:           "Vuelve"
@@ -268,10 +269,6 @@ es:
       request_failed: "No se ha podido crear el token de sesión. Vuelva a cargar la página"
     meeting:
       learning_dashboard_url_missing: "Error: URL del panel de aprendizaje no está configurada"
-  bucket_api:
-    error: Error al contactar con el servidor de almacenamiento de informes. Inténtalo de nuevo más tarde o ponte en contacto con el servicio de soporte.
-    access_data_missing: "Error: Datos de acceso al bucket no están configurados"
-    credentials_missing: "Error: Credenciales del bucket no están configuradas en el archivo .env"
   views:
     pagination:
       first: "&laquo;"

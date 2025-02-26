@@ -1,0 +1,6 @@
+<% [:csv, :xls].each do |format| %>
+  <%= link_to @report_artifacts["#{format}"], class: "dropdown-item rec-edit",
+  data: { 'tracking-id': "lti-download-report-#{format.to_s}" } do %>
+    <%= t("reports.download_options.#{format}")%>
+  <% end %>
+<% end %>

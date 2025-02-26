@@ -522,6 +522,12 @@ class RoomsController < ApplicationController
     end
     return true, nil if ext_context_url.blank? # proceed without a handler
 
+    # The API has different endpoints for teachers and students
+    base = ext_context_url.match(/.*\/context/).to_s
+    # ext_context_url = "http://<lti-context-api-host>/context/rooms"
+    # base = "http://<lti-context-api-host>/context"
+    ext_context_url = @user.moderator?(Abilities.moderator_roles) ? "#{base}/teacher/rooms" : "#{base}/student/rooms"
+
     Rails.logger.info "The consumer is configured to use an API to fetch the context/handler consumer_key=#{consumer_key} url=#{ext_context_url}"
 
     Rails.logger.info "Making a request to an external API to define the context/handler url=#{ext_context_url}"

@@ -517,6 +517,12 @@ body.theme-rnp {
     pointer-events: none;
   }
 
+  .disabled_link {
+    pointer-events: none;
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
   // This is a copy of the style of the guest wait page from BigBlueButton/Live
   // with a few adaptations, but to look as similar as possible
   &[data-controller="scheduled_meetings"][data-action="wait"],

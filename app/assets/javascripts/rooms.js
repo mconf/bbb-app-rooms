@@ -21,6 +21,7 @@ $(document).on('turbolinks:load', function(){
   var controller = $("body").data('controller');
   var action = $("body").data('action');
   var cable = $("body").data('use-cable');
+  var loaded_date = null;
 
   var pollStatus = function() {
     var url = $('#wait-for-moderator').data('wait-url');
@@ -32,7 +33,7 @@ $(document).on('turbolinks:load', function(){
       success: function(data) {
         if (data['running'] === true) {
           if (data['can_join_or_create'] === true && isMobile()) {
-            $("#offcanvasBottom").offcanvas('show');
+            $(".offcanvas-bottom").offcanvas('show');
           } else {
             joinSession();
           }
@@ -126,15 +127,66 @@ $(document).on('turbolinks:load', function(){
     window.location = storeUrl
   };
 
-  $('#download-app-btn').on('click', function(e){
+  /* Request the reports artifacts to Data API.
+  */
+  let doAjaxDownloadReports = async (download_reports_endpoint) => {
+    return $.ajax({
+      url: download_reports_endpoint,
+      type: "GET",
+      timeout: ajaxTimeout
+    });
+  }
+
+  /* Fetch the files from Data API and process the response
+  *
+  * In case of success, it will display the received partial.
+  * In case of timeout, the timeout value will increase in 1 second.
+  */
+  let downloadReports = async(report_date, download_reports_endpoint) => {
+    if (loaded_date != report_date) {
+      try {
+        let response = await doAjaxDownloadReports(download_reports_endpoint);
+        response = $(response);
+
+        loaded_date = report_date;
+        let buttons = response.filter('a')
+        showDropdownItems(buttons, report_date);
+      } catch(err) {
+        if (err.statusText == 'timeout') {
+          ajaxTimeout += 1000;
+        } else {
+          console.error(`Unexpected error: ${err}`);
+        }
+      }
+    }
+  };
+
+  let showDropdownItems = (buttons, report_date) => {
+    // Hide the loading items animation
+    $(`div[aria-labelledby="dropdown-opts-${report_date}"] .dropdown-item-loading`).hide();
+    // Remove only the items appended previously
+    $(`div[aria-labelledby="dropdown-opts-${report_date}"] .appended-item`).remove();
+  
+    for (let button of buttons) {
+      $(button).addClass('appended-item rec-edit');
+      $(`div[aria-labelledby="dropdown-opts-${report_date}"]`).append(button);
+    }
+  };
+
+  $('.download-reports').on('click', function(e) {
+    downloadReports(this.getAttribute('report-date'), this.getAttribute('download-reports-endpoint'))
+  })
+
+  $('.download-app-btn').on('click', function(e){
     e.preventDefault()
     downloadApp()
   });
 
-  $('#open-app-btn').on('click', function(e){
+  $('.open-app-btn').on('click', function(e){
     e.preventDefault()
-    $("#join_in_app").val(true)
-    $('#join-form').trigger("submit")
+    hash_id = $(e.target).data('meeting-hash-id')
+    $(`#join_in_app-${hash_id}`).val(true)
+    $(`#join-form-${hash_id}`).trigger("submit")
   });
 
   if (controller === 'scheduled_meetings' && action === 'external') {
@@ -152,7 +204,7 @@ $(document).on('turbolinks:load', function(){
       let canJoin = $('#wait-for-moderator').data('can-join');
       if (canJoin === true && isMobile()){
         setTimeout(function() {
-          $("#offcanvasBottom").offcanvas('show');
+          $(".offcanvas-bottom").offcanvas('show');
         }, 200);
       } else {
         setTimeout(function() { joinSession(); }, 200);
