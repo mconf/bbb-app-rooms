@@ -3,7 +3,7 @@ require 'faraday'
 
 module Moodle
   class API
-    def self.create_calendar_event(moodle_token, sched_meeting_hash_id, scheduled_meeting, context_id, opts={})
+    def self.create_calendar_event(moodle_token, scheduled_meeting, context_id, opts={})
       params = {
         wstoken: moodle_token.token,
         wsfunction: 'core_calendar_create_calendar_events',
@@ -28,79 +28,12 @@ module Moodle
       if result["exception"].present?
         Rails.logger.error(log_labels + "message=\"#{result}\"")
         return false
-      else
-        # Create a new Moodle Calendar Event
-        event_params = { event_id: result["events"].first['id'],
-                         scheduled_meeting_hash_id: sched_meeting_hash_id,
-                         start_at: scheduled_meeting.start_at }
-        MoodleCalendarEvent.create!(event_params)
       end
 
       if result["warnings"].present?
         Rails.logger.warn(log_labels + "message=\"#{result["warnings"].inspect}\"")
       end
       Rails.logger.info(log_labels + "message=\"Event created on Moodle calendar: #{result}\"")
-
-      true
-    end
-
-    def self.update_calendar_event_day(moodle_token, event_id, new_start_at, context_id, opts={})
-
-      params = {
-        wstoken: moodle_token.token,
-        wsfunction: 'core_calendar_update_event_start_day',
-        moodlewsrestformat: 'json',
-        eventid: event_id,
-        daytimestamp: new_start_at.to_i
-      }
-
-      result = post(moodle_token.url, params)
-      log_labels =  "[MOODLE API] url=#{moodle_token.url} " \
-                  "token_id=#{moodle_token.id} " \
-                  "duration=#{result['duration']&.round(3)}s " \
-                  "wsfunction=core_calendar_update_event_start_day " \
-                  "#{('nonce=' + opts[:nonce].to_s + ' ') if opts[:nonce]}"
-
-      if result["exception"].present?
-        Rails.logger.error(log_labels + "message=\"#{result}\"")
-        return false
-      end
-
-      if result["warnings"].present?
-        Rails.logger.warn(log_labels + "message=\"#{result["warnings"].inspect}\"")
-      end
-      Rails.logger.info(log_labels + "message=\"Event updated on Moodle calendar: event_id=#{result.dig('event', 'id')}, name='#{result.dig('event', 'name')}'\"")
-
-      true
-    end
-
-    def self.delete_calendar_event(moodle_token, event_id, context_id, opts)
-      Rails.logger.info("[MOODLE API] Deleting event=`#{event_id}`")
-
-      params = {
-        wstoken: moodle_token.token,
-        wsfunction: 'core_calendar_delete_calendar_events',
-        moodlewsrestformat: 'json',
-        'events[0][eventid]'=> event_id,
-        'events[0][repeat]'=> 0,
-      }
-      result = post(moodle_token.url, params)
-
-      log_labels =  "[MOODLE API] url=#{moodle_token.url} " \
-                    "token_id=#{moodle_token.id} " \
-                    "duration=#{result['duration']&.round(3)}s " \
-                    "wsfunction=core_calendar_delete_calendar_events " \
-                    "#{('nonce=' + opts[:nonce].to_s + ' ') if opts[:nonce]}"
-
-      if result["exception"].present?
-        Rails.logger.error(log_labels + "message=\"#{result}\"")
-        return false
-      end
-
-      if result["warnings"].present?
-        Rails.logger.warn(log_labels + "message=\"#{result["warnings"].inspect}\"")
-      end
-      Rails.logger.info(log_labels + "message=\"Event deleted on Moodle calendar: #{result}\"")
 
       true
     end

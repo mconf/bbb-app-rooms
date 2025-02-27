@@ -4,10 +4,3 @@ remove_old_app_launch_job:
    class: RemoveOldAppLaunchJob
    queue: default
    description: "Remove old AppLaunches"
-
-update_recurring_meetings_job:
-  # Every day at 01 GMT -3
-   cron: "0 4 * * *"
-   class: UpdateRecurringMeetingsJob
-   queue: default
-   description: "Update recurring meetings dates, and create a new event in Moodle Calendar if needed."
