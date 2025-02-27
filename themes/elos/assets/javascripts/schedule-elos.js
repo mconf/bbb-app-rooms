@@ -13,6 +13,26 @@ $(document).on('turbolinks:load', function(){
         contentCustomDuration.classList.remove('d-block')
     }
 
+    if($('input[name="scheduled_meeting[create_moodle_calendar_event]"]')) {
+      let recurrenceSelect = document.getElementsByName("scheduled_meeting[repeat]")[0]
+      recurrenceSelect?.addEventListener('change', toggleMoodleCalendarCheckbox)
+
+      function toggleMoodleCalendarCheckbox(e) {
+        let valueSelectDuration = e.target.value;
+        if (!!valueSelectDuration) {
+          $('input[name="scheduled_meeting[create_moodle_calendar_event]"]').each(function () {
+            $(this).prop('checked', false);
+            $(this).prop('disabled', true);
+          });
+        } else {
+          $('input[name="scheduled_meeting[create_moodle_calendar_event]"]').each(function () {
+            $(this).prop('checked', true);
+            $(this).prop('disabled', false);
+          });
+        }
+      }
+    }
+
     if(window.location.href.includes('/edit')){
       var duration = document.getElementsByName("scheduled_meeting[custom_duration]")[0].value,
           durationSeconds = (duration.split(':')[0] * 60 * 60 ) + ( duration.split(':')[1] * 60 ),

@@ -27,24 +27,6 @@ class Room < ApplicationRecord
     end
   end
 
-  def can_update_moodle_calendar_event
-    moodle_token = self.consumer_config&.moodle_token
-    if moodle_token
-      Moodle::API.token_functions_configured?(moodle_token, ['core_calendar_update_event_start_day'])
-    else
-      false
-    end
-  end
-
-  def can_delete_moodle_calendar_event
-    moodle_token = self.consumer_config&.moodle_token
-    if moodle_token
-      Moodle::API.token_functions_configured?(moodle_token, ['core_calendar_delete_calendar_events'])
-    else
-      false
-    end
-  end
-
   def consumer_config
     ConsumerConfig.find_by(key: self.consumer_key)
   end

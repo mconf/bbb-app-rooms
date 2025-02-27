@@ -150,7 +150,6 @@ module BbbAppRooms
 
     # Moodle API
     config.moodle_api_timeout = Mconf::Env.fetch_int('MCONF_MOODLE_API_TIMEOUT', 5)
-    config.moodle_recurring_events_month_period = Mconf::Env.fetch_int('MCONF_MOODLE_RECURRING_EVENTS_MONTH_PERIOD', 12)
 
     # Data API url
     config.data_api_url = Mconf::Env.fetch('MCONF_DATA_API_URL', '')
