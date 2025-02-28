@@ -21,7 +21,7 @@ es:
         hour: "%{count}h"
         minute: "%{count}min"
     hint:
-      create_moodle_calendar_event: "Crea un evento correspondiente en el Calendario de Moodle para esta reunión programada. Esta opción está deshabilitada cuando la reunión programada está configurada como recurrente."
+      create_moodle_calendar_event: "Crea un evento correspondiente en el Calendario de Moodle para esta reunión programada."
       disable_external_link: "El acceso a la sala virtual estará restringido a estudiantes autenticados."
       disable_private_chat: "El estudiante aún puede enviar mensajes privados al maestro. Esta función se puede reactivar dentro de la habitación a través de la opción \"Restringir participantes\"."
       disable_note: "El profesor aún puede usar las notas compartidas, pero los estudiantes solo pueden ver el contenido, no editarlo. Esta función se puede reactivar dentro de la habitación a través de la opción \"Restringir participantes\"."
