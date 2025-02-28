@@ -66,8 +66,10 @@ module Mconf
 
       if response.status == 400
         Rails.logger.error "[Data API] Bad request (consumer_key: #{consumer_key} and handler: #{handler})"
+        return nil
       elsif response.status == 404
         Rails.logger.error "[Data API] No reports found"
+        return nil
       end
 
       response.body
