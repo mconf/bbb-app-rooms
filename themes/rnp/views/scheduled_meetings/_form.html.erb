@@ -116,16 +116,18 @@
       <% end %>
 
       <% if @room.can_create_moodle_calendar_event %>
-      <div class="form-group">
-        <div class="form-check">
-          <%= form.check_box :create_moodle_calendar_event, class: "form-check-input" %>
-          <%= form.label :create_moodle_calendar_event, class: "form-check-label" do %>
-            <%= t('helpers.label.scheduled_meeting.create_moodle_calendar_event') %>
-            <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= t('helpers.hint.create_moodle_calendar_event') %>">help</i>
-          <% end %>
+        <div class="form-group">
+          <div class="form-check">
+            <%= form.check_box :create_moodle_calendar_event,
+            class: "form-check-input",
+            data: { persisted: scheduled_meeting.persisted?, replicated: scheduled_meeting.replicated_in_moodle?}%>
+            <%= form.label :create_moodle_calendar_event, class: "form-check-label" do %>
+              <%= t('helpers.label.scheduled_meeting.create_moodle_calendar_event') %>
+              <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= t('default.scheduled_meeting.tooltip.create_moodle_calendar_event') %>">help</i>
+            <% end %>
+          </div>
         </div>
-      </div>
-    <% end %>
+      <% end %>
 
       <% if @room.allow_all_moderators %>
         <div class="form-group">

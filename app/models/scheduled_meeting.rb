@@ -115,6 +115,10 @@ class ScheduledMeeting < ApplicationRecord
     recurring? && repeat == "every_two_weeks"
   end
 
+  def replicated_in_moodle?
+    MoodleCalendarEvent.where(scheduled_meeting_hash_id: self.hash_id).any?
+  end
+
   def meeting_id
     if room.moodle_group_select_enabled? && self.moodle_group_id.present?
       "#{room.meeting_id}-#{self.id}-#{self.moodle_group_id}"
