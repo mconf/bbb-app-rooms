@@ -3,7 +3,7 @@
     <h2><%= t('reports.title') %></h2>
   </div>
 
-  <% if reports.count > 0 %>
+  <% if reports.present? && reports.count > 0 %>
     <div class="col-12">
       <table id="report-table" class="table">
         <tbody>

@@ -12,7 +12,7 @@ class ReportsController < ApplicationController
   # GET /rooms/:id/reports
   def index
     respond_to do |format|
-      @reports = Mconf::DataApi.reports_available(@room.consumer_config.key, @room.handler).reverse()
+      @reports = Mconf::DataApi.reports_available(@room.consumer_config.key, @room.handler)&.reverse()
       format.html { render 'rooms/reports' }
     end
   end
