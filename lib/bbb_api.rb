@@ -267,9 +267,11 @@ module BbbApi
     end
 
     # BigBlueButtonApi.new(url, secret, version=nil, logger=nil)
-    BigBlueButton::BigBlueButtonApi.new(
+    api = BigBlueButton::BigBlueButtonApi.new(
       remove_slash(fix_bbb_endpoint_format(endpoint)), secret, "0.9", Rails.logger
     )
+    api.timeout = 15
+    api
   end
 
   # Fixes BigBlueButton endpoint ending.
