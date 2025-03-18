@@ -108,6 +108,9 @@ es:
         recording:    "La sesión se puede grabar"
         waitmoderator: "Los participantes no pueden ingresar hasta que ingrese un moderador"
         allmoderators: "Todos los usuarios serán moderadores"
+        create_moodle_calendar_event: "Cree un evento correspondiente en el Calendario de Moodle para esta reunión programada."
+        disable_replicate_in_moodle_calendar: "No hay eventos en el Calendario de Moodle correspondientes a esta reunión programada."
+        replicate_in_moodle_calendar: "Los cambios se aplicarán a los eventos del Calendario de Moodle correspondientes a esa reunión programada."
       updated:        "La programación ha sido actualizada"
       wait:
         change_name: "Cambiar nombre"

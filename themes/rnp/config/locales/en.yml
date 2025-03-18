@@ -27,7 +27,6 @@ en:
         hour: "%{count}h"
         minute: "%{count}min"
     hint:
-      create_moodle_calendar_event: "Creates a corresponding event on the Moodle Calendar for this scheduled meeting. This option is disabled when the scheduled meeting is set to be recurrent."
       disable_external_link: "The access to the virtual room will be restricted to authenticated students."
       disable_private_chat: "The student will still be able to send private messages to the teacher. This feature can be modified during the conference using the \"Manage users\" section."
       disable_note: "The teacher will be able to use the shared notes as usual, but the students will only be able to read them, not edit. This feature can be modified during the conference using the \"Manage users\" section."

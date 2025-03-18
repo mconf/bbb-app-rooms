@@ -13,24 +13,33 @@ $(document).on('turbolinks:load', function(){
         contentCustomDuration.classList.remove('d-block')
     }
 
-    if($('input[name="scheduled_meeting[create_moodle_calendar_event]"]')) {
-      let recurrenceSelect = document.getElementsByName("scheduled_meeting[repeat]")[0]
-      recurrenceSelect?.addEventListener('change', toggleMoodleCalendarCheckbox)
+    if(document.getElementsByName('input[name="scheduled_meeting[create_moodle_calendar_event]"]')) {
+      $('input[name="scheduled_meeting[create_moodle_calendar_event]"]').each(function() {
+        const hintIcon = $('.icon-label-hint');
+        var persisted = $(this).attr('data-persisted');
+        var replicated = $(this).attr('data-replicated');
+        // Edit action
+        if (persisted == 'true') {
+          $(this).prop('disabled', true);
 
-      function toggleMoodleCalendarCheckbox(e) {
-        let valueSelectDuration = e.target.value;
-        if (!!valueSelectDuration) {
-          $('input[name="scheduled_meeting[create_moodle_calendar_event]"]').each(function () {
-            $(this).prop('checked', false);
-            $(this).prop('disabled', true);
-          });
-        } else {
-          $('input[name="scheduled_meeting[create_moodle_calendar_event]"]').each(function () {
+          if (replicated == 'true') {
             $(this).prop('checked', true);
-            $(this).prop('disabled', false);
-          });
+            hintText = I18n.t('default.scheduled_meeting.tooltip.replicate_in_moodle_calendar');
+          }
+          else {
+            $(this).prop('checked', false);
+            hintText = I18n.t('default.scheduled_meeting.tooltip.disable_replicate_in_moodle_calendar');
+          }
         }
-      }
+        else {
+          // New action
+          $(this).prop('checked', true);
+          $(this).prop('disabled', false);
+          hintText = I18n.t('default.scheduled_meeting.tooltip.create_moodle_calendar_event');
+        }
+
+        hintIcon.attr("title", hintText);
+      })
     }
 
     if(window.location.href.includes('/edit')){
