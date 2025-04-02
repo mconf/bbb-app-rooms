@@ -61,7 +61,6 @@ $DOCUMENT.on('turbolinks:load',  () => {
   // Max time to wait for ajax response
   if ($statusElem.data('ajax-timeout')) {
     ajaxTimeout = parseInt($statusElem.data('ajax-timeout'));
-    console.log('timeout: ', ajaxTimeout);
   }
 
   $($loadButton).on('click', tryToFetchMeetings);
