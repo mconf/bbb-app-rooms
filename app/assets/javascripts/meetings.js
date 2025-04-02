@@ -21,7 +21,7 @@ let rendered = false;
 let loadedMeetingId = null;
 
 // Max time to wait for ajax response
-let ajaxTimeout = 5000;
+let ajaxTimeout = 15000;
 
 /* This is invoked only in 1 situations:
  * 1. When clicking on the link 'Meetings' in the Room view
@@ -57,6 +57,12 @@ $DOCUMENT.on('turbolinks:load',  () => {
   currentMeetingsCount = 0;
   fetchMeetingsEndpoint = $statusElem.attr('data-fetch-meetings-endpoint');
   maxFetchMeetings = $statusElem.attr('data-per-page');
+
+  // Max time to wait for ajax response
+  if ($statusElem.data('ajax-timeout')) {
+    ajaxTimeout = parseInt($statusElem.data('ajax-timeout'));
+    console.log('timeout: ', ajaxTimeout);
+  }
 
   $($loadButton).on('click', tryToFetchMeetings);
   $($toTopButton).on('click', handleToTopClick);

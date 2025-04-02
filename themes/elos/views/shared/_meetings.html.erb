@@ -50,7 +50,8 @@
       </table>
       <div id="status" class="mb-3"
           data-fetch-meetings-endpoint="<%= @fetch_meetings_endpoint %>"
-          data-per-page="<%= @per_page %>">
+          data-per-page="<%= @per_page %>"
+          data-ajax-timeout="<%= Rails.application.config.ajax_timeout %>">
         <div class="loader-wrapper">
           <button class="load-meetings btn btn-light btn-sm"><%= t('meetings.load') %></button>
           <div class="loader"></div>
