@@ -21,11 +21,11 @@
   </td>
   <td class="col-12 col-md-1 align-middle">
     <% if browser.safari? || browser.safari_webapp_mode? %>
-      <%= link_to join_room_scheduled_meeting_url(room, meeting), class: "btn btn-primary join-room-btn", data: { 'tracking-id': 'lti-join-session' } do %>
+      <%= link_to join_room_scheduled_meeting_url(room, meeting), class: "btn btn-primary join-room-btn", data: { 'tracking-id': 'lti-join-session', 'institution-guid': "#{@app_launch.params['custom_params']['institution_guid']}" } do %>
         <i class="icon material-icons">play_arrow</i>
       <% end %>
     <% else %>
-      <%= link_to join_room_scheduled_meeting_url(room, meeting), class: "btn btn-primary join-room-btn create-session-token", data: { 'tracking-id': 'lti-join-session' }, target: '_blank' do %>
+      <%= link_to join_room_scheduled_meeting_url(room, meeting), class: "btn btn-primary join-room-btn create-session-token", data: { 'tracking-id': 'lti-join-session', 'institution-guid': "#{@app_launch.params['custom_params']['institution_guid']}" }, target: '_blank' do %>
         <i class="icon material-icons">play_arrow</i>
       <% end %>
     <% end %>
@@ -44,7 +44,8 @@
               'clipboard-text': external_room_scheduled_meeting_url(room, meeting),
               turbolinks: false,
               'toast-id': '#external-link-copied-toast',
-              'tracking-id': 'lti-copy-external-link'
+              'tracking-id': 'lti-copy-external-link',
+              'institution-guid': "#{@app_launch.params['custom_params']['institution_guid']}"
             },
             class: "dropdown-item copy-to-clipboard"
             %>
@@ -54,14 +55,14 @@
           link_to t('scheduled_meetings.edit.action'),
            edit_room_scheduled_meeting_path(room, meeting),
            class: "dropdown-item",
-           data: { 'tracking-id': 'lti-edit-scheduled-meeting' }
+           data: { 'tracking-id': 'lti-edit-scheduled-meeting', 'institution-guid': "#{@app_launch.params['custom_params']['institution_guid']}" }
           %>
           <%=
           link_to t('scheduled_meetings.destroy'),
            room_scheduled_meeting_path(room, meeting),
            class: "dropdown-item",
            method: :delete,
-           data: { confirm: t('default.scheduled_meeting.destroy.confirmation'), 'tracking-id': 'lti-delete-scheduled-meeting' }
+           data: { confirm: t('default.scheduled_meeting.destroy.confirmation'), 'tracking-id': 'lti-delete-scheduled-meeting', 'institution-guid': "#{@app_launch.params['custom_params']['institution_guid']}" }
           %>
         </div>
       </div>
