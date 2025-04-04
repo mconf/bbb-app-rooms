@@ -1,6 +1,6 @@
 <% if @artifact_files.present? && @artifact_files['shared_notes'].present? %>
   <%= link_to @artifact_files['shared_notes'], target: (browser.safari? ? '_self' : '_blank'),
-  class: "dropdown-item rec-edit", data: { 'tracking-id': 'lti-download-participants-list' } do %>
+  class: "dropdown-item rec-edit", data: { 'tracking-id': 'lti-download-participants-list', 'institution-guid': "#{@app_launch.params['custom_params']['institution_guid']}" } do %>
     <%= icon_download %>
     <%= t('meetings.meeting_data_download.download_notes') %>
   <% end %>
@@ -12,7 +12,7 @@
 
 <% if @artifact_files.present? && @artifact_files['participants_list'].present? %>
   <%= link_to @artifact_files['participants_list'], target: (browser.safari? ? '_self' : '_blank'),
-  class: "dropdown-item rec-edit", data: { 'tracking-id': 'lti-download-participants-list' } do %>
+  class: "dropdown-item rec-edit", data: { 'tracking-id': 'lti-download-participants-list', 'institution-guid': "#{@app_launch.params['custom_params']['institution_guid']}" } do %>
     <%= icon_download %>
     <%= t('meetings.meeting_data_download.download_participants') %>
   <% end %>
@@ -24,7 +24,7 @@
 
 <% if @artifact_files.present? && @artifact_files['engagement_report'].present? %>
   <%= link_to @artifact_files['engagement_report'], target: (browser.safari? ? '_self' : '_blank'),
-  class: "dropdown-item rec-edit", data: { 'tracking-id': 'lti-download-participants-list' } do %>
+  class: "dropdown-item rec-edit", data: { 'tracking-id': 'lti-download-participants-list', 'institution-guid': "#{@app_launch.params['custom_params']['institution_guid']}" } do %>
     <%= icon_learning_dashboard %>
     <%= t('meetings.meeting_data_download.dashboard') %>
   <% end %>

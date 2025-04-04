@@ -13,6 +13,11 @@
     <%= render 'layouts/theme', theme: app_theme %>
     <%= render 'layouts/gtm_head' if app_theme == 'elos' %>
     <%= render 'shared/rnp_chat' if app_theme == 'rnp' %>
+
+    <% if Rails.application.config.adopt_website_code.present? %>
+      <meta name="adopt-website-id" content="<%= Rails.application.config.adopt_website_code %>" />
+      <script src="//tag.goadopt.io/injector.js?website_code=<%= Rails.application.config.adopt_website_code %>" class="adopt-injector"></script>
+    <% end %>
   </head>
 
   <body lang="<%= I18n.locale %>"

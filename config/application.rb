@@ -118,6 +118,9 @@ module BbbAppRooms
     config.gtm_id = Mconf::Env.fetch('MCONF_GTM_ID', '')
     config.gtm_enabled_keys = Mconf::Env.fetch('MCONF_GTM_ENABLED_KEYS', '')
 
+    # AdOpt configuration
+    config.adopt_website_code = Mconf::Env.fetch('MCONF_ADOPT_WEBSITE_CODE', '')
+
     config.active_job.queue_adapter = :resque
 
     # Redis configurations. Defaults to a localhost instance.

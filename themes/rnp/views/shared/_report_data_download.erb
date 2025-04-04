@@ -1,6 +1,6 @@
 <% [:csv, :xls].each do |format| %>
   <%= link_to @report_artifacts["#{format}"], class: "dropdown-item rec-edit",
-  data: { 'tracking-id': "lti-download-report-#{format.to_s}" } do %>
+  data: { 'tracking-id': "lti-download-report-#{format.to_s}", 'institution-guid': "#{@app_launch.params['custom_params']['institution_guid']}" } do %>
     <%= t("reports.download_options.#{format}")%>
   <% end %>
 <% end %>
