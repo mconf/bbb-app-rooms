@@ -157,5 +157,10 @@ module BbbAppRooms
 
     # Data API url
     config.data_api_url = Mconf::Env.fetch('MCONF_DATA_API_URL', '')
+
+    # Timeout configs
+    config.ajax_timeout = Mconf::Env.fetch_int('MCONF_AJAX_TIMEOUT', 15000)
+    config.bbb_api_timeout = Mconf::Env.fetch_int('MCONF_BBB_API_TIMEOUT', 15)
+
   end
 end
