@@ -178,9 +178,8 @@ class ScheduledMeetingsController < ApplicationController
         changes = @scheduled_meeting.previous_changes
         tracked_attrs = ['name', 'start_at', 'description']
 
-        if @room.can_update_moodle_calendar_event && moodle_calendar_events_ids.any?
+        if @room.can_create_moodle_calendar_event && @room.can_delete_moodle_calendar_event && moodle_calendar_events_ids.any?
           moodle_token = @room.consumer_config.moodle_token
-
           case
           when has_become_recurring
             Moodle::API.delete_calendar_event(moodle_token, moodle_calendar_events_ids.first, @app_launch.context_id, { nonce: @app_launch.nonce })
