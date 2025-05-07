@@ -234,7 +234,7 @@ class RoomsController < ApplicationController
   def filesender
     filesender_token = FilesenderToken.find_by(user_uid: @user.uid)
     if filesender_token.nil?
-      flash[:notice] = t('default.eduplay.error')
+      flash[:notice] = t('default.filesender.error')
       redirect_to(meetings_room_path(@room)) and return
     end
 
@@ -242,7 +242,7 @@ class RoomsController < ApplicationController
       new_token = Filesender::API.refresh_token(filesender_token.refresh_token)
 
       if new_token['error'].present?
-        flash[:notice] = t('default.eduplay.error')
+        flash[:notice] = t('default.filesender.error')
         redirect_to(meetings_room_path(@room)) and return
       end
 
