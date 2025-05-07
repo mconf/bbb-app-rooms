@@ -20,9 +20,6 @@ es:
     bigbluebutton:
       moderator:      "Moderador"
       viewer:         "Participante"
-    eduplay:
-      success: "Tu video está siendo subido a Eduplay"
-      error:   "Se ha producido un error. Inténtalo de nuevo"
     filesender:
       success: "Tu video está siendo subido a Filesender"
       error:   "Se ha producido un error. Inténtalo de nuevo"

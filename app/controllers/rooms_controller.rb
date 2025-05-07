@@ -160,29 +160,74 @@ class RoomsController < ApplicationController
     redirect_to(*redirect_args)
   end
 
+  def eduplay
+    @recording = get_recordings(@room, recordID: params['record_id']).first.first
+    eduplay_token = EduplayToken.find_by(user_uid: @user.uid)
+    return_to = meetings_room_path(@room, filter: params[:filter])
+
+    if eduplay_token.token.present? && eduplay_token.expires_at > Time.now + 30.minutes
+      @eduplay_token = eduplay_token.token
+      api = Eduplay::API.new(eduplay_token.token)
+      @channels = api.get_channels
+    else
+      eduplay_token&.destroy
+      @status = 500
+      @layout = false
+      render 'errors/error' and return
+    end
+
+    render "rooms/eduplay"
+  end
+
   def eduplay_upload
+    eduplay_token = EduplayToken.find_by(user_uid: @user.uid)
+    api = Eduplay::API.new(eduplay_token.token)
+
+    if params['channel'] == 'new_channel'
+      Rails.logger.info "Creating new channel(name: #{params['channel_name']} public: #{params['channel_public']} tags: #{params['channel_tags']})"
+      new_channel = api.create_channel(params['channel_name'], params['channel_public'].to_i, params['channel_tags'].split(','))
+      if new_channel['result'].present?
+        params['channel'] = new_channel['result']
+      else
+        Rails.logger.error "Error creating new channel: #{new_channel.inspect}"
+        flash[:error] = t('meetings.recording.eduplay.errors.error_creating_channel')
+        redirect_to(meetings_room_path(@room, filter: params[:filter]))
+      end
+    end
+
+    video_data = {
+      channel_id: params['channel'].to_i,
+      title: params['title'],
+      description: params['description'],
+      public: params['public'].to_i,
+      tags: params['tags'].split(',')
+    }
+
+    UploadRecordingToEduplayJob.perform_later(@room, params['record_id'], video_data, @user.as_json.symbolize_keys)
+
+    # Creates a new EduplayUpload object
+    eduplay_upload = EduplayUpload.new(recording_id: params['record_id'], user_uid: @user.uid)
+    eduplay_upload.save
+    flash[:notice] = t('meetings.recording.eduplay.success')
+    redirect_to(meetings_room_path(@room, filter: params[:filter]))
+  end
+
+  def eduplay_auth
     old_eduplay_token = EduplayToken.find_by(user_uid: @user.uid)
     if params['access_token'].present?
       if old_eduplay_token.nil?
-        EduplayToken.create!(user_uid: @user.uid, token: params['access_token'], expires_at: params['expires_at'])
+        old_eduplay_token = EduplayToken.create!(user_uid: @user.uid, token: params['access_token'], expires_at: params['expires_at'])
       else
         old_eduplay_token.update(token: params['access_token'], expires_at: params['expires_at'])
       end
     else
       if old_eduplay_token.nil?
-        flash[:notice] = t('default.eduplay.error')
+        flash[:notice] = t('meetings.recording.eduplay.error')
         redirect_to(meetings_room_path(@room, filter: params[:filter])) and return
       end
     end
 
-    flash[:notice] = t('default.eduplay.success')
-    UploadRecordingToEduplayJob.perform_later(@room, params['record_id'], @user.as_json.symbolize_keys)
-
-    # Creates a new EduplayUpload object
-    eduplay_upload = EduplayUpload.new(recording_id: params['record_id'], user_uid: @user.uid)
-    eduplay_upload.save
-
-    redirect_to(meetings_room_path(@room, filter: params[:filter]))
+    redirect_to(eduplay_path(@room, record_id: params['record_id']))
   end
 
   # GET	/rooms/:id/recording/:record_id/filesender

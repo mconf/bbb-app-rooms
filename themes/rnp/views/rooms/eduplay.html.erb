@@ -1,0 +1,102 @@
+<% eduplay_privacy_options = [[t('meetings.recording.eduplay.public'), Eduplay::PRIVACY[:public]], [t('meetings.recording.eduplay.private'), Eduplay::PRIVACY[:private]]] %>
+
+<div id="eduplay">
+  <div class="row mb-3 d-flex align-items-center justify-content-center">
+    <div class="col-12 col-md-10 text-center">
+      <h1><%= t('meetings.recording.eduplay.title') %></h1>
+    </div>
+  </div>
+
+  <%= form_with url: eduplay_upload_path(@room) do |form| %>
+    <%= form.hidden_field :channel, value: (@channels.empty? ? 'new_channel' : '') %>
+
+    <div class="form-row d-flex align-items-center justify-content-center">
+      <div class="form-group col-12 col-md-10">
+        <div class="dropdown">
+          <%= form.label :channel, t('meetings.recording.eduplay.channel') %>
+          <div class="dropdown-toggle form-control" type="button" data-bs-toggle="dropdown">
+            <div class="selected-option">
+              <% if @channels.empty? %>
+                <%= icon_plus %>
+                <%= t('meetings.recording.eduplay.new_channel') %>
+              <% end %>
+            </div>
+          </div>
+          <div class="dropdown-menu">
+            <% @channels.each do |channel| %>
+              <%= link_to '#', class: "dropdown-item", data: {'attr-name': 'channel', 'attr-value': channel['id']} do %>
+                <%= channel['name'] %>
+              <% end %>
+            <% end %>
+            <% if @channels.any? %>
+              <hr/>
+            <% end %>
+            <%= link_to '#', class: "dropdown-item", data: {'attr-name': 'channel', 'attr-value': 'new_channel'} do %>
+              <%= icon_plus %>
+              <span><%= t('meetings.recording.eduplay.new_channel') %></span>
+            <% end %>
+          </div>
+        </div>
+
+        <%# New channel form %>
+        <div class="new-channel-form my-4" style="<%= @channels.empty? ? '' : 'display: none' %>">
+          <div class="form-group col-12">
+            <%= form.label :channel_name, t('meetings.recording.eduplay.channel_name') %>
+            <%= form.text_field :channel_name, minlength: 2,  class: "form-control" %>
+          </div>
+          <div class="form-group col-12 privacy">
+            <%= form.label :channel_public, t('meetings.recording.eduplay.privacy'), class: "privacy-label" %>
+            <div style="display: inline;">
+              <% eduplay_privacy_options.each do |option| %>
+                <label style="display: inline; margin-right: 20px; accent-color: #074AA0;">
+                  <%= form.radio_button :channel_public, option[1] %>
+                  <%= option[0] %>
+                </label>
+              <% end %>
+            </div>
+          </div>
+          <div class="form-group col-12">
+            <%= form.label :channel_tags, t('meetings.recording.eduplay.channel_tags') %>
+            <%= form.text_field :channel_tags, id: "eduplay-channel-tags", minlength: 2,  class: "form-control" %>
+          </div>
+          <hr/>
+        </div>
+      </div>
+
+      <%# Video infos %>
+      <div class="form-group col-12 col-md-10">
+        <%= form.label :title, t('meetings.recording.eduplay.video_title') %>
+        <%= form.text_field :title, minlength: 2,  class: "form-control" %>
+      </div>
+      <div class="form-group col-12 col-md-10">
+        <%= form.label :description, t('meetings.recording.eduplay.description') %>
+        <%= form.text_field :description, minlength: 2,  class: "form-control" %>
+      </div>
+      <div class="form-group col-12 col-md-10 privacy">
+        <%= form.label :public, t('meetings.recording.eduplay.privacy'), class: "privacy-label" %>
+        <div style="display: inline;">
+          <% eduplay_privacy_options.each do |option| %>
+            <label style="display: inline; margin-right: 20px; accent-color: #074AA0";>
+              <%= form.radio_button :public, option %>
+              <%= option[0] %>
+            </label>
+          <% end %>
+        </div>
+      </div>
+      <div class="form-group col-12 col-md-10">
+        <%= form.label :tags, t('meetings.recording.eduplay.tags') %>
+        <%= form.text_field :tags, id: "eduplay-video-tags", minlength: 2,  class: "form-control" %>
+      </div>
+      <%= form.hidden_field :recordid, value: @recording[:recordID] %>
+      <%= form.hidden_field :meetingid, value: @recording[:meetingID] %>
+    </div>
+    <div class="row form-actions d-flex align-items-center justify-content-center">
+      <div class="col-12 col-md-10">
+        <%= link_to t('_all.cancel'), meetings_room_path(@room), class: "btn btn-light" %>
+        <%= form.submit t('_all.send'), id: "eduplay-submit", class: "btn btn-primary" %>
+      </div>
+    </div>
+  <% end %>
+
+  <%= render "shared/toast", { toast_id: 'eduplay-upload-form-error', text: '' } %>
+</div>

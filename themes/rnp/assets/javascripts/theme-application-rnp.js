@@ -176,6 +176,100 @@ $(document).on('turbolinks:load', function(){
     e.target.setAttribute("data-tracking-id", trackingId);
   });
 
+  $('#eduplay .dropdown-menu .dropdown-item').each(function() {
+    $(this).on('click', function(e) {
+      e.preventDefault();
+      if (!$(this).hasClass('active')) {
+        $(this).closest('.dropdown-menu').find('.dropdown-item.active').removeClass('active');
+        $(this).addClass('active');
+
+        toggle = $(this).closest('.dropdown').find('.selected-option');
+        toggle.empty().append($(this).contents().clone());
+
+        channelVal = $(this).attr('data-attr-value');
+        $('input[name="channel"]').val(channelVal);
+        if (channelVal == 'new_channel')
+          $('.new-channel-form').show()
+        else
+          $('.new-channel-form').hide()
+      }
+    })
+  });
+
+  const validateForm = (formData) => {
+    errors = []
+
+    channelId = formData['channel']
+    channelName = formData['channel_name']
+    channelPublic = formData['channel_public']
+    channelTags = formData['channel_tags']
+
+    if (channelId == 'new_channel'){
+      if ([channelName, channelPublic, channelTags].some(function(field){return field == null || field == ''})) {
+        errors.push(I18n.t('meetings.recording.eduplay.errors.channel_incomplete'));
+      } else if (channelName == channelTags) {
+        errors.push(I18n.t('meetings.recording.eduplay.errors.channel_same_field'));
+      }
+    } else if (channelId == '') {
+        errors.push(I18n.t('meetings.recording.eduplay.errors.no_channel'));
+    }
+
+    videoTitle = formData['title'];
+    videoDescription = formData['description'];
+    videoPublic = formData['public'];
+    videoTags = formData['tags'];
+    if ([videoTitle, videoDescription, videoPublic, videoTags].some(function(field) { return field == null || field == '';})){
+      errors.push(I18n.t('meetings.recording.eduplay.errors.video_incomplete'))
+    } else if (videoTitle ==  videoDescription || videoTitle ==  videoTags || videoDescription == videoTags) {
+      errors.push(I18n.t('meetings.recording.eduplay.errors.video_same_field'));
+    }
+
+    if (errors.length > 0)
+      return errors.join(' ');
+    return null
+  };
+
+  $('#eduplay form').on('submit', function(e) {
+    formData = $(this).serializeArray().reduce(function(fieldsObject, field) {
+      fieldsObject[field.name] = field.value;
+      return fieldsObject;
+    }, {});
+    errorMessage = validateForm(formData);
+
+    if (errorMessage) {
+      e.preventDefault();
+      button = $('#eduplay-submit');
+      setTimeout(function() {
+        button.prop('disabled', false);
+      }, 1000);
+
+      $('html, body').animate({ scrollTop: 0 }, 'fast');
+
+      $toast = $('.toast', '#eduplay-upload-form-error');
+      $toast.find('.toast-header').contents().first()[0].textContent = errorMessage;
+      $toast.toast('dispose');
+      $toast.toast('show');
+    }
+  })
+
+  // Select2
+  $("#eduplay-channel-tags").select2 ({
+    minimumInputLength: 1,
+    width: '100%',
+    multiple: true,
+    tags: true,
+    tokenSeparators: [","],
+    formatSearching: function() { return I18n.t('_all.select2.comma_tags') }
+  });
+
+  $("#eduplay-video-tags").select2 ({
+    minimumInputLength: 1,
+    width: '100%',
+    multiple: true,
+    tags: true,
+    tokenSeparators: [","],
+    formatSearching: function() { return I18n.t('_all.select2.comma_tags') }
+  });
 });
 
 $DOCUMENT.on('turbolinks:load',  () => {
