@@ -51,9 +51,6 @@ en:
     bigbluebutton:
       moderator:      "Moderator"
       viewer:         "Viewer"
-    eduplay:
-      success: "Your video is being uploaded to Eduplay"
-      error:   "An error has occurred. Please try again"
     filesender:
       success: "Your video is being uploaded to Filesender"
       error:   "An error has occurred. Please try again"

@@ -59,6 +59,10 @@ module IconsHelper
     image_tag 'icon_eduplay.svg'
   end
 
+  def icon_plus(options={})
+    material_icon_constructor "add", "icon material-symbols-rounded icon-plus", options
+  end
+
   def icon_info_circle(options={})
     material_icon_constructor "info", "icon material-symbols-rounded icon icon-info", options
   end

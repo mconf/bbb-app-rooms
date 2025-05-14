@@ -5,47 +5,50 @@ require 'tempfile'
 require 'json'
 
 module Eduplay
-  THUMBNAIL_PATH = Rails.root.join('app/assets/images/contato.png').to_s
+  THUMBNAIL_PATH = Rails.root.join('themes/rnp/assets/images/eduplay-thumbnail.png').to_s
   THUMBNAIL_MIME = 'image/png'
+  PRIVACY = {
+    public: 1,
+    private: 3
+  }.freeze
 
   class InvalidMethodError
   end
 
   class API
-
-    def initialize host_url, token, client_key
-      @host_url = host_url
+    def initialize(token)
+      @host_url = Rails.application.config.omniauth_eduplay_url
       @token = token
-      @client_key = client_key
+      @client_key = Rails.application.config.omniauth_eduplay_secret
     end
 
     def self.authorize_path(recordingid)
       Rails.logger.info("[AUTHORIZE_PATH] authorize_path pass")
       query = {
         response_type: 'code',
-        client_id: Rails.application.config.eduplay_client_id,
+        client_id: Rails.application.config.omniauth_eduplay_key,
         scope: 'ws:write',
         redirect_uri: Rails.application.config.eduplay_redirect_callback,
         state: recordingid
       }.to_query
 
-      authorize_url = "#{Rails.application.config.eduplay_service_url}/portal/oauth/authorize"
+      authorize_url = "#{Rails.application.config.omniauth_eduplay_url}/portal/oauth/authorize"
 
       "#{authorize_url}?#{query}"
     end
 
     def self.get_access_token(code)
       Rails.logger.info("[GET_ACCESS_TOKEN] pass")
-      token_url = "#{Rails.application.config.eduplay_service_url}/portal/oauth/token"
+      token_url = "#{Rails.application.config.omniauth_eduplay_url}/portal/oauth/token"
 
       response = Faraday.send(
         :post,
         token_url,
         {
-          client_id: Rails.application.config.eduplay_client_id,
+          client_id: Rails.application.config.omniauth_eduplay_key,
           redirect_uri: Rails.application.config.eduplay_redirect_callback,
           grant_type: 'authorization_code',
-          client_secret: Rails.application.config.eduplay_client_secret,
+          client_secret: Rails.application.config.omniauth_eduplay_secret,
           code: code
         },
         {
@@ -55,56 +58,100 @@ module Eduplay
       JSON.parse(response.body)
     end
 
-    def user_info user
-      path = "services/user/find/#{user}"
-
-      request_and_parse(:get, path)
-    end
-
-    def create_video username, id, filename, opt
-      path = "services/video/save/#{id}/#{filename}"
-
-      tempfile = get_xml_file 'video', title: opt[:title], keywords: 'mconf'
+    def create_video(data, video_data)
+      path = "api/v1/videos/#{data['identifier']}?status=0"
 
       payload = {
-        :file => [Eduplay::THUMBNAIL_PATH, Eduplay::THUMBNAIL_MIME],
-        :video => [tempfile, 'application/xml'],
-        :username => username,
+        image: [Eduplay::THUMBNAIL_PATH, Eduplay::THUMBNAIL_MIME],
+        data: {
+          title: video_data[:title],
+          mediaFileName: data['filename'],
+          internalMediaFileName: data['internalMediaFileName'] + '.mp4',
+          description: video_data[:description],
+          visibility: video_data[:public],
+          geolocationControl: 1,
+          tags: video_data[:tags],
+          idsChannels: [video_data[:channel_id]]
+        }
       }
 
       response = upload_request(path, payload)
 
-      tempfile.close
-      tempfile.unlink
-
       JSON.parse(response.body)
     end
 
-    def get_video id
-      path = "services/video/#{id}"
+    def get_channels
+      path = 'api/v1/users/channels'
 
       request_and_parse(:get, path)
     end
 
-    def get_upload_link id = nil, filename = nil, file_extension = nil
-      id = id || SecureRandom.uuid
-      filename = filename || "#{id}#{file_extension || '.mp4'}"
+    def create_channel(name, visibility, tags)
+      path = 'api/v1/channels'
 
-      path = "services/video/upload/url/#{id}/#{filename}"
+      payload = {
+        data: {
+          name: name,
+          visibility: visibility,
+          tags: tags
+        }
+      }
 
-      json = request_and_parse(:get, path)
+      create_multiple_tags(tags)
 
-      json.merge({'id' => id, 'filename' => filename})
+      response = upload_request(path, payload)
+
+      JSON.parse(response.body)
     end
 
-    def upload_file path, filename, mime_type = nil
+    def get_tags(term, quantity = 1)
+      path = "api/v1/catalog-topics"
+      params = { term: term, quantity: quantity }
 
+      request_and_parse(:get, path, params)
+    end
+
+    def create_multiple_tags(tags)
+      tags = tags.uniq
+      threads = tags.map do |tag|
+        Thread.new do
+          existing_tags = get_tags(tag)
+          unless existing_tags[0].eql?(tag)
+            Resque.logger.info "Creating tag '#{tag}' ..."
+            create_tag(tag)
+          else
+            Resque.logger.info "Tag '#{tag}' already exists, skipping ..."
+          end
+        end
+      end
+      threads.each(&:join)
+    end
+
+    def create_tag(tag)
+      path = "api/v1/catalog-topics"
+      body = { name: tag }
+
+      request_and_parse(:post, path, {}, body)
+    end
+
+    def get_upload_link(filename = nil, file_extension = nil)
+      filename = "#{filename}#{file_extension || '.mp4'}"
+
+      path = "api/v1/videos/upload-url"
+      params = { mediaFileName: filename }
+
+      json = request_and_parse(:get, path, params)
+
+      json.merge({ 'filename' => filename })
+    end
+
+    def upload_file(path, filename, mime_type = nil)
       response = upload_request path, file: [filename, mime_type]
 
       JSON.parse(response.body)
     end
 
-    def download_file path
+    def download_file(path)
       response = Faraday.get(path)
 
       tempfile = Tempfile.new(['recording', ".mp4"], binmode: true)
@@ -117,21 +164,25 @@ module Eduplay
     private
     def headers
       headers = {
-        "Accept" => "application/json",
-        "Authorization" => "Bearer #{@token}",
-        "clientkey" => @client_key
+        "Accept" => "*/*",
+        "Authorization" => "Bearer #{@token}"
       }
     end
 
-    def request_and_parse method, path, body = {}
-      throw InvalidMethodError unless [:get, :post].include?(method)
+    def request_and_parse(method, path, params = {}, body = {})
+      raise InvalidMethodError unless %i[get post].include?(method)
 
-      response = Faraday.send(method, "#{@host_url}/#{path}", body, headers)
+      query_string = params.empty? ? "" : "?#{URI.encode_www_form(params)}"
+      req_headers = headers
+      req_headers = req_headers.merge('Content-Type' => 'application/json') if method.eql?(:post)
+      body = body.to_json unless body.empty?
 
-      JSON.parse(response.body)
+      response = Faraday.send(method, "#{@host_url}/#{path}#{query_string}", body, req_headers)
+
+      response.body.empty? ? "" : JSON.parse(response.body)
     end
 
-    def upload_request path, body
+    def upload_request(path, body)
       url = @host_url
 
       if path.match(/^https?/)
@@ -157,23 +208,11 @@ module Eduplay
         if v.kind_of?(Array)
           [k, Faraday::UploadIO.new(v[0], v[1])]
         else
-          [k, v]
+          [k, Faraday::UploadIO.new(StringIO.new(v.to_json), 'application/json')]
         end
       end
 
       conn.post(path, payload.to_h)
     end
-
-    def get_xml_file title, keys
-      tempfile = Tempfile.new([title, '.xml'])
-
-      xml = keys.to_xml(skip_instruct: true, root: 'video')
-
-      tempfile.write(xml)
-      tempfile.rewind
-
-      tempfile
-    end
   end
-
 end

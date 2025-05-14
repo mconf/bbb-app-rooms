@@ -20,9 +20,6 @@ pt:
     bigbluebutton:
       moderator:      "Moderador"
       viewer:         "Participante"
-    eduplay:
-      success: "Seu vídeo está sendo carregado para o Eduplay"
-      error:   "Um erro ocorreu. Por favor, tente novamente!"
     filesender:
       success: "Seu vídeo está sendo carregado para o Filesender"
       error:   "Um erro ocorreu. Por favor, tente novamente!"
