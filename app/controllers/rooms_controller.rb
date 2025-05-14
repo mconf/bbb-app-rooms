@@ -166,6 +166,7 @@ class RoomsController < ApplicationController
     return_to = meetings_room_path(@room, filter: params[:filter])
 
     if eduplay_token.token.present? && eduplay_token.expires_at > Time.now + 30.minutes
+      Rails.logger.info "EduplayToken #{eduplay_token}"
       @eduplay_token = eduplay_token.token
       api = Eduplay::API.new(eduplay_token.token)
       @channels = api.get_channels
@@ -184,7 +185,7 @@ class RoomsController < ApplicationController
     api = Eduplay::API.new(eduplay_token.token)
 
     if params['channel'] == 'new_channel'
-      Rails.logger.info "Creating new channel(name: #{params['channel_name']} public: #{params['channel_public']} tags: #{params['channel_tags']})"
+      Rails.logger.info "Creating new channel (name=#{params['channel_name']}, public=#{params['channel_public']}, tags=#{params['channel_tags']})"
       new_channel = api.create_channel(params['channel_name'], params['channel_public'].to_i, params['channel_tags'].split(','))
       if new_channel['result'].present?
         params['channel'] = new_channel['result']
@@ -213,20 +214,22 @@ class RoomsController < ApplicationController
   end
 
   def eduplay_auth
-    old_eduplay_token = EduplayToken.find_by(user_uid: @user.uid)
+    eduplay_token = EduplayToken.find_by(user_uid: @user.uid)
     if params['access_token'].present?
-      if old_eduplay_token.nil?
-        old_eduplay_token = EduplayToken.create!(user_uid: @user.uid, token: params['access_token'], expires_at: params['expires_at'])
+      if eduplay_token.nil?
+        eduplay_token = EduplayToken.create!(user_uid: @user.uid, token: params['access_token'], expires_at: params['expires_at'])
+        Rails.logger.info "EduplayToken #{eduplay_token} created"
       else
-        old_eduplay_token.update(token: params['access_token'], expires_at: params['expires_at'])
+        eduplay_token.update(token: params['access_token'], expires_at: params['expires_at'])
+        Rails.logger.info "EduplayToken #{eduplay_token} updated (token and expires_at)"
       end
-    else
-      if old_eduplay_token.nil?
-        flash[:notice] = t('meetings.recording.eduplay.error')
-        redirect_to(meetings_room_path(@room, filter: params[:filter])) and return
-      end
+    elsif eduplay_token.nil?
+      Rails.logger.warn "EduplayToken not found for user_uid=#{@user.uid} and access_token was not informed"
+      flash[:notice] = t('meetings.recording.eduplay.error')
+      redirect_to(meetings_room_path(@room, filter: params[:filter])) and return
     end
 
+    Rails.logger.info "Successful auth with EduplayToken #{eduplay_token}"
     redirect_to(eduplay_path(@room, record_id: params['record_id']))
   end
 
