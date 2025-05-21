@@ -176,6 +176,78 @@ $(document).on('turbolinks:load', function(){
     e.target.setAttribute("data-tracking-id", trackingId);
   });
 
+  // Change selected thumbnail
+  $('#eduplay .thumbnail-default-option').on('click', function(e) {
+    e.stopPropagation();
+    $('.thumbnail-default-option').addClass('selected');
+    $('.thumbnail-upload-option').removeClass('selected');
+    $('input[name="thumbnail_option"][value="default"]').prop('checked', true);
+  });
+  
+  $('#eduplay .thumbnail-upload-option').on('click', function(e) {
+    let fileInput = $('input[type="file"][name="image"]');
+    if (fileInput.val()) {
+      e.stopPropagation();
+      $('.thumbnail-upload-option').addClass('selected');
+      $('.thumbnail-default-option').removeClass('selected');
+      $('input[name="thumbnail_option"][value="upload"]').prop('checked', true);
+    } else {
+      fileInput.trigger("click");
+    }
+  });
+
+  // Show preview of image and logic to limit size in 4MB
+  $('#eduplay input[type="file"][name="image"]').on('change', function(e) {
+    let input = e.target;
+    if (input.files && input.files[0]) {
+      let file = input.files[0];
+      if (!file.type.startsWith("image/") || file.size > 4 * 1024 * 1024) {
+        $('#preview').hide();
+        $('#remove-thumbnail').hide();
+        $('.upload-placeholder').show();
+        $(input).val('');
+
+
+        error_message = !file.type.startsWith("image/")
+          ? I18n.t('meetings.recording.eduplay.errors.image_not_image')
+          : I18n.t('meetings.recording.eduplay.errors.image_too_large');
+        $toast = $('.toast', '#eduplay-upload-form-error');
+        $toast.find('.toast-header').contents().first()[0].textContent = error_message;
+        $toast.toast('dispose');
+        $toast.toast('show');
+        return;
+      }
+      let reader = new FileReader();
+      reader.onload = function(ev) {
+        $('#preview').attr('src', ev.target.result).show();
+        $('.upload-placeholder').hide();
+        $('#remove-thumbnail').show();
+        // Select upload option
+        $('.thumbnail-upload-option').addClass('selected');
+        $('.thumbnail-default-option').removeClass('selected');
+        $('input[name="thumbnail_option"][value="upload"]').prop('checked', true);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      $('#preview').hide();
+      $('#remove-thumbnail').hide();
+      $('.upload-placeholder').show();
+    }
+  });
+  
+  // Remove uploaded image
+  $('#eduplay #remove-thumbnail').on('click', function(e) {
+    e.stopPropagation();
+    $('#preview').hide();
+    $('#remove-thumbnail').hide();
+    $('.upload-placeholder').show();
+    $('input[type="file"][name="image"]').val('');
+    // Select default option
+    $('.thumbnail-default-option').addClass('selected');
+    $('.thumbnail-upload-option').removeClass('selected');
+    $('input[name="thumbnail_option"][value="default"]').prop('checked', true);
+  });
+
   $('#eduplay .dropdown-menu .dropdown-item').each(function() {
     $(this).on('click', function(e) {
       e.preventDefault();

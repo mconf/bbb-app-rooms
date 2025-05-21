@@ -88,6 +88,8 @@ pt:
         errors:
           channel_incomplete: "Nome, privacidade e palavras-chave do canal não podem estar em branco."
           channel_same_field: "Nome e palavras-chave não podem ser iguais."
+          image_not_image: "O arquivo enviado não é uma imagem."
+          image_too_large: "Imagem muito grande. O tamanho máximo é de 4MB."
           no_channel: "Um canal deve ser selecionado ou criado."
           video_incomplete: "Título, descrição, privacidade e palavras-chave do vídeo não podem estar em branco."
           video_same_field: "Título, descrição, palavras-chave não podem ser iguais."
@@ -96,9 +98,13 @@ pt:
         privacy: "Privacidade"
         private: "Privado"
         public: "Público"
+        remove: "Remover"
         share_via_eduplay: "Compartilhar gravação via Eduplay"
+        success: "Seu vídeo está sendo carregado para o Eduplay"
         tags: "Palavras-Chave"
+        thumbnail: "Miniatura"
         title: "Upload no Eduplay"
+        upload_thumbnail: "Fazer upload de uma miniatura personalizada"
         video_title: "Título do Vídeo"
       exp_date: "Data de expiração: "
       filesender:

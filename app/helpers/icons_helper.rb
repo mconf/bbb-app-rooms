@@ -67,6 +67,14 @@ module IconsHelper
     material_icon_constructor "info", "icon material-symbols-rounded icon icon-info", options
   end
 
+  def icon_not_check(options={})
+    material_icon_constructor "close", "icon material-symbols-rounded icon_not_check", options
+  end
+
+  def icon_upload_image(options={})
+    material_icon_constructor "image_arrow_up", "icon material-symbols-rounded icon-upload-image", options
+  end
+
   # Base method for most of the methods above
   def icon_constructor(title=nil, cls=nil, options={})
     options[:class] = options.has_key?(:class) ? cls + " " + options[:class] : cls

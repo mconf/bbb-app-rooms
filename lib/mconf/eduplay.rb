@@ -61,8 +61,13 @@ module Eduplay
     def create_video(data, video_data)
       path = "api/v1/videos/#{data['identifier']}?status=0"
 
+      thumbnail = video_data[:thumbnail]
+      if video_data[:thumbnail].nil?
+        thumbnail = [Eduplay::THUMBNAIL_PATH, Eduplay::THUMBNAIL_MIME]
+      end
+
       payload = {
-        image: [Eduplay::THUMBNAIL_PATH, Eduplay::THUMBNAIL_MIME],
+        image: thumbnail,
         data: {
           title: video_data[:title],
           mediaFileName: data['filename'],

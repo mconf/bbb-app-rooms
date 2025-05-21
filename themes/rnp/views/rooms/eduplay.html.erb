@@ -87,6 +87,32 @@
         <%= form.label :tags, t('meetings.recording.eduplay.tags') %>
         <%= form.text_field :tags, id: "eduplay-video-tags", minlength: 2,  class: "form-control" %>
       </div>
+
+      <div class="d-none">
+        <%= form.collection_radio_buttons :thumbnail_option, ['default', 'upload'], :to_s, :to_s, { checked: 'default' }, { class: 'd-none', label: false } %>
+      </div>
+
+      <div class="form-group col-12 col-md-10">
+        <%= form.label :image, t('meetings.recording.eduplay.thumbnail'), class: "thumbnail-label" %>
+        <div class="thumbnail-options">
+          <div class="thumbnail-default-option selected">
+            <%= image_tag('eduplay-thumbnail.png', class: "default-thumbnail") %>
+          </div>
+          <div class="thumbnail-upload-option">
+            <div class="upload-placeholder">
+              <%= icon_upload_image %>
+              <span><%= t('meetings.recording.eduplay.upload_thumbnail') %></span>
+            </div>
+            <%= image_tag "#", id: "preview", alt: "Image Preview", style: "display: none" %>
+            <%= link_to '#', id: 'remove-thumbnail', type: "button", style: "display: none" do %>
+              <%= icon_not_check %>
+              <span><%= t('meetings.recording.eduplay.remove') %></span>
+            <% end %>
+          </div>
+        </div>
+        <%= form.file_field :image, accept: 'image/*', style: 'display:none;' %>
+      </div>
+
       <%= form.hidden_field :recordid, value: @recording[:recordID] %>
       <%= form.hidden_field :meetingid, value: @recording[:meetingID] %>
     </div>
