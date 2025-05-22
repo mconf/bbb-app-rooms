@@ -370,6 +370,25 @@ $(document).on('turbolinks:load', function(){
     tokenSeparators: [","],
     formatSearching: function() { return I18n.t('_all.select2.comma_tags') }
   });
+
+  $('.showable-password-wrapper').each(function() {
+    const $wrapper = $(this);
+    const $input = $wrapper.find('.showable-password');
+    const $showIcon = $wrapper.find('.showable-password-show');
+    const $hideIcon = $wrapper.find('.showable-password-hide');
+
+    $showIcon.on('click', function() {
+      $input.attr('type', 'text');
+      $showIcon.hide();
+      $hideIcon.show();
+    });
+
+    $hideIcon.on('click', function() {
+      $input.attr('type', 'password');
+      $hideIcon.hide();
+      $showIcon.show();
+    });
+  });
 });
 
 $DOCUMENT.on('turbolinks:load',  () => {

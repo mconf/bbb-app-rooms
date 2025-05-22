@@ -854,4 +854,18 @@ body.theme-rnp {
       background: none;
     }
   }
+
+  .showable-password-wrapper {
+    position: relative;
+  }
+
+  .showable-password-show,
+  .showable-password-hide {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: var(--m-font-fields);
+    cursor: pointer;
+  }
 }
