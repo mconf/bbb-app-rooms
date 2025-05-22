@@ -234,7 +234,7 @@ $(document).on('turbolinks:load', function(){
       $('.upload-placeholder').show();
     }
   });
-  
+
   // Remove uploaded image
   $('#eduplay #remove-thumbnail').on('click', function(e) {
     e.stopPropagation();
@@ -268,6 +268,16 @@ $(document).on('turbolinks:load', function(){
     })
   });
 
+  $('#eduplay input[name="public"]').on('change', function() {
+    var privateWithPassword = $('.password-input').data('private-with-password');
+    console.log($(this).val())
+    if ($(this).val() == privateWithPassword.toString()) {
+      $('.password-input').show();
+    } else {
+      $('.password-input').hide();
+    }
+  });
+
   const validateForm = (formData) => {
     errors = []
 
@@ -296,10 +306,28 @@ $(document).on('turbolinks:load', function(){
       errors.push(I18n.t('meetings.recording.eduplay.errors.video_same_field'));
     }
 
+    if (videoPublic == $('.password-input').data('private-with-password').toString()) {
+      let password = formData['video_password'];
+      if (!isPasswordValid(password)) {
+        errors.push(I18n.t('meetings.recording.eduplay.errors.password_invalid_requirments'));
+      }
+    }
+
     if (errors.length > 0)
       return errors.join(' ');
     return null
   };
+
+  function isPasswordValid(password) {
+    if (!password || password.length < 8) return false;
+
+    var hasUpper   = /[A-Z]/.test(password);
+    var hasLower   = /[a-z]/.test(password);
+    var hasNumber  = /[0-9]/.test(password);
+    var hasSpecial = /[*.!@#\$%\^&\(\)\{\}\[\]<>:;,.?\/~+\-=|\\]/.test(password);
+
+    return hasUpper && hasLower && hasNumber && hasSpecial;
+  }
 
   $('#eduplay form').on('submit', function(e) {
     formData = $(this).serializeArray().reduce(function(fieldsObject, field) {

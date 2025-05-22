@@ -220,6 +220,7 @@ class RoomsController < ApplicationController
       title: params['title'],
       description: params['description'],
       public: params['public'].to_i,
+      video_password: params['video_password'],
       tags: params['tags'].split(','),
       thumbnail: uploaded_thumbnail,
     }

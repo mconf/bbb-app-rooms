@@ -9,7 +9,8 @@ module Eduplay
   THUMBNAIL_MIME = 'image/png'
   PRIVACY = {
     public: 1,
-    private: 3
+    private: 3,
+    private_with_password: 4
   }.freeze
 
   class InvalidMethodError
@@ -74,6 +75,7 @@ module Eduplay
           internalMediaFileName: data['internalMediaFileName'] + '.mp4',
           description: video_data[:description],
           visibility: video_data[:public],
+          privatePassword: video_data[:video_password],
           geolocationControl: 1,
           tags: video_data[:tags],
           idsChannels: [video_data[:channel_id]]

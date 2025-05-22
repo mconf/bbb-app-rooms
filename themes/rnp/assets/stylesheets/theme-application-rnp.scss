@@ -407,6 +407,20 @@ body.theme-rnp {
       color: #4A5A63;
     }
 
+    .password-input {
+      margin-bottom: 30px;
+      display: none;
+
+      .eduplay_info_video_password {
+        margin-bottom: 4px;
+      }
+
+      span {
+        font-weight: 300;
+        font-size: var(--font-size-details);
+      }
+    }
+
     .thumbnail-options {
       display: flex;
       flex-wrap: wrap;

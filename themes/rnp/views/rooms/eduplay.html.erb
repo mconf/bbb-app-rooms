@@ -72,16 +72,23 @@
         <%= form.label :description, t('meetings.recording.eduplay.description') %>
         <%= form.text_field :description, minlength: 2,  class: "form-control" %>
       </div>
+
       <div class="form-group col-12 col-md-10 privacy">
         <%= form.label :public, t('meetings.recording.eduplay.privacy'), class: "privacy-label" %>
         <div style="display: inline;">
+          <% eduplay_privacy_options.push([t('meetings.recording.eduplay.private_with_password'), Eduplay::PRIVACY[:private_with_password]]) %>
           <% eduplay_privacy_options.each do |option| %>
             <label style="display: inline; margin-right: 20px; accent-color: #074AA0";>
-              <%= form.radio_button :public, option %>
+              <%= form.radio_button :public, option[1] %>
               <%= option[0] %>
             </label>
           <% end %>
         </div>
+      </div>
+      <div class="form-group col-12 col-md-10 password-input" data-private-with-password="<%= Eduplay::PRIVACY[:private_with_password] %>">
+        <%= form.label :video_password, t('meetings.recording.eduplay.password') %>
+        <%= form.text_field :video_password, id: "eduplay-video-password", minlength: 2,  class: "form-control", input_html: { autocomplete: 'new-password' } %>
+        <span><%= t('meetings.recording.eduplay.password_requirements') %></span>
       </div>
       <div class="form-group col-12 col-md-10">
         <%= form.label :tags, t('meetings.recording.eduplay.tags') %>
