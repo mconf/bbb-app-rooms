@@ -79,8 +79,10 @@ Rails.application.routes.draw do
           get '/error/:code', to: 'rooms#error'
         end
 
-        resources :reports, only: :index do
-          get :download, on: :collection
+        if Rails.configuration.data_reports_enabled
+          resources :reports, only: :index do
+            get :download, on: :collection
+          end
         end
 
         resources :scheduled_meetings, only: [:new, :create, :edit, :update, :destroy] do

@@ -155,10 +155,11 @@ module BbbAppRooms
     config.moodle_api_timeout = Mconf::Env.fetch_int('MCONF_MOODLE_API_TIMEOUT', 5)
     config.moodle_recurring_events_month_period = Mconf::Env.fetch_int('MCONF_MOODLE_RECURRING_EVENTS_MONTH_PERIOD', 12)
 
-    # Data API url
+    # Mconf Data API
     config.data_api_url = Mconf::Env.fetch('MCONF_DATA_API_URL', '')
+    config.data_reports_enabled = Mconf::Env.fetch_boolean('MCONF_DATA_REPORTS_ENABLED', true)
 
-    # Timeout configs
+    # BBB API timeout configs
     config.ajax_timeout = Mconf::Env.fetch_int('MCONF_AJAX_TIMEOUT', 15000)
     config.bbb_api_timeout = Mconf::Env.fetch_int('MCONF_BBB_API_TIMEOUT', 15)
 
