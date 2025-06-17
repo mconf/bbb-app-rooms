@@ -1,5 +1,8 @@
 #!/bin/sh
 
+PORT="${APP_PORT:=3000}"
+echo ">>> Rooms starting on port: $PORT"
+
 if [ "$RAILS_ENV" = "production" ] && [ "$DB_ADAPTER" = "postgresql" ]; then
   while ! curl http://$DB_HOST:-localhost:${DB_PORT:-5432}/ 2>&1 | grep '52'
   do
@@ -22,4 +25,4 @@ fi
 
 echo "Start app..."
 rm -r tmp/pids/server.pid
-bundle exec rails s -b 0.0.0.0 -p 3000
+bundle exec rails s -b 0.0.0.0 -p $PORT
