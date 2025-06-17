@@ -191,6 +191,55 @@ module Moodle
       result["body"]
     end
 
+    def self.get_course_attendance_instances(moodle_token, course_id, opts={})
+      params = {
+        wstoken: moodle_token.token,
+        wsfunction: 'core_course_get_contents',
+        moodlewsrestformat: 'json',
+        courseid: course_id,
+        'options[0][name]' => 'modname',
+        'options[0][value]' => 'attendance'
+      }
+      result = post(moodle_token.url, params)
+
+      log_labels =  "[MOODLE API] url=#{moodle_token.url} " \
+                    "token_id=#{moodle_token.id} " \
+                    "duration=#{result['duration']&.round(3)}s " \
+                    "wsfunction=core_course_get_contents " \
+                    "#{('nonce=' + opts[:nonce].to_s + ' ') if opts[:nonce]}"
+
+      if result["exception"].present?
+        Rails.logger.error(log_labels + "message=\"Failed to get course attendance instances: #{result}\"")
+        return nil
+      end
+
+      if result["warnings"].present?
+        Rails.logger.warn(log_labels + "message=\"Warnings while getting course attendance instances: #{result["warnings"].inspect}\"")
+      end
+
+      sections_data = result.is_a?(Array) ? result : result["body"]
+
+      unless sections_data.is_a?(Array)
+        Rails.logger.warn(log_labels + "message=\"Course contents data is not an array or is nil for courseid #{course_id}. Data: #{sections_data.inspect}\"")
+        return []
+      end
+
+      attendance_instances = []
+      sections_data.each do |section|
+        unless section.is_a?(Hash) && section['modules'].is_a?(Array)
+          Rails.logger.debug(log_labels + "message=\"Skipping malformed section: #{section.inspect}\"")
+          next
+        end
+
+        section['modules'].each do |mod|
+          attendance_instances << { instance: mod['instance'], name: mod['name'] }
+        end
+      end
+
+      Rails.logger.info(log_labels + "message=\"Found attendance instances for courseid #{course_id}: #{attendance_instances.inspect}\"")
+      attendance_instances
+    end
+
     def self.token_functions_configured?(moodle_token, wsfunctions, opts={})
       params = {
         wstoken: moodle_token.token,
@@ -265,6 +314,194 @@ module Moodle
       end
 
       validation_result
+    end
+
+    def self.add_attendance(moodle_token, courseid, name, intro = "", groupmode = 0, opts = {})
+      params = {
+        wstoken: moodle_token.token,
+        wsfunction: 'mod_attendance_add_attendance',
+        moodlewsrestformat: 'json',
+        courseid: courseid,
+        name: name,
+        intro: intro,
+        groupmode: groupmode
+      }
+      result = post(moodle_token.url, params)
+
+      log_labels =  "[MOODLE API] url=#{moodle_token.url} " \
+                    "token_id=#{moodle_token.id} " \
+                    "duration=#{result['duration']&.round(3)}s " \
+                    "wsfunction=mod_attendance_add_attendance " \
+                    "#{('nonce=' + opts[:nonce].to_s + ' ') if opts[:nonce]}"
+
+      if result["exception"].present?
+        Rails.logger.error(log_labels + "message=\"#{result}\"")
+        return false
+      end
+
+      if result["warnings"].present?
+        Rails.logger.warn(log_labels + "message=\"#{result["warnings"].inspect}\"")
+      end
+      Rails.logger.info(log_labels + "message=\"Attendance instance created: #{result}\"")
+
+      result['attendanceid']
+    end
+
+    def self.add_session(moodle_token, attendanceid, sessiontime, description = "", duration = 0, groupid = 0, addcalendarevent = 1, opts = {})
+      params = {
+        wstoken: moodle_token.token,
+        wsfunction: 'mod_attendance_add_session',
+        moodlewsrestformat: 'json',
+        attendanceid: attendanceid,
+        description: description,
+        sessiontime: sessiontime,
+        duration: duration,
+        groupid: groupid,
+        addcalendarevent: addcalendarevent 
+      }
+
+      result = post(moodle_token.url, params)
+
+      log_labels =  "[MOODLE API] url=#{moodle_token.url} " \
+                    "token_id=#{moodle_token.id} " \
+                    "duration=#{result['duration']&.round(3)}s " \
+                    "wsfunction=mod_attendance_add_session " \
+                    "#{('nonce=' + opts[:nonce].to_s + ' ') if opts[:nonce]}"
+
+      if result["exception"].present?
+        Rails.logger.error(log_labels + "message=\"#{result}\"")
+        return false
+      end
+
+      if result["warnings"].present?
+        Rails.logger.warn(log_labels + "message=\"#{result["warnings"].inspect}\"")
+      end
+      Rails.logger.info(log_labels + "message=\"Attendance session created: #{result}\"")
+
+      result['sessionid']
+    end
+
+    def self.get_session(moodle_token, sessionid, opts = {})
+      params = {
+        wstoken: moodle_token.token,
+        wsfunction: 'mod_attendance_get_session',
+        moodlewsrestformat: 'json',
+        sessionid: sessionid
+      }
+      result = post(moodle_token.url, params)
+
+      log_labels =  "[MOODLE API] url=#{moodle_token.url} " \
+                    "token_id=#{moodle_token.id} " \
+                    "duration=#{result['duration']&.round(3)}s " \
+                    "wsfunction=mod_attendance_get_session " \
+                    "#{('nonce=' + opts[:nonce].to_s + ' ') if opts[:nonce]}"
+
+      if result["exception"].present?
+        Rails.logger.error(log_labels + "message=\"#{result}\"")
+        return nil
+      end
+
+      if result["warnings"].present?
+        Rails.logger.warn(log_labels + "message=\"#{result["warnings"].inspect}\"")
+      end
+      Rails.logger.info(log_labels + "message=\"Attendance session data retrieved: #{result}\"")
+
+      result
+    end
+
+    def self.get_session_statuses(moodle_token, sessionid, opts = {})
+      session_data = get_session(moodle_token, sessionid, opts)
+
+      log_labels =  "[MOODLE API] url=#{moodle_token.url} " \
+                    "token_id=#{moodle_token.id} " \
+                    "wsfunction=mod_attendance_get_session (for statuses) " \
+                    "#{('nonce=' + opts[:nonce].to_s + ' ') if opts[:nonce]}" # Note: duration is part of session_data
+
+      unless session_data && session_data["statuses"].is_a?(Array)
+        Rails.logger.error(log_labels + "message=\"Failed to retrieve statuses or statuses is not an array. Data: #{session_data.inspect}\"")
+        return []
+      end
+
+      statuses_array = []
+      session_data["statuses"].each do |status|
+        if status.is_a?(Hash) && status.key?("id") && status.key?("description") && status.key?("grade")
+          statuses_array << { id: status["id"], description: status["description"], grade: status["grade"] }
+        else
+          Rails.logger.warn(log_labels + "message=\"Skipping invalid status entry: #{status.inspect}\"")
+        end
+      end
+
+      Rails.logger.info(log_labels + "message=\"Extracted session statuses: #{statuses_array.inspect}\"")
+      statuses_array
+    end
+
+    def self.update_user_status(moodle_token, sessionid, studentid, takenbyid, statusid, statusset, opts = {})
+      params = {
+        wstoken: moodle_token.token,
+        wsfunction: 'mod_attendance_update_user_status',
+        moodlewsrestformat: 'json',
+        sessionid: sessionid,
+        studentid: studentid,
+        takenbyid: takenbyid,
+        statusid: statusid,
+        statusset: statusset
+      }
+      result = post(moodle_token.url, params)
+
+      log_labels =  "[MOODLE API] url=#{moodle_token.url} " \
+                    "token_id=#{moodle_token.id} " \
+                    "duration=#{result['duration']&.round(3)}s " \
+                    "wsfunction=mod_attendance_update_user_status " \
+                    "#{('nonce=' + opts[:nonce].to_s + ' ') if opts[:nonce]}"
+
+      if result["exception"].present?
+        Rails.logger.error(log_labels + "message=\"#{result}\"")
+        return false
+      end
+
+      if result["warnings"].present?
+        Rails.logger.warn(log_labels + "message=\"#{result["warnings"].inspect}\"")
+      end
+      Rails.logger.info(log_labels + "message=\"User status update result: #{result}\"")
+
+      true
+    end
+
+    def self.get_enrolled_user_ids(moodle_token, courseid, opts = {})
+      params = {
+        wstoken: moodle_token.token,
+        wsfunction: 'core_enrol_get_enrolled_users', # Changed endpoint
+        moodlewsrestformat: 'json',
+        courseid: courseid
+      }
+      result = post(moodle_token.url, params)
+
+      log_labels =  "[MOODLE API] url=#{moodle_token.url} " \
+                    "token_id=#{moodle_token.id} " \
+                    "duration=#{result['duration']&.round(3)}s " \
+                    "wsfunction=core_enrol_get_enrolled_users " \
+                    "courseid=#{courseid} " \
+                    "#{('nonce=' + opts[:nonce].to_s + ' ') if opts[:nonce]}"
+
+      if result["exception"].present?
+        Rails.logger.error(log_labels + "message=\"#{result}\"")
+        return nil
+      end
+
+      if result["warnings"].present?
+        Rails.logger.warn(log_labels + "message=\"#{result["warnings"].inspect}\"")
+      end
+
+      users_data = result['body']
+      unless users_data.is_a?(Array)
+        Rails.logger.warn(log_labels + "message=\"Users data is not an array or is missing. Data: #{users_data.inspect}\"")
+        return []
+      end
+
+      user_ids = users_data.map { |user| user['id'] }.compact
+      Rails.logger.info(log_labels + "message=\"Retrieved #{user_ids.count} enrolled user IDs: #{user_ids.inspect}\"")
+
+      user_ids
     end
 
     def self.post(host_url, params)
