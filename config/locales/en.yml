@@ -141,6 +141,7 @@ en:
         allmoderators: "All users will join as moderators"
         create_moodle_calendar_event: "Create a corresponding event in the Moodle Calendar for this scheduled meeting."
         disable_replicate_in_moodle_calendar: "There are no events in the Moodle Calendar corresponding to this scheduled meeting."
+        mark_moodle_attendance: "If checked, the meeting will mark the attendance status (present or absent) on the first Attendance Moodle activity for every user on this course. If there is no Attendance Moodle activity, one will be created."
         replicate_in_moodle_calendar: "The changes will be applied to the events in the Moodle Calendar corresponding to that scheduled meeting."
       updated:        "The session schedule was updated"
       wait:

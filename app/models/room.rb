@@ -36,6 +36,23 @@ class Room < ApplicationRecord
     end
   end
 
+  def can_mark_moodle_attendance
+    moodle_token = self.consumer_config&.moodle_token
+    required_functions = [
+      'core_course_get_contents',
+      'core_enrol_get_enrolled_users',
+      'mod_attendance_add_attendance',
+      'mod_attendance_add_session',
+      'mod_attendance_get_session',
+      'mod_attendance_update_user_status'
+    ]
+    if moodle_token
+      Moodle::API.token_functions_configured?(moodle_token, required_functions)
+    else
+      false
+    end
+  end
+
   def consumer_config
     ConsumerConfig.find_by(key: self.consumer_key)
   end

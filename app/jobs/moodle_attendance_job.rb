@@ -135,7 +135,7 @@ class MoodleAttendanceJob < ApplicationJob
       else
         Rails.logger.info "MoodleAttendanceJob: No existing attendance instances found for course_id #{course_id} (API returned empty array). Creating new one."
         
-        target_attendance_name = "Attendance"
+        target_attendance_name = I18n.t('jobs.moodle_attendance.attendance_name')
         group_mode_param = group_select_enabled ? 1 : 0 # 0: no groups, 1: separate groups, 2: visible
         
         new_attendance_id = with_retries do
@@ -169,7 +169,7 @@ class MoodleAttendanceJob < ApplicationJob
     session_description = "<p>#{scheduled_meeting.meeting_name}</p> " \
     "#{'<p>' + scheduled_meeting.description + '</p>' || ''} " \
     "#{'<p>' + scheduled_meeting.start_at_date(I18n.locale) + ', ' + scheduled_meeting.start_at_time(I18n.locale) + '</p>' || ''} " \
-      "<p><em>Registrado automaticamente via ConferênciaWeb.</em></p>"
+    "<p><em>#{I18n.t('jobs.moodle_attendance.session_description_footer')}</em></p>"
 
     start_time_str = conference_data.dig('data', 'start')
     begin
@@ -183,7 +183,7 @@ class MoodleAttendanceJob < ApplicationJob
 
     session_group_id = 0
     if group_select_enabled
-      moodle_group_id_param = app_launch.custom_param('moodle_group_id')
+      moodle_group_id_param = scheduled_meeting.moodle_group_id
       session_group_id = moodle_group_id_param.to_i if moodle_group_id_param.present?
       Rails.logger.info "MoodleAttendanceJob: group_select_enabled is true. Using moodle_group_id: #{session_group_id} (from custom_param 'moodle_group_id': #{moodle_group_id_param})."
     end
