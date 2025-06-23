@@ -140,6 +140,7 @@ module BbbAppRooms
     config.omniauth_eduplay_key       = Mconf::Env.fetch('MCONF_OMNIAUTH_EDUPLAY_KEY')
     config.omniauth_eduplay_url       = Mconf::Env.fetch('MCONF_OMNIAUTH_EDUPLAY_URL')
     config.omniauth_eduplay_secret    = Mconf::Env.fetch('MCONF_OMNIAUTH_EDUPLAY_SECRET')
+    config.eduplay_default_tags       = Mconf::Env.fetch('MCONF_EDUPLAY_DEFAULT_TAGS', '').split(',')
 
     # Filesender
     config.filesender_enabled           = Mconf::Env.fetch_boolean('FILESENDER_ENABLED', false)
