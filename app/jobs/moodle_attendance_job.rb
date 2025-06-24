@@ -5,8 +5,6 @@ require 'time' # Required for Time.parse
 class MoodleAttendanceJob < ApplicationJob
   queue_as :default
   include ApplicationHelper
-  # include IconsHelper
-  # include ActionView::Helpers::AssetUrlHelper # For image_url
 
   def perform(conference_data_json)
     conference_data = JSON.parse(conference_data_json)
@@ -162,10 +160,6 @@ class MoodleAttendanceJob < ApplicationJob
 
   def create_moodle_session(moodle_token, attendance_id, scheduled_meeting, conference_data, app_launch, group_select_enabled)
     current_consumer_config = moodle_token.consumer_config
-    # TODO: change image dependending on the theme
-    # favicon_filename = "favicon.ico"
-    # favicon_url = image_url(favicon_filename)
-    # HTMl snippet: <img class='img-fluid' role='presentation' src='#{favicon_url}' alt='' width='16' height='16'>
     session_description = "<p>#{scheduled_meeting.meeting_name}</p> " \
     "#{'<p>' + scheduled_meeting.description + '</p>' || ''} " \
     "#{'<p>' + scheduled_meeting.start_at_date(I18n.locale) + ', ' + scheduled_meeting.start_at_time(I18n.locale) + '</p>' || ''} " \
