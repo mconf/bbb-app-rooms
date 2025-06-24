@@ -110,6 +110,7 @@ pt:
         allmoderators: "Todos usuários serão moderadores"
         create_moodle_calendar_event: "Cria um evento correspondente no Calendário do Moodle para esta sessão agendada."
         disable_replicate_in_moodle_calendar: "Não existem eventos no Calendário do Moodle correspondentes a essa sessão agendada."
+        mark_moodle_attendance: "Se marcado, a reunião registrará o status de presença (presente ou ausente) na primeira atividade de Presença do Moodle para cada usuário neste curso. Se não houver uma atividade de Presença no Moodle, uma será criada."
         replicate_in_moodle_calendar: "As mudanças serão aplicadas aos eventos no Calendário do Moodle correspondentes a essa sessão agendada."
       updated:        "O agendamento foi atualizado"
       wait:

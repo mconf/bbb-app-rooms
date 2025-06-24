@@ -254,6 +254,10 @@ class ScheduledMeetingsController < ApplicationController
         opts[:meeting_name] = "#{@scheduled_meeting.name} - #{group_name}"
       end
 
+      if @room.can_mark_moodle_attendance && @scheduled_meeting.mark_moodle_attendance
+        opts["meta_analytics-callback-url"] = moodle_attendance_url(host: Rails.application.config.url_host)
+      end
+
       # make user wait until moderator is in room
       if wait_for_mod?(@scheduled_meeting, @user) && (!mod_in_room?(@scheduled_meeting) ||
         (params[:no_auto_join] == 'true' && device_type? != 'desktop'))
@@ -459,7 +463,7 @@ class ScheduledMeetingsController < ApplicationController
   def scheduled_meeting_params(room)
     attrs = [
       :name, :recording, :duration, :description, :welcome, :repeat,
-      :disable_external_link, :disable_private_chat, :disable_note, :create_moodle_calendar_event
+      :disable_external_link, :disable_private_chat, :disable_note, :create_moodle_calendar_event, :mark_moodle_attendance
     ]
     attrs << [:wait_moderator] if room.allow_wait_moderator
     attrs << [:all_moderators] if room.allow_all_moderators

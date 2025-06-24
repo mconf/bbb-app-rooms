@@ -115,19 +115,32 @@
         </div>
       <% end %>
 
-      <% if @room.can_create_moodle_calendar_event %>
-        <div class="form-group">
-          <div class="form-check">
-            <%= form.check_box :create_moodle_calendar_event,
-            class: "form-check-input",
-            data: { persisted: scheduled_meeting.persisted?, replicated: scheduled_meeting.replicated_in_moodle?}%>
-            <%= form.label :create_moodle_calendar_event, class: "form-check-label" do %>
-              <%= t('helpers.label.scheduled_meeting.create_moodle_calendar_event') %>
-              <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= t('default.scheduled_meeting.tooltip.create_moodle_calendar_event') %>">help</i>
+      <% can_create_calendar = @room.can_create_moodle_calendar_event %>
+      <div class="form-group">
+        <div class="form-check">
+          <%= form.check_box :create_moodle_calendar_event,
+              class: "form-check-input",
+              disabled: !can_create_calendar,
+              data: { persisted: scheduled_meeting.persisted?, replicated: scheduled_meeting.replicated_in_moodle?, 'can-create': can_create_calendar } %>
+          <%= form.label :create_moodle_calendar_event, class: "form-check-label" do %>
+            <%= t('helpers.label.scheduled_meeting.create_moodle_calendar_event') %>
+            <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= can_create_calendar ? t('default.scheduled_meeting.tooltip.create_moodle_calendar_event') : t('default.scheduled_meeting.tooltip.create_moodle_calendar_event_disabled') %>">help</i>
+          <% end %>
+        </div>
+      </div>
+
+      <% can_mark_attendance = @room.can_mark_moodle_attendance %>
+      <div class="form-group">
+        <div class="form-check">
+            <%= form.check_box :mark_moodle_attendance,
+                class: "form-check-input",
+                disabled: !can_mark_attendance %>
+            <%= form.label :mark_moodle_attendance, class: "form-check-label" do %>
+              <%= t('helpers.label.scheduled_meeting.mark_moodle_attendance') %>
+              <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= can_mark_attendance ? t('default.scheduled_meeting.tooltip.mark_moodle_attendance') : t('default.scheduled_meeting.tooltip.mark_moodle_attendance_disabled') %>">help</i>
             <% end %>
           </div>
         </div>
-      <% end %>
 
       <% if @room.allow_all_moderators %>
         <div class="form-group">

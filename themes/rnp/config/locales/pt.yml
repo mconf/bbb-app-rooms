@@ -43,6 +43,7 @@ pt:
         disable_private_chat: "Desabilitar chats privados"
         disable_note: "Desabilitar notas compartilhadas"
         duration: "Duração"
+        mark_moodle_attendance: "Marcar Presença automaticamente"
         name: "Nome da sessão"
         recording: "Permitir que a sessão seja gravada"
         repeat: "Recorrência"
@@ -51,6 +52,10 @@ pt:
         start_time_time: "Hora de início"
         wait_moderator: "Aguardar moderador para entrar"
         welcome: "Mensagem de boas vindas (opcional)"
+  jobs:
+    moodle_attendance:
+      attendance_name: "Atividade de Presença"
+      session_description_footer: "Registrado automaticamente via ConferênciaWeb."
   meetings:
     all_loaded: "Todas as conferências foram carregadas"
     duration:
@@ -158,6 +163,11 @@ pt:
       x_hours:
         one: 'an hour'
         other: '%{count} hours'
+  default:
+    scheduled_meeting:
+      tooltip:
+        create_moodle_calendar_event_disabled: "A integração com o Calendário Moodle não está configurada. Para usar essa integração, entre em contato com o gerenciador do Moodle da sua instituição."
+        mark_moodle_attendance_disabled: "A integração de Presença Moodle não está configurada. Para usar essa integração, entre em contato com o gerenciador do Moodle da sua instituição."
   date:
     formats:
       day_month_year: '%d/%m/%Y'
