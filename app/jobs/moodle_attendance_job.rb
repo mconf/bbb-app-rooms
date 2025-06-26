@@ -160,10 +160,22 @@ class MoodleAttendanceJob < ApplicationJob
 
   def create_moodle_session(moodle_token, attendance_id, scheduled_meeting, conference_data, app_launch, group_select_enabled)
     current_consumer_config = moodle_token.consumer_config
+    theme_display_name = case app_theme
+                         when 'rnp'
+                           'ConferênciaWeb'
+                         when 'elos'
+                           'Elos'
+                         else
+                           app_theme # Fallback to the raw theme name
+                         end
+
+    # TODO: Forcing the 'rnp' theme until the app_theme return is consistent
+    theme_display_name = 'ConferênciaWeb'
+
     session_description = "<p>#{scheduled_meeting.meeting_name}</p> " \
     "#{'<p>' + scheduled_meeting.description + '</p>' || ''} " \
     "#{'<p>' + scheduled_meeting.start_at_date(I18n.locale) + ', ' + scheduled_meeting.start_at_time(I18n.locale) + '</p>' || ''} " \
-    "<p><em>#{I18n.t('jobs.moodle_attendance.session_description_footer')}</em></p>"
+    "<p><em>#{I18n.t('jobs.moodle_attendance.session_description_footer', app_theme: theme_display_name)}</em></p>"
 
     start_time_str = conference_data.dig('data', 'start')
     begin

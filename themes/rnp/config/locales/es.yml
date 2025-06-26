@@ -43,7 +43,7 @@ es:
         disable_private_chat: "Deshabilitar chats privados"
         disable_note: "Deshabilitar notas compartidas"
         duration: "Duración"
-        mark_moodle_attendance: "Marcar Asistencia automáticamente"
+        mark_moodle_attendance: "Marcar asistencia automáticamente"
         name: "Nombre de la sesión"
         recording: "Permitir que se grabe la sesión"
         repeat: "Recurrencia"
@@ -55,7 +55,7 @@ es:
   jobs:
     moodle_attendance:
       attendance_name: "Actividad de Asistencia"
-      session_description_footer: "Registrado automáticamente vía ConferênciaWeb."
+      session_description_footer: "Registrado automáticamente vía %{app_theme}."
   meetings:
     all_loaded: "Se han cargado todas las conferencias"
     duration:
