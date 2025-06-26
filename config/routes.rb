@@ -16,11 +16,12 @@ Rails.application.routes.draw do
   if Rails.configuration.cable_enabled
     mount ActionCable.server => Rails.configuration.action_cable.mount_path
   end
-
+  
   if Mconf::Env.fetch_boolean("SERVE_APPLICATION", true)
     scope ENV['RELATIVE_URL_ROOT'] || '' do
       scope 'rooms' do
         get '/close', to: 'rooms#close', as: :autoclose
+        post '/webhooks/moodle_attendance', to: 'webhooks#moodle_attendance', as: :moodle_attendance
 
         # Handles recording management.
         scope ':id/recording/:record_id' do
@@ -81,8 +82,10 @@ Rails.application.routes.draw do
           get '/error/:code', to: 'rooms#error'
         end
 
-        resources :reports, only: :index do
-          get :download, on: :collection
+        if Rails.configuration.data_reports_enabled
+          resources :reports, only: :index do
+            get :download, on: :collection
+          end
         end
 
         resources :scheduled_meetings, only: [:new, :create, :edit, :update, :destroy] do

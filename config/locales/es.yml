@@ -107,6 +107,7 @@ es:
         allmoderators: "Todos los usuarios serán moderadores"
         create_moodle_calendar_event: "Cree un evento correspondiente en el Calendario de Moodle para esta reunión programada."
         disable_replicate_in_moodle_calendar: "No hay eventos en el Calendario de Moodle correspondientes a esta reunión programada."
+        mark_moodle_attendance: "Si está marcada, la reunión registrará el estado de asistencia (presente o ausente) en la primera actividad de Asistencia de Moodle para cada usuario en este curso. Si no existe una actividad de Asistencia en Moodle, se creará una."
         replicate_in_moodle_calendar: "Los cambios se aplicarán a los eventos del Calendario de Moodle correspondientes a esa reunión programada."
       updated:        "La programación ha sido actualizada"
       wait:

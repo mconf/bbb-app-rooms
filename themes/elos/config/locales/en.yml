@@ -37,6 +37,7 @@ en:
         disable_private_chat: "Disable private chats"
         disable_note: "Disable shared notes"
         duration: "Duration"
+        mark_moodle_attendance: "Automatically mark attendance"
         name: "Session name"
         recording: "Allow the session to be recorded"
         repeat: "Recurrence"
@@ -45,6 +46,10 @@ en:
         start_time_time: "Start time"
         wait_moderator: "Wait for a moderator to join"
         welcome: "Welcome message (optional)"
+  jobs:
+    moodle_attendance:
+      attendance_name: "Attendance Activity"
+      session_description_footer: "Automatically registered via %{app_theme}."
   meetings:
     all_loaded: "All conferences loaded"
     duration:
@@ -141,6 +146,11 @@ en:
         about_x_hours:
           one: 'an hour'
           other: '%{count} hours'
+  default: # Assuming 'default' is a valid top-level key based on ERB usage
+    scheduled_meeting:
+      tooltip:
+        create_moodle_calendar_event_disabled: "Moodle Calendar integration is not configured. To use this integration, please contact your institution's Moodle manager."
+        mark_moodle_attendance_disabled: "Moodle Attendance integration is not configured. To use this integration, please contact your institution's Moodle manager."
   date:
     formats:
       day_month_year: '%m/%d/%Y'

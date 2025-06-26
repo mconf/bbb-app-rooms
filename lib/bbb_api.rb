@@ -49,10 +49,12 @@ module BbbApi
       meeting_name = opts[:meeting_name] || scheduled_meeting.meeting_name
 
       begin
+        options = scheduled_meeting.create_options(user)
+        options["meta_analytics-callback-url"] = opts["meta_analytics-callback-url"]
         bbb(room).create_meeting(
           meeting_name,
           meeting_id,
-          scheduled_meeting.create_options(user)
+          options
         )
       rescue BigBlueButton::BigBlueButtonException => e
         if ['simultaneousMeetingsLimitReachedForSecret', 'simultaneousMeetingsLimitReachedForInstitution'].include? e.key.to_s
