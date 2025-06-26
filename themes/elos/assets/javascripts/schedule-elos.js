@@ -13,33 +13,45 @@ $(document).on('turbolinks:load', function(){
         contentCustomDuration.classList.remove('d-block')
     }
 
-    if(document.getElementsByName('input[name="scheduled_meeting[create_moodle_calendar_event]"]')) {
-      $('input[name="scheduled_meeting[create_moodle_calendar_event]"]').each(function() {
-        const hintIcon = $('.icon-label-hint');
-        var persisted = $(this).attr('data-persisted');
-        var replicated = $(this).attr('data-replicated');
-        // Edit action
-        if (persisted == 'true') {
-          $(this).prop('disabled', true);
+    const createMoodleCalendarCheckbox = $('input[name="scheduled_meeting[create_moodle_calendar_event]"]');
+    if (createMoodleCalendarCheckbox.length) {
+      const canCreateCalendar = createMoodleCalendarCheckbox.data('can-create');
+      const hintIcon = createMoodleCalendarCheckbox.closest('.form-check').find('.icon-label-hint');
 
-          if (replicated == 'true') {
-            $(this).prop('checked', true);
+      if (canCreateCalendar) { // Only apply JS logic if the Moodle function is configured
+        var persisted = createMoodleCalendarCheckbox.data('persisted');
+        var replicated = createMoodleCalendarCheckbox.data('replicated');
+        var hintText;
+
+        if (persisted) { // Edit action
+          createMoodleCalendarCheckbox.prop('disabled', true);
+          if (replicated) {
+            createMoodleCalendarCheckbox.prop('checked', true);
             hintText = I18n.t('default.scheduled_meeting.tooltip.replicate_in_moodle_calendar');
-          }
-          else {
-            $(this).prop('checked', false);
+          } else {
+            createMoodleCalendarCheckbox.prop('checked', false);
             hintText = I18n.t('default.scheduled_meeting.tooltip.disable_replicate_in_moodle_calendar');
           }
-        }
-        else {
-          // New action
-          $(this).prop('checked', true);
-          $(this).prop('disabled', false);
+        } else { // New action
+          createMoodleCalendarCheckbox.prop('checked', true);
+          // Checkbox is already enabled by ERB if canCreateCalendar is true
           hintText = I18n.t('default.scheduled_meeting.tooltip.create_moodle_calendar_event');
         }
-
-        hintIcon.attr("title", hintText);
-      })
+        if (hintIcon.length) {
+          hintIcon.attr("title", hintText); // Update title if JS logic applies
+        }
+      } else {
+        createMoodleCalendarCheckbox.prop('disabled', true);
+        createMoodleCalendarCheckbox.prop('checked', false);
+      }
+      // Ensure Bootstrap tooltip is initialized/updated with the correct title (either from ERB or JS)
+      if (hintIcon.length && hintIcon[0]) {
+        var tooltipInstance = bootstrap.Tooltip.getInstance(hintIcon[0]);
+        if (tooltipInstance) {
+          tooltipInstance.dispose(); // Dispose of old instance to ensure new title is picked up correctly
+        }
+        new bootstrap.Tooltip(hintIcon[0]); // Create new instance
+      }
     }
 
     if(window.location.href.includes('/edit')){
@@ -95,6 +107,30 @@ $(document).on('turbolinks:load', function(){
             : $(".timepicker")[0].value,
         });
       });
+    }
+
+    // Logic for disabling wait_moderator based on mark_moodle_attendance
+    var markMoodleAttendanceCheckbox = $('input[name="scheduled_meeting[mark_moodle_attendance]"]');
+    var waitModeratorCheckbox = $('input[name="scheduled_meeting[wait_moderator]"]');
+
+    function toggleWaitModeratorBasedOnAttendance() {
+      if (markMoodleAttendanceCheckbox.length && waitModeratorCheckbox.length) {
+        if (markMoodleAttendanceCheckbox.is(':checked')) {
+          // If attendance is checked, wait_moderator MUST be checked and disabled.
+          waitModeratorCheckbox.prop('checked', true);
+          waitModeratorCheckbox.prop('disabled', true);
+        } else {
+          waitModeratorCheckbox.prop('disabled', false);
+        }
+      }
+    }
+
+    // Set initial state on page load
+    toggleWaitModeratorBasedOnAttendance();
+
+    // Add event listener for changes
+    if (markMoodleAttendanceCheckbox.length) {
+      markMoodleAttendanceCheckbox.on('change', toggleWaitModeratorBasedOnAttendance);
     }
   }
 })

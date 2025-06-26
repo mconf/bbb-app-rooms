@@ -37,7 +37,7 @@ pt:
         disable_private_chat: "Desabilitar chats privados"
         disable_note: "Desabilitar notas compartilhadas"
         duration: "Duração"
-        mark_moodle_attendance: "Marcar Presença automaticamente"
+        mark_moodle_attendance: "Atribuir presença automaticamente"
         name: "Nome da sessão"
         recording: "Permitir que a sessão seja gravada"
         repeat: "Recorrência"
@@ -49,7 +49,7 @@ pt:
   jobs:
     moodle_attendance:
       attendance_name: "Atividade de Presença"
-      session_description_footer: "Registrado automaticamente via ConferênciaWeb."
+      session_description_footer: "Registrado automaticamente via %{app_theme}."
   meetings:
     all_loaded: "Todas as conferências foram carregadas"
     duration:
