@@ -270,7 +270,6 @@ $(document).on('turbolinks:load', function(){
 
   $('#eduplay input[name="public"]').on('change', function() {
     var privateWithPassword = $('.password-input').data('private-with-password');
-    console.log($(this).val())
     if ($(this).val() == privateWithPassword.toString()) {
       $('.password-input').show();
     } else {
