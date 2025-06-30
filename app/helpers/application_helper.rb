@@ -104,7 +104,7 @@ module ApplicationHelper
     field = form.text_field(attribute, input_options)
 
     ico_show = icon_show_recording(class: 'showable-password-show')
-    ico_hide = icon_hide_recording(class: 'showable-password-hide')
+    ico_hide = icon_hide_recording(class: 'showable-password-hide', style: 'display: none;')
 
     content_tag(:div, field + ico_show + ico_hide, class: 'showable-password-wrapper')
   end

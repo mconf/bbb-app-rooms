@@ -97,7 +97,7 @@ pt:
           error_creating_channel: "Erro ao criar canal no Eduplay"
         new_channel: "Novo Canal"
         password: "Senha"
-        password_requirements: "Letras e números, com pelo menos uma letra maiúscula, uma letra minúscula e um caractere especial (* . ! @ # $ % ^ & ( ) { } [ ] < > : ; , . ? / ~ + - = | )."
+        password_requirements: "Letras e números, mínimo 8 caracteres, com pelo menos: uma letra maiúscula, uma letra minúscula e um caractere especial (* . ! @ # $ % ^ & ( ) { } [ ] < > : ; , . ? / ~ + - = | )."
         privacy: "Privacidade"
         private: "Privado"
         private_with_password: "Privado com senha"

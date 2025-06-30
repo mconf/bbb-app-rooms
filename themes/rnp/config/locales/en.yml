@@ -97,7 +97,7 @@ en:
           error_creating_channel: "Error creating channel on Eduplay"
         new_channel: "New Channel"
         password: "Password"
-        password_requirements: "Letters and numbers, with at least one uppercase letter, one lowercase letter, and one special character (* . ! @ # $ % ^ & ( ) { } [ ] < > : ; , . ? / ~ + - = | )."
+        password_requirements: "Letters and numbers, minumum 8 charactersm, with at least: one uppercase letter, one lowercase letter, and one special character (* . ! @ # $ % ^ & ( ) { } [ ] < > : ; , . ? / ~ + - = | )."
         privacy: "Privacy"
         private: "Private"
         private_with_password: "Private with password"
