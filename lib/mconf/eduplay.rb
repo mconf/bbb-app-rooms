@@ -9,7 +9,8 @@ module Eduplay
   THUMBNAIL_MIME = 'image/png'
   PRIVACY = {
     public: 1,
-    private: 3
+    private: 3,
+    private_with_password: 4
   }.freeze
 
   class InvalidMethodError
@@ -29,17 +30,18 @@ module Eduplay
         client_id: Rails.application.config.omniauth_eduplay_key,
         scope: 'ws:write',
         redirect_uri: Rails.application.config.eduplay_redirect_callback,
-        state: recordingid
+        state: recordingid,
+        nonce: recordingid
       }.to_query
 
-      authorize_url = "#{Rails.application.config.omniauth_eduplay_url}/portal/oauth/authorize"
+      authorize_url = "#{Rails.application.config.omniauth_eduplay_url}/api/v1/oauth2/authorize"
 
       "#{authorize_url}?#{query}"
     end
 
     def self.get_access_token(code)
       Rails.logger.info("[GET_ACCESS_TOKEN] pass")
-      token_url = "#{Rails.application.config.omniauth_eduplay_url}/portal/oauth/token"
+      token_url = "#{Rails.application.config.omniauth_eduplay_url}/api/v1/oauth2/token"
 
       response = Faraday.send(
         :post,
@@ -61,14 +63,20 @@ module Eduplay
     def create_video(data, video_data)
       path = "api/v1/videos/#{data['identifier']}?status=0"
 
+      thumbnail = video_data[:thumbnail]
+      if video_data[:thumbnail].nil?
+        thumbnail = [Eduplay::THUMBNAIL_PATH, Eduplay::THUMBNAIL_MIME]
+      end
+
       payload = {
-        image: [Eduplay::THUMBNAIL_PATH, Eduplay::THUMBNAIL_MIME],
+        image: thumbnail,
         data: {
           title: video_data[:title],
           mediaFileName: data['filename'],
           internalMediaFileName: data['internalMediaFileName'] + '.mp4',
           description: video_data[:description],
           visibility: video_data[:public],
+          privatePassword: video_data[:video_password],
           geolocationControl: 1,
           tags: video_data[:tags],
           idsChannels: [video_data[:channel_id]]

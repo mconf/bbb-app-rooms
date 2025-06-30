@@ -32,11 +32,11 @@ module IconsHelper
   end
 
   def icon_hide_recording(options={})
-    image_tag 'hide_recording.svg'
+    image_tag 'hide_recording.svg', options
   end
 
   def icon_show_recording(options={})
-    image_tag 'visibility.svg'
+    image_tag 'visibility.svg', options
   end
 
   def icon_learning_dashboard(options={})
@@ -65,6 +65,14 @@ module IconsHelper
 
   def icon_info_circle(options={})
     material_icon_constructor "info", "icon material-symbols-rounded icon icon-info", options
+  end
+
+  def icon_not_check(options={})
+    material_icon_constructor "close", "icon material-symbols-rounded icon_not_check", options
+  end
+
+  def icon_upload_image(options={})
+    material_icon_constructor "image_arrow_up", "icon material-symbols-rounded icon-upload-image", options
   end
 
   # Base method for most of the methods above

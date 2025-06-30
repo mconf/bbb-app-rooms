@@ -88,5 +88,25 @@ module ApplicationHelper
     options.merge!(:title => title,
                    :class => "tooltipped " + (options[:class] || ""),
                    :"data-placement" => options[:"data-placement"] || "top")
- end
+  end
+
+  def showable_password_field(form, attribute, options = {})
+    value = form.object.try(attribute) unless options[:autofill] == 'off'
+    input_id = options[:id] || "#{form.object_name}_#{attribute}"
+
+    input_options = options.merge({
+      type: 'password',
+      value: value,
+      id: input_id,
+      class: "#{options[:class]} showable-password"
+    })
+
+    field = form.text_field(attribute, input_options)
+
+    ico_show = icon_show_recording(class: 'showable-password-show')
+    ico_hide = icon_hide_recording(class: 'showable-password-hide', style: 'display: none;')
+
+    content_tag(:div, field + ico_show + ico_hide, class: 'showable-password-wrapper')
+  end
+
 end

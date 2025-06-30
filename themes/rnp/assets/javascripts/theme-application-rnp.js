@@ -176,6 +176,78 @@ $(document).on('turbolinks:load', function(){
     e.target.setAttribute("data-tracking-id", trackingId);
   });
 
+  // Change selected thumbnail
+  $('#eduplay .thumbnail-default-option').on('click', function(e) {
+    e.stopPropagation();
+    $('.thumbnail-default-option').addClass('selected');
+    $('.thumbnail-upload-option').removeClass('selected');
+    $('input[name="thumbnail_option"][value="default"]').prop('checked', true);
+  });
+  
+  $('#eduplay .thumbnail-upload-option').on('click', function(e) {
+    let fileInput = $('input[type="file"][name="image"]');
+    if (fileInput.val()) {
+      e.stopPropagation();
+      $('.thumbnail-upload-option').addClass('selected');
+      $('.thumbnail-default-option').removeClass('selected');
+      $('input[name="thumbnail_option"][value="upload"]').prop('checked', true);
+    } else {
+      fileInput.trigger("click");
+    }
+  });
+
+  // Show preview of image and logic to limit size in 4MB
+  $('#eduplay input[type="file"][name="image"]').on('change', function(e) {
+    let input = e.target;
+    if (input.files && input.files[0]) {
+      let file = input.files[0];
+      if (!file.type.startsWith("image/") || file.size > 4 * 1024 * 1024) {
+        $('#preview').hide();
+        $('#remove-thumbnail').hide();
+        $('.upload-placeholder').show();
+        $(input).val('');
+
+
+        error_message = !file.type.startsWith("image/")
+          ? I18n.t('meetings.recording.eduplay.errors.image_not_image')
+          : I18n.t('meetings.recording.eduplay.errors.image_too_large');
+        $toast = $('.toast', '#eduplay-upload-form-error');
+        $toast.find('.toast-header').contents().first()[0].textContent = error_message;
+        $toast.toast('dispose');
+        $toast.toast('show');
+        return;
+      }
+      let reader = new FileReader();
+      reader.onload = function(ev) {
+        $('#preview').attr('src', ev.target.result).show();
+        $('.upload-placeholder').hide();
+        $('#remove-thumbnail').show();
+        // Select upload option
+        $('.thumbnail-upload-option').addClass('selected');
+        $('.thumbnail-default-option').removeClass('selected');
+        $('input[name="thumbnail_option"][value="upload"]').prop('checked', true);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      $('#preview').hide();
+      $('#remove-thumbnail').hide();
+      $('.upload-placeholder').show();
+    }
+  });
+
+  // Remove uploaded image
+  $('#eduplay #remove-thumbnail').on('click', function(e) {
+    e.stopPropagation();
+    $('#preview').hide();
+    $('#remove-thumbnail').hide();
+    $('.upload-placeholder').show();
+    $('input[type="file"][name="image"]').val('');
+    // Select default option
+    $('.thumbnail-default-option').addClass('selected');
+    $('.thumbnail-upload-option').removeClass('selected');
+    $('input[name="thumbnail_option"][value="default"]').prop('checked', true);
+  });
+
   $('#eduplay .dropdown-menu .dropdown-item').each(function() {
     $(this).on('click', function(e) {
       e.preventDefault();
@@ -194,6 +266,15 @@ $(document).on('turbolinks:load', function(){
           $('.new-channel-form').hide()
       }
     })
+  });
+
+  $('#eduplay input[name="public"]').on('change', function() {
+    var privateWithPassword = $('.password-input').data('private-with-password');
+    if ($(this).val() == privateWithPassword.toString()) {
+      $('.password-input').show();
+    } else {
+      $('.password-input').hide();
+    }
   });
 
   const validateForm = (formData) => {
@@ -224,10 +305,28 @@ $(document).on('turbolinks:load', function(){
       errors.push(I18n.t('meetings.recording.eduplay.errors.video_same_field'));
     }
 
+    if (videoPublic == $('.password-input').data('private-with-password').toString()) {
+      let password = formData['video_password'];
+      if (!isPasswordValid(password)) {
+        errors.push(I18n.t('meetings.recording.eduplay.errors.password_invalid_requirments'));
+      }
+    }
+
     if (errors.length > 0)
       return errors.join(' ');
     return null
   };
+
+  function isPasswordValid(password) {
+    if (!password || password.length < 8) return false;
+
+    var hasUpper   = /[A-Z]/.test(password);
+    var hasLower   = /[a-z]/.test(password);
+    var hasNumber  = /[0-9]/.test(password);
+    var hasSpecial = /[*.!@#\$%\^&\(\)\{\}\[\]<>:;,.?\/~+\-=|\\]/.test(password);
+
+    return hasUpper && hasLower && hasNumber && hasSpecial;
+  }
 
   $('#eduplay form').on('submit', function(e) {
     formData = $(this).serializeArray().reduce(function(fieldsObject, field) {
@@ -269,6 +368,25 @@ $(document).on('turbolinks:load', function(){
     tags: true,
     tokenSeparators: [","],
     formatSearching: function() { return I18n.t('_all.select2.comma_tags') }
+  });
+
+  $('.showable-password-wrapper').each(function() {
+    const $wrapper = $(this);
+    const $input = $wrapper.find('.showable-password');
+    const $showIcon = $wrapper.find('.showable-password-show');
+    const $hideIcon = $wrapper.find('.showable-password-hide');
+
+    $showIcon.on('click', function() {
+      $input.attr('type', 'text');
+      $showIcon.hide();
+      $hideIcon.show();
+    });
+
+    $hideIcon.on('click', function() {
+      $input.attr('type', 'password');
+      $hideIcon.hide();
+      $showIcon.show();
+    });
   });
 });
 

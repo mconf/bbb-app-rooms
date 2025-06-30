@@ -192,16 +192,37 @@ class RoomsController < ApplicationController
       else
         Rails.logger.error "Error creating new channel: #{new_channel.inspect}"
         flash[:error] = t('meetings.recording.eduplay.errors.error_creating_channel')
-        redirect_to(meetings_room_path(@room, filter: params[:filter]))
+        redirect_to(meetings_room_path(@room, filter: params[:filter])) and return
       end
     end
+
+    uploaded_thumbnail = nil
+      if params['thumbnail_option'] != 'default'
+        uploaded_file = params['image']
+
+        if uploaded_file.present? && uploaded_file.content_type.start_with?('image/') && uploaded_file.size <= 4.megabytes
+          tmp_dir = Rails.root.join('tmp/uploads')
+          FileUtils.mkdir_p(tmp_dir)
+  
+          filename = "#{SecureRandom.uuid}_#{uploaded_file.original_filename}"
+          filepath = tmp_dir.join(filename)
+
+          File.open(filepath, 'wb') do |file|
+            file.write(uploaded_file.read)
+          end
+
+          uploaded_thumbnail = [filepath.to_s, uploaded_file.content_type]
+        end
+      end
 
     video_data = {
       channel_id: params['channel'].to_i,
       title: params['title'],
       description: params['description'],
       public: params['public'].to_i,
-      tags: params['tags'].split(',')
+      video_password: params['video_password'],
+      tags: params['tags'].split(','),
+      thumbnail: uploaded_thumbnail,
     }
 
     UploadRecordingToEduplayJob.perform_later(@room, params['record_id'], video_data, @user.as_json.symbolize_keys)
