@@ -215,13 +215,16 @@ class RoomsController < ApplicationController
         end
       end
 
+    default_tags = Rails.configuration.eduplay_default_tags
+    form_tags = params['tags'].split(',')
+
     video_data = {
       channel_id: params['channel'].to_i,
       title: params['title'],
       description: params['description'],
       public: params['public'].to_i,
       video_password: params['video_password'],
-      tags: params['tags'].split(','),
+      tags: default_tags | form_tags,
       thumbnail: uploaded_thumbnail,
     }
 

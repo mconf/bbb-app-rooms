@@ -298,10 +298,9 @@ $(document).on('turbolinks:load', function(){
     videoTitle = formData['title'];
     videoDescription = formData['description'];
     videoPublic = formData['public'];
-    videoTags = formData['tags'];
-    if ([videoTitle, videoDescription, videoPublic, videoTags].some(function(field) { return field == null || field == '';})){
+    if ([videoTitle, videoDescription, videoPublic].some(function(field) { return field == null || field == '';})){
       errors.push(I18n.t('meetings.recording.eduplay.errors.video_incomplete'))
-    } else if (videoTitle ==  videoDescription || videoTitle ==  videoTags || videoDescription == videoTags) {
+    } else if (videoTitle ==  videoDescription) {
       errors.push(I18n.t('meetings.recording.eduplay.errors.video_same_field'));
     }
 
