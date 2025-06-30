@@ -30,17 +30,18 @@ module Eduplay
         client_id: Rails.application.config.omniauth_eduplay_key,
         scope: 'ws:write',
         redirect_uri: Rails.application.config.eduplay_redirect_callback,
-        state: recordingid
+        state: recordingid,
+        nonce: recordingid
       }.to_query
 
-      authorize_url = "#{Rails.application.config.omniauth_eduplay_url}/portal/oauth/authorize"
+      authorize_url = "#{Rails.application.config.omniauth_eduplay_url}/api/v1/oauth2/authorize"
 
       "#{authorize_url}?#{query}"
     end
 
     def self.get_access_token(code)
       Rails.logger.info("[GET_ACCESS_TOKEN] pass")
-      token_url = "#{Rails.application.config.omniauth_eduplay_url}/portal/oauth/token"
+      token_url = "#{Rails.application.config.omniauth_eduplay_url}/api/v1/oauth2/token"
 
       response = Faraday.send(
         :post,
