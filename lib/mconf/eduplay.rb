@@ -29,7 +29,7 @@ module Eduplay
         response_type: 'code',
         client_id: Rails.application.config.omniauth_eduplay_key,
         scope: 'ws:write',
-        redirect_uri: Rails.application.config.eduplay_redirect_callback,
+        redirect_uri: Rails.application.config.omniauth_eduplay_redirect_callback,
         state: recordingid,
         nonce: recordingid
       }.to_query
@@ -48,7 +48,7 @@ module Eduplay
         token_url,
         {
           client_id: Rails.application.config.omniauth_eduplay_key,
-          redirect_uri: Rails.application.config.eduplay_redirect_callback,
+          redirect_uri: Rails.application.config.omniauth_eduplay_redirect_callback,
           grant_type: 'authorization_code',
           client_secret: Rails.application.config.omniauth_eduplay_secret,
           code: code

@@ -134,13 +134,13 @@ module BbbAppRooms
     config.meeting_participants_filename       = 'activities.txt'
     config.meeting_learning_dashboard_filename = 'learning_dashboard.json'
 
-    # Eduplay
+    # Eduplay integration
     config.eduplay_enabled            = Mconf::Env.fetch_boolean('EDUPLAY_ENABLED', false)
-    config.eduplay_redirect_callback  = Mconf::Env.fetch('MCONF_EDUPLAY_REDIRECT_CALLBACK')
+    config.eduplay_default_tags       = Mconf::Env.fetch('MCONF_EDUPLAY_DEFAULT_TAGS', '').split(',')
     config.omniauth_eduplay_key       = Mconf::Env.fetch('MCONF_OMNIAUTH_EDUPLAY_KEY')
     config.omniauth_eduplay_url       = Mconf::Env.fetch('MCONF_OMNIAUTH_EDUPLAY_URL')
     config.omniauth_eduplay_secret    = Mconf::Env.fetch('MCONF_OMNIAUTH_EDUPLAY_SECRET')
-    config.eduplay_default_tags       = Mconf::Env.fetch('MCONF_EDUPLAY_DEFAULT_TAGS', '').split(',')
+    config.omniauth_eduplay_redirect_callback  = Mconf::Env.fetch('MCONF_OMNIAUTH_EDUPLAY_REDIRECT_CALLBACK')
 
     # Filesender
     config.filesender_enabled           = Mconf::Env.fetch_boolean('FILESENDER_ENABLED', false)
