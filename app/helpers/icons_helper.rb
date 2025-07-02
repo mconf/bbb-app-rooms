@@ -27,6 +27,10 @@ module IconsHelper
     material_icon_constructor "more_vert", "icon material-icons icon icon-options-dots", options
   end
 
+  def icon_ai_summary(options={})
+    image_tag 'icon-ai-summary.svg'
+  end
+
   def icon_content_copy(options={})
     image_tag 'content_copy.svg'
   end

@@ -86,7 +86,9 @@ module Mconf
 
       key_mapping = {
         "activities.txt" => "participants_list",
-        "notes.txt" => "shared_notes"
+        "notes.txt" => "shared_notes",
+        "transcription.txt" => "transcription",
+        "summary.txt" => "ai_summary",
       }
 
       artifact_download_links = {}
