@@ -250,10 +250,12 @@
                 <div class="dropdown-divider"></div>
               <% end %>
 
-              <%# Download notes and participants, access learning dashboard %>
+              <%# Download notes, participants, AI summary and transcription, access learning dashboard %>
               <div class="dropdown-item-loading">
+                <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_ai_summary') %>
                 <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_notes') %>
                 <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_participants') %>
+                <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_transcription') %>
                 <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.dashboard') %>
               </div>
             <% end %>
@@ -279,8 +281,10 @@
           </a>
           <div class="dropdown-menu dropdown-menu-right dropdown-items" aria-labelledby="dropdown-opts-<%= meeting[:internalMeetingID] %>">
             <div class="dropdown-item-loading">
+              <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_ai_summary') %>
               <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_notes') %>
               <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_participants') %>
+              <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_transcription') %>
               <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.dashboard') %>
             </div>
           </div>

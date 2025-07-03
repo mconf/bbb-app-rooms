@@ -72,11 +72,15 @@ en:
     load: "Load more conferences"
     meeting_data_download:
       dashboard: "Engagement report"
+      download_ai_summary: "Download AI summary"
       download_notes: "Download meeting's notes"
       download_participants: "Download participants list"
+      download_transcription: "Download transcription"
+      unavailable_ai_summary: "Unavailable AI summary"
       unavailable_dashboard: "Unavailable engagement report"
       unavailable_notes: "Unavailable meeting's notes"
       unavailable_participants: "Unavailable participants list"
+      unavailable_transcription: "Unavailable transcription"
     recording:
       confirm:
         destroy: "Are you sure you want to delete this recording?"
