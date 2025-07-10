@@ -13,12 +13,12 @@ $(document).on('turbolinks:load', function(){
         contentCustomDuration.classList.remove('d-block')
     }
 
-    const createMoodleCalendarCheckbox = $('input[name="scheduled_meeting[create_moodle_calendar_event]"]');
+    const createMoodleCalendarCheckbox = $('input[name="scheduled_meeting[create_moodle_calendar_event]"].form-check-input');
     if (createMoodleCalendarCheckbox.length) {
-      const canCreateCalendar = createMoodleCalendarCheckbox.data('can-create');
+      const canCreateCalendar = createMoodleCalendarCheckbox[0].dataset.canCreate;
       const hintIcon = createMoodleCalendarCheckbox.closest('.form-check').find('.icon-label-hint');
 
-      if (canCreateCalendar) { // Only apply JS logic if the Moodle function is configured
+      if (canCreateCalendar == 'true') { // Only apply JS logic if the Moodle function is configured
         var persisted = createMoodleCalendarCheckbox.data('persisted');
         var replicated = createMoodleCalendarCheckbox.data('replicated');
         var hintText;
