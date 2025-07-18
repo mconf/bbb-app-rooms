@@ -1,4 +1,4 @@
-FROM ruby:3.0.7-alpine
+FROM ruby:3.1.7-alpine
 
 USER root
 

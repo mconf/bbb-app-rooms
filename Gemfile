@@ -6,10 +6,12 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
+ruby '3.1.7'
+
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.1.4'
 # Include sqlite as the default database
-gem 'sqlite3', '~> 1.3'
+gem 'sqlite3'
 # Include postgres as another database option
 gem 'pg', '~> 1.0'
 # Use Puma as the app server
@@ -42,7 +44,7 @@ gem 'redis'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', require: false
 
-gem 'rails_admin', '~> 2.0'
+gem 'rails_admin'
 
 # Return texts I18n in .js
 gem 'i18n-js', '~> 3.9'
@@ -58,8 +60,8 @@ group :development, :test do
   gem 'rspec'
   gem 'rspec_junit_formatter'
   gem 'rspec-rails', '~> 4.0.0'
-  gem 'rubocop', '~> 0.79.0', require: false
-  gem 'rubocop-rails', '~> 2.4.0', require: false
+  gem 'rubocop'
+  gem 'rubocop-rails'
   gem 'shoulda-matchers', '~> 4.0'
 end
 
