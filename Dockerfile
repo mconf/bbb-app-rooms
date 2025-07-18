@@ -1,4 +1,4 @@
-FROM ruby:2.7.0-alpine
+FROM ruby:3.0.7-alpine
 
 USER root
 
@@ -7,6 +7,13 @@ RUN apk update \
   && apk add --update --no-cache \
     build-base curl-dev git postgresql-dev sqlite-libs sqlite-dev \
     yaml-dev zlib-dev nodejs yarn dumb-init
+
+# Atualiza RubyGems antes de qualquer outra coisa
+RUN gem update --system 3.4.22
+
+# Instala uma versão recente do Bundler compatível com RubyGems 3.4+
+# Você pode fixar se quiser, mas recomendo deixar sem versão se possível
+RUN gem install bundler --no-document
 
 ARG BUILD_NUMBER
 ENV BUILD_NUMBER=${BUILD_NUMBER}
@@ -27,17 +34,14 @@ WORKDIR $APP_HOME
 COPY Gemfile* $APP_HOME/
 
 ENV BUNDLE_PATH /usr/src/bundle
-ENV BUNDLER_VERSION='2.1.4'
-RUN gem install bundler --no-document -v '2.1.4'
+
 RUN if [ "$RAILS_ENV" == "production" ]; \
   then bundle config set without 'development test doc'; \
   else bundle config set without 'test doc'; \
   fi
+
 RUN bundle config set path ${BUNDLE_PATH}
 RUN bundle install --jobs 4
-
-RUN bundle update --bundler 2.1.4
-RUN gem update --system 3.4.22
 
 COPY . $APP_HOME
 
