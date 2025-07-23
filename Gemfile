@@ -9,7 +9,7 @@ end
 ruby '3.1.7'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.1.4'
+gem 'rails', '~> 7.0.8.7'
 # Include sqlite as the default database
 gem 'sqlite3'
 # Include postgres as another database option
@@ -18,6 +18,7 @@ gem 'pg', '~> 1.0'
 gem 'puma', '~> 3.12'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
+gem 'sassc-rails'
 # Use Terser as compressor for JavaScript assets
 gem 'terser', '~> 1.1'
 # See https://github.com/rails/execjs#readme for more supported runtimes

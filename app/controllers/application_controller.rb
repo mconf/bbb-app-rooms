@@ -78,7 +78,7 @@ class ApplicationController < ActionController::Base
 
     user_params = @app_launch&.user_params
     if user_params.present?
-      @user = BbbAppRooms::User.new(user_params)
+      @user = User.new(user_params)
       Rails.logger.info "Found the user #{@user.email} (#{@user.uid}, #{@user.launch_nonce})"
 
       # update the locale so we use the user's locale, if any
@@ -264,7 +264,7 @@ class ApplicationController < ActionController::Base
     respond_to do |format|
       format.html { render 'shared/error', status: status }
       format.json { render json: { error: @error[:message] }, status: status }
-      format.all  { render 'shared/error.html', status: status, content_type: 'text/html' }
+      format.all  { render 'shared/error', status: status, content_type: 'text/html' }
     end
   end
 

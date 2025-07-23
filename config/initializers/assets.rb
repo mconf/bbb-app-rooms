@@ -1,12 +1,11 @@
-# frozen_string_literal: true
-
 # Be sure to restart your server when you modify this file.
 
 # Version of your assets, change this if you want to expire all your assets.
-Rails.application.config.assets.version = '1.0'
+Rails.application.config.assets.version = "1.0"
 
 # Add additional assets to the asset load path.
 # Rails.application.config.assets.paths << Emoji.images_path
+
 # Add Yarn node_modules folder to the asset load path.
 Rails.application.config.assets.paths << Rails.root.join('node_modules')
 
@@ -19,13 +18,13 @@ theme = Rails.application.config.theme
 
 unless theme.blank?
   # the entrypoint for the styles of the theme
-  Rails.application.config.assets.precompile += [ 
+  Rails.application.config.assets.precompile += [
     "theme-application-#{theme}.css",
     "theme-application-#{theme}.js",
     "schedule-#{theme}.js",
     "application-#{theme}.css"
   ]
-  Rails.application.config.assets.precompile << /\.(?:svg)\z/
+  Rails.application.config.assets.precompile << "/\.(?:svg)\z/"
   Rails.application.config.assets.precompile += [
     Proc.new { |path, fn| fn =~ /themes\/#{theme}/ && !%w(.js .css).include?(File.extname(path)) }
   ]

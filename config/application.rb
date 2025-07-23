@@ -1,11 +1,8 @@
-# frozen_string_literal: true
+require_relative "boot"
 
-require_relative 'boot'
-require 'rails/all'
-require_relative '../lib/simple_json_formatter'
-require_relative '../lib/mconf/env'
-
-# Load the app's custom environment variables here, so that they are loaded before environments/*.rb
+require "rails/all"
+require_relative "../lib/simple_json_formatter"
+require_relative "../lib/mconf/env"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -21,6 +18,7 @@ module BbbAppRooms
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
     config.url_host = ENV['URL_HOST']
+    config.hosts << ENV['URL_HOST']
     config.relative_url_root = if ENV['RELATIVE_URL_ROOT'].blank?
                                  '/rooms'
                                else

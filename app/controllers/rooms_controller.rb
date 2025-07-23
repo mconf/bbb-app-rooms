@@ -582,7 +582,7 @@ class RoomsController < ApplicationController
     # this is a temporary user in case we are responding the request here and we need it (at least
     # the locale we need to set, even for error pages)
     user_params = AppLaunch.new(params: launch_params).user_params
-    @user = BbbAppRooms::User.new(user_params)
+    @user = User.new(user_params)
     set_current_locale
 
     # will only try to get an external context/handler if the ConsumerConfig is configured to do so
