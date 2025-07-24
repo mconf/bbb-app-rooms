@@ -9,7 +9,7 @@ end
 ruby '3.3.8'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 7.0.8.7'
+gem 'rails', '~> 7.1.5.1'
 # Include sqlite as the default database
 gem 'sqlite3'
 # Include postgres as another database option
