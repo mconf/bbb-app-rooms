@@ -315,6 +315,7 @@ GEM
       rack (>= 1.2, < 4)
       snaky_hash (~> 2.0)
       version_gem (~> 1.1)
+    observer (0.1.2)
     omniauth (2.1.2)
       hashie (>= 3.4.6)
       rack (>= 2.2.3)
@@ -598,6 +599,7 @@ DEPENDENCIES
   listen
   lograge
   logstash-event
+  observer
   omniauth (~> 2.1.2)
   omniauth-bbbltibroker!
   omniauth-brightspace!
