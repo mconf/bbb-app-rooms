@@ -279,12 +279,12 @@ class ApplicationController < ActionController::Base
     end
 
     case locale
-    when /^pt/i
-      I18n.locale = 'pt'
+    when /^en/i
+      I18n.locale = 'en'
     when /^es/i
       I18n.locale = 'es'
     else
-      I18n.locale = 'en' # fallback
+      I18n.locale = 'pt' # fallback
     end
     response.set_header("Content-Language", I18n.locale)
   end

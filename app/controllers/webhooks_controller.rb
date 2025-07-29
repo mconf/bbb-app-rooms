@@ -1,8 +1,9 @@
 # frozen_string_literal: true
+include ApplicationHelper
 
-class WebhooksController < ActionController::Base
-
+class WebhooksController < ApplicationController
   def moodle_attendance
+    set_current_locale
     json_body = request.body.read
 
     if json_body.blank?
@@ -12,7 +13,7 @@ class WebhooksController < ActionController::Base
 
      # Enqueue the job for background processing
     begin
-      MoodleAttendanceJob.perform_later(json_body)
+      MoodleAttendanceJob.perform_later(json_body, app_theme, I18n.locale)
       Rails.logger.info "WebhooksController: MoodleAttendanceJob enqueued. IDs will be derived from JSON body."
       head :accepted # HTTP 202 Accepted: Request accepted for processing
     rescue StandardError => e

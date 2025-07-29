@@ -6,7 +6,7 @@ class MoodleAttendanceJob < ApplicationJob
   queue_as :default
   include ApplicationHelper
 
-  def perform(conference_data_json)
+  def perform(conference_data_json, theme, locale)
     conference_data = JSON.parse(conference_data_json)
 
     # --- Derive IDs from conference_data ---
@@ -63,11 +63,11 @@ class MoodleAttendanceJob < ApplicationJob
     course_id = app_launch.context_id
     
     # 1. Get or Create Attendance ID
-    attendance_id = get_or_create_moodle_attendance(moodle_token, course_id, group_select_enabled)
+    attendance_id = get_or_create_moodle_attendance(moodle_token, course_id, group_select_enabled, locale)
     return unless attendance_id
 
     # 2. Create Session
-    session_id = create_moodle_session(moodle_token, attendance_id, scheduled_meeting, conference_data, app_launch, group_select_enabled)
+    session_id = create_moodle_session(moodle_token, attendance_id, scheduled_meeting, conference_data, app_launch, group_select_enabled, theme, locale)
     return unless session_id
 
     # 3. Get status ids
@@ -110,7 +110,7 @@ class MoodleAttendanceJob < ApplicationJob
     end
   end
 
-  def get_or_create_moodle_attendance(moodle_token, course_id, group_select_enabled)
+  def get_or_create_moodle_attendance(moodle_token, course_id, group_select_enabled, locale)
     existing_attendances = with_retries { Moodle::API.get_course_attendance_instances(moodle_token, course_id) }
 
     if existing_attendances.nil?
@@ -133,7 +133,7 @@ class MoodleAttendanceJob < ApplicationJob
       else
         Rails.logger.info "MoodleAttendanceJob: No existing attendance instances found for course_id #{course_id} (API returned empty array). Creating new one."
         
-        target_attendance_name = I18n.t('jobs.moodle_attendance.attendance_name')
+        target_attendance_name = I18n.t('jobs.moodle_attendance.attendance_name', locale: locale)
         group_mode_param = group_select_enabled ? 1 : 0 # 0: no groups, 1: separate groups, 2: visible
         
         new_attendance_id = with_retries do
@@ -158,24 +158,21 @@ class MoodleAttendanceJob < ApplicationJob
     end
   end
 
-  def create_moodle_session(moodle_token, attendance_id, scheduled_meeting, conference_data, app_launch, group_select_enabled)
+  def create_moodle_session(moodle_token, attendance_id, scheduled_meeting, conference_data, app_launch, group_select_enabled, theme, locale)
     current_consumer_config = moodle_token.consumer_config
-    theme_display_name = case app_theme
+    theme_display_name = case theme
                          when 'rnp'
                            'ConferênciaWeb'
                          when 'elos'
                            'Elos'
-                         else
-                           app_theme # Fallback to the raw theme name
+                          else
+                            theme # Fallback to the raw theme name
                          end
-
-    # TODO: Forcing the 'rnp' theme until the app_theme return is consistent
-    theme_display_name = 'ConferênciaWeb'
 
     session_description = "<p>#{scheduled_meeting.meeting_name}</p> " \
     "#{'<p>' + scheduled_meeting.description + '</p>' || ''} " \
-    "#{'<p>' + scheduled_meeting.start_at_date(I18n.locale) + ', ' + scheduled_meeting.start_at_time(I18n.locale) + '</p>' || ''} " \
-    "<p><em>#{I18n.t('jobs.moodle_attendance.session_description_footer', app_theme: theme_display_name)}</em></p>"
+    "#{'<p>' + scheduled_meeting.start_at_date(locale) + ', ' + scheduled_meeting.start_at_time(locale) + '</p>' || ''} " \
+    "<p><em>#{I18n.t('jobs.moodle_attendance.session_description_footer', app_theme: theme_display_name, locale: locale)}</em></p>"
 
     start_time_str = conference_data.dig('data', 'start')
     begin
