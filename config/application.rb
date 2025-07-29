@@ -12,6 +12,9 @@ module BbbAppRooms
   class Application < Rails::Application
     VERSION = "0.22.0"
 
+    # Initialize configuration defaults for originally generated Rails version.
+    config.load_defaults 5.0
+
     config.eager_load_paths << Rails.root.join('lib')
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
