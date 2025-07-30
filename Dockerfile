@@ -27,13 +27,13 @@ ENV RELATIVE_URL_ROOT=${RELATIVE_URL_ROOT}
 ARG APP_THEME
 ENV APP_THEME=${APP_THEME}
 
-ENV APP_HOME /usr/src/app
+ENV APP_HOME=/usr/src/app
 RUN mkdir -p $APP_HOME
 WORKDIR $APP_HOME
 
 COPY Gemfile* $APP_HOME/
 
-ENV BUNDLE_PATH /usr/src/bundle
+ENV BUNDLE_PATH=/usr/src/bundle
 
 RUN if [ "$RAILS_ENV" == "production" ]; \
   then bundle config set without 'development test doc'; \
@@ -46,7 +46,7 @@ RUN bundle install --jobs 4
 COPY . $APP_HOME
 
 RUN if [ "$RAILS_ENV" == "production" ]; then \
-  SECRET_KEY_BASE=`bin/rake secret` \
+  SECRET_KEY_BASE=`bin/rails secret` \
   bundle exec rake assets:precompile --trace; \
   fi
 
