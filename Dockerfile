@@ -8,11 +8,8 @@ RUN apk update \
     build-base curl-dev git postgresql-dev sqlite-libs sqlite-dev \
     yaml-dev zlib-dev nodejs yarn dumb-init
 
-# Atualiza RubyGems antes de qualquer outra coisa
 RUN gem update --system 3.4.22
 
-# Instala uma versão recente do Bundler compatível com RubyGems 3.4+
-# Você pode fixar se quiser, mas recomendo deixar sem versão se possível
 RUN gem install bundler --no-document
 
 ARG BUILD_NUMBER
