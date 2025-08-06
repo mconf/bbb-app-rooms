@@ -28,51 +28,40 @@ threads_count = ENV.fetch('PUMA_MAX_THREADS') { 5 }
 threads_min_count = ENV.fetch('PUMA_MIN_THREADS') { 5 }
 threads(threads_min_count, threads_count)
 
+if ENV['RAILS_ENV'] == 'production'
+  require 'prometheus_exporter/instrumentation'
+  require 'concurrent-ruby'
+  # Specifies the number of `workers` to boot in clustered mode.
+  # Workers are forked webserver processes. If using threads and workers together
+  # the concurrency of the application would be max `threads` * `workers`.
+  # Workers do not work on JRuby or Windows (both of which do not support
+  # processes).
+  # If the number of workers is not defined, fallbacks to the number of processors
+  worker_count = Mconf::Env.fetch_int('PUMA_WORKERS', Concurrent.physical_processor_count)
+  if worker_count > 1
+    workers worker_count
+    # Preloading reduces total memory usage of your application
+    preload_app!
+    # Initialize prometheus_exporter for Puma clustered mode
+    after_worker_boot do
+      PrometheusExporter::Instrumentation::Puma.start unless PrometheusExporter::Instrumentation::Puma.started?
+    end
+  else
+    # Initialize prometheus_exporter for Puma single mode
+    PrometheusExporter::Instrumentation::Puma.start unless PrometheusExporter::Instrumentation::Puma.started?
+  end
+end
+
+# Specifies the `worker_timeout` threshold that Puma will use to wait before
+# terminating a worker in development environments.
+worker_timeout 3600 if ENV.fetch('RAILS_ENV', 'development') == 'development'
+
 # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
 port ENV.fetch("PORT", 3000)
 
 # Specifies the `environment` that Puma will run in.
 environment(ENV.fetch('RAILS_ENV') { 'development' })
 
-# Specifies the number of `workers` to boot in clustered mode.
-# Workers are forked webserver processes. If using threads and workers together
-# the concurrency of the application would be max `threads` * `workers`.
-# Workers do not work on JRuby or Windows (both of which do not support
-# processes).
-#
-if ENV["PUMA_WORKERS"].present?
-  workers ENV.fetch("PUMA_WORKERS") { 1 }
-end
-
-# Use the `preload_app!` method when specifying a `workers` number.
-# This directive tells Puma to first boot the application and load code
-# before forking the application. This takes advantage of Copy On Write
-# process behavior so workers use less memory. If you use this option
-# you need to make sure to reconnect any threads in the `on_worker_boot`
-# block.
-#
-preload_app!
-
-# The code in the `on_worker_boot` will be called if you are using
-# clustered mode by specifying a number of `workers`. After each worker
-# process is booted this block will be run, if you are using `preload_app!`
-# option you will want to use this block to reconnect to any threads
-# or connections that may have been created at application boot, Ruby
-# cannot share connections between processes.
-#
-on_worker_boot do
-  ActiveRecord::Base.establish_connection if defined?(ActiveRecord)
-end
-
-# Initialize prometheus_exporter
-# This will only work in clustered mode, so if PUMA_WORKERS is not set it won't
-# work (setting PUMA_WORKERS=1 works)
-after_worker_boot do
-  if Rails.env.production?
-    require 'prometheus_exporter/instrumentation'
-    PrometheusExporter::Instrumentation::Puma.start
-  end
-end
 # Allow puma to be restarted by `bin/rails restart` command.
 plugin :tmp_restart
 
