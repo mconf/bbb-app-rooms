@@ -24,7 +24,7 @@ module RnpHelper
       else
         value = Time.zone.at(date)
       end
-      value.to_s(:time)
+      value.to_fs(:time)
     else
       nil
     end
