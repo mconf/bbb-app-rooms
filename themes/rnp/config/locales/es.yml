@@ -168,13 +168,15 @@ es:
     destroy: "Eliminar"
     edit:
       action: "Editar"
-      title: "Editar sesión"
+      title: "Editar sesión programada"
+      title_with_group: "Editar sesión programada | Grupo: %{group_name}"
     error:
       moodle_group_data_not_found: "Error al leer los datos del grupo de Moodle. Por favor, intente de nuevo"
     external_link: "Copiar enlace externo"
     new:
       add: "+ Programar sesión"
       title: "Programar sesión"
+      title_with_group: "Programar sesión | Grupo: %{group_name}"
     show:
       view_history: "Ver historial"
     table:
