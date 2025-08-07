@@ -1,13 +1,5 @@
 # frozen_string_literal: true
 
-# Pre-set omniauth variables based on ENV
-Rails.configuration.omniauth_site[:bbbltibroker] = ENV['OMNIAUTH_BBBLTIBROKER_SITE']
-Rails.configuration.omniauth_root[:bbbltibroker] = (
-  ENV['OMNIAUTH_BBBLTIBROKER_ROOT'] ? '/' + ENV['OMNIAUTH_BBBLTIBROKER_ROOT'] : ''
-).to_s
-Rails.configuration.omniauth_key[:bbbltibroker] = ENV['OMNIAUTH_BBBLTIBROKER_KEY']
-Rails.configuration.omniauth_secret[:bbbltibroker] = ENV['OMNIAUTH_BBBLTIBROKER_SECRET']
-
 OmniAuth.config.logger = Rails.logger
 
 missing_configs = {}

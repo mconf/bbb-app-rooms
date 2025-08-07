@@ -25,10 +25,10 @@ RailsAdmin.config do |config|
 
   config.asset_source = :sprockets
 
-  if ENV['AUTHENTICATION_RAILS_ADMIN'] == true.to_s
+  if Mconf::Env.fetch_boolean('AUTHENTICATION_RAILS_ADMIN', true)
     config.authorize_with do
       authenticate_or_request_with_http_basic('Administration') do |username, password|
-        username == ENV["ADMIN_KEY"] && password == ENV["ADMIN_PASSWORD"]
+        username == Mconf::Env.fetch('ADMIN_KEY') && password == Mconf::Env.fetch('ADMIN_PASSWORD')
       end
     end
   end

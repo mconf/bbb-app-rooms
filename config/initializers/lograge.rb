@@ -1,7 +1,7 @@
 require 'simple_json_formatter'
 
 Rails.application.configure do
-  if ENV['LOGRAGE_ENABLED'] == '1'
+  if Mconf::Env.fetch_boolean('LOGRAGE_ENABLED', false)
     config.lograge.enabled = true
     # config.lograge.keep_original_rails_log = false
     config.lograge.formatter = Lograge::Formatters::Logstash.new
