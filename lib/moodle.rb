@@ -528,6 +528,7 @@ module Moodle
       Rails.logger.error( "[MOODLE API] url=#{host_url} " \
                           "duration=#{(Time.now - start_time).round(3)}s " \
                           "wsfunction=#{params[:wsfunction]} " \
+                          "caller=#{caller(2..3)} " \
                           "message=\"Request failed (Faraday::ResourceNotFound): #{e}\" " \
                           "response_body=\"#{e.response_body&.gsub(/\n/, '')}\""
                         )
@@ -536,12 +537,14 @@ module Moodle
       Rails.logger.error( "[MOODLE API] url=#{host_url} " \
                           "duration=#{(Time.now - start_time).round(3)}s " \
                           "wsfunction=#{params[:wsfunction]} " \
+                          "caller=#{caller(2..3)} " \
                           "message=\"Request failed (Faraday::TimeoutError): #{e}\"")
       raise TimeoutError, e
     rescue Faraday::Error => e
       Rails.logger.error( "[MOODLE API] url=#{host_url} " \
                           "duration=#{(Time.now - start_time).round(3)}s " \
                           "wsfunction=#{params[:wsfunction]} " \
+                          "caller=#{caller(2..3)} " \
                           "message=\"Request failed (Faraday::Error): #{e}\" " \
                           "response_body=\"#{e.response_body&.gsub(/\n/, '')}\""
                         )
