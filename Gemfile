@@ -32,15 +32,9 @@ gem 'turbolinks', '~> 5'
 gem 'jbuilder'
 # Use Redis adapter to run Action Cable in production
 gem 'redis'
-# gem 'redis', '~> 4.0'
-# Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
 
-# Use ActiveStorage variant
-# gem 'mini_magick', '~> 4.8'
-
-# Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
+# From Ruby 3.5.0, ostruct is no longer part of the default gems and must be installed separately
+gem 'ostruct'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', require: false

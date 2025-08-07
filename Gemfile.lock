@@ -320,6 +320,7 @@ GEM
     omniauth-rails_csrf_protection (1.0.1)
       actionpack (>= 4.2)
       omniauth (~> 2.0)
+    ostruct (0.6.3)
     parallel (1.27.0)
     parser (3.3.8.0)
       ast (~> 2.4.1)
@@ -601,6 +602,7 @@ DEPENDENCIES
   omniauth-brightspace!
   omniauth-oauth2 (~> 1.8.0)
   omniauth-rails_csrf_protection (~> 1.0.1)
+  ostruct
   pg
   prometheus_exporter
   puma (~> 3.12)
