@@ -125,13 +125,15 @@ pt:
     destroy: "Remover"
     edit:
       action: "Editar"
-      title: "Editar sessão"
+      title: "Editar sessão agendada"
+      title_with_group: "Editar sessão agendada | Grupo: %{group_name}"
     error:
       moodle_group_data_not_found: "Erro na leitura dos dados de grupos do Moodle. Por favor, tente novamente"
     external_link: "Copiar link externo"
     new:
       add: "+ Agendar sessão"
       title: "Agendar sessão"
+      title_with_group: "Agendar sessão | Grupo: %{group_name}"
     show:
       view_history: "Ver histórico"
     table:

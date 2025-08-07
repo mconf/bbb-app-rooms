@@ -168,13 +168,15 @@ en:
     destroy: "Remove"
     edit:
       action: "Edit"
-      title: "Edit session"
+      title: "Edit scheduled session"
+      title_with_group: "Edit scheduled session | Group: %{group_name}"
     error:
       moodle_group_data_not_found: "Error reading the Moodle groups data. Please, try again"
     external_link: "Copy external link"
     new:
       add: "+ Schedule session"
       title: "Schedule session"
+      title_with_group: "Schedule session | Group: %{group_name}"
     show:
       view_history: "View history"
     table:

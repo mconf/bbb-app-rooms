@@ -1,11 +1,8 @@
-# frozen_string_literal: true
+require_relative "boot"
 
-require_relative 'boot'
-require 'rails/all'
-require_relative '../lib/simple_json_formatter'
-require_relative '../lib/mconf/env'
-
-# Load the app's custom environment variables here, so that they are loaded before environments/*.rb
+require "rails/all"
+require_relative "../lib/simple_json_formatter"
+require_relative "../lib/mconf/env"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -15,12 +12,21 @@ module BbbAppRooms
   class Application < Rails::Application
     VERSION = "0.23.0"
 
+    # Initialize configuration defaults for originally generated Rails version.
+    config.load_defaults 5.0
+
     config.eager_load_paths << Rails.root.join('lib')
+
+    # Please, add to the `ignore` list any other `lib` subdirectories that do
+    # not contain `.rb` files, or that should not be reloaded or eager loaded.
+    # Common ones are `templates`, `generators`, or `middleware`, for example.
+    config.autoload_lib(ignore: %w[assets tasks])
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
     config.url_host = ENV['URL_HOST']
+    config.hosts << ENV['URL_HOST']
     config.relative_url_root = if ENV['RELATIVE_URL_ROOT'].blank?
                                  '/rooms'
                                else
