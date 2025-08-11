@@ -36,8 +36,6 @@ end
 OmniAuth.config.on_failure = Proc.new do |env|
   case env['omniauth.strategy']&.name&.to_sym
   when :bbbltibroker
-    request = Rack::Request.new(env)
-    request.update_param(:provider, :bbbltiprovider)
     SessionsController.action(:failure).call(env)
   end
 end

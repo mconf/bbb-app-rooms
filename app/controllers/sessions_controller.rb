@@ -68,9 +68,8 @@ class SessionsController < ApplicationController
 
   def failure
     # TODO: there are different types of errors, not all require a retry
-    redirect_to(
-      omniauth_retry_path(provider: params['provider'], launch_nonce: params['launch_nonce'])
-    )
+    provider = request.env['omniauth.strategy'].name.to_sym
+    redirect_to(omniauth_retry_path(provider: provider, launch_nonce: params['launch_nonce']))
   end
 
   def retry
