@@ -92,26 +92,8 @@ class MoodleAttendanceJob < ApplicationJob
 
   private
 
-  MAX_RETRIES = 3 # Define the maximum number of retries
-
-  def with_retries
-    begin
-      retries ||= 0
-      yield
-    rescue Moodle::UrlNotFoundError, Moodle::TimeoutError, Moodle::RequestError => e
-      if (retries += 1) < MAX_RETRIES
-        Rails.logger.warn "MoodleAttendanceJob: API call failed (#{e.class}: #{e.message}), retrying (attempt #{retries + 1}/#{MAX_RETRIES})"
-        sleep 1
-        retry
-      else
-        Rails.logger.error "MoodleAttendanceJob: API call failed after #{MAX_RETRIES} attempts (#{e.class}: #{e.message})."
-        raise e # Re-raise the exception to let the job fail
-      end
-    end
-  end
-
-  def get_or_create_moodle_attendance(moodle_token, course_id, group_select_enabled, locale)
-    existing_attendances = with_retries { Moodle::API.get_course_attendance_instances(moodle_token, course_id) }
+  def get_or_create_moodle_attendance(moodle_token, course_id, group_select_enabled)
+    existing_attendances = Moodle::API.get_course_attendance_instances(moodle_token, course_id)
 
     if existing_attendances.nil?
       Rails.logger.error "MoodleAttendanceJob: Moodle::API.get_course_attendance_instances returned nil (API error). Cannot proceed to find or create attendance for course_id #{course_id}."
@@ -136,15 +118,13 @@ class MoodleAttendanceJob < ApplicationJob
         target_attendance_name = I18n.t('jobs.moodle_attendance.attendance_name', locale: locale)
         group_mode_param = group_select_enabled ? 1 : 0 # 0: no groups, 1: separate groups, 2: visible
         
-        new_attendance_id = with_retries do
-          Moodle::API.add_attendance(
+        new_attendance_id = Moodle::API.add_attendance(
             moodle_token,
             course_id,
             target_attendance_name,
             "", # intro
             group_mode_param
           )
-        end
         unless new_attendance_id
           Rails.logger.error "MoodleAttendanceJob: Failed to create Moodle attendance for course_id #{course_id} with name '#{target_attendance_name}'."
           return nil
@@ -191,8 +171,7 @@ class MoodleAttendanceJob < ApplicationJob
       Rails.logger.info "MoodleAttendanceJob: group_select_enabled is true. Using moodle_group_id: #{session_group_id} (from custom_param 'moodle_group_id': #{moodle_group_id_param})."
     end
     
-    session_id = with_retries do
-      Moodle::API.add_session(
+    session_id = Moodle::API.add_session(
         moodle_token,
         attendance_id,
         session_time_unix,
@@ -201,7 +180,6 @@ class MoodleAttendanceJob < ApplicationJob
         session_group_id,
         0 # addcalendarevent = 0
       )
-    end
 
     unless session_id
       Rails.logger.error "MoodleAttendanceJob: Failed to create Moodle session for attendance_id #{attendance_id}."
@@ -212,7 +190,7 @@ class MoodleAttendanceJob < ApplicationJob
   end
 
   def get_presence_and_absence_status_ids(moodle_token, session_id)
-    session_statuses = with_retries { Moodle::API.get_session_statuses(moodle_token, session_id) }
+    session_statuses = Moodle::API.get_session_statuses(moodle_token, session_id)
     
     unless session_statuses.is_a?(Array) && session_statuses.any?
       Rails.logger.error "MoodleAttendanceJob: Failed to retrieve session statuses or no statuses found for session ID #{session_id}. API returned: #{session_statuses.inspect}"
@@ -268,11 +246,9 @@ class MoodleAttendanceJob < ApplicationJob
     present_failed_count = 0
     
     present_user_ids.each do |student_id|
-      success = with_retries do
-        Moodle::API.update_user_status(
+      success = Moodle::API.update_user_status(
           moodle_token, session_id, student_id, taken_by_id, presence_status_id, status_set_param
         )
-      end
       if success
         Rails.logger.info "MoodleAttendanceJob: Successfully marked PRESENT for student ID #{student_id} in session ID #{session_id}."
         present_marked_count += 1
@@ -285,7 +261,7 @@ class MoodleAttendanceJob < ApplicationJob
     absent_marked_count = 0
     absent_failed_count = 0
     
-    all_moodle_user_ids = with_retries { Moodle::API.get_enrolled_user_ids(moodle_token, course_id) }
+    all_moodle_user_ids = Moodle::API.get_enrolled_user_ids(moodle_token, course_id)
 
     if all_moodle_user_ids.nil?
       Rails.logger.error "MoodleAttendanceJob: Failed to retrieve enrolled users from Moodle for course ID #{course_id}. Cannot mark absent users for session ID #{session_id}."
@@ -295,11 +271,9 @@ class MoodleAttendanceJob < ApplicationJob
       Rails.logger.info "MoodleAttendanceJob: User IDs to be marked ABSENT: #{absent_user_ids.inspect} for session ID #{session_id}."
 
       absent_user_ids.each do |student_id|
-        success = with_retries do
-          Moodle::API.update_user_status(
+        success = Moodle::API.update_user_status(
             moodle_token, session_id, student_id, taken_by_id, absence_status_id, status_set_param
           )
-        end
         if success
           Rails.logger.info "MoodleAttendanceJob: Successfully marked ABSENT for student ID #{student_id} in session ID #{session_id}."
           absent_marked_count += 1

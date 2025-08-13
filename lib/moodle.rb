@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require 'faraday'
+require 'cgi'
 
 module Moodle
   class API
@@ -504,51 +505,72 @@ module Moodle
       user_ids
     end
 
+    MAX_RETRIES = 3
+
     def self.post(host_url, params)
-      options = {
-        headers: { 'Content-Type' => 'application/x-www-form-urlencoded' },
-        request: { timeout: Rails.application.config.moodle_api_timeout },
-        params: params
-      }
+      retries ||= 0
+      begin
+        begin
+          options = {
+            headers: { 'Content-Type' => 'application/x-www-form-urlencoded' },
+            request: { timeout: Rails.application.config.moodle_api_timeout },
+            params: params
+          }
 
-      conn = Faraday.new(url: host_url, **options) do |config|
-        config.response :json
-        config.response :raise_error
-        config.adapter :net_http
+          conn = Faraday.new(url: host_url, **options) do |config|
+            config.response :json
+            config.response :raise_error
+            config.adapter :net_http
+          end
+
+          start_time = Time.now
+          res = conn.post(host_url)
+          duration = Time.now - start_time
+
+          result = res.body.is_a?(Hash) ? res.body.merge({"duration" => duration}) :
+                                          { "body" => res.body, "duration" => duration }
+
+          Rails.logger.debug("[MOODLE API] Calling URL: #{host_url}?#{params.to_a.map { |k, v| "#{k}=#{CGI.escape(v.to_s)}" }.join('&')} | Moodle response: #{res.inspect}")
+          return result
+
+        rescue Faraday::ResourceNotFound => e
+          Rails.logger.error( "[MOODLE API] url=#{host_url} " \
+                              "duration=#{(Time.now - start_time).round(3)}s " \
+                              "wsfunction=#{params[:wsfunction]} " \
+                              "caller=#{caller(2..3)} " \
+                              "message=\"Request failed (Faraday::ResourceNotFound): #{e}\" " \
+                              "response_body=\"#{e.response_body&.gsub(/\n/, '')}\""
+                            )
+          raise UrlNotFoundError, e
+        rescue Faraday::TimeoutError => e
+          Rails.logger.error( "[MOODLE API] url=#{host_url} " \
+                              "duration=#{(Time.now - start_time).round(3)}s " \
+                              "wsfunction=#{params[:wsfunction]} " \
+                              "caller=#{caller(2..3)} " \
+                              "message=\"Request failed (Faraday::TimeoutError): #{e}\"")
+          raise TimeoutError, e
+        rescue Faraday::Error => e
+          Rails.logger.error( "[MOODLE API] url=#{host_url} " \
+                              "duration=#{(Time.now - start_time).round(3)}s " \
+                              "wsfunction=#{params[:wsfunction]} " \
+                              "caller=#{caller(2..3)} " \
+                              "message=\"Request failed (Faraday::Error): #{e}\" " \
+                              "response_body=\"#{e.response_body&.gsub(/\n/, '')}\""
+                            )
+          raise RequestError, e
+        end
+      rescue Moodle::UrlNotFoundError, Moodle::TimeoutError, Moodle::RequestError => e
+        if (retries += 1) < MAX_RETRIES
+          caller_name = params[:wsfunction] || 'Moodle::API.post'
+          Rails.logger.warn "[#{caller_name}] Moodle API call failed (#{e.class}: #{e.message}), retrying (attempt #{retries + 1}/#{MAX_RETRIES})"
+          sleep 1
+          retry
+        else
+          caller_name = params[:wsfunction] || 'Moodle::API.post'
+          Rails.logger.error "[#{caller_name}] Moodle API call failed after #{MAX_RETRIES} attempts (#{e.class}: #{e.message})."
+          raise e
+        end
       end
-
-      start_time = Time.now
-      res = conn.post(host_url)
-      duration = Time.now - start_time
-
-      res.body.is_a?(Hash) ? res.body.merge({"duration" => duration}) :
-                             { "body" => res.body, "duration" => duration }
-
-    rescue Faraday::ResourceNotFound => e
-      Rails.logger.error( "[MOODLE API] url=#{host_url} " \
-                          "duration=#{(Time.now - start_time).round(3)}s " \
-                          "wsfunction=#{params[:wsfunction]} " \
-                          "caller=#{caller(2..3)} " \
-                          "message=\"Request failed (Faraday::ResourceNotFound): #{e}\" " \
-                          "response_body=\"#{e.response_body&.gsub(/\n/, '')}\""
-                        )
-      raise UrlNotFoundError, e
-    rescue Faraday::TimeoutError => e
-      Rails.logger.error( "[MOODLE API] url=#{host_url} " \
-                          "duration=#{(Time.now - start_time).round(3)}s " \
-                          "wsfunction=#{params[:wsfunction]} " \
-                          "caller=#{caller(2..3)} " \
-                          "message=\"Request failed (Faraday::TimeoutError): #{e}\"")
-      raise TimeoutError, e
-    rescue Faraday::Error => e
-      Rails.logger.error( "[MOODLE API] url=#{host_url} " \
-                          "duration=#{(Time.now - start_time).round(3)}s " \
-                          "wsfunction=#{params[:wsfunction]} " \
-                          "caller=#{caller(2..3)} " \
-                          "message=\"Request failed (Faraday::Error): #{e}\" " \
-                          "response_body=\"#{e.response_body&.gsub(/\n/, '')}\""
-                        )
-      raise RequestError, e
     end
   end
 
