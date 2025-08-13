@@ -129,6 +129,7 @@ pt:
       title_with_group: "Editar sessão agendada | Grupo: %{group_name}"
     error:
       moodle_group_data_not_found: "Erro na leitura dos dados de grupos do Moodle. Por favor, tente novamente"
+      moodle_create_calendar_event: "Erro ao criar o evento no calendário do Moodle"
     external_link: "Copiar link externo"
     new:
       add: "+ Agendar sessão"

@@ -18,7 +18,11 @@ module Moodle
         'events[0][visible]' => 1,
         'events[0][eventtype]' => 'course'
       }
-      result = post(moodle_token.url, params)
+      begin
+        result = post(moodle_token.url, params)
+      rescue Moodle::UrlNotFoundError, Moodle::TimeoutError, Moodle::RequestError
+        return false
+      end
 
       log_labels =  "[MOODLE API] url=#{moodle_token.url} " \
                     "token_id=#{moodle_token.id} " \
@@ -58,7 +62,11 @@ module Moodle
         'events[0][eventid]'=> event_id,
         'events[0][repeat]'=> 0,
       }
-      result = post(moodle_token.url, params)
+      begin
+        result = post(moodle_token.url, params)
+      rescue Moodle::UrlNotFoundError, Moodle::TimeoutError, Moodle::RequestError
+        return false
+      end
 
       log_labels =  "[MOODLE API] url=#{moodle_token.url} " \
                     "token_id=#{moodle_token.id} " \
@@ -252,7 +260,12 @@ module Moodle
         wsfunction: 'core_webservice_get_site_info',
         moodlewsrestformat: 'json',
       }
-      result = post(moodle_token.url, params)
+
+      begin
+        result = post(moodle_token.url, params)
+      rescue Moodle::UrlNotFoundError, Moodle::TimeoutError, Moodle::RequestError
+        return false
+      end
 
       log_labels =  "[MOODLE API] url=#{moodle_token.url} " \
                     "token_id=#{moodle_token.id} " \
