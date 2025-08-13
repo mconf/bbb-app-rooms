@@ -3,14 +3,14 @@ require './lib/moodle'
 class UpdateRecurringMeetingsJob < ApplicationJob
   def perform()
     Room.find_each do |room|
-      Resque.logger.info "[JOB] Looking for meetings to be updated in room `#{room.name}`"
+      Resque.logger.info "[UpdateRecurringMeetingsJob] Looking for meetings to be updated in room `#{room.name}`"
       room.scheduled_meetings.inactive.recurring.each do |meeting|
-        Resque.logger.info "[JOB] Updating meeting: id=#{meeting.id}, name=#{meeting.name}"
+        Resque.logger.info "[UpdateRecurringMeetingsJob] Updating meeting: id=#{meeting.id}, name=#{meeting.name}"
         meeting.update_to_next_recurring_date
         handle_moodle_calendar_events(meeting, room)
       end
     end
-    Resque.logger.info "[JOB] All meetings updated."
+    Resque.logger.info "[UpdateRecurringMeetingsJob] All meetings updated."
   end
 
   def handle_moodle_calendar_events(meeting, room)
@@ -26,7 +26,7 @@ class UpdateRecurringMeetingsJob < ApplicationJob
           Resque.logger.error "[UpdateRecurringMeetingsJob] Moodle API call to create calendar event failed for meeting `#{meeting.id}`."
         end
       rescue StandardError => e
-        Resque.logger.error "Error creating the new calendar event for meeting `#{meeting.id}`, message: #{e.message}."
+        Resque.logger.error "[UpdateRecurringMeetingsJob] Error creating the new calendar event for meeting `#{meeting.id}`, message: #{e.message}."
       end
     end
   end
