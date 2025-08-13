@@ -26,6 +26,12 @@ module Moodle
                     "wsfunction=core_calendar_create_calendar_events " \
                     "#{('nonce=' + opts[:nonce].to_s + ' ') if opts[:nonce]}"
 
+      if result["warnings"].present?
+        Rails.logger.warn(log_labels + "message=\"#{result["warnings"].inspect}\"")
+        # The event fails to be created on Moodle if there is a "nopermissions" warning
+        return false if result["warnings"].any? { |w| w["warningcode"] == "nopermissions" }
+      end
+      
       if result["exception"].present?
         Rails.logger.error(log_labels + "message=\"#{result}\"")
         return false
@@ -37,9 +43,6 @@ module Moodle
         MoodleCalendarEvent.create!(event_params)
       end
 
-      if result["warnings"].present?
-        Rails.logger.warn(log_labels + "message=\"#{result["warnings"].inspect}\"")
-      end
       Rails.logger.info(log_labels + "message=\"Event created on Moodle calendar: #{result}\"")
 
       true
@@ -63,14 +66,16 @@ module Moodle
                     "wsfunction=core_calendar_delete_calendar_events " \
                     "#{('nonce=' + opts[:nonce].to_s + ' ') if opts[:nonce]}"
 
+      if result["warnings"].present?
+        Rails.logger.warn(log_labels + "message=\"#{result["warnings"].inspect}\"")
+        return false if result["warnings"].any? { |w| w["warningcode"] == "nopermissions" }
+      end
+
       if result["exception"].present?
         Rails.logger.error(log_labels + "message=\"#{result}\"")
         return false
       end
 
-      if result["warnings"].present?
-        Rails.logger.warn(log_labels + "message=\"#{result["warnings"].inspect}\"")
-      end
       Rails.logger.info(log_labels + "message=\"Event deleted on Moodle calendar: #{result}\"")
 
       true
