@@ -69,11 +69,9 @@ pt:
       download_notes: "Download das notas da reunião"
       download_participants: "Download da lista de participantes"
       download_transcription: "Download da transcrição"
-      unavailable_ai_summary: "Resumo de IA indisponível"
       unavailable_dashboard: "Relatório de engajamento indisponível"
       unavailable_notes: "Notas da reunião indisponíveis"
       unavailable_participants: "Lista de participante indisponível"
-      unavailable_transcription: "Transcrição indisponível"
     recording:
       confirm:
         destroy: "Você tem certeza que deseja deletar esta gravação?"

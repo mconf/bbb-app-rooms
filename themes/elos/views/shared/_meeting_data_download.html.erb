@@ -4,10 +4,6 @@
     <%= icon_ai_summary %>
     <%= t('meetings.meeting_data_download.download_ai_summary') %>
   <% end %>
-<% else %>
-  <%= link_to '#', class: "dropdown-item rec-edit disabled_link" do %>
-    <%= t('meetings.meeting_data_download.unavailable_ai_summary') %>
-  <% end %>
 <% end %>
 
 <% if @artifact_files.present? && @artifact_files['shared_notes'].present? %>
@@ -39,10 +35,6 @@
   class: "dropdown-item rec-edit", data: { 'tracking-id': 'lti-download-transcription', 'institution-guid': "#{@app_launch.params['custom_params']['institution_guid']}" } do %>
     <%= icon_download %>
     <%= t('meetings.meeting_data_download.download_transcription') %>
-  <% end %>
-<% else %>
-  <%= link_to '#', class: "dropdown-item rec-edit disabled_link" do %>
-    <%= t('meetings.meeting_data_download.unavailable_transcription') %>
   <% end %>
 <% end %>
 
