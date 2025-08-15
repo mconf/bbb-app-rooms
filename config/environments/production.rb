@@ -16,7 +16,7 @@ Rails.application.configure do
   config.action_controller.perform_caching = true
 
   # Cache assets for far-future expiry since they are all digest stamped.
-  if ENV['RAILS_SERVE_STATIC_FILES'].present?
+  if Mconf::Env.fetch('RAILS_SERVE_STATIC_FILES').present?
     # Disable serving static files from the `/public` folder by default since
     # Apache or NGINX already handles this.
     config.public_file_server.enabled = true
@@ -38,11 +38,7 @@ Rails.application.configure do
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
-
-
-  unless ENV['ASSET_HOST'].blank?
-    config.asset_host = ENV['ASSET_HOST']
-  end
+  config.asset_host = Mconf::Env.fetch('ASSET_HOST')
 
   # Specifies the header that your server uses for sending files.
   # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for Apache
@@ -52,13 +48,9 @@ Rails.application.configure do
   config.active_storage.service = :local
 
   # Mount Action Cable outside main process or domain
-  unless ENV['CABLE_MOUNT_PATH'].blank?
-    config.action_cable.mount_path = ENV['CABLE_MOUNT_PATH']
-  end
+  config.action_cable.mount_path = Mconf::Env.fetch('CABLE_MOUNT_PATH')
   # config.action_cable.url = 'wss://example.com/cable'
-  config.action_cable.allowed_request_origins = [
-    "https://#{config.url_host}"
-  ]
+  config.action_cable.allowed_request_origins = ["https://#{config.url_host}"]
   # config.action_cable.allowed_request_origins = [ 'http://example.com', /http:\/\/example.*/ ]
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
@@ -66,7 +58,7 @@ Rails.application.configure do
   # config.assume_ssl = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = (ENV['ENABLE_SSL'] == 'true')
+  config.force_ssl = Mconf::Env.fetch_boolean('ENABLE_SSL', true)
 
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
@@ -75,7 +67,7 @@ Rails.application.configure do
   config.log_tags = [ :request_id ]
 
   # Change to "debug" to log everything (including potentially personally-identifiable information!)
-  config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
+  config.log_level = Mconf::Env.fetch('RAILS_LOG_LEVEL', 'info')
 
   # Prevent health checks from clogging up the logs.
   config.silence_healthcheck_path = "/up"
@@ -114,7 +106,7 @@ Rails.application.configure do
   # Don't log any deprecations.
   config.active_support.report_deprecations = :notify
 
-  if ENV['LOGRAGE_ENABLED'] != '1'
+  unless Mconf::Env.fetch_boolean('LOGRAGE_ENABLED', true)
     # Use default logging formatter so that PID and timestamp are not suppressed.
     config.log_formatter = ::Logger::Formatter.new
   end
@@ -123,7 +115,7 @@ Rails.application.configure do
   # require "syslog/logger"
   # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new "app-name")
 
-  if ENV['RAILS_LOG_TO_STDOUT'].present?
+  if Mconf::Env.fetch_boolean('RAILS_LOG_TO_STDOUT', true)
     # Disable output buffering when STDOUT isn't a tty (e.g. Docker images, systemd services)
     STDOUT.sync = true
     logger = ActiveSupport::Logger.new(STDOUT)
@@ -132,11 +124,11 @@ Rails.application.configure do
   end
 
   # configure redis for ActionCable
-  config.cache_store = if ENV['REDIS_URL'].present?
+  config.cache_store = if Mconf::Env.fetch('REDIS_URL').present?
                         # Set up Redis cache store
                         [:redis_cache_store,
                           {
-                            url: ENV['REDIS_URL'],
+                            url: Mconf::Env.fetch('REDIS_URL'),
                             expires_in: 1.day,
                             connect_timeout: 30, # Defaults to 20 seconds
                             read_timeout: 0.2, # Defaults to 1 second
@@ -151,7 +143,7 @@ Rails.application.configure do
                           :memory_store
                        end
 
-  config.hosts = ENV['WHITELIST_HOST'].presence || nil
+  config.hosts = Mconf::Env.fetch('WHITELIST_HOST')
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false

@@ -59,8 +59,6 @@ module Mconf
         Rails.logger.info("[GET_ACCESS_TOKEN] pass")
         token_url = "#{Rails.application.config.filesender_service_url}/oauth/token"
 
-        ssl_verifying = ENV['OAUTH_CLIENT_SSL_VERIFYING'] == '1'
-
         response = Faraday.post(token_url, {
           grant_type: 'authorization_code',
           client_id: Rails.application.config.filesender_client_id,
@@ -76,8 +74,6 @@ module Mconf
       def self.refresh_token(refresh_token)
         Rails.logger.info("[GET_ACCESS_TOKEN] pass")
         token_url = "#{Rails.application.config.filesender_service_url}/oauth/token"
-
-        ssl_verifying = ENV['OAUTH_CLIENT_SSL_VERIFYING'] == '1'
 
         response = Faraday.post(token_url, {
           grant_type: 'refresh_token',

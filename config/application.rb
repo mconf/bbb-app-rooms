@@ -25,61 +25,59 @@ module BbbAppRooms
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
-    config.url_host = ENV['URL_HOST']
-    config.hosts << ENV['URL_HOST']
-    config.relative_url_root = if ENV['RELATIVE_URL_ROOT'].blank?
+    config.url_host = Mconf::Env.fetch('URL_HOST')
+    config.hosts << Mconf::Env.fetch('URL_HOST')
+    config.relative_url_root = if Mconf::Env.fetch('RELATIVE_URL_ROOT').blank?
                                  '/rooms'
                                else
-                                 "/#{ENV['RELATIVE_URL_ROOT']}/rooms"
+                                 "/#{Mconf::Env.fetch('RELATIVE_URL_ROOT')}/rooms"
                                end
 
-    config.build_number = ENV['BUILD_NUMBER'] || VERSION
+    config.build_number = Mconf::Env.fetch('BUILD_NUMBER', VERSION)
 
     # Omniauth configs for Broker
-    config.omniauth_path_prefix = if ENV['RELATIVE_URL_ROOT'].blank?
+    config.omniauth_path_prefix = if Mconf::Env.fetch('RELATIVE_URL_ROOT').blank?
                                     '/rooms/auth'
                                   else
-                                    "/#{ENV['RELATIVE_URL_ROOT']}/rooms/auth"
+                                    "/#{Mconf::Env.fetch('RELATIVE_URL_ROOT')}/rooms/auth"
                                   end
     config.omniauth_site = {}
-    config.omniauth_site[:bbbltibroker] = ENV['OMNIAUTH_BBBLTIBROKER_SITE'] || 'http://localhost:3000'
+    config.omniauth_site[:bbbltibroker] = Mconf::Env.fetch('OMNIAUTH_BBBLTIBROKER_SITE', 'http://localhost:3000')
     config.omniauth_root = {}
-    config.omniauth_root[:bbbltibroker] = (
-      ENV['OMNIAUTH_BBBLTIBROKER_ROOT'] ? '/' + ENV['OMNIAUTH_BBBLTIBROKER_ROOT'] : ''
-    ).to_s
+    config.omniauth_root[:bbbltibroker] = ''
+    config.omniauth_root[:bbbltibroker] = "/#{Mconf::Env.fetch('OMNIAUTH_BBBLTIBROKER_ROOT')}" if Mconf::Env.fetch('OMNIAUTH_BBBLTIBROKER_ROOT')
     config.omniauth_key = {}
-    config.omniauth_key[:bbbltibroker] = ENV['OMNIAUTH_BBBLTIBROKER_KEY'] || ''
+    config.omniauth_key[:bbbltibroker] = Mconf::Env.fetch('OMNIAUTH_BBBLTIBROKER_KEY', '')
     config.omniauth_secret = {}
-    config.omniauth_secret[:bbbltibroker] = ENV['OMNIAUTH_BBBLTIBROKER_SECRET'] || ''
+    config.omniauth_secret[:bbbltibroker] = Mconf::Env.fetch('OMNIAUTH_BBBLTIBROKER_SECRET', '')
 
-    config.assets.prefix = if ENV['RELATIVE_URL_ROOT'].blank?
+    config.assets.prefix = if Mconf::Env.fetch('RELATIVE_URL_ROOT').blank?
                              '/rooms/assets'
                            else
-                             "/#{ENV['RELATIVE_URL_ROOT']}/rooms/assets"
+                             "/#{Mconf::Env.fetch('RELATIVE_URL_ROOT')}/rooms/assets"
                            end
 
-    config.default_timezone = ENV["DEFAULT_TIMEZONE"] || 'UTC'
-    config.force_default_timezone = ENV['FORCE_DEFAULT_TIMEZONE'] == 'true'
+    config.default_timezone = Mconf::Env.fetch('DEFAULT_TIMEZONE', 'UTC')
+    config.force_default_timezone = Mconf::Env.fetch_boolean('FORCE_DEFAULT_TIMEZONE', false)
 
-    config.app_name = ENV["APP_NAME"] || 'BbbAppRooms'
+    config.app_name = Mconf::Env.fetch('APP_NAME', 'BbbAppRooms')
 
     # ActiveJob
     config.active_job.queue_adapter = :resque
 
     ### Log configs
-    config.log_level = ENV['LOG_LEVEL'] || :debug
+    config.log_level = Mconf::Env.fetch('LOG_LEVEL', :debug)
     # use a json formatter to match lograge's logs
-    config.log_formatter = SimpleJsonFormatter.new if ENV['LOGRAGE_ENABLED'] == '1'
+    config.log_formatter = SimpleJsonFormatter.new if Mconf::Env.fetch_boolean('LOGRAGE_ENABLED', false)
 
     # App_launch configs
-    config.launch_duration_mins =
-      ENV["APP_LAUNCH_DURATION_MINS"].try(:to_i).try(:minutes) || 30.minutes
+    config.launch_duration_mins = Mconf::Env.fetch_int('APP_LAUNCH_DURATION_MINS', 30).minutes
     config.launch_remove_old_on_launch = Mconf::Env.fetch_boolean("APP_LAUNCH_REMOVE_OLD_ON_LAUNCH", true)
-    config.launch_days_to_delete = (ENV['APP_LAUNCH_DAYS_TO_DELETE'] || 15).to_i
-    config.launch_limit_for_delete = (ENV['APP_LAUNCH_LIMIT_FOR_DELETE'] || 1000).to_i
+    config.launch_days_to_delete = Mconf::Env.fetch_int('APP_LAUNCH_DAYS_TO_DELETE', 15)
+    config.launch_limit_for_delete = Mconf::Env.fetch_int('APP_LAUNCH_LIMIT_FOR_DELETE', 1000)
 
     ### Themes configs
-    config.theme = ENV['APP_THEME']
+    config.theme = Mconf::Env.fetch('APP_THEME')
     unless config.theme.blank?
       # FIX ME: why we need this now?
       config.eager_load_paths << Rails.root.join('themes', config.theme, 'helpers')
@@ -95,14 +93,13 @@ module BbbAppRooms
     end
 
     # ActionCable
-    config.cable_enabled = ENV['CABLE_ENABLED'] == '1' || ENV['CABLE_ENABLED'] == 'true'
-    config.cable_polling_secs = ENV['CABLE_POLLING_SECS'] || 30
-    config.cable_btn_timeout = ENV['CABLE_BTN_TIMEOUT'] || 60000
+    config.cable_enabled = Mconf::Env.fetch_boolean('CABLE_ENABLED', false)
+    config.cable_polling_secs = Mconf::Env.fetch_int('CABLE_POLLING_SECS', 30)
+    config.cable_btn_timeout = Mconf::Env.fetch_int('CABLE_BTN_TIMEOUT', 60000)
 
     # Browser timezone
-    config.browser_time_zone_secure_cookie = ENV['COOKIES_SECURE_OFF'].blank?
-    config.browser_time_zone_same_site_cookie =
-      ENV['COOKIES_SAME_SITE'].blank? ? 'None' : "#{ENV['COOKIES_SAME_SITE']}"
+    config.browser_time_zone_secure_cookie = !Mconf::Env.fetch_boolean('COOKIES_SECURE_OFF', false)
+    config.browser_time_zone_same_site_cookie = Mconf::Env.fetch('COOKIES_SAME_SITE', 'None')
     config.browser_time_zone_default_tz = config.default_timezone
 
     # Integration with Google Tag Manager
@@ -113,20 +110,20 @@ module BbbAppRooms
     config.adopt_website_code = Mconf::Env.fetch('MCONF_ADOPT_WEBSITE_CODE', '')
 
     # Redis configurations. Defaults to a localhost instance.
-    config.redis_host      = ENV['MCONF_REDIS_HOST']
-    config.redis_port      = ENV['MCONF_REDIS_PORT']
-    config.redis_db        = ENV['MCONF_REDIS_DB']
-    config.redis_password  = ENV['MCONF_REDIS_PASSWORD']
+    config.redis_host      = Mconf::Env.fetch('MCONF_REDIS_HOST')
+    config.redis_port      = Mconf::Env.fetch('MCONF_REDIS_PORT')
+    config.redis_db        = Mconf::Env.fetch('MCONF_REDIS_DB')
+    config.redis_password  = Mconf::Env.fetch('MCONF_REDIS_PASSWORD')
 
     ### Meetings page configs
-    config.meetings_per_page = ENV['MEETINGS_PER_PAGE'].blank? ? 25 : ENV['MEETINGS_PER_PAGE'].to_i
+    config.meetings_per_page = Mconf::Env.fetch_int('MEETINGS_PER_PAGE', 25)
     # Meeting artifacts
     config.meeting_learning_dashboard_url      = Mconf::Env.fetch('MCONF_LEARNING_DASHBOARD_URL')
     config.meeting_notes_filename              = 'notes.txt'
     config.meeting_participants_filename       = 'activities.txt'
     config.meeting_learning_dashboard_filename = 'learning_dashboard.json'
     # Enable playback URL authentication through getRecordingToken
-    config.playback_url_authentication = ENV['PLAYBACK_URL_AUTHENTICATION'] == 'true'
+    config.playback_url_authentication = Mconf::Env.fetch_boolean('PLAYBACK_URL_AUTHENTICATION', false)
 
     # Eduplay integration
     config.eduplay_enabled            = Mconf::Env.fetch_boolean('EDUPLAY_ENABLED', false)
@@ -155,16 +152,19 @@ module BbbAppRooms
     config.data_reports_enabled = Mconf::Env.fetch_boolean('MCONF_DATA_REPORTS_ENABLED', true)
 
     ### Bigbluebutton API
-    config.bigbluebutton_endpoint = ENV['BIGBLUEBUTTON_ENDPOINT'] || 'http://test-install.blindsidenetworks.com/bigbluebutton/api'
-    config.bigbluebutton_endpoint_internal = ENV['BIGBLUEBUTTON_ENDPOINT_INTERNAL']
-    config.bigbluebutton_secret = ENV['BIGBLUEBUTTON_SECRET'] || '8cd8ef52e8e101574e400365b55e11a6'
-    config.bigbluebutton_moderator_roles = ENV['BIGBLUEBUTTON_MODERATOR_ROLES'] || 'Instructor,Faculty,Teacher,Mentor,Administrator,Admin'
+    config.bigbluebutton_endpoint = Mconf::Env.fetch('BIGBLUEBUTTON_ENDPOINT',
+    'http://test-install.blindsidenetworks.com/bigbluebutton/api')
+    config.bigbluebutton_endpoint_internal = Mconf::Env.fetch('BIGBLUEBUTTON_ENDPOINT_INTERNAL')
+    config.bigbluebutton_secret = Mconf::Env.fetch('BIGBLUEBUTTON_SECRET','8cd8ef52e8e101574e400365b55e11a6')
+    config.bigbluebutton_moderator_roles = Mconf::Env.fetch('BIGBLUEBUTTON_MODERATOR_ROLES',
+    'Instructor,Faculty,Teacher,Mentor,Administrator,Admin')
     config.ajax_timeout = Mconf::Env.fetch_int('MCONF_AJAX_TIMEOUT', 15000)
     config.bbb_api_timeout = Mconf::Env.fetch_int('MCONF_BBB_API_TIMEOUT', 15)
     # Pre-open the join_api_url with `redirect=false` to check whether the user can join the meeting
     # before actually redirecting him
     config.check_can_join_meeting = Mconf::Env.fetch_boolean("CHECK_CAN_JOIN_MEETING", true)
-    config.running_polling_delay = ENV['RUNNING_POLLING_DELAY'] || ''
+    # polling interval, in milliseconds
+    config.running_polling_delay = Mconf::Env.fetch_int('RUNNING_POLLING_DELAY', 10000)
 
   end
 end
