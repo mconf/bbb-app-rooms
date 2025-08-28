@@ -152,6 +152,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def set_institution_guid
+    @institution_guid = @room.institution_guid
+  end
+
   def validate_room
     # Exit with error by re-setting the room to nil if the session for the room.handler is not set
     room_session = get_room_session(@room)

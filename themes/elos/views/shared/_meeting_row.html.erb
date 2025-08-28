@@ -111,13 +111,13 @@
               <% if p[:type] == 'presentation' %>
                 <%=
                 link_to icon_conference_play(title: t("meetings.recording.playbacks.#{p[:type]}"), class: 'fa-2x'), url,
-                data: { 'tracking-id': 'lti-play-record', 'institution-guid': "#{@app_launch.params['custom_params']['institution_guid']}" },
+                data: { 'tracking-id': 'lti-play-record', 'institution-guid': "#{@institution_guid}" },
                 class: 'd-flex text-decoration-none', target: browser_safari ? '_self' : '_blank'
                 %>
               <% else %>
                 <%=
                 link_to icon_file_download(title: t("meetings.recording.playbacks.#{p[:type]}"), class: 'fa-2x'), url,
-                data: { 'tracking-id': 'lti-download-recording', 'institution-guid': "#{@app_launch.params['custom_params']['institution_guid']}" },
+                data: { 'tracking-id': 'lti-download-recording', 'institution-guid': "#{@institution_guid}" },
                 class: 'd-flex text-decoration-none me-2', target: browser_safari ? '_self' : '_blank'
                 %>
               <% end %>
@@ -126,7 +126,7 @@
             <% url = playback_url(room, recording[:recordID], recording[:playbacks].find { |p| p[:type] == 'presentation' }) %>
             <%=
             link_to icon_conference_play(title: t("meetings.recording.playbacks.presentation"), class: 'fa-2x'), url,
-            data: { 'tracking-id': 'lti-play-record', 'institution-guid': "#{@app_launch.params['custom_params']['institution_guid']}" },
+            data: { 'tracking-id': 'lti-play-record', 'institution-guid': "#{@institution_guid}" },
             class: 'd-flex text-decoration-none', target: browser_safari ? '_self' : '_blank'
             %>
           <% end %>
@@ -160,7 +160,7 @@
                   turbolinks: false,
                   'toast-id': '#playback-link-copied-toast',
                   'tracking-id': 'lti-copy-playback-link',
-                  'institution-guid': "#{@app_launch.params['custom_params']['institution_guid']}"
+                  'institution-guid': "#{@institution_guid}"
                 },
                 class: "dropdown-item copy-to-clipboard" do
                 %>
@@ -177,7 +177,7 @@
                 <% if recording[:published] %>
                   <%= link_to recording_unpublish_path(room, record_id: recording[:recordID]),
                   method: :post,
-                  data: { confirm: t('meetings.recording.confirm.unpublish'), 'tracking-id': 'lti-unpublish-recording', 'institution-guid': "#{@app_launch.params['custom_params']['institution_guid']}" },
+                  data: { confirm: t('meetings.recording.confirm.unpublish'), 'tracking-id': 'lti-unpublish-recording', 'institution-guid': "#{@institution_guid}" },
                   class: "dropdown-item rec-edit" do %>
                     <%= icon_hide_recording %>
                     <%= t("meetings.recording.unpublish") %>
@@ -186,7 +186,7 @@
                 <% else %>
                   <%= link_to recording_publish_path(room, record_id: recording[:recordID]),
                   method: :post,
-                  data: { confirm: t('meetings.recording.confirm.publish'), 'tracking-id': 'lti-publish-recording', 'institution-guid': "#{@app_launch.params['custom_params']['institution_guid']}" },
+                  data: { confirm: t('meetings.recording.confirm.publish'), 'tracking-id': 'lti-publish-recording', 'institution-guid': "#{@institution_guid}" },
                   class: "dropdown-item rec-edit" do %>
                     <%= icon_show_recording %>
                     <%= t("meetings.recording.publish") %>
@@ -195,7 +195,7 @@
                 <%# Delete recording %>
                 <%= link_to recording_delete_path(room, record_id: recording[:recordID]),
                 method: :post,
-                data: { confirm: t('meetings.recording.confirm.destroy'), 'tracking-id': 'lti-delete-recording', 'institution-guid': "#{@app_launch.params['custom_params']['institution_guid']}" },
+                data: { confirm: t('meetings.recording.confirm.destroy'), 'tracking-id': 'lti-delete-recording', 'institution-guid': "#{@institution_guid}" },
                 class: "dropdown-item rec-edit" do %>
                   <%= icon_delete %>
                   <%= t("meetings.recording.destroy") %>

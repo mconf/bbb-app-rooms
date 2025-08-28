@@ -5,6 +5,7 @@ class ReportsController < ApplicationController
   before_action :check_data_api_config
   before_action :find_user
   before_action :find_app_launch
+  before_action :set_institution_guid
   before_action do
     authorize_user!(:edit, @room)
   end

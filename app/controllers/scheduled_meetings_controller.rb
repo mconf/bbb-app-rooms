@@ -19,6 +19,7 @@ class ScheduledMeetingsController < ApplicationController
   before_action :validate_session_token_and_restore_session, only: :join
   before_action :find_user
   before_action :find_app_launch, only: %i[create update destroy]
+  before_action :set_institution_guid
 
   before_action :find_scheduled_meeting, only: (%i[edit update destroy] + open_actions)
   before_action :validate_scheduled_meeting, only: (%i[edit update destroy] + open_actions)
