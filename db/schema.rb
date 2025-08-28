@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_28_192937) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_22_214356) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -70,6 +70,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_28_192937) do
     t.string "external_widget", default: ""
     t.boolean "force_disable_external_link", default: false
     t.string "external_context_url"
+    t.string "institution_guid"
     t.index ["key"], name: "index_consumer_configs_on_key", unique: true
   end
 
