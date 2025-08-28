@@ -43,6 +43,10 @@ class AppLaunch < ApplicationRecord
     }
   end
 
+  def custom_params
+    self.params['custom_params'] || {}
+  end
+
   def has_custom_param?(name)
     self.params.key?('custom_params') &&
       self.params['custom_params'].key?('custom_' + name)
@@ -116,7 +120,7 @@ class AppLaunch < ApplicationRecord
   end
 
   def oauth_consumer_key
-    self.params['custom_params']['oauth_consumer_key'] if self.params.key?('custom_params')
+    self.custom_params['oauth_consumer_key']
   end
 
   def consumer_key
