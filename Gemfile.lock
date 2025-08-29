@@ -331,7 +331,7 @@ GEM
       prettyprint
     prettyprint (0.2.0)
     prism (1.4.0)
-    prometheus_exporter (1.0.1)
+    prometheus_exporter (2.3.0)
       webrick
     psych (5.2.6)
       date
@@ -605,7 +605,7 @@ DEPENDENCIES
   omniauth-rails_csrf_protection (~> 1.0.1)
   ostruct
   pg
-  prometheus_exporter
+  prometheus_exporter (~> 2.3)
   puma (~> 6.6)
   rails (~> 8.0.2)
   rails_admin
