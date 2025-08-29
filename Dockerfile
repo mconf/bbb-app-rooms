@@ -39,11 +39,11 @@ RUN if [ "$RAILS_ENV" == "production" ]; \
 
 RUN bundle config set path ${BUNDLE_PATH}
 RUN bundle install
-RUN yarn install --check-files
 
 COPY . $APP_HOME
 
 RUN if [ "$RAILS_ENV" == "production" ]; then \
+  yarn install --check-files; \
   SECRET_KEY_BASE=`bin/rails secret` \
   bundle exec rake assets:precompile --trace; \
   fi
