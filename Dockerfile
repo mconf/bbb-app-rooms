@@ -38,7 +38,8 @@ RUN if [ "$RAILS_ENV" == "production" ]; \
   fi
 
 RUN bundle config set path ${BUNDLE_PATH}
-RUN bundle install --jobs 4
+RUN bundle install
+RUN yarn install --check-files
 
 COPY . $APP_HOME
 
