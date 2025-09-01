@@ -10,7 +10,7 @@ Bundler.require(*Rails.groups)
 
 module BbbAppRooms
   class Application < Rails::Application
-    VERSION = "0.23.0"
+    VERSION = "1.0.0"
 
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.0
