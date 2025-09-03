@@ -89,6 +89,7 @@ en:
       eduplay:
         channel: "Select Channel"
         channel_name: "Channel Title"
+        channel_section: "Channel Details"
         channel_tags: "Channel Tags"
         description: "Description"
         error: "An error has occurred. Please try again"
@@ -116,6 +117,7 @@ en:
         thumbnail: "Thumbnail"
         title: "Upload to Eduplay"
         upload_thumbnail: "Upload a custom thumbnail"
+        video_section: "Video Details"
         video_title: "Video Title"
       exp_date: "Expiration Date: "
       filesender:

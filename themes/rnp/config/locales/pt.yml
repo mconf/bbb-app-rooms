@@ -89,6 +89,7 @@ pt:
       eduplay:
         channel: "Selecionar Canal"
         channel_name: "Título do Canal"
+        channel_section: "Detalhes do Canal"
         channel_tags: "Tags do Canal"
         description: "Descrição"
         error: "Um erro ocorreu. Por favor, tente novamente!"
@@ -114,8 +115,9 @@ pt:
         success: "Seu vídeo está sendo carregado para o Eduplay"
         tags: "Palavras-Chave"
         thumbnail: "Miniatura"
-        title: "Upload no Eduplay"
+        title: "Enviar para Eduplay"
         upload_thumbnail: "Fazer upload de uma miniatura personalizada"
+        video_section: "Detalhes do Vídeo"
         video_title: "Título do Vídeo"
       exp_date: "Data de expiração: "
       filesender:
