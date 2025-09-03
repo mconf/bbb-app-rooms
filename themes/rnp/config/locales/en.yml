@@ -7,6 +7,7 @@ en:
     schedule: "Schedule"
     select2:
       comma_tags: "Type a comma to confirm the tag"
+      comma_tags_or_enter: "Type a comma or press Enter to confirm the tag"
       hint: "Type to start searching"
       no_results: "No results found"
       searching: "Searching"
@@ -89,6 +90,7 @@ en:
       eduplay:
         channel: "Select Channel"
         channel_name: "Channel Title"
+        channel_section: "Channel Details"
         channel_tags: "Channel Tags"
         description: "Description"
         error: "An error has occurred. Please try again"
@@ -100,7 +102,7 @@ en:
           no_channel: "A channel must be selected or created."
           password_invalid_requirments: "Password does not meet minimum requirements."
           video_incomplete: "Video title, description and privacy cannot be blank."
-          video_same_field: "Title and description cannot be the same."
+          video_same_field: "Title, description and tags cannot be the same."
           error_creating_channel: "Error creating channel on Eduplay"
         new_channel: "New Channel"
         password: "Password"
@@ -116,6 +118,7 @@ en:
         thumbnail: "Thumbnail"
         title: "Upload to Eduplay"
         upload_thumbnail: "Upload a custom thumbnail"
+        video_section: "Video Details"
         video_title: "Video Title"
       exp_date: "Expiration Date: "
       filesender:

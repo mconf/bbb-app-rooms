@@ -11,8 +11,11 @@
     <%= form.hidden_field :channel, value: (@channels.empty? ? 'new_channel' : '') %>
 
     <div class="form-row d-flex align-items-center justify-content-center">
-      <div class="form-group col-12 col-md-10">
-        <div class="dropdown">
+      <div class="form-section-title col-12 col-md-10">
+        <%= t('meetings.recording.eduplay.channel_section') %>
+      </div>
+      <div class="form-group col-12 col-md-10 m-0">
+        <div class="dropdown mb-3">
           <%= form.label :channel, t('meetings.recording.eduplay.channel') %>
           <div class="dropdown-toggle form-control" type="button" data-bs-toggle="dropdown">
             <div class="selected-option">
@@ -39,7 +42,7 @@
         </div>
 
         <%# New channel form %>
-        <div class="new-channel-form my-4" style="<%= @channels.empty? ? '' : 'display: none' %>">
+        <div class="new-channel-form" style="<%= @channels.empty? ? '' : 'display: none' %>">
           <div class="form-group col-12">
             <%= form.label :channel_name, t('meetings.recording.eduplay.channel_name') %>
             <%= form.text_field :channel_name, minlength: 2,  class: "form-control" %>
@@ -63,6 +66,10 @@
         </div>
       </div>
 
+
+      <div class="form-section-title col-12 col-md-10 mt-3">
+        <%= t('meetings.recording.eduplay.video_section') %>
+      </div>
       <%# Video infos %>
       <div class="form-group col-12 col-md-10">
         <%= form.label :title, t('meetings.recording.eduplay.video_title') %>

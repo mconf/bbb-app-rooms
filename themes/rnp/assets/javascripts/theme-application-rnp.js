@@ -288,7 +288,7 @@ $(document).on('turbolinks:load', function(){
     if (channelId == 'new_channel'){
       if ([channelName, channelPublic, channelTags].some(function(field){return field == null || field == ''})) {
         errors.push(I18n.t('meetings.recording.eduplay.errors.channel_incomplete'));
-      } else if (channelName == channelTags) {
+      } else if (channelTags.split(',').some(tag => tag.trim().toLowerCase() === channelName.toLowerCase())) {
         errors.push(I18n.t('meetings.recording.eduplay.errors.channel_same_field'));
       }
     } else if (channelId == '') {
@@ -298,9 +298,13 @@ $(document).on('turbolinks:load', function(){
     videoTitle = formData['title'];
     videoDescription = formData['description'];
     videoPublic = formData['public'];
+    videoTags = formData['tags'];
+
     if ([videoTitle, videoDescription, videoPublic].some(function(field) { return field == null || field == '';})){
       errors.push(I18n.t('meetings.recording.eduplay.errors.video_incomplete'))
-    } else if (videoTitle ==  videoDescription) {
+    } else if (videoTitle.toLowerCase() ==  videoDescription.toLowerCase()) {
+      errors.push(I18n.t('meetings.recording.eduplay.errors.video_same_field'));
+    } else if (videoTags.split(',').some(tag => tag.trim().toLowerCase() === videoTitle.toLowerCase() || tag.trim().toLowerCase() === videoDescription.toLowerCase())) {
       errors.push(I18n.t('meetings.recording.eduplay.errors.video_same_field'));
     }
 
@@ -350,6 +354,34 @@ $(document).on('turbolinks:load', function(){
     }
   })
 
+  // select2 does not create tags on enter, so we need to create it manually
+  function enableManualTagCreationOnEnter(selector) {
+    const select2 = $(selector);
+
+    select2.on('select2-open', function() {
+      $('.select2-input').on('keydown.select2enter', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          e.stopPropagation();
+
+          const newTagText = $(this).val().trim();
+          if (newTagText) {
+            const currentData = select2.select2('data');
+            currentData.push({ id: newTagText, text: newTagText });
+            select2.select2('data', currentData);
+          }
+
+          select2.select2('close');
+        }
+      });
+    });
+
+    select2.on('select2-close', function() {
+      // If the listener is not removed when closed, it will create duplicates.
+      $('.select2-input').off('keydown.select2enter');
+    });
+  }
+
   // Select2
   $("#eduplay-channel-tags").select2 ({
     minimumInputLength: 1,
@@ -357,8 +389,9 @@ $(document).on('turbolinks:load', function(){
     multiple: true,
     tags: true,
     tokenSeparators: [","],
-    formatSearching: function() { return I18n.t('_all.select2.comma_tags') }
+    formatSearching: function() { return I18n.t('_all.select2.comma_tags_or_enter') }
   });
+  enableManualTagCreationOnEnter("#eduplay-channel-tags");
 
   $("#eduplay-video-tags").select2 ({
     minimumInputLength: 1,
@@ -366,8 +399,9 @@ $(document).on('turbolinks:load', function(){
     multiple: true,
     tags: true,
     tokenSeparators: [","],
-    formatSearching: function() { return I18n.t('_all.select2.comma_tags') }
+    formatSearching: function() { return I18n.t('_all.select2.comma_tags_or_enter') }
   });
+  enableManualTagCreationOnEnter("#eduplay-video-tags");
 
   $('.showable-password-wrapper').each(function() {
     const $wrapper = $(this);
