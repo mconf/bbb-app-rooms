@@ -7,6 +7,7 @@ es:
     schedule: "Agendar"
     select2:
       comma_tags: "Escriba una coma para confirmar la etiqueta"
+      comma_tags_or_enter: "Escriba una coma o presione Enter para confirmar la etiqueta"
       hint: "Escriba para empezar a buscar"
       no_results: "No se han encontrado resultados"
       searching: "Buscando"
@@ -101,7 +102,7 @@ es:
           no_channel: "Se debe seleccionar o crear un canal."
           password_invalid_requirments: "¡La contraseña no cumple con los requisitos mínimos."
           video_incomplete: "El título, la descripción y la privacidad del video no pueden estar en blanco."
-          video_same_field: "El título y la descripción no pueden ser iguales."
+          video_same_field: "El título, la descripción y las palabras clave no pueden ser iguales."
           error_creating_channel: "Error al crear el canal en Eduplay"
         new_channel: "Nuevo Canal"
         password: "Contraseña"
