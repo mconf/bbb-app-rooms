@@ -66,7 +66,7 @@ module Mconf
 
         thumbnail = video_data[:thumbnail]
         if video_data[:thumbnail].nil?
-          thumbnail = [Eduplay::THUMBNAIL_PATH, Eduplay::THUMBNAIL_MIME]
+          thumbnail = [THUMBNAIL_PATH, THUMBNAIL_MIME]
         end
 
         payload = {
