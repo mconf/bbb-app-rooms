@@ -3,7 +3,7 @@
 # Be sure to restart your server when you modify this file.
 
 attrs = {
-  key: '_app_rooms_session',
+  key: Mconf::Env.fetch('SESSION_COOKIE_KEY', "_app_rooms_session_#{BbbAppRooms::Application::VERSION}"),
   secure: !Mconf::Env.fetch_boolean('COOKIES_SECURE_OFF', false),
   same_site: Mconf::Env.fetch('COOKIES_SAME_SITE', 'None'),
   partitioned: true
