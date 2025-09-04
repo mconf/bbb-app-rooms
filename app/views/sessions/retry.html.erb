@@ -20,6 +20,8 @@
       <p class="fs-5"><%= t('default.session.retry.description') %></p>
       <div class="error-description">
         <div class="error-logo-all" id="error500-logo"></div>
+        <p class="fs-xxs mb-0"><%= params[:error_detail] %></p>
+        <p class="fs-xxs mb-0"><%= @launch_nonce %></p>
       </div>
 
       <div id="retry-alternatives" class="text-muted">

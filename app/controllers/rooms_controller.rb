@@ -174,9 +174,8 @@ class RoomsController < ApplicationController
       @channels = api.get_channels
     else
       eduplay_token&.destroy
-      @status = 500
-      @layout = false
-      render 'errors/error' and return
+      set_error('eduplay', 'invalid_token_error', 500)
+      respond_with_error(@error) and return
     end
 
     render "rooms/eduplay"
