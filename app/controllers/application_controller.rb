@@ -185,7 +185,7 @@ class ApplicationController < ActionController::Base
   def set_error(model, error, status, context_info: nil)
     @user = nil
     instance_variable_set("@#{model}".to_sym, nil)
-    context_info ||= { nonce: @app_launch&.nonce , consumer: @app_launch&.consumer_key }
+    context_info ||= [@app_launch&.consumer_key, @app_launch&.nonce].compact
     @error = {
       internal_key: error,
       message: t("error.#{model}.#{error}.message"),
