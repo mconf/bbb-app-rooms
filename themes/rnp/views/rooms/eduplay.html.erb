@@ -1,4 +1,4 @@
-<% eduplay_privacy_options = [[t('meetings.recording.eduplay.public'), Eduplay::PRIVACY[:public]], [t('meetings.recording.eduplay.private'), Eduplay::PRIVACY[:private]]] %>
+<% eduplay_privacy_options = [[t('meetings.recording.eduplay.public'), Mconf::Eduplay::PRIVACY[:public]], [t('meetings.recording.eduplay.private'), Mconf::Eduplay::PRIVACY[:private]]] %>
 
 <div id="eduplay">
   <div class="row mb-3 d-flex align-items-center justify-content-center">
@@ -76,7 +76,7 @@
       <div class="form-group col-12 col-md-10 privacy">
         <%= form.label :public, t('meetings.recording.eduplay.privacy'), class: "privacy-label" %>
         <div style="display: inline;">
-          <% eduplay_privacy_options.push([t('meetings.recording.eduplay.private_with_password'), Eduplay::PRIVACY[:private_with_password]]) %>
+          <% eduplay_privacy_options.push([t('meetings.recording.eduplay.private_with_password'), Mconf::Eduplay::PRIVACY[:private_with_password]]) %>
           <% eduplay_privacy_options.each do |option| %>
             <label style="display: inline; margin-right: 20px; accent-color: #074AA0";>
               <%= form.radio_button :public, option[1] %>
@@ -85,7 +85,7 @@
           <% end %>
         </div>
       </div>
-      <div class="form-group col-12 col-md-10 password-input" data-private-with-password="<%= Eduplay::PRIVACY[:private_with_password] %>">
+      <div class="form-group col-12 col-md-10 password-input" data-private-with-password="<%= Mconf::Eduplay::PRIVACY[:private_with_password] %>">
         <%= form.label :video_password, t('meetings.recording.eduplay.password') %>
         <%= showable_password_field form, :video_password, id: "eduplay-video-password", minlength: 2, class: "form-control", autocomplete: "new-password" %>
         <span><%= t('meetings.recording.eduplay.password_requirements') %></span>

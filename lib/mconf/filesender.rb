@@ -7,18 +7,6 @@ require 'json'
 module Mconf
   module Filesender
 
-    def flatten(a, p = nil)
-      o = []
-      a.sort.to_h.each do |k, v|
-        if v.is_a?(Hash)
-          flatten(v, p ? "#{p}[#{k}]" : k).each { |s| o << s }
-        else
-          o << "#{p ? "#{p}[#{k}]" : k}=#{v}"
-        end
-      end
-      o
-    end
-
     class API
       # $base_url base url to Filesender's rest service
       # $mode authentication mode, "application" or "user"

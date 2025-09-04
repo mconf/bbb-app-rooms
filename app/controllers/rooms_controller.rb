@@ -170,7 +170,7 @@ class RoomsController < ApplicationController
     if eduplay_token.token.present? && eduplay_token.expires_at > Time.now + 30.minutes
       Rails.logger.info "EduplayToken #{eduplay_token}"
       @eduplay_token = eduplay_token.token
-      api = Eduplay::API.new(eduplay_token.token)
+      api = Mconf::Eduplay::API.new(eduplay_token.token)
       @channels = api.get_channels
     else
       eduplay_token&.destroy
@@ -184,7 +184,7 @@ class RoomsController < ApplicationController
 
   def eduplay_upload
     eduplay_token = EduplayToken.find_by(user_uid: @user.uid)
-    api = Eduplay::API.new(eduplay_token.token)
+    api = Mconf::Eduplay::API.new(eduplay_token.token)
 
     if params['channel'] == 'new_channel'
       Rails.logger.info "Creating new channel (name=#{params['channel_name']}, public=#{params['channel_public']}, tags=#{params['channel_tags']})"
@@ -268,7 +268,7 @@ class RoomsController < ApplicationController
     end
 
     if filesender_token.expires_at.nil? || filesender_token.expires_at < Time.now
-      new_token = Filesender::API.refresh_token(filesender_token.refresh_token)
+      new_token = Mconf::Filesender::API.refresh_token(filesender_token.refresh_token)
 
       if new_token['error'].present?
         flash[:notice] = t('default.filesender.error')
