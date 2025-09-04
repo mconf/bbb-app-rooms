@@ -100,9 +100,6 @@ gem 'repost', '~> 0.4.2'
 # BigBlueButton API
 gem 'bigbluebutton-api-ruby', git: 'https://github.com/mconf/bigbluebutton-api-ruby.git', tag: 'v1.9.0-mconf'
 
-# AWS S3 API (to access Spaces API)
-gem 'aws-sdk-s3', '~> 1'
-
 # Authentication
 gem 'rest-client'
 gem 'omniauth', '~> 2.1.2'
