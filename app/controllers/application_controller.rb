@@ -55,7 +55,7 @@ class ApplicationController < ActionController::Base
     if params[:session_set]
       Rails.logger.info "Session should be set but found no user, going to the retry page"
       return redirect_to(
-        omniauth_retry_path(provider: provider, launch_nonce: params['launch_nonce'])
+        omniauth_retry_path(provider: provider, launch_nonce: params['launch_nonce'], error_detail: 'session_set')
       )
     end
     if params['launch_nonce']
