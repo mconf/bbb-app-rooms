@@ -1,5 +1,22 @@
-<%= render 'errors/error',
-    code: @error[:code],
-    message: @error[:message],
-    suggestion: @error[:suggestion],
-    explanation: @error[:explanation] %>
+<div class="error-wrapper" id="<%= @error[:internal_key] %>">
+  <div class="error-description">
+    <div class="ops-text">
+      <%= t("error.ops") %>
+    </div>
+    <div class="description-text">
+      <%= @error[:suggestion] %>
+    </div>
+    <% if @error[:explanation] %>
+      <div class="explanation-text">
+        <%= @error[:explanation] %>
+      </div>
+    <% end %>
+    <div class="error-logo-all" id="error<%= @error[:code] %>-logo"></div>
+    <div class="title-text">
+      <%= "#{t('default.app.error').upcase} #{@error[:code]} – #{@error[:message]}" %>
+    </div>
+    <div class="context-info text-muted fs-xxs mt-2">
+      <%= @error[:context_info] %>
+    </div>
+  </div>
+</div>

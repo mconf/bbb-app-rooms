@@ -182,15 +182,17 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def set_error(model, error, status)
+  def set_error(model, error, status, context_info: nil)
     @user = nil
     instance_variable_set("@#{model}".to_sym, nil)
+    context_info ||= { nonce: @app_launch&.nonce , consumer: @app_launch&.consumer_key }
     @error = {
       internal_key: error,
       message: t("error.#{model}.#{error}.message"),
       suggestion: t("error.#{model}.#{error}.suggestion"),
       explanation: t("error.#{model}.#{error}.status_code") == '404' ? nil : t("error.#{model}.#{error}.explanation"),
       code: t("error.#{model}.#{error}.status_code"),
+      context_info: context_info,
       status: status
     }
   end
