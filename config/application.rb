@@ -13,7 +13,7 @@ Bundler.require(*Rails.groups)
 
 module BbbAppRooms
   class Application < Rails::Application
-    VERSION = "0.23.1"
+    VERSION = "0.23.2"
 
     config.eager_load_paths << Rails.root.join('lib')
 
