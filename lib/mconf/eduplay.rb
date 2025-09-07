@@ -201,9 +201,7 @@ module Eduplay
 
       opt = {
         url: url,
-        headers: headers.merge({
-          'Content-Type': 'multipart/form-data'
-        }),
+        headers: headers,
       }
 
       conn = Faraday.new(opt) do |f|
@@ -216,7 +214,7 @@ module Eduplay
         if v.kind_of?(Array)
           [k, Faraday::UploadIO.new(v[0], v[1])]
         else
-          [k, Faraday::UploadIO.new(StringIO.new(v.to_json), 'application/json')]
+          [k, Faraday::Multipart::ParamPart.new(v.to_json, 'application/json')]
         end
       end
 
