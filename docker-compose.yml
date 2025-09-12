@@ -154,5 +154,14 @@ services:
       - bundle-volume:/usr/src/bundle
     command: "bin/rake resque:scheduler"
 
+  dev_mailer:
+    container_name: rooms_dev_mailer
+    build:
+      context: .
+      dockerfile: ./Dockerfile.mailcatcher
+    ports:
+      - "1080:1080" # Web UI
+      - "1025:1025" # SMTP port
+
 volumes:
   bundle-volume:
