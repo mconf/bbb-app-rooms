@@ -523,6 +523,36 @@ module Moodle
       user_ids
     end
 
+    def self.get_user_info(moodle_token, user_id, opts = {})
+      params = {
+        wstoken: moodle_token.token,
+        wsfunction: 'core_user_get_users_by_field',
+        moodlewsrestformat: 'json',
+        field: 'id',
+        values: [user_id]
+      }
+      result = post(moodle_token.url, params)
+
+      log_labels =  "[MOODLE API] url=#{moodle_token.url} " \
+                    "token_id=#{moodle_token.id} " \
+                    "duration=#{result['duration']&.round(3)}s " \
+                    "wsfunction=core_user_get_users_by_field " \
+                    "field=id " \
+                    "values=#{[user_id].inspect} " \
+                    "#{('nonce=' + opts[:nonce].to_s + ' ') if opts[:nonce]}"
+
+      if result["exception"].present?
+        Rails.logger.error(log_labels + "message=\"#{result}\"")
+        return nil
+      end
+
+      if result["warnings"].present?
+        Rails.logger.warn(log_labels + "message=\"#{result["warnings"].inspect}\"")
+      end
+
+      result["body"].first
+    end
+
     MAX_RETRIES = 3
 
     def self.post(host_url, params)

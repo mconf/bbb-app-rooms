@@ -265,6 +265,13 @@ class ScheduledMeetingsController < ApplicationController
           NotifyRoomWatcherJob.set(wait: 10.seconds).perform_later(@scheduled_meeting)
         end
 
+        # get user profile image url if available
+        moodle_token = @room.consumer_config.moodle_token
+        if Moodle::API.token_functions_configured?(moodle_token, ['core_user_get_users_by_field'])
+          user_info = Moodle::API.get_user_info(moodle_token, @user.uid)
+          @user.profile_image_url = user_info["profileimageurl"] if user_info && user_info["profileimageurl"]
+        end
+
         # join as moderator (creates the meeting if not created yet)
         res = join_api_url(@scheduled_meeting, @user, opts)
         if res[:can_join?]
