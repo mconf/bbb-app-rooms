@@ -247,7 +247,16 @@ class ApplicationController < ActionController::Base
 
   def on_500(exception = nil)
     Rails.logger.error "Exception caught: class=#{exception.class.name} " \
-                       "message='#{exception.message}'"
+                       "message='#{exception.message}'" if exception
+
+    if Mconf::Env.fetch_boolean('EXCEPTION_NOTIFICATIONS_ENABLED', true) && exception
+      begin
+        ExceptionNotifier.notify_exception(exception)
+      rescue => notify_err
+        Rails.logger.warn "ExceptionNotifier failed: #{notify_err.class}: #{notify_err.message}"
+      end
+    end
+
     render_error(500)
   end
 

@@ -55,7 +55,7 @@ group :development, :test do
   gem 'faker'
   gem 'rspec'
   gem 'rspec_junit_formatter'
-  gem 'rspec-rails', '~> 4.0.0'
+  gem 'rspec-rails'
   gem 'rubocop'
   gem 'rubocop-rails'
   gem 'shoulda-matchers', '~> 4.0'
@@ -141,3 +141,6 @@ gem 'render_async', '~> 2.1'
 
 # Select2
 gem "select2-rails"
+
+# Exception notification via email
+gem 'exception_notification', '~> 4.0'
