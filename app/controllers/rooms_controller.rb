@@ -22,6 +22,7 @@ class RoomsController < ApplicationController
   before_action :validate_room, except: %i[launch close]
   before_action :find_user
   before_action :find_app_launch, only: %i[launch]
+  before_action :fetch_moodle_cmid, only: %i[launch]
   before_action :setup_moodle_groups, only: %i[launch]
   before_action :set_group_variables, only: %i[show meetings]
   before_action :set_institution_guid, except: %i[launch close]
@@ -485,6 +486,25 @@ class RoomsController < ApplicationController
       Rails.logger.info "[setup_consumer_configs] No params received for ConsumerConfigBrightspaceOauth" \
       "#{destroyed ? ', destroyed the existing one' : ''}"
     end
+  end
+
+  def fetch_moodle_cmid
+    return unless @room.moodle_token
+    # the `resource_link_id` provided by Moodle is the `instance_id` of the activity.
+    # We use it to fetch the activity data, from where we get its `cmid` (course module id)
+    activity_data = Moodle::API.get_activity_data(
+      @room.moodle_token,
+      @app_launch.params['resource_link_id'],
+      { nonce: @app_launch.nonce }
+    )
+    if activity_data.nil?
+      Rails.logger.warn "[fetch_moodle_cmid] Could not get the data from activity" \
+                        " instance_id=#{@app_launch.params['resource_link_id']}"
+      return
+    end
+    # store the activity's cmid in the app_launch for later use
+    # (e.g. when checking groupmode or creating calendar events)
+    @app_launch.update(params: @app_launch.params.merge('cmid' => activity_data['id']))
   end
 
   # Initial setup for Moodle groups feature:
