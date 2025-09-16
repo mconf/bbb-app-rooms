@@ -540,20 +540,18 @@ class RoomsController < ApplicationController
         return
       end
 
-      # the `resource_link_id` provided by Moodle is the `instance_id` of the activity.
-      # We use it to fetch the activity data, from where we get its `cmid` (course module id)
-      # to fetch the effective groupmode configured on the activity
-      activity_data = Moodle::API.get_activity_data(moodle_token, @app_launch.params['resource_link_id'], {nonce: @app_launch.nonce})
-      if activity_data.nil?
-        Rails.logger.error "Could not find the necessary data for this activity (instance_id: #{@app_launch.params['resource_link_id']})"
+      # check if we have the activity's cmid stored in the app_launch (from `fetch_moodle_cmid`),
+      # if not, respond with error
+      if @app_launch.params['cmid'].nil?
+        Rails.logger.error '[setup_moodle_groups] The \'cmid\' is missing from app_launch params'
         set_error('room', 'moodle_activity_not_found', :forbidden)
         respond_with_error(@error)
         return
       end
 
-      groupmode = Moodle::API.get_groupmode(moodle_token, activity_data['id'], {nonce: @app_launch.nonce})
       # testing if the activity has its groupmode configured for separate groups (1)
       # or visible groups (2)
+      groupmode = Moodle::API.get_groupmode(moodle_token, @app_launch.params['cmid'], {nonce: @app_launch.nonce})
       if groupmode == 0 || groupmode.nil?
         Rails.logger.error 'The Moodle activity has an invalid groupmode configured'
         set_error('room', 'moodle_invalid_groupmode', :forbidden)
