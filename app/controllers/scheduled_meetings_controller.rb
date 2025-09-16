@@ -214,7 +214,6 @@ class ScheduledMeetingsController < ApplicationController
               { nonce: @app_launch.nonce, cmid: @app_launch.params['cmid'] }
             )
             flash[:error] = t('scheduled_meetings.error.moodle_create_calendar_event') unless created
-          end
 
           when has_changed_recurrence || (changes.keys & tracked_attrs).any?
             if @scheduled_meeting.recurring?
