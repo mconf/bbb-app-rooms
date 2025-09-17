@@ -132,7 +132,7 @@ class ScheduledMeetingsController < ApplicationController
               moodle_token,
               @scheduled_meeting,
               app_launch.context_id,
-              { nonce: @app_launch.nonce, cmid: @app_launch.params['cmid'] }
+              { nonce: @app_launch.nonce }
             )
           else
             created = Moodle::API.create_calendar_event(
@@ -140,7 +140,7 @@ class ScheduledMeetingsController < ApplicationController
               @scheduled_meeting.hash_id,
               @scheduled_meeting,
               @app_launch.context_id,
-              { nonce: @app_launch.nonce, cmid: @app_launch.params['cmid'] }
+              { nonce: @app_launch.nonce }
             )
             flash[:error] = t('scheduled_meetings.error.moodle_create_calendar_event') unless created
           end
@@ -211,7 +211,7 @@ class ScheduledMeetingsController < ApplicationController
               @scheduled_meeting.hash_id,
               @scheduled_meeting,
               @app_launch.context_id,
-              { nonce: @app_launch.nonce, cmid: @app_launch.params['cmid'] }
+              { nonce: @app_launch.nonce }
             )
             flash[:error] = t('scheduled_meetings.error.moodle_create_calendar_event') unless created
 
@@ -242,7 +242,7 @@ class ScheduledMeetingsController < ApplicationController
                 @scheduled_meeting.hash_id,
                 @scheduled_meeting,
                 @app_launch.context_id,
-                { nonce: @app_launch.nonce, cmid: @app_launch.params['cmid'] }
+                { nonce: @app_launch.nonce }
               )
               flash[:error] = t('scheduled_meetings.error.moodle_create_calendar_event') unless created
             end

@@ -28,7 +28,7 @@ class UpdateRecurringMeetingsJob < ApplicationJob
           meeting.hash_id,
           new_meeting,
           app_launch.context_id,
-          { nonce: app_launch.nonce, cmid: app_launch.params['cmid'] }
+          { nonce: app_launch.nonce }
         )
         Resque.logger.error "[UpdateRecurringMeetingsJob] Moodle API call to create calendar event" \
         " failed for meeting `#{meeting.id}`." unless created
