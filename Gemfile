@@ -98,7 +98,7 @@ gem 'faraday-multipart'
 gem 'repost', '~> 0.4.2'
 
 # BigBlueButton API
-gem 'bigbluebutton-api-ruby', git: 'https://github.com/mconf/bigbluebutton-api-ruby.git', tag: 'v1.9.0-mconf'
+gem 'bigbluebutton-api-ruby', git: 'https://github.com/mconf/bigbluebutton-api-ruby.git', tag: 'v2.0.0-rc.1'
 
 # Authentication
 gem 'rest-client'

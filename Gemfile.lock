@@ -7,16 +7,11 @@ GIT
 
 GIT
   remote: https://github.com/mconf/bigbluebutton-api-ruby.git
-  revision: 5375e17d823ea760bfed2ca3f705226ac5a67f83
-  tag: v1.9.0-mconf
+  revision: 1fb71d14e5cb9c24ab6efc2b18777e1472a0fc1b
+  tag: v2.0.0-rc.1
   specs:
-    bigbluebutton-api-ruby (1.9.0.pre.mconf)
-      childprocess (>= 1.0.1)
-      ffi (>= 1.9.24)
-      json (>= 1.8.6)
-      nokogiri (>= 1.10.4)
-      rack (>= 1.6.11)
-      rubyzip (>= 1.3.0)
+    bigbluebutton-api-ruby (2.0.0.pre.rc.1)
+      base64 (>= 0.1.0)
       xml-simple (~> 1.1)
 
 GIT
