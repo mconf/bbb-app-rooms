@@ -7,10 +7,10 @@ GIT
 
 GIT
   remote: https://github.com/mconf/bigbluebutton-api-ruby.git
-  revision: 1fb71d14e5cb9c24ab6efc2b18777e1472a0fc1b
-  tag: v2.0.0-rc.1
+  revision: 01949108d5c96fee2c9b91f79d719d7ae8153d27
+  tag: v2.0.0-mconf.rc.1
   specs:
-    bigbluebutton-api-ruby (2.0.0.pre.rc.1)
+    bigbluebutton-api-ruby (2.0.0.pre.mconf.rc.1)
       base64 (>= 0.1.0)
       xml-simple (~> 1.1)
 
