@@ -11,7 +11,9 @@ module Moodle
       # Append the activity link to the event description
       if app_launch && app_launch.params['cmid']
         activity_url = URI.join(moodle_token.url, "/mod/lti/view.php?id=#{app_launch.params['cmid']}").to_s
-        link_text = I18n.t('default.scheduled_meeting.calendar.description.link')
+        link_text = app_launch.params['resource_link_title'] || I18n.t(
+          'default.scheduled_meeting.calendar.description.moodle_link', app: Rails.configuration.app_name
+        )
         link = "<a href=\"#{activity_url}\" target=\"_blank\">#{link_text}</a>"
         raw_string = "#{scheduled_meeting.description}\n#{link}"
         # Split each line into a paragraph
