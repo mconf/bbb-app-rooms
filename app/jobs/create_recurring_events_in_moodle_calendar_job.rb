@@ -39,6 +39,7 @@ class CreateRecurringEventsInMoodleCalendarJob < ApplicationJob
         description: scheduled_meeting.description,
         start_at: next_start_at,
         duration: scheduled_meeting.duration,
+        created_by_launch_nonce: scheduled_meeting.created_by_launch_nonce,
       )
     end
 

@@ -131,7 +131,7 @@ class ScheduledMeetingsController < ApplicationController
             CreateRecurringEventsInMoodleCalendarJob.perform_later(
               moodle_token,
               @scheduled_meeting,
-              app_launch.context_id,
+              @app_launch.context_id,
               { nonce: @app_launch.nonce }
             )
           else
