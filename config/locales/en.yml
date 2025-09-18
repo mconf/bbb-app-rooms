@@ -87,6 +87,7 @@ en:
       allmoderators:  "All moderators"
       calendar:
         description:
+          moodle_link: "Click here to access %{app}"
           link:       "Click here to access this class."
       created:        "The session was scheduled"
       destroy:

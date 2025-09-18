@@ -21,12 +21,20 @@ class UpdateRecurringMeetingsJob < ApplicationJob
         cycle = meeting.weekly? ? 1 : 2
         new_meeting = meeting
         new_meeting.start_at = (moodle_calendar_events.last.start_at + cycle.weeks)
-        Resque.logger.info "[UpdateRecurringMeetingsJob] Creating a new event in Moodle Calendar in order to keep meeting's recurrence."
-        unless Moodle::API.create_calendar_event(room.moodle_token, meeting.hash_id, new_meeting, app_launch.context_id, {nonce: app_launch.nonce})
-          Resque.logger.error "[UpdateRecurringMeetingsJob] Moodle API call to create calendar event failed for meeting `#{meeting.id}`."
-        end
+        Resque.logger.info "[UpdateRecurringMeetingsJob] Creating a new event in Moodle Calendar in" \
+                          " order to keep meeting's recurrence."
+        created = Moodle::API.create_calendar_event(
+          room.moodle_token,
+          meeting.hash_id,
+          new_meeting,
+          app_launch.context_id,
+          { nonce: app_launch.nonce }
+        )
+        Resque.logger.error "[UpdateRecurringMeetingsJob] Moodle API call to create calendar event" \
+        " failed for meeting `#{meeting.id}`." unless created
       rescue StandardError => e
-        Resque.logger.error "[UpdateRecurringMeetingsJob] Error creating the new calendar event for meeting `#{meeting.id}`, message: #{e.message}."
+        Resque.logger.error "[UpdateRecurringMeetingsJob] Error creating the new calendar event for" \
+        " meeting `#{meeting.id}`, message: #{e.message}."
       end
     end
   end

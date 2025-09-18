@@ -126,13 +126,23 @@ class ScheduledMeetingsController < ApplicationController
       if valid_start_at && @scheduled_meeting.save
         if params[:scheduled_meeting][:create_moodle_calendar_event] == '1' &&
         @room.can_create_moodle_calendar_event
-          moodle_token = @room.consumer_config.moodle_token
+          moodle_token = @room.moodle_token
           if @scheduled_meeting.recurring?
-            CreateRecurringEventsInMoodleCalendarJob.perform_later(moodle_token, @scheduled_meeting, @app_launch.context_id, {nonce: @app_launch.nonce})
+            CreateRecurringEventsInMoodleCalendarJob.perform_later(
+              moodle_token,
+              @scheduled_meeting,
+              @app_launch.context_id,
+              { nonce: @app_launch.nonce }
+            )
           else
-            unless Moodle::API.create_calendar_event(moodle_token, @scheduled_meeting.hash_id, @scheduled_meeting, @app_launch.context_id, {nonce: @app_launch.nonce})
-              flash[:error] = t('scheduled_meetings.error.moodle_create_calendar_event')
-            end
+            created = Moodle::API.create_calendar_event(
+              moodle_token,
+              @scheduled_meeting.hash_id,
+              @scheduled_meeting,
+              @app_launch.context_id,
+              { nonce: @app_launch.nonce }
+            )
+            flash[:error] = t('scheduled_meetings.error.moodle_create_calendar_event') unless created
           end
         end
         format.html do
@@ -175,24 +185,66 @@ class ScheduledMeetingsController < ApplicationController
           moodle_token = @room.consumer_config.moodle_token
           case
           when has_become_recurring
-            Moodle::API.delete_calendar_event(moodle_token, moodle_calendar_events_ids.first, @app_launch.context_id, { nonce: @app_launch.nonce })
+            Moodle::API.delete_calendar_event(
+              moodle_token,
+              moodle_calendar_events_ids.first,
+              @app_launch.context_id,
+              { nonce: @app_launch.nonce }
+            )
             MoodleCalendarEvent.find_by(event_id: moodle_calendar_events_ids.first).destroy
-            CreateRecurringEventsInMoodleCalendarJob.perform_later(moodle_token, @scheduled_meeting, @app_launch.context_id, { nonce: @app_launch.nonce })
+            CreateRecurringEventsInMoodleCalendarJob.perform_later(
+              moodle_token,
+              @scheduled_meeting,
+              @app_launch.context_id,
+              { nonce: @app_launch.nonce }
+            )
+
           when has_lost_recurrence
-            DeleteRecurringEventsInMoodleCalendarJob.perform_later(moodle_token, moodle_calendar_events_ids, @app_launch.context_id, {nonce: @app_launch.nonce})
-            unless Moodle::API.create_calendar_event(moodle_token, @scheduled_meeting.hash_id, @scheduled_meeting, @app_launch.context_id, {nonce: @app_launch.nonce})
-              flash[:error] = t('scheduled_meetings.error.moodle_create_calendar_event')
-            end
+            DeleteRecurringEventsInMoodleCalendarJob.perform_later(
+              moodle_token,
+              moodle_calendar_events_ids,
+              @app_launch.context_id,
+              { nonce: @app_launch.nonce }
+            )
+            created = Moodle::API.create_calendar_event(
+              moodle_token,
+              @scheduled_meeting.hash_id,
+              @scheduled_meeting,
+              @app_launch.context_id,
+              { nonce: @app_launch.nonce }
+            )
+            flash[:error] = t('scheduled_meetings.error.moodle_create_calendar_event') unless created
+
           when has_changed_recurrence || (changes.keys & tracked_attrs).any?
             if @scheduled_meeting.recurring?
-              DeleteRecurringEventsInMoodleCalendarJob.perform_later(moodle_token, moodle_calendar_events_ids, @app_launch.context_id, {nonce: @app_launch.nonce})
-              CreateRecurringEventsInMoodleCalendarJob.perform_later(moodle_token, @scheduled_meeting, @app_launch.context_id, { nonce: @app_launch.nonce })
+              DeleteRecurringEventsInMoodleCalendarJob.perform_later(
+                moodle_token,
+                moodle_calendar_events_ids,
+                @app_launch.context_id,
+                { nonce: @app_launch.nonce }
+              )
+              CreateRecurringEventsInMoodleCalendarJob.perform_later(
+                moodle_token,
+                @scheduled_meeting,
+                @app_launch.context_id,
+                { nonce: @app_launch.nonce, cmid: @app_launch.params['cmid'] }
+              )
             else
-              Moodle::API.delete_calendar_event(moodle_token, moodle_calendar_events_ids.first, @app_launch.context_id, { nonce: @app_launch.nonce })
+              Moodle::API.delete_calendar_event(
+                moodle_token,
+                moodle_calendar_events_ids.first,
+                @app_launch.context_id,
+                { nonce: @app_launch.nonce }
+              )
               MoodleCalendarEvent.find_by(event_id: moodle_calendar_events_ids.first).destroy
-              unless Moodle::API.create_calendar_event(moodle_token, @scheduled_meeting.hash_id, @scheduled_meeting, @app_launch.context_id, {nonce: @app_launch.nonce})
-                flash[:error] = t('scheduled_meetings.error.moodle_create_calendar_event')
-              end
+              created = Moodle::API.create_calendar_event(
+                moodle_token,
+                @scheduled_meeting.hash_id,
+                @scheduled_meeting,
+                @app_launch.context_id,
+                { nonce: @app_launch.nonce }
+              )
+              flash[:error] = t('scheduled_meetings.error.moodle_create_calendar_event') unless created
             end
           end
         end
