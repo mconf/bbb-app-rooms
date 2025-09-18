@@ -11,14 +11,18 @@ class MeetingsController < ApplicationController
   before_action :check_data_api_config, only: [:download_artifacts]
   before_action :find_app_launch
   before_action :find_user, only: [:download_artifacts]
+  before_action :set_institution_guid
   before_action only: :download_artifacts do
     authorize_user!(:download_artifacts, @room)
   end
 
   # GET /rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/meetings/:internal_id/download_artifacts
   def download_artifacts
-    institution_guid = @app_launch.params['custom_params']['institution_guid']
-    @artifact_files = Mconf::DataApi.get_meeting_artifacts_files(institution_guid, @meeting[:internalMeetingID], I18n.locale.to_s)
+    @artifact_files = Mconf::DataApi.get_meeting_artifacts_files(
+      @institution_guid,
+      @meeting[:internalMeetingID],
+      I18n.locale.to_s
+    )
 
     render partial: "shared/meeting_data_download"
   end

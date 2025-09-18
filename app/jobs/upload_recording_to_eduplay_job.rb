@@ -21,13 +21,13 @@ class UploadRecordingToEduplayJob < ApplicationJob
 
       # If the recordings server uses token authentication, we must get an authenticated
       # download URL
-      rec_url = URI.parse(playback[:url] + 'video-0.mp4')
+      rec_url = URI.parse(playback[:url])
       if Rails.application.config.playback_url_authentication
         token = get_recording_token(room, user[:full_name], rec_id)
         rec_url.query = URI.encode_www_form({ token: token })
       end
 
-      api = Eduplay::API.new(@eduplay_token.token)
+      api = Mconf::Eduplay::API.new(@eduplay_token.token)
 
       Resque.logger.info "[+] Creating tags #{video_data[:tags]} ..."
       api.create_multiple_tags(video_data[:tags])

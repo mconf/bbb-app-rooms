@@ -10,17 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_06_18_142915) do
-
+ActiveRecord::Schema[8.0].define(version: 2025_08_22_214356) do
   # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
+  enable_extension "pg_catalog.plpgsql"
 
   create_table "app_launches", force: :cascade do |t|
     t.string "nonce"
     t.jsonb "params"
-    t.datetime "expires_at"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "expires_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.jsonb "omniauth_auth"
     t.string "room_handler"
     t.index ["expires_at"], name: "index_app_launches_on_expires_at"
@@ -32,8 +31,8 @@ ActiveRecord::Schema.define(version: 2025_06_18_142915) do
     t.integer "event_id"
     t.string "scheduled_meeting_hash_id"
     t.bigint "room_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer "link_id"
     t.index ["event_id", "room_id"], name: "index_brightspace_calendar_events_on_event_id_and_room_id", unique: true
     t.index ["link_id", "room_id"], name: "index_brightspace_calendar_events_on_link_id_and_room_id", unique: true
@@ -63,56 +62,57 @@ ActiveRecord::Schema.define(version: 2025_06_18_142915) do
   create_table "consumer_configs", force: :cascade do |t|
     t.string "key"
     t.string "external_disclaimer"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.boolean "set_duration", default: false
     t.boolean "download_presentation_video", default: true
     t.boolean "message_reference_terms_use", default: true
     t.string "external_widget", default: ""
     t.boolean "force_disable_external_link", default: false
     t.string "external_context_url"
+    t.string "institution_guid"
     t.index ["key"], name: "index_consumer_configs_on_key", unique: true
   end
 
   create_table "eduplay_tokens", force: :cascade do |t|
     t.string "user_uid"
     t.text "token"
-    t.datetime "expires_at"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "expires_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "eduplay_uploads", force: :cascade do |t|
     t.string "user_uid"
     t.string "recording_id"
     t.string "upload_url"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "filesender_tokens", force: :cascade do |t|
     t.string "user_uid"
     t.string "token"
-    t.datetime "expires_at"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "expires_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.text "refresh_token"
   end
 
   create_table "moodle_calendar_events", force: :cascade do |t|
     t.integer "event_id"
     t.string "scheduled_meeting_hash_id"
-    t.datetime "start_at"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "start_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "moodle_tokens", force: :cascade do |t|
     t.bigint "consumer_config_id"
     t.string "token"
     t.string "url"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.boolean "group_select_enabled", default: false
     t.boolean "show_all_groups", default: true
     t.index ["consumer_config_id"], name: "index_moodle_tokens_on_consumer_config_id"
@@ -127,8 +127,8 @@ ActiveRecord::Schema.define(version: 2025_06_18_142915) do
     t.boolean "recording", default: true
     t.boolean "wait_moderator", default: true
     t.boolean "all_moderators", default: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "handler"
     t.boolean "allow_wait_moderator", default: true
     t.boolean "allow_all_moderators", default: true
@@ -139,13 +139,13 @@ ActiveRecord::Schema.define(version: 2025_06_18_142915) do
   create_table "scheduled_meetings", force: :cascade do |t|
     t.bigint "room_id"
     t.string "name", null: false
-    t.datetime "start_at", null: false
+    t.datetime "start_at", precision: nil, null: false
     t.integer "duration", null: false
     t.boolean "recording", default: true
     t.boolean "wait_moderator", default: true
     t.boolean "all_moderators", default: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "description"
     t.string "welcome"
     t.string "created_by_launch_nonce"

@@ -15,6 +15,7 @@ class RoomsController < ApplicationController
   before_action -> {authenticate_with_oauth! :bbbltibroker},
     only: :launch, raise: false
   before_action :set_launch_room, only: %i[launch]
+  before_action :setup_consumer_configs, only: %i[launch]
 
   before_action :find_room, except: %i[launch close]
   before_action :validate_session_token_and_restore_session, only: %i[recording_playback]
@@ -23,6 +24,7 @@ class RoomsController < ApplicationController
   before_action :find_app_launch, only: %i[launch]
   before_action :setup_moodle_groups, only: %i[launch]
   before_action :set_group_variables, only: %i[show meetings]
+  before_action :set_institution_guid, except: %i[launch close]
 
   before_action only: %i[show launch] do
     authorize_user!(:show, @room)
@@ -37,7 +39,7 @@ class RoomsController < ApplicationController
     respond_to do |format|
       @room.update_recurring_meetings
       @scheduled_meetings = @room.scheduled_meetings.active
-      
+
       if @room.moodle_group_select_enabled?
         @scheduled_meetings = @scheduled_meetings.where(moodle_group_id: Rails.cache.read("#{@app_launch.nonce}/current_group_id"))
       end
@@ -168,13 +170,12 @@ class RoomsController < ApplicationController
     if eduplay_token.token.present? && eduplay_token.expires_at > Time.now + 30.minutes
       Rails.logger.info "EduplayToken #{eduplay_token}"
       @eduplay_token = eduplay_token.token
-      api = Eduplay::API.new(eduplay_token.token)
+      api = Mconf::Eduplay::API.new(eduplay_token.token)
       @channels = api.get_channels
     else
       eduplay_token&.destroy
-      @status = 500
-      @layout = false
-      render 'errors/error' and return
+      set_error('eduplay', 'invalid_token_error', 500)
+      respond_with_error(@error) and return
     end
 
     render "rooms/eduplay"
@@ -182,7 +183,7 @@ class RoomsController < ApplicationController
 
   def eduplay_upload
     eduplay_token = EduplayToken.find_by(user_uid: @user.uid)
-    api = Eduplay::API.new(eduplay_token.token)
+    api = Mconf::Eduplay::API.new(eduplay_token.token)
 
     if params['channel'] == 'new_channel'
       Rails.logger.info "Creating new channel (name=#{params['channel_name']}, public=#{params['channel_public']}, tags=#{params['channel_tags']})"
@@ -266,7 +267,7 @@ class RoomsController < ApplicationController
     end
 
     if filesender_token.expires_at.nil? || filesender_token.expires_at < Time.now
-      new_token = Filesender::API.refresh_token(filesender_token.refresh_token)
+      new_token = Mconf::Filesender::API.refresh_token(filesender_token.refresh_token)
 
       if new_token['error'].present?
         flash[:notice] = t('default.filesender.error')
@@ -387,7 +388,7 @@ class RoomsController < ApplicationController
 
     # Store the data from this launch for easier access
     expires_at = Rails.configuration.launch_duration_mins.from_now
-    app_launch = AppLaunch.create_with(room_handler: handler)
+    @app_launch = AppLaunch.create_with(room_handler: handler)
                    .find_or_create_by(nonce: launch_nonce) do |launch|
       launch.update(
         params: launch_params,
@@ -395,14 +396,14 @@ class RoomsController < ApplicationController
         expires_at: expires_at
       )
     end
-    Rails.logger.info "Saved the AppLaunch nonce=#{app_launch.nonce} room_handler=#{app_launch.room_handler}"
+    Rails.logger.info "Saved the AppLaunch nonce=#{@app_launch.nonce} room_handler=#{@app_launch.room_handler}"
 
     # Use this data only during the launch
     # From now on, take it from the AppLaunch
     session.delete('omniauth_auth')
 
     # Create/update the room
-    local_room_params = app_launch.room_params
+    local_room_params = @app_launch.room_params
     @room = Room.create_with(local_room_params)
               .find_or_create_by(handler: local_room_params[:handler])
     @room.update(local_room_params) if @room.present?
@@ -412,6 +413,77 @@ class RoomsController < ApplicationController
     set_room_session(
       @room, { launch: launch_nonce }
     )
+  end
+
+  def setup_consumer_configs
+    custom_params = @app_launch.custom_params
+    return if custom_params.nil?
+
+    # Create or update the ConsumerConfig with custom_params
+    @consumer_config = ConsumerConfig.find_or_create_by(key: @app_launch.consumer_key)
+    @consumer_config.update(
+      set_duration: custom_params['set_duration'],
+      download_presentation_video: custom_params['download_presentation_video'],
+      message_reference_terms_use: custom_params['message_reference_terms_use'],
+      force_disable_external_link: custom_params['force_disable_external_link'],
+      external_widget: custom_params['external_widget'],
+      external_disclaimer: custom_params['external_disclaimer'],
+      external_context_url: custom_params['external_context_url'],
+      institution_guid: custom_params['institution_guid']
+    )
+    Rails.logger.info "[setup_consumer_configs] ConsumerConfig created/updated with key=#{@consumer_config.key}, " \
+    "params=#{custom_params.except('bbb', 'moodle', 'brightspace')}"
+
+    # Create or update the ConsumerConfigServer
+    if custom_params.key?('bbb')
+      bbb_configs = custom_params['bbb']
+      consumer_config_server = ConsumerConfigServer.find_or_create_by(consumer_config: @consumer_config)
+      consumer_config_server.update(
+        endpoint: bbb_configs['url'],
+        internal_endpoint: bbb_configs['internal_url'],
+        secret: bbb_configs['secret']
+      )
+      Rails.logger.info "[setup_consumer_configs] ConsumerConfigServer created/updated, params=#{bbb_configs}"
+    else
+      destroyed = @consumer_config.server&.destroy
+      Rails.logger.info "[setup_consumer_configs] No params received for ConsumerConfigServer" \
+      "#{destroyed ? ', destroyed the existing one' : ''}"
+    end
+
+    # Create or update the MoodleToken
+    if custom_params.key?('moodle')
+      moodle_configs = custom_params['moodle']
+      moodle_token = MoodleToken.find_or_create_by(consumer_config: @consumer_config)
+      moodle_token.update(
+        url: moodle_configs['url'],
+        token: moodle_configs['token'],
+        group_select_enabled: moodle_configs['group_select_enabled'],
+        show_all_groups: moodle_configs['show_all_groups']
+      )
+      Rails.logger.info "[setup_consumer_configs] MoodleToken created/updated, params=#{moodle_configs}"
+    else
+      destroyed = @consumer_config.moodle_token&.destroy
+      Rails.logger.info '[setup_consumer_configs] No params received for MoodleToken' \
+      "#{destroyed ? ', destroyed the existing one' : ''}"
+    end
+
+    # Create or update the ConsumerConfigBrightspaceOauth
+    if custom_params.key?('brightspace')
+      brightspace_configs = custom_params['brightspace']
+      brightspace_oauth = ConsumerConfigBrightspaceOauth.find_or_create_by(consumer_config: @consumer_config)
+      brightspace_oauth.update(
+        url: brightspace_configs['oauth_url'],
+        client_id: brightspace_configs['oauth_client_id'],
+        client_secret: brightspace_configs['oauth_client_secret'],
+        scope: brightspace_configs['oauth_scopes']
+      )
+      Rails.logger.info "[setup_consumer_configs] ConsumerConfigBrightspaceOauth created/updated, " \
+      "params=#{brightspace_configs}"
+    else
+      destroyed = @consumer_config.brightspace_oauth&.destroy
+      Rails.logger.info "[setup_consumer_configs] No params received for ConsumerConfigBrightspaceOauth" \
+      "#{destroyed ? ', destroyed the existing one' : ''}"
+    end
   end
 
   # Initial setup for Moodle groups feature:
@@ -577,22 +649,16 @@ class RoomsController < ApplicationController
   end
 
   def fetch_external_context(launch_params)
-    launch_nonce = params['launch_nonce']
+    app_launch = AppLaunch.new(params: launch_params)
+    ext_context_url = app_launch.custom_params['external_context_url']
+
+    # will only try to get an external context/handler if the `external_context_url` custom_param is present
+    return true, nil if ext_context_url.blank? # proceed without a handler
 
     # this is a temporary user in case we are responding the request here and we need it (at least
     # the locale we need to set, even for error pages)
-    user_params = AppLaunch.new(params: launch_params).user_params
-    @user = BbbAppRooms::User.new(user_params)
+    @user = User.new(app_launch.user_params)
     set_current_locale
-
-    # will only try to get an external context/handler if the ConsumerConfig is configured to do so
-    if launch_params.key?('custom_params') && launch_params['custom_params'].key?('oauth_consumer_key')
-      consumer_key = launch_params['custom_params']['oauth_consumer_key']
-      if consumer_key.present?
-        ext_context_url = ConsumerConfig.find_by(key: consumer_key)&.external_context_url
-      end
-    end
-    return true, nil if ext_context_url.blank? # proceed without a handler
 
     # The API has different endpoints for teachers and students
     base = ext_context_url.match(/.*\/context/).to_s
@@ -600,9 +666,9 @@ class RoomsController < ApplicationController
     # base = "http://<lti-context-api-host>/context"
     ext_context_url = @user.moderator?(Abilities.moderator_roles) ? "#{base}/teacher/rooms" : "#{base}/student/rooms"
 
-    Rails.logger.info "The consumer is configured to use an API to fetch the context/handler consumer_key=#{consumer_key} url=#{ext_context_url}"
+    Rails.logger.info "The consumer key=#{app_launch.consumer_key} is configured to " \
+    "fetch the context/handler from url=#{ext_context_url}"
 
-    Rails.logger.info "Making a request to an external API to define the context/handler url=#{ext_context_url}"
     begin
       response = send_request(ext_context_url, launch_params)
       # example response:
@@ -648,7 +714,7 @@ class RoomsController < ApplicationController
       return false, nil
     elsif handlers.size > 1
       @handlers = handlers
-      @launch_nonce = launch_nonce
+      @launch_nonce = params['launch_nonce']
       respond_to do |format|
         format.html { render 'rooms/external_context_selector' }
       end

@@ -5,10 +5,10 @@ Rails.application.routes.draw do
   get '/health_check', to: 'health_check#all', default: { format: nil }
   get '/healthz', to: 'health_check#all', default: { format: nil }
 
-  if Mconf::Env.fetch_boolean("SERVE_RAILS_ADMIN", false)
+  if Mconf::Env.fetch_boolean('SERVE_RAILS_ADMIN', false)
     mount RailsAdmin::Engine => '/dash', as: 'rails_admin'
 
-    unless Mconf::Env.fetch_boolean("SERVE_APPLICATION", true)
+    unless Mconf::Env.fetch_boolean('SERVE_APPLICATION', true)
       root to: redirect('/dash')
     end
   end
@@ -17,8 +17,8 @@ Rails.application.routes.draw do
     mount ActionCable.server => Rails.configuration.action_cable.mount_path
   end
   
-  if Mconf::Env.fetch_boolean("SERVE_APPLICATION", true)
-    scope ENV['RELATIVE_URL_ROOT'] || '' do
+  if Mconf::Env.fetch_boolean('SERVE_APPLICATION', true)
+    scope Mconf::Env.fetch('RELATIVE_URL_ROOT', '') do
       scope 'rooms' do
         get '/close', to: 'rooms#close', as: :autoclose
         post '/webhooks/moodle_attendance', to: 'webhooks#moodle_attendance', as: :moodle_attendance
@@ -66,7 +66,7 @@ Rails.application.routes.draw do
           end
         end
 
-        if Mconf::Env.fetch_boolean("MCONF_SERVE_RESQUE_INTERFACE", false)
+        if Mconf::Env.fetch_boolean('MCONF_SERVE_RESQUE_INTERFACE', false)
           mount Resque::Server.new, at: "/resque"
         end
       end

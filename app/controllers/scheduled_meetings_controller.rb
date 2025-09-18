@@ -19,6 +19,7 @@ class ScheduledMeetingsController < ApplicationController
   before_action :validate_session_token_and_restore_session, only: :join
   before_action :find_user
   before_action :find_app_launch, only: %i[create update destroy]
+  before_action :set_institution_guid
 
   before_action :find_scheduled_meeting, only: (%i[edit update destroy] + open_actions)
   before_action :validate_scheduled_meeting, only: (%i[edit update destroy] + open_actions)
@@ -126,20 +127,12 @@ class ScheduledMeetingsController < ApplicationController
         if params[:scheduled_meeting][:create_moodle_calendar_event] == '1' &&
         @room.can_create_moodle_calendar_event
           moodle_token = @room.consumer_config.moodle_token
-          begin
-            if @scheduled_meeting.recurring?
-              CreateRecurringEventsInMoodleCalendarJob.perform_later(moodle_token, @scheduled_meeting, @app_launch.context_id, {nonce: @app_launch.nonce})
-            else
-              Moodle::API.create_calendar_event(moodle_token, @scheduled_meeting.hash_id, @scheduled_meeting, @app_launch.context_id, {nonce: @app_launch.nonce})
+          if @scheduled_meeting.recurring?
+            CreateRecurringEventsInMoodleCalendarJob.perform_later(moodle_token, @scheduled_meeting, @app_launch.context_id, {nonce: @app_launch.nonce})
+          else
+            unless Moodle::API.create_calendar_event(moodle_token, @scheduled_meeting.hash_id, @scheduled_meeting, @app_launch.context_id, {nonce: @app_launch.nonce})
+              flash[:error] = t('scheduled_meetings.error.moodle_create_calendar_event')
             end
-          rescue Moodle::UrlNotFoundError => e
-            set_error('room', 'moodle_url_not_found', 500)
-            respond_with_error(@error)
-            return
-          rescue Moodle::RequestError => e
-            set_error('room', 'moodle_request_error', 500)
-            respond_with_error(@error)
-            return
           end
         end
         format.html do
@@ -187,7 +180,9 @@ class ScheduledMeetingsController < ApplicationController
             CreateRecurringEventsInMoodleCalendarJob.perform_later(moodle_token, @scheduled_meeting, @app_launch.context_id, { nonce: @app_launch.nonce })
           when has_lost_recurrence
             DeleteRecurringEventsInMoodleCalendarJob.perform_later(moodle_token, moodle_calendar_events_ids, @app_launch.context_id, {nonce: @app_launch.nonce})
-            Moodle::API.create_calendar_event(moodle_token, @scheduled_meeting.hash_id, @scheduled_meeting, @app_launch.context_id, {nonce: @app_launch.nonce})
+            unless Moodle::API.create_calendar_event(moodle_token, @scheduled_meeting.hash_id, @scheduled_meeting, @app_launch.context_id, {nonce: @app_launch.nonce})
+              flash[:error] = t('scheduled_meetings.error.moodle_create_calendar_event')
+            end
           when has_changed_recurrence || (changes.keys & tracked_attrs).any?
             if @scheduled_meeting.recurring?
               DeleteRecurringEventsInMoodleCalendarJob.perform_later(moodle_token, moodle_calendar_events_ids, @app_launch.context_id, {nonce: @app_launch.nonce})
@@ -195,7 +190,9 @@ class ScheduledMeetingsController < ApplicationController
             else
               Moodle::API.delete_calendar_event(moodle_token, moodle_calendar_events_ids.first, @app_launch.context_id, { nonce: @app_launch.nonce })
               MoodleCalendarEvent.find_by(event_id: moodle_calendar_events_ids.first).destroy
-              Moodle::API.create_calendar_event(moodle_token, @scheduled_meeting.hash_id, @scheduled_meeting, @app_launch.context_id, {nonce: @app_launch.nonce})
+              unless Moodle::API.create_calendar_event(moodle_token, @scheduled_meeting.hash_id, @scheduled_meeting, @app_launch.context_id, {nonce: @app_launch.nonce})
+                flash[:error] = t('scheduled_meetings.error.moodle_create_calendar_event')
+              end
             end
           end
         end

@@ -13,6 +13,8 @@
     <%= render 'layouts/theme', theme: app_theme %>
     <%= render 'layouts/gtm_head' if app_theme == 'elos' %>
     <%= render 'shared/rnp_chat' if app_theme == 'rnp' %>
+    <meta name="session-consumer" content="<%= @app_launch&.consumer_key %>" />
+    <meta name="session-launch" content="<%= @app_launch&.nonce %>" />
 
     <% if Rails.application.config.adopt_website_code.present? %>
       <meta name="adopt-website-id" content="<%= Rails.application.config.adopt_website_code %>" />

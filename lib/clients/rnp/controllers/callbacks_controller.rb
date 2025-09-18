@@ -3,7 +3,7 @@ module Clients::Rnp
     class CallbacksController < ApplicationController
 
       def eduplay_callback
-        response = Eduplay::API.get_access_token(params[:code])
+        response = Mconf::Eduplay::API.get_access_token(params[:code])
         @access_token = response['access_token']
         @expires_at = Time.now + response['expires_in'].to_i
         @recordID = params[:state]
@@ -12,7 +12,7 @@ module Clients::Rnp
       end
 
       def filesender_callback
-        response = Filesender::API.get_access_token(params[:code])
+        response = Mconf::Filesender::API.get_access_token(params[:code])
         @access_token = response['access_token']
         @refresh_token = response['refresh_token']
         @expires_at = Time.now - 24.hours + response['expires_in'].to_i

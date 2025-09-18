@@ -21,8 +21,8 @@ my_key="my-key"
 my_secret="my-secret"
 
 # Used on the oauth flow between broker and rooms
-my_internal_key="my-internal-key"
-my_internal_secret="my-internal-secret"
+my_internal_key="rooms-internal-key"
+my_internal_secret="rooms-internal-secret"
 
 redb=`tput setaf 1; tput setab 0`
 greenb=`tput setaf 2; tput setab 0`
@@ -79,34 +79,32 @@ start_ngrok() {
 
   echo
   echo "ngrok started"
-  echo "Forwarding: http://localhost:${greenb}$port0${reset} ->  http://${greenb}$address0${reset}"
-  echo "Forwarding: http://localhost:${greenb}$port0${reset} -> https://${greenb}$address0${reset}"
-  echo "Forwarding: http://localhost:${yellowb}$port1${reset} ->  http://${yellowb}$address1${reset}"
-  echo "Forwarding: http://localhost:${yellowb}$port1${reset} -> https://${yellowb}$address1${reset}"
+  echo "Forwarding Broker: http://localhost:${greenb}$port0${reset} -> https://${greenb}$address0${reset}"
+  echo "Forwarding Rooms: http://localhost:${yellowb}$port1${reset} -> https://${yellowb}$address1${reset}"
 }
 
 update_ngrok_addresses() {
-  file0="$lti_broker_path/.env"
-  file1="$app_rooms_path/.env.development"
+  broker_env="$lti_broker_path/.env"
+  rooms_env="$app_rooms_path/.env.development.local"
 
   echo
-  replace_key_value $file0 "URL_HOST" $address0 ${greenb}
-  replace_key_value $file1 "URL_HOST" $address1 ${yellowb}
-  replace_key_value $file1 "OMNIAUTH_BBBLTIBROKER_SITE" "https://$address0" ${yellowb}
+  replace_key_value $broker_env "URL_HOST" $address0 ${greenb}
+  replace_key_value $broker_env "DEFAULT_LTI_TOOL" "rooms" ${greenb}
+  replace_key_value $rooms_env "URL_HOST" $address1 ${yellowb}
+  replace_key_value $rooms_env "OMNIAUTH_BBBLTIBROKER_SITE" "https://$address0" ${yellowb}
 
   echo
   echo "Check if everything is alright."
-  read -p "This will reset the ${greenb}bbb-lti-broker${reset} database. Proceed? [y/N] " proceed
+  read -p "This will update the ${greenb}bbb-lti-broker${reset} database. Proceed? [y/N] " proceed
   echo
   if [ "${proceed,,}" = "y" ];
   then
-    dc_file=$lti_broker_path/docker-compose.yml
-    docker compose -f $dc_file run --rm $dc_service bundle exec rake db:environment:set RAILS_ENV=$env
-    docker compose -f $dc_file run --rm $dc_service bundle exec rake db:reset
-    docker compose -f $dc_file run --rm $dc_service bundle exec rake "db:apps:add[rooms,https://$address1/rooms/auth/bbbltibroker/callback,$my_internal_key,$my_internal_secret]"
-    docker compose -f $dc_file run --rm $dc_service bundle exec rake "db:keys:add[$my_key,$my_secret]"
-    docker compose -f $dc_file run --rm $dc_service bundle exec rake "db:registration:create[$issuer,$client_id,$key_set_url,$auth_token_url,$auth_login_url]"
-    docker compose -f $dc_file run --rm $dc_service bundle exec rake db:registration:url[rooms]
+    broker_dc=$lti_broker_path/docker-compose.yml
+    docker compose -f $broker_dc run --rm $dc_service bundle exec rake "db:apps:add_or_update[rooms,https://$address1/rooms/auth/bbbltibroker/callback,$my_internal_key,$my_internal_secret]"
+    docker compose -f $broker_dc run --rm $dc_service bundle exec rake "db:keys:add[$my_key,$my_secret]"
+    # uncomment these if you need a LTI 1.3 tool
+    # docker compose -f $broker_dc run --rm $dc_service bundle exec rake "db:registration:create[$issuer,$client_id,$key_set_url,$auth_token_url,$auth_login_url]"
+    # docker compose -f $broker_dc run --rm $dc_service bundle exec rake db:registration:url[rooms]
   else
     echo "exiting"
     exit 1

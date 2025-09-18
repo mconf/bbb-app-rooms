@@ -6,9 +6,11 @@ class CreateRecurringEventsInMoodleCalendarJob < ApplicationJob
   def perform(moodle_token, scheduled_meeting, context_id, opts={})
     recurring_events = generate_recurring_events(scheduled_meeting)
     
-    Resque.logger.info "[JOB] Calling Moodle API create_calendar_event for the #{recurring_events.count} recurring events generated."
+    Resque.logger.info "[CreateRecurringEventsInMoodleCalendarJob] Calling Moodle API create_calendar_event for the #{recurring_events.count} recurring events generated."
     recurring_events.each do |event|
-      Moodle::API.create_calendar_event(moodle_token, scheduled_meeting.hash_id, event, context_id, opts)
+      unless Moodle::API.create_calendar_event(moodle_token, scheduled_meeting.hash_id, event, context_id, opts)
+        Resque.logger.error "[CreateRecurringEventsInMoodleCalendarJob] Failed to create Moodle calendar event for meeting '#{scheduled_meeting.name}' (hash_id: #{scheduled_meeting.hash_id}) starting at #{event.start_at}."
+      end
       sleep(1)
     end
   end
@@ -27,7 +29,7 @@ class CreateRecurringEventsInMoodleCalendarJob < ApplicationJob
       cycle = 2
     end
 
-    Resque.logger.info "[JOB] Generating recurring events"
+    Resque.logger.info "[CreateRecurringEventsInMoodleCalendarJob] Generating recurring events"
     recurring_events = []
     event_count.times do |i|
       next_start_at = start_at + (i * cycle).weeks

@@ -184,6 +184,13 @@ en:
         message:    "This page does not exist."
         suggestion: "It seems there isn't anything here."
         status_code: "404"
+    eduplay:
+      invalid_token_error:
+        code:       "InvalidTokenError"
+        message:    "Invalid EduplayToken"
+        suggestion: "Please try to authenticate in Eduplay service again."
+        explanation: "The current token is invalid."
+        status_code: "500"
     bigbluebutton:
       invalid_request:
         code:       "BBBAPICallInvalid"

@@ -31,7 +31,7 @@ class UploadRecordingToFilesenderJob < ApplicationJob
       rec_url.query = URI.encode_www_form({ token: token })
     end
 
-    api = Filesender::API.new(client_host, mode, @filesender_token.token, client_secret)
+    api = Mconf::Filesender::API.new(client_host, mode, @filesender_token.token, client_secret)
     # Resque.logger.info "[+] api: #{api.inspect}..."
 
     # Download the video then upload it to Filesender

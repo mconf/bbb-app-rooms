@@ -152,6 +152,13 @@ pt:
         message:    "Página inexistente"
         suggestion: "Parece que não tem nada por aqui."
         status_code: "404"
+    eduplay:
+      invalid_token_error:
+        code:       "InvalidTokenError"
+        message:    "EduplayToken inválido"
+        suggestion: "Por favor, tente se autenticar novamente no serviço Eduplay."
+        explanation: "O token atual é inválido."
+        status_code: "500"
     bigbluebutton:
       invalid_request:
         code:       "BBBAPICallInvalid"
