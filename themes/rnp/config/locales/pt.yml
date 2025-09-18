@@ -7,6 +7,7 @@ pt:
     schedule: "Agendar"
     select2:
       comma_tags: "Digite uma vírgula para confirmar a tag"
+      comma_tags_or_enter: "Digite uma vírgula ou aperte Enter para confirmar a tag"
       hint: "Digite para começar a buscar"
       no_results: "Sem resultados encontrados"
       searching: "Buscando"
@@ -89,6 +90,7 @@ pt:
       eduplay:
         channel: "Selecionar Canal"
         channel_name: "Título do Canal"
+        channel_section: "Detalhes do Canal"
         channel_tags: "Tags do Canal"
         description: "Descrição"
         error: "Um erro ocorreu. Por favor, tente novamente!"
@@ -100,7 +102,7 @@ pt:
           no_channel: "Um canal deve ser selecionado ou criado."
           password_invalid_requirments: "Senha não atende aos requisitos mínimos."
           video_incomplete: "Título, descrição e privacidade do vídeo não podem estar em branco."
-          video_same_field: "Título e descrição não podem ser iguais."
+          video_same_field: "Título, descrição e palavras-chave não podem ser iguais."
           error_creating_channel: "Erro ao criar canal no Eduplay"
         new_channel: "Novo Canal"
         password: "Senha"
@@ -114,8 +116,9 @@ pt:
         success: "Seu vídeo está sendo carregado para o Eduplay"
         tags: "Palavras-Chave"
         thumbnail: "Miniatura"
-        title: "Upload no Eduplay"
+        title: "Enviar para Eduplay"
         upload_thumbnail: "Fazer upload de uma miniatura personalizada"
+        video_section: "Detalhes do Vídeo"
         video_title: "Título do Vídeo"
       exp_date: "Data de expiração: "
       filesender:

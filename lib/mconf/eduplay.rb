@@ -10,7 +10,7 @@ module Mconf
     THUMBNAIL_MIME = 'image/png'
     PRIVACY = {
       public: 1,
-      private: 3,
+      private: 2,
       private_with_password: 4
     }.freeze
 
