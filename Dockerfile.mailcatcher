@@ -1,0 +1,7 @@
+# Dockerfile.mailcatcher
+FROM ruby:3.4-alpine
+RUN apk add --no-cache build-base sqlite-dev \
+ && gem install mailcatcher \
+ && rm -rf /var/cache/apk/*
+EXPOSE 1025 1080
+CMD ["mailcatcher", "--ip=0.0.0.0", "--foreground"]
