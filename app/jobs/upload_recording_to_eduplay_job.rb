@@ -27,7 +27,7 @@ class UploadRecordingToEduplayJob < ApplicationJob
         rec_url.query = URI.encode_www_form({ token: token })
       end
 
-      api = Eduplay::API.new(@eduplay_token.token)
+      api = Mconf::Eduplay::API.new(@eduplay_token.token)
 
       Resque.logger.info "[+] Creating tags #{video_data[:tags]} ..."
       api.create_multiple_tags(video_data[:tags])

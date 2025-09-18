@@ -99,6 +99,10 @@ class Room < ApplicationRecord
     end
   end
 
+  def institution_guid
+    self.consumer_config&.institution_guid
+  end
+
   private
 
   def random_password(length, reference = '')

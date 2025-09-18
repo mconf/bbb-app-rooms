@@ -55,7 +55,7 @@ class ApplicationController < ActionController::Base
     if params[:session_set]
       Rails.logger.info "Session should be set but found no user, going to the retry page"
       return redirect_to(
-        omniauth_retry_path(provider: provider, launch_nonce: params['launch_nonce'])
+        omniauth_retry_path(provider: provider, launch_nonce: params['launch_nonce'], error_detail: 'session_set')
       )
     end
     if params['launch_nonce']
@@ -78,7 +78,7 @@ class ApplicationController < ActionController::Base
 
     user_params = @app_launch&.user_params
     if user_params.present?
-      @user = BbbAppRooms::User.new(user_params)
+      @user = User.new(user_params)
       Rails.logger.info "Found the user #{@user.email} (#{@user.uid}, #{@user.launch_nonce})"
 
       # update the locale so we use the user's locale, if any
@@ -152,6 +152,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def set_institution_guid
+    @institution_guid = @room.institution_guid
+  end
+
   def validate_room
     # Exit with error by re-setting the room to nil if the session for the room.handler is not set
     room_session = get_room_session(@room)
@@ -178,15 +182,17 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def set_error(model, error, status)
+  def set_error(model, error, status, context_info: nil)
     @user = nil
     instance_variable_set("@#{model}".to_sym, nil)
+    context_info ||= [@app_launch&.consumer_key, @app_launch&.nonce].compact
     @error = {
       internal_key: error,
       message: t("error.#{model}.#{error}.message"),
       suggestion: t("error.#{model}.#{error}.suggestion"),
       explanation: t("error.#{model}.#{error}.status_code") == '404' ? nil : t("error.#{model}.#{error}.explanation"),
       code: t("error.#{model}.#{error}.status_code"),
+      context_info: context_info,
       status: status
     }
   end
@@ -264,7 +270,7 @@ class ApplicationController < ActionController::Base
     respond_to do |format|
       format.html { render 'shared/error', status: status }
       format.json { render json: { error: @error[:message] }, status: status }
-      format.all  { render 'shared/error.html', status: status, content_type: 'text/html' }
+      format.all  { render 'shared/error', status: status, content_type: 'text/html' }
     end
   end
 
@@ -279,12 +285,12 @@ class ApplicationController < ActionController::Base
     end
 
     case locale
-    when /^pt/i
-      I18n.locale = 'pt'
+    when /^en/i
+      I18n.locale = 'en'
     when /^es/i
       I18n.locale = 'es'
     else
-      I18n.locale = 'en' # fallback
+      I18n.locale = 'pt' # fallback
     end
     response.set_header("Content-Language", I18n.locale)
   end

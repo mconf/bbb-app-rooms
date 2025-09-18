@@ -19,7 +19,7 @@ class SessionsController < ApplicationController
     # Return error if authentication fails
     unless omniauth_auth&.uid
       Rails.logger.info "Authentication failed, redirecting to #{omniauth_retry_path(params)}"
-      redirect_to(omniauth_retry_path(params)) && return
+      redirect_to(omniauth_retry_path(params, error_detail: 'session_create_failed')) && return
     end
     # As authentication did not fail, initialize the session
 
@@ -68,9 +68,8 @@ class SessionsController < ApplicationController
 
   def failure
     # TODO: there are different types of errors, not all require a retry
-    redirect_to(
-      omniauth_retry_path(provider: params['provider'], launch_nonce: params['launch_nonce'])
-    )
+    provider = request.env['omniauth.strategy'].name.to_sym
+    redirect_to(omniauth_retry_path(provider: provider, launch_nonce: params['launch_nonce'], error_detail: 'auth_failure'))
   end
 
   def retry

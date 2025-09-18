@@ -8,7 +8,7 @@ class ErrorsController < ApplicationController
                key: t("error.http._#{params[:code]}.code"),
                message: t("error.http._#{params[:code]}.message"),
                suggestion: t("error.http._#{params[:code]}.suggestion"),
-               status: params[:code], }
+               status: params[:code], context_info: params[:context_info] }
     respond_to do |format|
       format.html { render :index, status: params[:code] }
       format.json { render json: { error:  @error }, status: @error[:code] }

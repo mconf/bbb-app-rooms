@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require 'faraday'
+require 'cgi'
 
 module Moodle
   class API
@@ -17,7 +18,11 @@ module Moodle
         'events[0][visible]' => 1,
         'events[0][eventtype]' => 'course'
       }
-      result = post(moodle_token.url, params)
+      begin
+        result = post(moodle_token.url, params)
+      rescue Moodle::UrlNotFoundError, Moodle::TimeoutError, Moodle::RequestError
+        return false
+      end
 
       log_labels =  "[MOODLE API] url=#{moodle_token.url} " \
                     "token_id=#{moodle_token.id} " \
@@ -25,6 +30,12 @@ module Moodle
                     "wsfunction=core_calendar_create_calendar_events " \
                     "#{('nonce=' + opts[:nonce].to_s + ' ') if opts[:nonce]}"
 
+      if result["warnings"].present?
+        Rails.logger.warn(log_labels + "message=\"#{result["warnings"].inspect}\"")
+        # The event fails to be created on Moodle if there is a "nopermissions" warning
+        return false if result["warnings"].any? { |w| w["warningcode"] == "nopermissions" }
+      end
+      
       if result["exception"].present?
         Rails.logger.error(log_labels + "message=\"#{result}\"")
         return false
@@ -36,9 +47,6 @@ module Moodle
         MoodleCalendarEvent.create!(event_params)
       end
 
-      if result["warnings"].present?
-        Rails.logger.warn(log_labels + "message=\"#{result["warnings"].inspect}\"")
-      end
       Rails.logger.info(log_labels + "message=\"Event created on Moodle calendar: #{result}\"")
 
       true
@@ -54,7 +62,11 @@ module Moodle
         'events[0][eventid]'=> event_id,
         'events[0][repeat]'=> 0,
       }
-      result = post(moodle_token.url, params)
+      begin
+        result = post(moodle_token.url, params)
+      rescue Moodle::UrlNotFoundError, Moodle::TimeoutError, Moodle::RequestError
+        return false
+      end
 
       log_labels =  "[MOODLE API] url=#{moodle_token.url} " \
                     "token_id=#{moodle_token.id} " \
@@ -62,14 +74,16 @@ module Moodle
                     "wsfunction=core_calendar_delete_calendar_events " \
                     "#{('nonce=' + opts[:nonce].to_s + ' ') if opts[:nonce]}"
 
+      if result["warnings"].present?
+        Rails.logger.warn(log_labels + "message=\"#{result["warnings"].inspect}\"")
+        return false if result["warnings"].any? { |w| w["warningcode"] == "nopermissions" }
+      end
+
       if result["exception"].present?
         Rails.logger.error(log_labels + "message=\"#{result}\"")
         return false
       end
 
-      if result["warnings"].present?
-        Rails.logger.warn(log_labels + "message=\"#{result["warnings"].inspect}\"")
-      end
       Rails.logger.info(log_labels + "message=\"Event deleted on Moodle calendar: #{result}\"")
 
       true
@@ -246,7 +260,12 @@ module Moodle
         wsfunction: 'core_webservice_get_site_info',
         moodlewsrestformat: 'json',
       }
-      result = post(moodle_token.url, params)
+
+      begin
+        result = post(moodle_token.url, params)
+      rescue Moodle::UrlNotFoundError, Moodle::TimeoutError, Moodle::RequestError
+        return false
+      end
 
       log_labels =  "[MOODLE API] url=#{moodle_token.url} " \
                     "token_id=#{moodle_token.id} " \
@@ -504,48 +523,72 @@ module Moodle
       user_ids
     end
 
+    MAX_RETRIES = 3
+
     def self.post(host_url, params)
-      options = {
-        headers: { 'Content-Type' => 'application/x-www-form-urlencoded' },
-        request: { timeout: Rails.application.config.moodle_api_timeout },
-        params: params
-      }
+      retries ||= 0
+      begin
+        begin
+          options = {
+            headers: { 'Content-Type' => 'application/x-www-form-urlencoded' },
+            request: { timeout: Rails.application.config.moodle_api_timeout },
+            params: params
+          }
 
-      conn = Faraday.new(url: host_url, **options) do |config|
-        config.response :json
-        config.response :raise_error
-        config.adapter :net_http
+          conn = Faraday.new(url: host_url, **options) do |config|
+            config.response :json
+            config.response :raise_error
+            config.adapter :net_http
+          end
+
+          start_time = Time.now
+          res = conn.post(host_url)
+          duration = Time.now - start_time
+
+          result = res.body.is_a?(Hash) ? res.body.merge({"duration" => duration}) :
+                                          { "body" => res.body, "duration" => duration }
+
+          Rails.logger.debug("[MOODLE API] Calling URL: #{host_url}?#{params.to_a.map { |k, v| "#{k}=#{CGI.escape(v.to_s)}" }.join('&')} | Moodle response: #{res.inspect}")
+          return result
+
+        rescue Faraday::ResourceNotFound => e
+          Rails.logger.error( "[MOODLE API] url=#{host_url} " \
+                              "duration=#{(Time.now - start_time).round(3)}s " \
+                              "wsfunction=#{params[:wsfunction]} " \
+                              "caller=#{caller(2..3)} " \
+                              "message=\"Request failed (Faraday::ResourceNotFound): #{e}\" " \
+                              "response_body=\"#{e.response_body&.gsub(/\n/, '')}\""
+                            )
+          raise UrlNotFoundError, e
+        rescue Faraday::TimeoutError => e
+          Rails.logger.error( "[MOODLE API] url=#{host_url} " \
+                              "duration=#{(Time.now - start_time).round(3)}s " \
+                              "wsfunction=#{params[:wsfunction]} " \
+                              "caller=#{caller(2..3)} " \
+                              "message=\"Request failed (Faraday::TimeoutError): #{e}\"")
+          raise TimeoutError, e
+        rescue Faraday::Error => e
+          Rails.logger.error( "[MOODLE API] url=#{host_url} " \
+                              "duration=#{(Time.now - start_time).round(3)}s " \
+                              "wsfunction=#{params[:wsfunction]} " \
+                              "caller=#{caller(2..3)} " \
+                              "message=\"Request failed (Faraday::Error): #{e}\" " \
+                              "response_body=\"#{e.response_body&.gsub(/\n/, '')}\""
+                            )
+          raise RequestError, e
+        end
+      rescue Moodle::UrlNotFoundError, Moodle::TimeoutError, Moodle::RequestError => e
+        if (retries += 1) < MAX_RETRIES
+          caller_name = params[:wsfunction] || 'Moodle::API.post'
+          Rails.logger.warn "[#{caller_name}] Moodle API call failed (#{e.class}: #{e.message}), retrying (attempt #{retries + 1}/#{MAX_RETRIES})"
+          sleep 1
+          retry
+        else
+          caller_name = params[:wsfunction] || 'Moodle::API.post'
+          Rails.logger.error "[#{caller_name}] Moodle API call failed after #{MAX_RETRIES} attempts (#{e.class}: #{e.message})."
+          raise e
+        end
       end
-
-      start_time = Time.now
-      res = conn.post(host_url)
-      duration = Time.now - start_time
-
-      res.body.is_a?(Hash) ? res.body.merge({"duration" => duration}) :
-                             { "body" => res.body, "duration" => duration }
-
-    rescue Faraday::ResourceNotFound => e
-      Rails.logger.error( "[MOODLE API] url=#{host_url} " \
-                          "duration=#{(Time.now - start_time).round(3)}s " \
-                          "wsfunction=#{params[:wsfunction]} " \
-                          "message=\"Request failed (Faraday::ResourceNotFound): #{e}\" " \
-                          "response_body=\"#{e.response_body&.gsub(/\n/, '')}\""
-                        )
-      raise UrlNotFoundError, e
-    rescue Faraday::TimeoutError => e
-      Rails.logger.error( "[MOODLE API] url=#{host_url} " \
-                          "duration=#{(Time.now - start_time).round(3)}s " \
-                          "wsfunction=#{params[:wsfunction]} " \
-                          "message=\"Request failed (Faraday::TimeoutError): #{e}\"")
-      raise TimeoutError, e
-    rescue Faraday::Error => e
-      Rails.logger.error( "[MOODLE API] url=#{host_url} " \
-                          "duration=#{(Time.now - start_time).round(3)}s " \
-                          "wsfunction=#{params[:wsfunction]} " \
-                          "message=\"Request failed (Faraday::Error): #{e}\" " \
-                          "response_body=\"#{e.response_body&.gsub(/\n/, '')}\""
-                        )
-      raise RequestError, e
     end
   end
 
