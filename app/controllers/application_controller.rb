@@ -55,7 +55,7 @@ class ApplicationController < ActionController::Base
     if params[:session_set]
       Rails.logger.info "Session should be set but found no user, going to the retry page"
       return redirect_to(
-        omniauth_retry_path(provider: provider, launch_nonce: params['launch_nonce'])
+        omniauth_retry_path(provider: provider, launch_nonce: params['launch_nonce'], error_detail: 'session_set')
       )
     end
     if params['launch_nonce']
@@ -182,15 +182,17 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def set_error(model, error, status)
+  def set_error(model, error, status, context_info: nil)
     @user = nil
     instance_variable_set("@#{model}".to_sym, nil)
+    context_info ||= [@app_launch&.consumer_key, @app_launch&.nonce].compact
     @error = {
       internal_key: error,
       message: t("error.#{model}.#{error}.message"),
       suggestion: t("error.#{model}.#{error}.suggestion"),
       explanation: t("error.#{model}.#{error}.status_code") == '404' ? nil : t("error.#{model}.#{error}.explanation"),
       code: t("error.#{model}.#{error}.status_code"),
+      context_info: context_info,
       status: status
     }
   end

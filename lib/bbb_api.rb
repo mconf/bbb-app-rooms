@@ -80,6 +80,7 @@ module BbbApi
         {
           'userdata-bbb_override_default_locale': locale,
           'userdata-bbb_feedback_redirect_url': logout_url,
+          'avatarURL': user.profile_image_url,
           userID: user.uid,
           redirect: false
         }
@@ -103,6 +104,7 @@ module BbbApi
       {
         'userdata-bbb_override_default_locale': locale,
         'userdata-bbb_feedback_redirect_url': logout_url,
+        'avatarURL': user.profile_image_url,
         userID: user.uid
       }
     )
