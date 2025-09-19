@@ -198,23 +198,24 @@ class RoomsController < ApplicationController
     end
 
     uploaded_thumbnail = nil
-      if params['thumbnail_option'] != 'default'
-        uploaded_file = params['image']
+    params['thumbnail_option'] = 'default' # Disable uploading a thumbnail for now
+    if params['thumbnail_option'] != 'default'
+      uploaded_file = params['image']
 
-        if uploaded_file.present? && uploaded_file.content_type.start_with?('image/') && uploaded_file.size <= 4.megabytes
-          tmp_dir = Rails.root.join('tmp/uploads')
-          FileUtils.mkdir_p(tmp_dir)
-  
-          filename = "#{SecureRandom.uuid}_#{uploaded_file.original_filename}"
-          filepath = tmp_dir.join(filename)
+      if uploaded_file.present? && uploaded_file.content_type.start_with?('image/') && uploaded_file.size <= 4.megabytes
+        tmp_dir = Rails.root.join('tmp/uploads')
+        FileUtils.mkdir_p(tmp_dir)
 
-          File.open(filepath, 'wb') do |file|
-            file.write(uploaded_file.read)
-          end
+        filename = "#{SecureRandom.uuid}_#{uploaded_file.original_filename}"
+        filepath = tmp_dir.join(filename)
 
-          uploaded_thumbnail = [filepath.to_s, uploaded_file.content_type]
+        File.open(filepath, 'wb') do |file|
+          file.write(uploaded_file.read)
         end
+
+        uploaded_thumbnail = [filepath.to_s, uploaded_file.content_type]
       end
+    end
 
     default_tags = Rails.configuration.eduplay_default_tags
     form_tags = params['tags'].split(',')
