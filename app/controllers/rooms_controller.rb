@@ -270,6 +270,8 @@ class RoomsController < ApplicationController
       new_token = Mconf::Filesender::API.refresh_token(filesender_token.refresh_token)
 
       if new_token['error'].present?
+        Rails.logger.error "Error refreshing Filesender token for user_uid=#{@user.uid}: #{new_token['error']}"
+        filesender_token.destroy
         flash[:notice] = t('default.filesender.error')
         redirect_to(meetings_room_path(@room)) and return
       end
