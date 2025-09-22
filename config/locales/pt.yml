@@ -56,6 +56,7 @@ pt:
       allmoderators:  "Todos moderadores"
       calendar:
         description:
+          moodle_link: "Clique aqui para acessar o %{app}"
           link:       "Clique aqui para acessar esta aula."
       created:        "A sessão foi agendada"
       destroy:

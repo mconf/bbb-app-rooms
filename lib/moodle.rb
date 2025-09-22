@@ -5,12 +5,27 @@ require 'cgi'
 module Moodle
   class API
     def self.create_calendar_event(moodle_token, sched_meeting_hash_id, scheduled_meeting, context_id, opts={})
+      app_launch = AppLaunch.find_by(nonce: scheduled_meeting.created_by_launch_nonce)
+
+      event_description = scheduled_meeting.description
+      # Append the activity link to the event description
+      if app_launch && app_launch.params['cmid']
+        activity_url = URI.join(moodle_token.url, "/mod/lti/view.php?id=#{app_launch.params['cmid']}").to_s
+        link_text = app_launch.params['resource_link_title'] || I18n.t(
+          'default.scheduled_meeting.calendar.description.moodle_link', app: Rails.configuration.app_name
+        )
+        link = "<a href=\"#{activity_url}\" target=\"_blank\">#{link_text}</a>"
+        raw_string = "#{scheduled_meeting.description}\n#{link}"
+        # Split each line into a paragraph
+        event_description = raw_string.split("\n").compact_blank.map { |line| "<p>#{line}</p>" }.join
+      end
+
       params = {
         wstoken: moodle_token.token,
         wsfunction: 'core_calendar_create_calendar_events',
         moodlewsrestformat: 'json',
         'events[0][name]' => scheduled_meeting.name,
-        'events[0][description]' => scheduled_meeting.description,
+        'events[0][description]' => event_description,
         'events[0][format]' => 1,
         'events[0][courseid]' => context_id,
         'events[0][timestart]' => scheduled_meeting.start_at.to_i,

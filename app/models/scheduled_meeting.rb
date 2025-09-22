@@ -208,6 +208,18 @@ class ScheduledMeeting < ApplicationRecord
     )
   end
 
+  # URL to join this meeting from outside the system (not LTI).
+  # This URL is generated with the `external_room_scheduled_meeting_url` helper,
+  # which is defined in `config/routes.rb`
+  def external_url
+    Rails.application.routes.url_helpers.external_room_scheduled_meeting_url(
+      self.room,
+      self,
+      host: Rails.configuration.url_host,
+      protocol: 'https'
+    ).sub('/rooms/rooms/', '/rooms/')
+  end
+
   # Example of params:
   #   "date"=>"2020-06-12", "time"=>"17:15"
   def set_dates_from_params(params, locale = I18n.locale, zone = Time.zone)

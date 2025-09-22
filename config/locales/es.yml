@@ -56,6 +56,7 @@ es:
       allmoderators:  "Todos moderadores"
       calendar:
         description:
+          moodle_link: "Haga clic aquí para acceder a %{app}"
           link:       "Haga clic aquí para acceder a esta clase."
       created:        "La sesión ha sido programada"
       destroy:
