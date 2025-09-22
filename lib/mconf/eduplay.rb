@@ -8,9 +8,10 @@ module Mconf
   module Eduplay
     THUMBNAIL_PATH = Rails.root.join('themes/rnp/assets/images/eduplay-thumbnail.png').to_s
     THUMBNAIL_MIME = 'image/png'
-    PRIVACY = {
+    PRIVACY = { # only 1 and 3 for channels
       public: 1,
-      private: 2,
+      public_not_visible: 2,
+      authenticated_access: 3,
       private_with_password: 4
     }.freeze
 
