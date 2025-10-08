@@ -221,7 +221,7 @@ class RoomsController < ApplicationController
       public: params['public'].to_i,
       video_password: params['video_password'],
       tags: default_tags | form_tags,
-      thumbnail: eduplay_upload.id,
+      eduplay_upload_id: eduplay_upload.id,
     }
 
     UploadRecordingToEduplayJob.perform_later(@room, params['record_id'], video_data, @user.as_json.symbolize_keys)

@@ -51,7 +51,7 @@ class UploadRecordingToEduplayJob < ApplicationJob
 
       # Handle thumbnail from database if present
       tempfile = nil
-      eduplay_upload_id = video_data[:thumbnail]
+      eduplay_upload_id = video_data[:eduplay_upload_id]
       if eduplay_upload_id.is_a?(Integer)
         eduplay_upload = EduplayUpload.find_by(id: eduplay_upload_id)
 
