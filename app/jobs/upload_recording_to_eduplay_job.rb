@@ -14,10 +14,10 @@ class UploadRecordingToEduplayJob < ApplicationJob
       playback = @recording[:playbacks].find { |f| f[:type] == 'video' } || @recording[:playbacks].find { |f| f[:type] == 'presentation_video' }
 
       if playback.nil?
-        return Resque.logger.error "Recording #{rec_id} has no video playback format"
+        return Resque.logger.error "[UploadRecordingToEduplayJob] Recording #{rec_id} has no video playback format"
       end
 
-      Resque.logger.info "Starting upload to Eduplay Worker, recording #{rec_id}"
+      Resque.logger.info "[UploadRecordingToEduplayJob] Starting upload to Eduplay Worker, recording #{rec_id}"
 
       # If the recordings server uses token authentication, we must get an authenticated
       # download URL
@@ -29,25 +29,25 @@ class UploadRecordingToEduplayJob < ApplicationJob
 
       api = Mconf::Eduplay::API.new(@eduplay_token.token)
 
-      Resque.logger.info "[+] Creating tags #{video_data[:tags]} ..."
+      Resque.logger.info "[UploadRecordingToEduplayJob] Creating tags #{video_data[:tags]} ..."
       api.create_multiple_tags(video_data[:tags])
 
-      Resque.logger.info "[+] Downloading #{rec_url} ..."
+      Resque.logger.info "[UploadRecordingToEduplayJob] Downloading #{rec_url} ..."
       file = api.download_file rec_url
 
       if file.nil?
-        return Resque.logger.error "File is not a video"
+        return Resque.logger.error "[UploadRecordingToEduplayJob] File is not a video"
       end
 
-      Resque.logger.info "[+] Recording downloaded. Size: #{file.size} bytes, extension: #{File.extname(file)}. Recording (#{rec_id})"
+      Resque.logger.info "[UploadRecordingToEduplayJob] Recording downloaded. Size: #{file.size} bytes, extension: #{File.extname(file)}. Recording (#{rec_id})"
 
-      Resque.logger.info "[+] Getting upload link file..."
+      Resque.logger.info "[UploadRecordingToEduplayJob] Getting upload link file..."
       data = api.get_upload_link(video_data[:title], File.extname(file))
 
-      Resque.logger.info "[+] Uploading file..."
+      Resque.logger.info "[UploadRecordingToEduplayJob] Uploading file..."
       up_file_res = api.upload_file(data['url'], file.path)
 
-      Resque.logger.info "[+] Creating video #{@eduplay_token.user_uid}, #{data['identifier']}, #{data['filename']}..."
+      Resque.logger.info "[UploadRecordingToEduplayJob] Creating video #{@eduplay_token.user_uid}, #{data['identifier']}, #{data['filename']}..."
 
       # Handle thumbnail from database if present
       tempfile = nil
@@ -57,7 +57,7 @@ class UploadRecordingToEduplayJob < ApplicationJob
 
         if eduplay_upload&.thumbnail_data&.present?
           begin
-            Resque.logger.info "[+] Loading thumbnail from database (EduplayUpload ID: #{eduplay_upload_id})"
+            Resque.logger.info "[UploadRecordingToEduplayJob] Loading thumbnail from database (EduplayUpload ID: #{eduplay_upload_id})"
 
             extension = case eduplay_upload.thumbnail_content_type
                        when 'image/jpeg', 'image/jpg' then '.jpg'
@@ -73,16 +73,16 @@ class UploadRecordingToEduplayJob < ApplicationJob
 
             video_data = video_data.merge(thumbnail: [tempfile.path, eduplay_upload.thumbnail_content_type])
 
-            Resque.logger.info "[+] Thumbnail loaded from database successfully (temp file: #{File.basename(tempfile.path)})"
+            Resque.logger.info "[UploadRecordingToEduplayJob] Thumbnail loaded from database successfully (temp file: #{File.basename(tempfile.path)})"
           rescue => e
-            Resque.logger.error "[+] Failed to load thumbnail from database: #{e.message}"
+            Resque.logger.error "[UploadRecordingToEduplayJob] Failed to load thumbnail from database: #{e.message}"
             video_data = video_data.merge(thumbnail: nil)
           end
         elsif eduplay_upload
-          Resque.logger.info "[+] No thumbnail data found for EduplayUpload ID: #{eduplay_upload_id}"
+          Resque.logger.info "[UploadRecordingToEduplayJob] No thumbnail data found for EduplayUpload ID: #{eduplay_upload_id}"
           video_data = video_data.merge(thumbnail: nil)
         else
-          Resque.logger.error "[+] EduplayUpload not found with ID: #{eduplay_upload_id}"
+          Resque.logger.error "[UploadRecordingToEduplayJob] EduplayUpload not found with ID: #{eduplay_upload_id}"
           video_data = video_data.merge(thumbnail: nil)
         end
       end
@@ -90,9 +90,9 @@ class UploadRecordingToEduplayJob < ApplicationJob
       video = api.create_video(data, video_data)
 
       if video['success']
-        Resque.logger.info "[+] Upload video recording to Eduplay rec_id: #{rec_id} video: #{video.inspect}"
+        Resque.logger.info "[UploadRecordingToEduplayJob] Upload video recording to Eduplay rec_id: #{rec_id} video: #{video.inspect}"
       else
-        Resque.logger.error "[+] Error uploading video to Eduplay: #{video.inspect}"
+        Resque.logger.error "[UploadRecordingToEduplayJob] Error uploading video to Eduplay: #{video.inspect}"
       end
     ensure
       # Clean up temporary files
@@ -112,9 +112,9 @@ class UploadRecordingToEduplayJob < ApplicationJob
         if eduplay_upload&.thumbnail_data&.present?
           begin
             eduplay_upload.update!(thumbnail_data: nil, thumbnail_content_type: nil)
-            Resque.logger.info "[+] Cleaned up thumbnail data from database (EduplayUpload ID: #{eduplay_upload_id})"
+            Resque.logger.info "[UploadRecordingToEduplayJob] Cleaned up thumbnail data from database (EduplayUpload ID: #{eduplay_upload_id})"
           rescue => e
-            Resque.logger.error "[+] Failed to cleanup thumbnail data from database: #{e.message}"
+            Resque.logger.error "[UploadRecordingToEduplayJob] Failed to cleanup thumbnail data from database: #{e.message}"
           end
         end
       end
