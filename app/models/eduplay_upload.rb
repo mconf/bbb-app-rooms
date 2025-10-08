@@ -12,7 +12,14 @@ class EduplayUpload < ApplicationRecord
 
   # Override to_s to hide binary data
   def to_s
-    "#<EduplayUpload id=#{id}, recording_id=#{recording_id}, thumbnail_size=#{thumbnail_data&.bytesize || 0} bytes>"
+    attrs = attributes.map do |key, value|
+      if key == 'thumbnail_data' && value.present?
+        "#{key}: [BINARY DATA #{value.bytesize} bytes]"
+      else
+        "#{key}: #{value.inspect}"
+      end
+    end
+    "#<#{self.class.name} #{attrs.join(', ')}>"
   end
 
   # Override AwesomePrint's ai method to hide binary data
