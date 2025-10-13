@@ -198,24 +198,18 @@ class RoomsController < ApplicationController
       end
     end
 
-    uploaded_thumbnail = nil
-      if params['thumbnail_option'] != 'default'
+    eduplay_upload = EduplayUpload.new(user_uid: @user.uid, recording_id: params['record_id'])
+
+      # Store thumbnail data in database if uploaded
+      if params['thumbnail_option'] != 'default' && params['image']
         uploaded_file = params['image']
-
         if uploaded_file.present? && uploaded_file.content_type.start_with?('image/') && uploaded_file.size <= 4.megabytes
-          tmp_dir = Rails.root.join('tmp/uploads')
-          FileUtils.mkdir_p(tmp_dir)
-  
-          filename = "#{SecureRandom.uuid}_#{uploaded_file.original_filename}"
-          filepath = tmp_dir.join(filename)
-
-          File.open(filepath, 'wb') do |file|
-            file.write(uploaded_file.read)
-          end
-
-          uploaded_thumbnail = [filepath.to_s, uploaded_file.content_type]
+          eduplay_upload.thumbnail_data = uploaded_file.read
+          eduplay_upload.thumbnail_content_type = uploaded_file.content_type
         end
       end
+      
+      eduplay_upload.save!
 
     default_tags = Rails.configuration.eduplay_default_tags
     form_tags = params['tags'].split(',')
@@ -227,14 +221,11 @@ class RoomsController < ApplicationController
       public: params['public'].to_i,
       video_password: params['video_password'],
       tags: default_tags | form_tags,
-      thumbnail: uploaded_thumbnail,
+      eduplay_upload_id: eduplay_upload.id,
     }
 
     UploadRecordingToEduplayJob.perform_later(@room, params['record_id'], video_data, @user.as_json.symbolize_keys)
 
-    # Creates a new EduplayUpload object
-    eduplay_upload = EduplayUpload.new(recording_id: params['record_id'], user_uid: @user.uid)
-    eduplay_upload.save
     flash[:notice] = t('meetings.recording.eduplay.success')
     redirect_to(meetings_room_path(@room, filter: params[:filter]))
   end

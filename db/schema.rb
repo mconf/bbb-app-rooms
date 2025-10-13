@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_22_214356) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_03_171319) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -88,6 +88,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_22_214356) do
     t.string "upload_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.binary "thumbnail_data"
+    t.string "thumbnail_content_type"
   end
 
   create_table "filesender_tokens", force: :cascade do |t|
