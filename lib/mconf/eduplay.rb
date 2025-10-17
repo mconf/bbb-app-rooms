@@ -8,9 +8,10 @@ module Mconf
   module Eduplay
     THUMBNAIL_PATH = Rails.root.join('themes/rnp/assets/images/eduplay-thumbnail.png').to_s
     THUMBNAIL_MIME = 'image/png'
-    PRIVACY = {
+    PRIVACY = { # only 1 and 3 for channels
       public: 1,
-      private: 3,
+      public_not_visible: 2,
+      authenticated_access: 3,
       private_with_password: 4
     }.freeze
 
@@ -202,9 +203,7 @@ module Mconf
 
         opt = {
           url: url,
-          headers: headers.merge({
-            'Content-Type': 'multipart/form-data'
-          }),
+          headers: headers
         }
 
         conn = Faraday.new(opt) do |f|
@@ -217,7 +216,7 @@ module Mconf
           if v.kind_of?(Array)
             [k, Faraday::UploadIO.new(v[0], v[1])]
           else
-            [k, Faraday::UploadIO.new(StringIO.new(v.to_json), 'application/json')]
+            [k, Faraday::Multipart::ParamPart.new(v.to_json, 'application/json')]
           end
         end
 

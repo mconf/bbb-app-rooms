@@ -48,7 +48,7 @@ Rails.application.configure do
   config.active_storage.service = :local
 
   # Mount Action Cable outside main process or domain
-  config.action_cable.mount_path = Mconf::Env.fetch('CABLE_MOUNT_PATH')
+  config.action_cable.mount_path = Mconf::Env.fetch('CABLE_MOUNT_PATH', '/cable-not-used') if config.cable_enabled
   # config.action_cable.url = 'wss://example.com/cable'
   config.action_cable.allowed_request_origins = ["https://#{config.url_host}"]
   # config.action_cable.allowed_request_origins = [ 'http://example.com', /http:\/\/example.*/ ]

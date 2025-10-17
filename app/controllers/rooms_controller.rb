@@ -200,16 +200,18 @@ class RoomsController < ApplicationController
 
     eduplay_upload = EduplayUpload.new(user_uid: @user.uid, recording_id: params['record_id'])
 
-      # Store thumbnail data in database if uploaded
-      if params['thumbnail_option'] != 'default' && params['image']
-        uploaded_file = params['image']
-        if uploaded_file.present? && uploaded_file.content_type.start_with?('image/') && uploaded_file.size <= 4.megabytes
-          eduplay_upload.thumbnail_data = uploaded_file.read
-          eduplay_upload.thumbnail_content_type = uploaded_file.content_type
-        end
+    # Store thumbnail data in database if uploaded
+    if params['thumbnail_option'] != 'default' && params['image']
+      uploaded_file = params['image']
+      if uploaded_file.present? && uploaded_file.content_type.start_with?('image/') && uploaded_file.size <= 4.megabytes
+        eduplay_upload.thumbnail_data = uploaded_file.read
+        eduplay_upload.thumbnail_content_type = uploaded_file.content_type
       end
-      
-      eduplay_upload.save!
+
+      uploaded_thumbnail = [filepath.to_s, uploaded_file.content_type]
+    end
+    
+    eduplay_upload.save!
 
     default_tags = Rails.configuration.eduplay_default_tags
     form_tags = params['tags'].split(',')
@@ -262,6 +264,8 @@ class RoomsController < ApplicationController
       new_token = Mconf::Filesender::API.refresh_token(filesender_token.refresh_token)
 
       if new_token['error'].present?
+        Rails.logger.error "Error refreshing Filesender token for user_uid=#{@user.uid}: #{new_token['error']}"
+        filesender_token.destroy
         flash[:notice] = t('default.filesender.error')
         redirect_to(meetings_room_path(@room)) and return
       end

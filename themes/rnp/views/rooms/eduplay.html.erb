@@ -1,5 +1,3 @@
-<% eduplay_privacy_options = [[t('meetings.recording.eduplay.public'), Mconf::Eduplay::PRIVACY[:public]], [t('meetings.recording.eduplay.private'), Mconf::Eduplay::PRIVACY[:private]]] %>
-
 <div id="eduplay">
   <div class="row mb-3 d-flex align-items-center justify-content-center">
     <div class="col-12 col-md-10 text-center">
@@ -11,8 +9,11 @@
     <%= form.hidden_field :channel, value: (@channels.empty? ? 'new_channel' : '') %>
 
     <div class="form-row d-flex align-items-center justify-content-center">
-      <div class="form-group col-12 col-md-10">
-        <div class="dropdown">
+      <div class="form-section-title col-12 col-md-10">
+        <%= t('meetings.recording.eduplay.channel_section') %>
+      </div>
+      <div class="form-group col-12 col-md-10 m-0">
+        <div class="dropdown mb-3">
           <%= form.label :channel, t('meetings.recording.eduplay.channel') %>
           <div class="dropdown-toggle form-control" type="button" data-bs-toggle="dropdown">
             <div class="selected-option">
@@ -39,7 +40,7 @@
         </div>
 
         <%# New channel form %>
-        <div class="new-channel-form my-4" style="<%= @channels.empty? ? '' : 'display: none' %>">
+        <div class="new-channel-form" style="<%= @channels.empty? ? '' : 'display: none' %>">
           <div class="form-group col-12">
             <%= form.label :channel_name, t('meetings.recording.eduplay.channel_name') %>
             <%= form.text_field :channel_name, minlength: 2,  class: "form-control" %>
@@ -47,7 +48,11 @@
           <div class="form-group col-12 privacy">
             <%= form.label :channel_public, t('meetings.recording.eduplay.privacy'), class: "privacy-label" %>
             <div style="display: inline;">
-              <% eduplay_privacy_options.each do |option| %>
+              <% privacy_options_channel = [
+                [t('meetings.recording.eduplay.public'), Mconf::Eduplay::PRIVACY[:public]],
+                [t('meetings.recording.eduplay.private'), Mconf::Eduplay::PRIVACY[:authenticated_access]]
+              ] %>
+              <% privacy_options_channel.each do |option| %>
                 <label style="display: inline; margin-right: 20px; accent-color: #074AA0;">
                   <%= form.radio_button :channel_public, option[1] %>
                   <%= option[0] %>
@@ -63,6 +68,10 @@
         </div>
       </div>
 
+
+      <div class="form-section-title col-12 col-md-10 mt-3">
+        <%= t('meetings.recording.eduplay.video_section') %>
+      </div>
       <%# Video infos %>
       <div class="form-group col-12 col-md-10">
         <%= form.label :title, t('meetings.recording.eduplay.video_title') %>
@@ -76,8 +85,12 @@
       <div class="form-group col-12 col-md-10 privacy">
         <%= form.label :public, t('meetings.recording.eduplay.privacy'), class: "privacy-label" %>
         <div style="display: inline;">
-          <% eduplay_privacy_options.push([t('meetings.recording.eduplay.private_with_password'), Mconf::Eduplay::PRIVACY[:private_with_password]]) %>
-          <% eduplay_privacy_options.each do |option| %>
+          <% privacy_options_video = [
+              [t('meetings.recording.eduplay.public'), Mconf::Eduplay::PRIVACY[:public]],
+              [t('meetings.recording.eduplay.private'), Mconf::Eduplay::PRIVACY[:public_not_visible]],
+              [t('meetings.recording.eduplay.private_with_password'), Mconf::Eduplay::PRIVACY[:private_with_password]]
+          ] %>
+          <% privacy_options_video.each do |option| %>
             <label style="display: inline; margin-right: 20px; accent-color: #074AA0";>
               <%= form.radio_button :public, option[1] %>
               <%= option[0] %>
@@ -99,7 +112,7 @@
         <%= form.collection_radio_buttons :thumbnail_option, ['default', 'upload'], :to_s, :to_s, { checked: 'default' }, { class: 'd-none', label: false } %>
       </div>
 
-      <div class="form-group col-12 col-md-10">
+      <div class="form-group col-12 col-md-10 d-none">
         <%= form.label :image, t('meetings.recording.eduplay.thumbnail'), class: "thumbnail-label" %>
         <div class="thumbnail-options">
           <div class="thumbnail-default-option selected">
