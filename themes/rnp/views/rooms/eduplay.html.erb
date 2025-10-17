@@ -112,7 +112,7 @@
         <%= form.collection_radio_buttons :thumbnail_option, ['default', 'upload'], :to_s, :to_s, { checked: 'default' }, { class: 'd-none', label: false } %>
       </div>
 
-      <div class="form-group col-12 col-md-10 d-none">
+      <div class="form-group col-12 col-md-10">
         <%= form.label :image, t('meetings.recording.eduplay.thumbnail'), class: "thumbnail-label" %>
         <div class="thumbnail-options">
           <div class="thumbnail-default-option selected">

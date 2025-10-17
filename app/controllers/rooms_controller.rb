@@ -207,10 +207,8 @@ class RoomsController < ApplicationController
         eduplay_upload.thumbnail_data = uploaded_file.read
         eduplay_upload.thumbnail_content_type = uploaded_file.content_type
       end
-
-      uploaded_thumbnail = [filepath.to_s, uploaded_file.content_type]
     end
-    
+
     eduplay_upload.save!
 
     default_tags = Rails.configuration.eduplay_default_tags
