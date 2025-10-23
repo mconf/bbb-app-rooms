@@ -270,6 +270,12 @@ module Moodle
     end
 
     def self.token_functions_configured?(moodle_token, wsfunctions, opts={})
+      wsfunctions = Array(wsfunctions)
+      if moodle_token.nil? || wsfunctions.empty?
+        Rails.logger.warn("[MOODLE API] No token or functions provided")
+        return false
+      end
+
       params = {
         wstoken: moodle_token.token,
         wsfunction: 'core_webservice_get_site_info',
