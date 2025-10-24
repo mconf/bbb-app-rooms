@@ -20,20 +20,12 @@ class Room < ApplicationRecord
 
   def can_create_moodle_calendar_event
     moodle_token = self.consumer_config&.moodle_token
-    if moodle_token
-      Moodle::API.token_functions_configured?(moodle_token, ['core_calendar_create_calendar_events'])
-    else
-      false
-    end
+    Moodle::API.token_functions_configured?(moodle_token, ['core_calendar_create_calendar_events'])
   end
 
   def can_delete_moodle_calendar_event
     moodle_token = self.consumer_config&.moodle_token
-    if moodle_token
-      Moodle::API.token_functions_configured?(moodle_token, ['core_calendar_delete_calendar_events'])
-    else
-      false
-    end
+    Moodle::API.token_functions_configured?(moodle_token, ['core_calendar_delete_calendar_events'])
   end
 
   def can_mark_moodle_attendance
@@ -46,11 +38,7 @@ class Room < ApplicationRecord
       'mod_attendance_get_session',
       'mod_attendance_update_user_status'
     ]
-    if moodle_token
-      Moodle::API.token_functions_configured?(moodle_token, required_functions)
-    else
-      false
-    end
+    Moodle::API.token_functions_configured?(moodle_token, required_functions)
   end
 
   def consumer_config
