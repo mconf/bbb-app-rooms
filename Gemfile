@@ -141,3 +141,6 @@ gem "select2-rails"
 
 # Exception notification via email
 gem 'exception_notification', '~> 4.0'
+
+# AWS SDK for S3
+gem 'aws-sdk-s3', '~> 1.203'
