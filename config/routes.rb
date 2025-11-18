@@ -66,6 +66,10 @@ Rails.application.routes.draw do
           end
         end
 
+        scope ':room_id/brightspace' do
+          get '/fetch_profile_image', to: 'brightspace#fetch_profile_image', as: :fetch_brightspace_profile_image
+        end
+
         if Mconf::Env.fetch_boolean('MCONF_SERVE_RESQUE_INTERFACE', false)
           mount Resque::Server.new, at: "/resque"
         end
