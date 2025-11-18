@@ -386,7 +386,7 @@ class RoomsController < ApplicationController
                    .find_or_create_by(nonce: launch_nonce) do |launch|
       launch.update(
         params: launch_params,
-        omniauth_auth: session['omniauth_auth']['bbbltibroker'],
+        omniauth_auth: { bbbltibroker: session['omniauth_auth']['bbbltibroker'] },
         expires_at: expires_at
       )
     end
