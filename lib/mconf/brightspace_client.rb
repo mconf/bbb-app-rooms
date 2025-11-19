@@ -18,10 +18,10 @@ module Mconf
     end
 
     # Fetches the profile image of the authenticated user
-    #
+    # @param size [Integer] size of the profile image in pixels (default: 200)
     # @return [String, nil] binary data of the profile image, or nil if not found
-    def get_profile_image
-      url = "#{@base_url}/d2l/api/lp/#{@api_versions[:lp]}/profile/myProfile/image"
+    def get_profile_image(size: 200)
+      url = "#{@base_url}/d2l/api/lp/#{@api_versions[:lp]}/profile/myProfile/image?size=#{size}"
       Rails.logger.info "Calling Brightspace API at #{url} to get user profile image #{@user_info_str}"
 
       res = RestClient.get(url, self.http_headers)
