@@ -1,7 +1,6 @@
 # module to interact with AWS S3 API
 # uses 'aws-sdk-s3' gem
 module Mconf::S3Client
-  class BucketConfigMissingError < StandardError; end
 
   BUCKET_NAME = Mconf::Env.fetch('AWS_PUBLIC_BUCKET_NAME', nil)
 
