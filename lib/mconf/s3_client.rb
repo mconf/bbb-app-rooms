@@ -3,6 +3,7 @@
 module Mconf::S3Client
 
   BUCKET_NAME = Mconf::Env.fetch('AWS_PUBLIC_BUCKET_NAME', nil)
+  STORE_PATH = 'uploads/profile_image'.freeze
 
   # Returns an Aws::S3::Client instance
   # @return [Aws::S3::Client]
@@ -20,17 +21,12 @@ module Mconf::S3Client
     nil
   end
 
-  # @return [String] the S3 object key for the given file name
-  def self.store_path
-    "uploads/profile_image"
-  end
-
   # Returns the public URL for a file stored in S3
   # e.g. https://bucket-hmg-public.s3.amazonaws.com/uploads/profile_image/8aec81df-1948-4f78-ad24-70daa21cdbeb_409.jpg
   # @param file_name [String] the name of the file
   # @return [String] the public URL of the file
   def self.url_for(file_name)
-    "https://#{BUCKET_NAME}.s3.amazonaws.com/#{self.store_path}/#{file_name}"
+    "https://#{BUCKET_NAME}.s3.amazonaws.com/#{STORE_PATH}/#{file_name}"
   end
 
   # List files in the S3 bucket with the given prefix
@@ -42,7 +38,7 @@ module Mconf::S3Client
       prefix: prefix
     ).each do |ret|
       ret.contents.each do |r|
-        puts r
+        Rails.logger.info r.inspect
       end
     end
   rescue StandardError => e
@@ -55,7 +51,7 @@ module Mconf::S3Client
   # @param file_name [String] the name of the file to upload
   # @return [String, nil] the S3 object key if upload is successful, nil otherwise
   def self.upload_file(file_body, file_name)
-    object_key = "#{self.store_path}/#{file_name}"
+    object_key = "#{STORE_PATH}/#{file_name}"
 
     res = client.put_object(
       acl: 'public-read',
@@ -79,7 +75,7 @@ module Mconf::S3Client
   # @param file_name [String] the name of the file to delete
   # @return [Boolean] true if deletion is successful, false otherwise
   def self.delete_file(file_name)
-    object_key = "#{self.store_path}/#{file_name}"
+    object_key = "#{STORE_PATH}/#{file_name}"
 
     ret = client.delete_object(bucket: BUCKET_NAME, key: object_key)
     if ret.delete_marker.blank?
