@@ -77,13 +77,9 @@ module Mconf::S3Client
   def self.delete_file(file_name)
     object_key = "#{STORE_PATH}/#{file_name}"
 
-    ret = client.delete_object(bucket: BUCKET_NAME, key: object_key)
-    if ret.delete_marker.blank?
-      Rails.logger.warn "[S3Client] File '#{object_key}' could not be deleted from bucket '#{BUCKET_NAME}'"
-      return false
-    end
-
+    client.delete_object(bucket: BUCKET_NAME, key: object_key)
     Rails.logger.info "[S3Client] File '#{object_key}' deleted from bucket '#{BUCKET_NAME}'"
+
     true
   rescue StandardError => e
     Rails.logger.error "[S3Client] Error: #{e.message}"
