@@ -50,7 +50,7 @@ module Mconf::S3Client
   # @param file_body [IO, String] the file body to upload
   # @param file_name [String] the name of the file to upload
   # @return [String, nil] the S3 object key if upload is successful, nil otherwise
-  def self.upload_file(file_body, file_name)
+  def self.upload_public_file(file_body, file_name)
     object_key = "#{STORE_PATH}/#{file_name}"
 
     res = client.put_object(
