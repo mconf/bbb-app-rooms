@@ -42,7 +42,7 @@ brightspace_setup_phase = lambda do |env|
   app_launch = AppLaunch.find_by(nonce: launch_nonce)
 
   # try to find the app_launch from the session if not found by the launch_nonce
-  if launch_nonce.nil?
+  if app_launch.nil?
     room_handler = req.GET&.[]('room_id') || session&.[]('omniauth.params')&.[]('room_id')
     # FIXME. This is the get_room_session in ApplicationController, but
     # we can't access that method here
