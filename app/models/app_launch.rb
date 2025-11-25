@@ -53,7 +53,8 @@ class AppLaunch < ApplicationRecord
   def set_custom_param(name, value)
     self.params ||= {}
     self.params['custom_params'] ||= {}
-    self.params['custom_params']['custom_' + name] = value
+    key = 'custom_' + name.sub(/\Acustom_/, '')
+    self.params['custom_params'][key] = value
     self.save
   end
 
