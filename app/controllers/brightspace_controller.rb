@@ -21,6 +21,7 @@ class BrightspaceController < ApplicationController
   # GET /rooms/:room_id/brightspace/fetch_profile_image
   def fetch_profile_image
     base_url = @app_launch.brightspace_oauth.url
+    # assume the access token is stored in the omniauth_auth credentials after OAuth authentication
     access_token = @app_launch.omniauth_auth.dig('brightspace','credentials', 'token')
     user_info = { email: @user.email, launch_nonce: @app_launch.nonce }
     brightspace_client = Mconf::BrightspaceClient.new(base_url, access_token, user_info: user_info)
