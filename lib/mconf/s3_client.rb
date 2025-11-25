@@ -25,8 +25,15 @@ module Mconf::S3Client
   # e.g. https://bucket-hmg-public.s3.amazonaws.com/uploads/profile_image/8aec81df-1948-4f78-ad24-70daa21cdbeb_409.jpg
   # @param file_name [String] the name of the file
   # @return [String] the public URL of the file
-  def self.url_for(file_name)
-    "https://#{BUCKET_NAME}.s3.amazonaws.com/#{STORE_PATH}/#{file_name}"
+  def self.public_url_for(file_name)
+    Aws::S3::Object.new(
+      bucket_name: BUCKET_NAME,
+      key: "#{STORE_PATH}/#{file_name}",
+      client: self.client
+    ).public_url
+  rescue StandardError => e
+    Rails.logger.error "[S3Client] Error: #{e.message}"
+    nil
   end
 
   # List files in the S3 bucket with the given prefix

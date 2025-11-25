@@ -29,7 +29,7 @@ class BrightspaceController < ApplicationController
     file_name = "#{@app_launch.consumer_key}/#{@user.uid}.jpg" # unique file name per LMS and user
     # Upload the profile image to S3 and set the profile_image_url param on AppLaunch
     if profile_image.present? && Mconf::S3Client.upload_public_file(profile_image, file_name)
-      @app_launch.set_param('profile_image_url', Mconf::S3Client.url_for(file_name))
+      @app_launch.set_param('profile_image_url', Mconf::S3Client.public_url_for(file_name))
     end
 
     redirect_to room_path(@room)
