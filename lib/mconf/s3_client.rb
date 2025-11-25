@@ -3,7 +3,7 @@
 module Mconf::S3Client
 
   BUCKET_NAME = Mconf::Env.fetch('AWS_PUBLIC_BUCKET_NAME', nil)
-  STORE_PATH = 'uploads/profile_image'.freeze
+  STORE_PATH = 'profile-image'.freeze
 
   # Returns an Aws::S3::Client instance
   # @return [Aws::S3::Client]
@@ -22,7 +22,7 @@ module Mconf::S3Client
   end
 
   # Returns the public URL for a file stored in S3
-  # e.g. https://bucket-hmg-public.s3.amazonaws.com/uploads/profile_image/8aec81df-1948-4f78-ad24-70daa21cdbeb_409.jpg
+  # e.g. https://s3.amazonaws.com/bucket-hmg-public/profile-image/my-key/8aec81df-1948-4f78-ad24-70daa21cdbeb_409.jpg
   # @param file_name [String] the name of the file
   # @return [String] the public URL of the file
   def self.public_url_for(file_name)
