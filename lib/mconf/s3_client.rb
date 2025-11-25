@@ -17,7 +17,7 @@ module Mconf::S3Client
 
     Aws::S3::Client.new(attrs)
   rescue StandardError => e
-    Rails.logger.error "Error on AWS S3 Client configuration: #{e.message}"
+    Rails.logger.error "[S3Client##{__method__}] Error: #{e.message}"
     nil
   end
 
@@ -32,7 +32,7 @@ module Mconf::S3Client
       client: self.client
     ).public_url
   rescue StandardError => e
-    Rails.logger.error "[S3Client] Error: #{e.message}"
+    Rails.logger.error "[S3Client##{__method__}] Error: #{e.message}"
     nil
   end
 
@@ -49,7 +49,7 @@ module Mconf::S3Client
       end
     end
   rescue StandardError => e
-    Rails.logger.error "[S3Client] Error: #{e.message}"
+    Rails.logger.error "[S3Client##{__method__}] Error: #{e.message}"
     nil
   end
 
@@ -74,7 +74,7 @@ module Mconf::S3Client
     Rails.logger.info "[S3Client] File '#{object_key}' uploaded to bucket '#{BUCKET_NAME}'"
     object_key
   rescue StandardError => e
-    Rails.logger.error "[S3Client] Error: #{e.message}"
+    Rails.logger.error "[S3Client##{__method__}] Error: #{e.message}"
     nil
   end
 
@@ -89,7 +89,7 @@ module Mconf::S3Client
 
     true
   rescue StandardError => e
-    Rails.logger.error "[S3Client] Error: #{e.message}"
+    Rails.logger.error "[S3Client##{__method__}] Error: #{e.message}"
     false
   end
 end
