@@ -39,8 +39,23 @@ class AppLaunch < ApplicationRecord
       email: self.params['lis_person_contact_email_primary'],
       roles: self.params['roles'],
       locale: self.params['launch_presentation_locale'],
+      profile_image_url: self.params['profile_image_url'],
       launch_nonce: self.nonce,
     }
+  end
+
+  def set_param(key, value)
+    self.params ||= {}
+    self.params[key] = value
+    self.save
+  end
+
+  def set_custom_param(name, value)
+    self.params ||= {}
+    self.params['custom_params'] ||= {}
+    key = 'custom_' + name.sub(/\Acustom_/, '')
+    self.params['custom_params'][key] = value
+    self.save
   end
 
   def custom_params

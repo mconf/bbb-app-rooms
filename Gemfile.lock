@@ -116,6 +116,25 @@ GEM
     autoprefixer-rails (10.4.16.0)
       execjs (~> 2)
     awesome_print (1.9.2)
+    aws-eventstream (1.4.0)
+    aws-partitions (1.1183.0)
+    aws-sdk-core (3.237.0)
+      aws-eventstream (~> 1, >= 1.3.0)
+      aws-partitions (~> 1, >= 1.992.0)
+      aws-sigv4 (~> 1.9)
+      base64
+      bigdecimal
+      jmespath (~> 1, >= 1.6.1)
+      logger
+    aws-sdk-kms (1.117.0)
+      aws-sdk-core (~> 3, >= 3.234.0)
+      aws-sigv4 (~> 1.5)
+    aws-sdk-s3 (1.203.1)
+      aws-sdk-core (~> 3, >= 3.234.0)
+      aws-sdk-kms (~> 1)
+      aws-sigv4 (~> 1.5)
+    aws-sigv4 (1.12.1)
+      aws-eventstream (~> 1, >= 1.0.2)
     base64 (0.3.0)
     benchmark (0.4.1)
     bigdecimal (3.2.3)
@@ -206,6 +225,7 @@ GEM
     jbuilder (2.13.0)
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
+    jmespath (1.6.2)
     jquery-fileupload-rails (1.0.0)
       actionpack (>= 3.1)
       railties (>= 3.1)
@@ -553,6 +573,7 @@ PLATFORMS
 DEPENDENCIES
   active_scheduler
   awesome_print
+  aws-sdk-s3 (~> 1.203)
   bigbluebutton-api-ruby!
   bootsnap
   bootstrap (~> 5.3)

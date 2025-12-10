@@ -10,13 +10,31 @@ class BrightspaceController < ApplicationController
   before_action :find_room
   before_action :validate_room
   before_action :find_user
-  before_action :find_scheduled_meeting, except: :send_delete_calendar_event
-  before_action :validate_scheduled_meeting, except: :send_delete_calendar_event
-  before_action -> { authorize_user!(:edit, @room) }
+  before_action :find_scheduled_meeting, except: [:send_delete_calendar_event, :fetch_profile_image]
+  before_action :validate_scheduled_meeting, except: [:send_delete_calendar_event, :fetch_profile_image]
+  before_action -> { authorize_user!(:edit, @room) }, except: [:fetch_profile_image]
   before_action :prevent_event_duplication, only: :send_create_calendar_event
   before_action :find_app_launch
   before_action :set_event
   before_action -> { authenticate_with_oauth! :brightspace, @custom_params }
+
+  # GET /rooms/:room_id/brightspace/fetch_profile_image
+  def fetch_profile_image
+    base_url = @app_launch.brightspace_oauth.url
+    # assume the access token is stored in the omniauth_auth credentials after OAuth authentication
+    access_token = @app_launch.omniauth_auth.dig('brightspace','credentials', 'token')
+    user_info = { email: @user.email, launch_nonce: @app_launch.nonce }
+    brightspace_client = Mconf::BrightspaceClient.new(base_url, access_token, user_info: user_info)
+
+    profile_image = brightspace_client.get_profile_image
+    file_name = "#{@app_launch.consumer_key}/#{@user.uid}.jpg" # unique file name per LMS and user
+    # Upload the profile image to S3 and set the profile_image_url param on AppLaunch
+    if profile_image.present? && Mconf::S3Client.upload_public_file(profile_image, file_name)
+      @app_launch.set_param('profile_image_url', Mconf::S3Client.public_url_for(file_name))
+    end
+
+    redirect_to room_path(@room)
+  end
 
   def send_create_calendar_event
     begin
@@ -88,7 +106,10 @@ class BrightspaceController < ApplicationController
   end
 
   def set_event
+    # clear param :session_set to avoid conflict with the previous "bbltibroker" auth
+    params.delete(:session_set)
     @custom_params = permitted_params.to_h
+    @custom_params[:launch_nonce] = @app_launch.nonce
     @custom_params[:event] = action_name
   end
 

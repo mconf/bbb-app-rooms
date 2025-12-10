@@ -38,22 +38,29 @@ brightspace_setup_phase = lambda do |env|
   req = Rack::Request.new(env)
   session = env['rack.session']
 
-  room_handler = req.GET&.[]('room_id') ||
-                 session&.[]('omniauth.params')&.[]('room_id')
+  launch_nonce = req.GET&.[]('launch_nonce')
+  app_launch = AppLaunch.find_by(nonce: launch_nonce)
 
-  # FIXME. This is the get_room_session in ApplicationController, but
-  # we can't access that method here
-  room = Room.find_by(handler: room_handler)
-  room_session = session&.[](ApplicationController::COOKIE_ROOMS_SCOPE) || {}
-  room_session_handler = room_session[room.handler] if room.present? &&
-                                                       room_session.key?(room.handler)
+  # try to find the app_launch from the session if not found by the launch_nonce
+  if app_launch.nil?
+    room_handler = req.GET&.[]('room_id') || session&.[]('omniauth.params')&.[]('room_id')
+    # FIXME. This is the get_room_session in ApplicationController, but
+    # we can't access that method here
+    room = Room.find_by(handler: room_handler)
+    room_session = session&.[](ApplicationController::COOKIE_ROOMS_SCOPE) || {}
+    room_session_handler = room_session[room.handler] if room.present? &&
+                                                        room_session.key?(room.handler)
 
-  # FIXME. This is the find_app_launch in ApplicationController, but
-  # we can't access that method here
-  app = AppLaunch.find_by(nonce: room_session_handler['launch']) if room_session_handler.present?
-  brightspace_oauth = app&.brightspace_oauth
+    # FIXME. This is the find_app_launch in ApplicationController, but
+    # we can't access that method here
+    app_launch = AppLaunch.find_by(nonce: room_session_handler['launch']) if room_session_handler.present?
+  end
 
-  if app.blank? || brightspace_oauth.blank?
+  brightspace_oauth = app_launch&.brightspace_oauth
+
+  if app_launch.blank? || brightspace_oauth.blank?
+    Rails.logger.error "Brightspace OAuth configuration is missing" \
+    ", app_launch=#{app_launch.inspect} brightspace_oauth=#{brightspace_oauth.inspect}"
     # FIXME. We should use url_helpers like so:
     #   routes = redirect_path_on_failure = Rails.application.routes.url_helpers
     #   redirect_path_on_failure = routes.room_url(room_handler)

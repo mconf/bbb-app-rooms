@@ -28,10 +28,23 @@ class SessionsController < ApplicationController
     session['omniauth_auth'][provider] = omniauth_auth
 
     omniauth_params = request.env['omniauth.params']
+    Rails.logger.info "Callback received with omniauth_params=#{omniauth_params.inspect}"
     if provider == 'brightspace'
       room_param = omniauth_params['room_id']
       scheduled_meeting_param = omniauth_params['id']
+
+      # Store the access token in the AppLaunch record
+      if omniauth_params['launch_nonce'].present?
+        @app_launch = AppLaunch.find_by(nonce: omniauth_params['launch_nonce'])
+        omniauth_hash = @app_launch.omniauth_auth || {}
+        omniauth_hash['brightspace'] = omniauth_auth
+        @app_launch.update(omniauth_auth: omniauth_hash)
+        Rails.logger.info "Brightspace access token retrieved and stored on AppLaunch nonce=#{@app_launch.nonce}"
+      end
+
       case omniauth_params['event']
+      when 'fetch_profile_image'
+        redirect_to fetch_brightspace_profile_image_path(@app_launch.room_handler)
       when 'send_create_calendar_event'
         redirect_to send_create_calendar_event_room_scheduled_meeting_path(room_param, scheduled_meeting_param)
       when 'send_update_calendar_event'

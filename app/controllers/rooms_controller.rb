@@ -34,6 +34,7 @@ class RoomsController < ApplicationController
                          recording_update recording_delete] do
     authorize_user!(:edit, @room)
   end
+  before_action :setup_brightspace_integration, only: :launch
 
   # GET /rooms/1
   def show
@@ -386,7 +387,7 @@ class RoomsController < ApplicationController
                    .find_or_create_by(nonce: launch_nonce) do |launch|
       launch.update(
         params: launch_params,
-        omniauth_auth: session['omniauth_auth']['bbbltibroker'],
+        omniauth_auth: { bbbltibroker: session['omniauth_auth']['bbbltibroker'] },
         expires_at: expires_at
       )
     end
@@ -735,6 +736,12 @@ class RoomsController < ApplicationController
       Rails.logger.info "Defined a handler using the external request handler=#{handler}"
       return true, handler
     end
+  end
+
+  def setup_brightspace_integration
+    return if @consumer_config.brightspace_oauth.nil?
+
+    redirect_to fetch_brightspace_profile_image_path(@app_launch.room_handler)
   end
 
   def send_request(url, data=nil)
