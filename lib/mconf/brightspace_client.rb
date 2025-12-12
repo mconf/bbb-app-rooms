@@ -75,6 +75,41 @@ module Mconf
       nil
     end
 
+    # Creates a grade category in a provided course
+    # https://docs.valence.desire2learn.com/res/grade.html#post--d2l-api-le-(version)-(orgUnitId)-grades-categories-
+    # @param course_id [Integer] ID of the course
+    # @param name [String] Name of the grade category (default: "Presença nas aulas online")
+    # @param short_name [String] Short name of the grade category (default: "Presença nas aulas online")
+    # @return [Hash, nil] JSON response with created grade category, or nil on error
+    def create_course_grade_category(course_id, name: nil, short_name: nil)
+      url = "#{@base_url}/d2l/api/le/#{@api_versions[:le]}/#{course_id}/grades/categories/"
+      Rails.logger.info "[BrightspaceClient] Calling #{url} to create a grade category in course #{course_id} #{@user_info_str}"
+
+      payload = {
+        "Name": name || "Presença nas aulas online",
+        "ShortName": short_name || "Presença nas aulas online",
+        "CanExceedMax": false,
+        "ExcludeFromFinalGrade": false,
+        "StartDate": nil,
+        "EndDate": nil,
+        "Weight": nil,
+        "MaxPoints": 10,
+        "AutoPoints": nil,
+        "WeightDistributionType": nil,
+        "NumberOfHighestToDrop": nil,
+        "NumberOfLowestToDrop": nil
+      }
+
+      res = RestClient.post(url, payload.to_json, self.http_headers.merge(content_type: :json, accept: :json))
+      JSON.parse(res.body)
+    rescue RestClient::ExceptionWithResponse => e
+      Rails.logger.error "[BrightspaceClient##{__method__}]#{@user_info_str} RestClient error: #{e.response}"
+      nil
+    rescue StandardError => e
+      Rails.logger.error "[BrightspaceClient##{__method__}]#{@user_info_str} Unexpected error: #{e.message}"
+      nil
+    end
+
     # Retrieve all the grade schemes for a provided course
     # https://docs.valence.desire2learn.com/res/grade.html#get--d2l-api-le-(version)-(orgUnitId)-grades-schemes-
     # @param course_id [Integer] ID of the course
