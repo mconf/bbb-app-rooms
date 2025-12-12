@@ -42,13 +42,13 @@ module Mconf
     # Retrieve all the current grade objects for a provided course
     # https://docs.valence.desire2learn.com/res/grade.html#get--d2l-api-le-(version)-(orgUnitId)-grades-
     # @param course_id [Integer] ID of the course
-    # @return [String, nil] JSON response with grade objects, or nil on error
+    # @return [Hash, nil] JSON response with grade objects, or nil on error
     def get_course_grade_objects(course_id)
       url = "#{@base_url}/d2l/api/le/#{@api_versions[:le]}/#{course_id}/grades/"
       Rails.logger.info "[BrightspaceClient] Calling #{url} to get grade objects from course #{course_id} #{@user_info_str}"
 
       res = RestClient.get(url, self.http_headers)
-      res.body
+      JSON.parse(res.body)
     rescue RestClient::ExceptionWithResponse => e
       Rails.logger.error "[BrightspaceClient##{__method__}]#{@user_info_str} RestClient error: #{e.response}"
       nil
@@ -60,13 +60,13 @@ module Mconf
     # Retrieve a list of all grade categories for a provided course
     # https://docs.valence.desire2learn.com/res/grade.html#get--d2l-api-le-(version)-(orgUnitId)-grades-categories-
     # @param course_id [Integer] ID of the course
-    # @return [String, nil] JSON response with grade categories, or nil on error
+    # @return [Hash, nil] JSON response with grade categories, or nil on error
     def get_course_grade_categories(course_id)
       url = "#{@base_url}/d2l/api/le/#{@api_versions[:le]}/#{course_id}/grades/categories/"
       Rails.logger.info "[BrightspaceClient] Calling #{url} to get grade categories from course #{course_id} #{@user_info_str}"
 
       res = RestClient.get(url, self.http_headers)
-      res.body
+      JSON.parse(res.body)
     rescue RestClient::ExceptionWithResponse => e
       Rails.logger.error "[BrightspaceClient##{__method__}]#{@user_info_str} RestClient error: #{e.response}"
       nil
@@ -78,13 +78,13 @@ module Mconf
     # Retrieve all the grade schemes for a provided course
     # https://docs.valence.desire2learn.com/res/grade.html#get--d2l-api-le-(version)-(orgUnitId)-grades-schemes-
     # @param course_id [Integer] ID of the course
-    # @return [String, nil] JSON response with grade schemes, or nil on error
+    # @return [Hash, nil] JSON response with grade schemes, or nil on error
     def get_course_grade_schemes(course_id)
       url = "#{@base_url}/d2l/api/le/#{@api_versions[:le]}/#{course_id}/grades/schemes/"
       Rails.logger.info "[BrightspaceClient] Calling #{url} to get grade schemes from course #{course_id} #{@user_info_str}"
 
       res = RestClient.get(url, self.http_headers)
-      res.body
+      JSON.parse(res.body)
     rescue RestClient::ExceptionWithResponse => e
       Rails.logger.error "[BrightspaceClient##{__method__}]#{@user_info_str} RestClient error: #{e.response}"
       nil
@@ -97,14 +97,14 @@ module Mconf
     # https://docs.valence.desire2learn.com/res/grade.html#post--d2l-api-le-(version)-(orgUnitId)-grades-
     # @param course_id [Integer] ID of the course
     # @param category_id [Integer] ID of the category to assign the grade object to
-    # @param name [String] Name of the grade object (default: "New Grade Object")
-    # @param short_name [String] Short name of the grade object (default: "NewGradeObj")
-    # @return [String, nil] JSON response with created grade object, or nil on error
-    def create_grade_object(course_id, category_id, name:, short_name:)
+    # @param name [String] Name of the grade object (default: "Nota de Presença")
+    # @param short_name [String] Short name of the grade object (default: "NotaPresenca")
+    # @return [Hash, nil] JSON response with created grade object, or nil on error
+    def create_grade_object(course_id, category_id, name: nil, short_name: nil)
       url = "#{@base_url}/d2l/api/le/#{@api_versions[:le]}/#{course_id}/grades/"
       Rails.logger.info "[BrightspaceClient] Calling #{url} to create a grade object in course #{course_id} #{@user_info_str}"
       payload = {
-        "MaxPoints": 1,
+        "MaxPoints": 10,
         "CanExceedMaxPoints": false,
         "IsBonus": false,
         "ExcludeFromFinalGradeCalculation": false,
@@ -119,7 +119,7 @@ module Mconf
       }
 
       res = RestClient.post(url, payload.to_json, self.http_headers.merge(content_type: :json, accept: :json))
-      res.body
+      JSON.parse(res.body)
     rescue RestClient::ExceptionWithResponse => e
       Rails.logger.error "[BrightspaceClient##{__method__}]#{@user_info_str} RestClient error: #{e.response}"
       nil
@@ -129,6 +129,7 @@ module Mconf
     end
 
     # Updates a grade value for a user in a given course
+    # https://docs.valence.desire2learn.com/res/grade.html#put--d2l-api-le-(version)-(orgUnitId)-grades-(gradeObjectId)-values-(userId)
     # @param course_id [Integer] ID of the course
     # @param grade_object_id [Integer] ID of the grade object
     # @param user_id [Integer] ID of the user
@@ -165,13 +166,13 @@ module Mconf
     # Retrieve the enrolled users in the classlist for a provided course
     # https://docs.valence.desire2learn.com/res/enroll.html#get--d2l-api-le-(version)-(orgUnitId)-classlist-
     # @param course_id [Integer] ID of the course
-    # @return [String, nil] JSON response with course users, or nil on error
+    # @return [Hash, nil] JSON response with course users, or nil on error
     def get_course_users(course_id)
       url = "#{@base_url}/d2l/api/le/#{@api_versions[:le]}/#{course_id}/classlist/"
       Rails.logger.info "[BrightspaceClient] Calling #{url} to get users enrolled in course #{course_id} #{@user_info_str}"
 
       res = RestClient.get(url, self.http_headers)
-      res.body
+      JSON.parse(res.body)
     rescue RestClient::ExceptionWithResponse => e
       Rails.logger.error "[BrightspaceClient##{__method__}]#{@user_info_str} RestClient error: #{e.response}"
       nil
