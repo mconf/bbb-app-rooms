@@ -111,17 +111,34 @@ class BrightspaceAttendanceJob < ApplicationJob
         end
       end
 
-      ### update grade value for each enrolled user not present in the meeting
-      all_enrolled_user_ids = brightspace_client.get_course_users(app_launch.context_id)&.map { |user| user['Identifier'].to_i }
-      if all_enrolled_user_ids.nil?
-        Resque.logger.error "[BrightspaceAttendanceJob] Failed to retrieve enrolled users from course ID #{app_launch.context_id}." \
-        " Cannot assign grade 0 to absent students"
-      else
+      ### retrieve the IDs of all enrolled users in the course
+      enrollments_first_page = brightspace_client.get_course_users(app_launch.context_id)
+      if enrollments_first_page.present? && enrollments_first_page['Objects']
+        Resque.logger.info "[BrightspaceAttendanceJob] Retrieved first page of enrolled users from course ID #{app_launch.context_id}"
+        all_enrolled_user_ids = enrollments_first_page['Objects'].map { |user| user['Identifier'].to_i }
+
+        # check if there are more pages to retrieve
+        if enrollments_first_page['Next'].present?
+          Resque.logger.info "[BrightspaceAttendanceJob] More enrolled users available, retrieving all pages"
+          next_page_url = enrollments_first_page['Next']
+          while next_page_url
+            page = brightspace_client.get_course_users(app_launch.context_id, next_page_url: next_page_url)
+            if page && page['Objects']
+              all_enrolled_user_ids.concat(page['Objects'].map { |user| user['Identifier'].to_i })
+              next_page_url = page['Next']
+              Resque.logger.info "[BrightspaceAttendanceJob] Retrieved a page of enrolled users, next page URL: #{next_page_url}"
+            else
+              Resque.logger.error "[BrightspaceAttendanceJob] Failed to retrieve a page of enrolled users, stopping pagination"
+              break
+            end
+          end
+        end
         Resque.logger.info "[BrightspaceAttendanceJob] All enrolled user IDs from course #{app_launch.context_id}:" \
         " #{all_enrolled_user_ids.inspect}"
+
+        ### assign grade 0 for each enrolled user not present in the meeting
         absent_user_ids = all_enrolled_user_ids - present_user_ids
         Resque.logger.info "[BrightspaceAttendanceJob] User IDs to be assigned grade 0: #{absent_user_ids.inspect}"
-
         absent_marked_count = 0
         absent_failed_count = 0
         absent_user_ids.each do |student_id|
@@ -139,6 +156,10 @@ class BrightspaceAttendanceJob < ApplicationJob
             absent_failed_count += 1
           end
         end
+      # no enrolled users retrieved
+      else
+        Resque.logger.error "[BrightspaceAttendanceJob] Failed to retrieve enrolled users from course ID #{app_launch.context_id}." \
+        " Cannot assign grade 0 to absent students"
       end
 
       Resque.logger.info "[BrightspaceAttendanceJob] Attendance marking summary for scheduled_meeting '#{scheduled_meeting.name}'" \

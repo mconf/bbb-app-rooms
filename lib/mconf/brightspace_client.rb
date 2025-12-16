@@ -200,11 +200,14 @@ module Mconf
     end
 
     # Retrieve the enrolled users in the classlist for a provided course
-    # https://docs.valence.desire2learn.com/res/enroll.html#get--d2l-api-le-(version)-(orgUnitId)-classlist-
+    # https://docs.valence.desire2learn.com/res/enroll.html#get--d2l-api-le-(version)-(orgUnitId)-classlist-paged-
+    # The response contains two keys: "Objects" (array of users) and "Next" (URL for the next page, if any)
     # @param course_id [Integer] ID of the course
-    # @return [Hash, nil] JSON response with course users, or nil on error
-    def get_course_users(course_id)
-      url = "#{@base_url}/d2l/api/le/#{@api_versions[:le]}/#{course_id}/classlist/"
+    # @param next_page_url [String, nil] URL for the next page of results (default: nil)
+    # @return [Hash, nil] JSON response with a page of enrolled users, or nil on error
+    def get_course_users(course_id, next_page_url: nil)
+      first_page_url = "#{@base_url}/d2l/api/le/#{@api_versions[:le]}/#{course_id}/classlist/paged/?onlyShowShownInGrades=true"
+      url = next_page_url || first_page_url
       @logger.info "[BrightspaceClient] Calling #{url} to get users enrolled in course #{course_id} #{@user_info_str}"
 
       res = RestClient.get(url, self.http_headers)
