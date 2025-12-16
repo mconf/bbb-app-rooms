@@ -18,6 +18,8 @@ class BrightspaceAttendanceJob < ApplicationJob
     return unless scheduled_meeting
     app_launch = find_app_launch(conference_data)
     return unless app_launch
+    Resque.logger.info "[BrightspaceAttendanceJob] User info from app_launch: " \
+    "email=#{app_launch.user_params[:email]}, uid=#{app_launch.user_params[:uid]}, roles=#{app_launch.user_params[:roles]}"
 
     ### prepare Brightspace client
     base_url = app_launch.brightspace_oauth.url
@@ -26,8 +28,7 @@ class BrightspaceAttendanceJob < ApplicationJob
     # scopes to manage grades and read enrollments. It is expected to be stored in the omniauth_auth
     # credentials, in the user's app_launch, after OAuth authentication
     access_token = app_launch.omniauth_auth.dig('brightspace','credentials', 'token')
-    user_info = { email: app_launch.user_params[:email], launch_nonce: app_launch.nonce }
-    brightspace_client = Mconf::BrightspaceClient.new(base_url, access_token, user_info: user_info, logger: Resque.logger)
+    brightspace_client = Mconf::BrightspaceClient.new(base_url, access_token, logger: Resque.logger)
 
     I18n.with_locale(locale) do
       ### get (or create) the grade category reserved for attendances
@@ -161,11 +162,12 @@ class BrightspaceAttendanceJob < ApplicationJob
       # no enrolled users retrieved
       else
         Resque.logger.error "[BrightspaceAttendanceJob] Failed to retrieve enrolled users from course ID #{app_launch.context_id}." \
-        " Cannot assign grade 0 to absent students"
+        " It will not be possible to assign grade 0 to absent students"
       end
 
+      total_count = present_user_ids.size + absent_user_ids.size
       Resque.logger.info "[BrightspaceAttendanceJob] Attendance marking summary for scheduled_meeting '#{scheduled_meeting.name}'" \
-      " - Present (success=#{present_marked_count}, failed=#{present_failed_count})," \
+      " - Total = #{total_count}, Present (success=#{present_marked_count}, failed=#{present_failed_count})," \
       " Absent (success=#{absent_marked_count}, failed=#{absent_failed_count})."
     end
   end
