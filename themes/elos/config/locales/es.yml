@@ -51,6 +51,9 @@ es:
     moodle_attendance:
       attendance_name: "Actividad de Asistencia"
       session_description_footer: "Registrado automáticamente vía %{app_theme}."
+    brightspace_attendance:
+      attendance_name: "Asistencia"
+      grade_comment: "Asistencia registrada automáticamente vía Elos LTI"
   meetings:
     all_loaded: "Se han cargado todas las conferencias"
     duration:

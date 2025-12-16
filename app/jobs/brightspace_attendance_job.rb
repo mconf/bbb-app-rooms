@@ -69,7 +69,7 @@ class BrightspaceAttendanceJob < ApplicationJob
         parsed_start_time = scheduled_meeting.start_at_date(locale)
       end
       meeting_date = I18n.l(parsed_start_time, format: :short_custom).gsub('/', '-')
-      grade_name = "Presença #{meeting_date}"
+      grade_name = "#{I18n.t('jobs.brightspace_attendance.attendance_name')} #{meeting_date}"
       grade_object = brightspace_client.create_grade_object(
         app_launch.context_id,
         attendance_category['Id'],
@@ -103,7 +103,8 @@ class BrightspaceAttendanceJob < ApplicationJob
           app_launch.context_id,
           grade_object_id: grade_object['Id'],
           user_id: student_id,
-          grade_value: 10
+          grade_value: 10,
+          grade_comment: I18n.t('jobs.brightspace_attendance.grade_comment')
         )
         if success
           Resque.logger.info "[BrightspaceAttendanceJob] Successfully assigned grade 10 to student ID #{student_id}"
@@ -149,7 +150,8 @@ class BrightspaceAttendanceJob < ApplicationJob
             app_launch.context_id,
             grade_object_id: grade_object['Id'],
             user_id: student_id,
-            grade_value: 0
+            grade_value: 0,
+            grade_comment: I18n.t('jobs.brightspace_attendance.grade_comment')
           )
           if success
             Resque.logger.info "[BrightspaceAttendanceJob] Successfully assigned grade 0 to student ID #{student_id}"

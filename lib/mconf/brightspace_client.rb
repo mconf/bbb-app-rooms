@@ -171,7 +171,7 @@ module Mconf
     # @param user_id [Integer] ID of the user
     # @param grade_value [Numeric] New grade value to set
     # @return [String, nil] JSON response with updated grade value, or nil on error
-    def update_grade_value(course_id, grade_object_id:, user_id:, grade_value:)
+    def update_grade_value(course_id, grade_object_id:, user_id:, grade_value:, grade_comment: nil)
       url = "#{@base_url}/d2l/api/le/#{@api_versions[:le]}/#{course_id}/grades/#{grade_object_id}/values/#{user_id}"
       @logger.info "[BrightspaceClient] Calling #{url} to update grade value for user #{user_id}" \
       " in course #{course_id} #{@user_info_str}"
@@ -180,7 +180,7 @@ module Mconf
         "GradeObjectType": 1,
         "PointsNumerator": grade_value.to_i,
         "Comments": {
-          "Content": "Presença registrada automaticamente via Elos LTI",
+          "Content": grade_comment || "Presença registrada automaticamente via Elos LTI",
           "Type": "Text"
         },
         "PrivateComments": {
