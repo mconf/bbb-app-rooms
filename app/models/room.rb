@@ -41,6 +41,10 @@ class Room < ApplicationRecord
     Moodle::API.token_functions_configured?(moodle_token, required_functions)
   end
 
+  def brightspace_oauth?
+    self.consumer_config&.brightspace_oauth.present?
+  end
+
   def consumer_config
     ConsumerConfig.find_by(key: self.consumer_key)
   end

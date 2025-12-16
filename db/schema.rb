@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_03_171319) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_16_103515) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -159,6 +159,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_03_171319) do
     t.integer "moodle_group_id"
     t.string "moodle_group_name"
     t.boolean "mark_moodle_attendance"
+    t.boolean "mark_brightspace_attendance"
     t.index ["created_by_launch_nonce"], name: "index_scheduled_meetings_on_created_by_launch_nonce"
     t.index ["hash_id"], name: "index_scheduled_meetings_on_hash_id", unique: true
     t.index ["repeat"], name: "index_scheduled_meetings_on_repeat"
