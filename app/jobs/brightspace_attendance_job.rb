@@ -90,6 +90,8 @@ class BrightspaceAttendanceJob < ApplicationJob
       # User IDs sent by Brightspace on LTI launches have the format "<random-string>_123", where 123 is the 'Identifier'
       # used internally, so we extract the numeric ID part
       present_user_ids = conference_attendees_data.map { |att| att['ext_user_id']&.split('_')&.last&.to_i }.compact.uniq
+      # remove the current user (instructor) from the list of present students
+      present_user_ids.delete(app_launch.user_params[:uid].split('_').last.to_i)
       Resque.logger.info "[BrightspaceAttendanceJob] User IDs from conference data (present): #{present_user_ids.inspect}"
 
       ### update grade value for each conference attendee
