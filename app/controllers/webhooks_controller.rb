@@ -11,7 +11,7 @@ class WebhooksController < ApplicationController
       return
     end
 
-     # Enqueue the job for background processing
+    # Enqueue the job for background processing
     begin
       MoodleAttendanceJob.perform_later(json_body, app_theme, I18n.locale)
       Rails.logger.info "WebhooksController: MoodleAttendanceJob enqueued. IDs will be derived from JSON body."
@@ -31,7 +31,7 @@ class WebhooksController < ApplicationController
       return
     end
 
-     # Enqueue the job for background processing
+    # Enqueue the job for background processing
     begin
       BrightspaceAttendanceJob.perform_later(json_body, I18n.locale)
       Rails.logger.info "WebhooksController: BrightspaceAttendanceJob enqueued. IDs will be derived from JSON body."
