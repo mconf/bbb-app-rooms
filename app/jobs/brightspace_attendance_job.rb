@@ -165,6 +165,9 @@ class BrightspaceAttendanceJob < ApplicationJob
       else
         Resque.logger.error "[BrightspaceAttendanceJob] Failed to retrieve enrolled users from course ID #{app_launch.context_id}." \
         " It will not be possible to assign grade 0 to absent students"
+        absent_user_ids = []
+        absent_marked_count = 0
+        absent_failed_count = 0
       end
 
       total_count = present_user_ids.size + absent_user_ids.size
