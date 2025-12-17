@@ -2,6 +2,8 @@ module Mconf
   # Client to interact with Brightspace's API
   class BrightspaceClient
 
+    MaxGrade = Mconf::Env.fetch_int('BRIGHTSPACE_ATTENDANCE_MAX_GRADE', 10)
+
     # @param base_url [String] base URL to Brightspace's API
     # @param access_token [String] OAuth2 access token
     # @param api_versions [Hash] API versions to use (default: { lp: '1.54', le: '1.89' })
@@ -94,7 +96,7 @@ module Mconf
         "StartDate": nil,
         "EndDate": nil,
         "Weight": nil,
-        "MaxPoints": 10,
+        "MaxPoints": MaxGrade,
         "AutoPoints": nil,
         "WeightDistributionType": nil,
         "NumberOfHighestToDrop": nil,
@@ -140,7 +142,7 @@ module Mconf
       url = "#{@base_url}/d2l/api/le/#{@api_versions[:le]}/#{course_id}/grades/"
       @logger.info "[BrightspaceClient] Calling #{url} to create a grade object in course #{course_id} #{@user_info_str}"
       payload = {
-        "MaxPoints": 10,
+        "MaxPoints": MaxGrade,
         "CanExceedMaxPoints": false,
         "IsBonus": false,
         "ExcludeFromFinalGradeCalculation": false,
@@ -173,7 +175,7 @@ module Mconf
     # @return [String, nil] JSON response with updated grade value, or nil on error
     def update_grade_value(course_id, grade_object_id:, user_id:, grade_value:, grade_comment: nil)
       url = "#{@base_url}/d2l/api/le/#{@api_versions[:le]}/#{course_id}/grades/#{grade_object_id}/values/#{user_id}"
-      @logger.info "[BrightspaceClient] Calling #{url} to update grade value for user #{user_id}" \
+      @logger.info "[BrightspaceClient] Calling #{url} to assign grade value #{grade_value} to user #{user_id}" \
       " in course #{course_id} #{@user_info_str}"
 
       payload = {

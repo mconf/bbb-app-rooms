@@ -95,7 +95,7 @@ class BrightspaceAttendanceJob < ApplicationJob
       present_user_ids.delete(app_launch.user_params[:uid].split('_').last.to_i)
       Resque.logger.info "[BrightspaceAttendanceJob] User IDs from conference data (present): #{present_user_ids.inspect}"
 
-      ### update grade value for each conference attendee
+      ### assign the max grade to each conference attendee
       present_marked_count = 0
       present_failed_count = 0
       present_user_ids.each do |student_id|
@@ -103,14 +103,14 @@ class BrightspaceAttendanceJob < ApplicationJob
           app_launch.context_id,
           grade_object_id: grade_object['Id'],
           user_id: student_id,
-          grade_value: 10,
+          grade_value: Mconf::BrightspaceClient::MaxGrade,
           grade_comment: I18n.t('jobs.brightspace_attendance.grade_comment')
         )
         if success
-          Resque.logger.info "[BrightspaceAttendanceJob] Successfully assigned grade 10 to student ID #{student_id}"
+          Resque.logger.info "[BrightspaceAttendanceJob] Successfully assigned max grade to student ID #{student_id}"
           present_marked_count += 1
         else
-          Resque.logger.error "[BrightspaceAttendanceJob] Failed to assign grade 10 to student ID #{student_id}"
+          Resque.logger.error "[BrightspaceAttendanceJob] Failed to assign max grade to student ID #{student_id}"
           present_failed_count += 1
         end
       end
