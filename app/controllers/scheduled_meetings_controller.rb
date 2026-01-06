@@ -307,7 +307,7 @@ class ScheduledMeetingsController < ApplicationController
         opts["meta_analytics-callback-url"] = moodle_attendance_url(host: Rails.application.config.url_host)
       end
 
-      if @room.brightspace_oauth? && @scheduled_meeting.mark_brightspace_attendance
+      if @room.can_mark_brightspace_attendance? && @scheduled_meeting.mark_brightspace_attendance
         opts["meta_analytics-callback-url"] = brightspace_attendance_url(host: Rails.application.config.url_host)
       end
 

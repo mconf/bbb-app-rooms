@@ -160,6 +160,7 @@ en:
       tooltip:
         create_moodle_calendar_event_disabled: "Moodle Calendar integration is not configured. To use this integration, please contact your institution's Moodle manager."
         mark_brightspace_attendance: "If checked, an attendance grade (present = 10, absent = 0) will be assigned to each student in this course."
+        mark_brightspace_attendance_disabled: "Attendance integration is not configured. To use this integration, please contact your institution's Brightspace manager."
         mark_moodle_attendance_disabled: "Moodle Attendance integration is not configured. To use this integration, please contact your institution's Moodle manager."
   date:
     formats:

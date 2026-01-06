@@ -108,12 +108,19 @@
 
       <%# show Brightspace OR Moodle attendance checkbox %>
       <% if @room.brightspace_oauth? %>
+        <% can_mark_bright_attendance = @room.can_mark_brightspace_attendance? %>
         <div class="form-group">
           <div class="form-check">
-            <%= form.check_box :mark_brightspace_attendance, class: "form-check-input" %>
+            <%= form.check_box :mark_brightspace_attendance,
+              class: "form-check-input",
+              checked: can_mark_bright_attendance,
+              disabled: !can_mark_bright_attendance %>
             <%= form.label :mark_brightspace_attendance, class: "form-check-label" do %>
               <%= t('helpers.label.scheduled_meeting.mark_brightspace_attendance') %>
-              <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= t('default.scheduled_meeting.tooltip.mark_brightspace_attendance') %>">help</i>
+              <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip"
+                title="<%= can_mark_bright_attendance ?
+                t('default.scheduled_meeting.tooltip.mark_brightspace_attendance') :
+                t('default.scheduled_meeting.tooltip.mark_brightspace_attendance_disabled') %>">help</i>
             <% end %>
           </div>
         </div>

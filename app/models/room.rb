@@ -45,6 +45,17 @@ class Room < ApplicationRecord
     self.consumer_config&.brightspace_oauth.present?
   end
 
+  def can_mark_brightspace_attendance?
+    return false unless self.consumer_config&.brightspace_oauth.present?
+
+    oauth_scopes = self.consumer_config.brightspace_oauth.scope.split(' ')
+    necessary_scopes = ['enrollment:orgunit:read', 'grades:gradeobjects:read,write']
+    # Check if all necessary scopes are configured in the brightspace_oauth
+    missing_scopes = necessary_scopes - oauth_scopes
+
+    missing_scopes.empty?
+  end
+
   def consumer_config
     ConsumerConfig.find_by(key: self.consumer_key)
   end

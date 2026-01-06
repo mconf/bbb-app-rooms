@@ -159,6 +159,7 @@ pt:
       tooltip:
         create_moodle_calendar_event_disabled: "A integração com o Calendário Moodle não está configurada. Para usar essa integração, entre em contato com o gerenciador do Moodle da sua instituição."
         mark_brightspace_attendance: "Se marcado, será atribuída uma nota de presença (presente = 10, ausente = 0) para cada aluno deste curso."
+        mark_brightspace_attendance_disabled: "A integração de Presença não está configurada. Para usar essa integração, entre em contato com o gerenciador do Brightspace da sua instituição."
         mark_moodle_attendance_disabled: "A integração de Presença Moodle não está configurada. Para usar essa integração, entre em contato com o gerenciador do Moodle da sua instituição."
   date:
     formats:
