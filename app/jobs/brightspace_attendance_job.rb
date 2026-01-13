@@ -35,7 +35,7 @@ class BrightspaceAttendanceJob < ApplicationJob
       # this category groups all grade objects created for attendance marking
       categories = brightspace_client.get_course_grade_categories(app_launch.context_id)
       Resque.logger.info "[BrightspaceAttendanceJob] Grade categories from course '#{app_launch.context_id}':" \
-      " #{categories.map { |c| c['Name'] }}"
+      " #{categories&.map { |c| c['Name'] }}"
       # the category is expected to have a specific name defined in environment variable
       attendance_category_name = Mconf::Env.fetch('BRIGHTSPACE_ATTENDANCE_CATEGORY_NAME', 'Presença nas aulas online')
       attendance_category = categories&.find { |category| category['Name'] == attendance_category_name }
