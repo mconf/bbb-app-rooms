@@ -66,7 +66,7 @@ class BrightspaceAttendanceJob < ApplicationJob
       rescue ArgumentError => e
         Resque.logger.warn "[BrightspaceAttendanceJob] Invalid start_time format '#{start_time_str}': #{e.message}." \
         "Using scheduled_meeting start date (#{scheduled_meeting.start_at_date(locale)}) instead"
-        parsed_start_time = scheduled_meeting.start_at_date(locale)
+        parsed_start_time = scheduled_meeting.start_at
       end
       meeting_date = I18n.l(parsed_start_time, format: :short_custom).gsub('/', '-')
       grade_name = "#{I18n.t('jobs.brightspace_attendance.attendance_name')} #{meeting_date}"
