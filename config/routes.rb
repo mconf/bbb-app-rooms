@@ -22,6 +22,7 @@ Rails.application.routes.draw do
       scope 'rooms' do
         get '/close', to: 'rooms#close', as: :autoclose
         post '/webhooks/moodle_attendance', to: 'webhooks#moodle_attendance', as: :moodle_attendance
+        post '/webhooks/brightspace_attendance', to: 'webhooks#brightspace_attendance', as: :brightspace_attendance
 
         # Handles recording management.
         scope ':id/recording/:record_id' do

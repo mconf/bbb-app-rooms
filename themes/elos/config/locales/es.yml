@@ -38,6 +38,7 @@ es:
         disable_note: "Deshabilitar notas compartidas"
         duration: "Duración"
         mark_moodle_attendance: "Marcar asistencia automáticamente"
+        mark_brightspace_attendance: "Asignar calificación de asistencia automáticamente"
         name: "Nombre de la sesión"
         recording: "Permitir que se grabe la sesión"
         repeat: "Recurrencia"
@@ -50,6 +51,9 @@ es:
     moodle_attendance:
       attendance_name: "Actividad de Asistencia"
       session_description_footer: "Registrado automáticamente vía %{app_theme}."
+    brightspace_attendance:
+      attendance_name: "Asistencia"
+      grade_comment: "Asistencia registrada automáticamente vía Elos LTI"
   meetings:
     all_loaded: "Se han cargado todas las conferencias"
     duration:
@@ -154,6 +158,8 @@ es:
     scheduled_meeting:
       tooltip:
         create_moodle_calendar_event_disabled: "La integración con el Calendario de Moodle no está configurada. Para utilizar esta integración, por favor contacte al administrador de Moodle de su institución."
+        mark_brightspace_attendance: "Si está marcado, se asignará una calificación de asistencia (presente = 10, ausente = 0) a cada estudiante en este curso."
+        mark_brightspace_attendance_disabled: "La integración de Asistencia no está configurada. Para utilizar esta integración, por favor contacte al administrador de Brightspace de su institución."
         mark_moodle_attendance_disabled: "La integración de Asistencia de Moodle no está configurada. Para utilizar esta integración, por favor contacte al administrador de Moodle de su institución."
   date:
     formats:

@@ -109,13 +109,14 @@ $(document).on('turbolinks:load', function(){
       });
     }
 
-    // Logic for disabling wait_moderator based on mark_moodle_attendance
+    // Logic for disabling wait_moderator based on mark_moodle_attendance or mark_brightspace_attendance
     var markMoodleAttendanceCheckbox = $('input[name="scheduled_meeting[mark_moodle_attendance]"]');
+    var markBrightspaceAttendanceCheckbox = $('input[name="scheduled_meeting[mark_brightspace_attendance]"]');
     var waitModeratorCheckbox = $('input[name="scheduled_meeting[wait_moderator]"]');
 
     function toggleWaitModeratorBasedOnAttendance() {
-      if (markMoodleAttendanceCheckbox.length && waitModeratorCheckbox.length) {
-        if (markMoodleAttendanceCheckbox.is(':checked')) {
+      if ((markMoodleAttendanceCheckbox.length || markBrightspaceAttendanceCheckbox.length) && waitModeratorCheckbox.length) {
+        if (markMoodleAttendanceCheckbox.is(':checked') || markBrightspaceAttendanceCheckbox.is(':checked')) {
           // If attendance is checked, wait_moderator MUST be checked and disabled.
           waitModeratorCheckbox.prop('checked', true);
           waitModeratorCheckbox.prop('disabled', true);
@@ -128,9 +129,12 @@ $(document).on('turbolinks:load', function(){
     // Set initial state on page load
     toggleWaitModeratorBasedOnAttendance();
 
-    // Add event listener for changes
+    // Add event listeners for changes
     if (markMoodleAttendanceCheckbox.length) {
       markMoodleAttendanceCheckbox.on('change', toggleWaitModeratorBasedOnAttendance);
+    }
+    if (markBrightspaceAttendanceCheckbox.length) {
+      markBrightspaceAttendanceCheckbox.on('change', toggleWaitModeratorBasedOnAttendance);
     }
   }
 })
