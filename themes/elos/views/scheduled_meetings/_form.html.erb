@@ -113,7 +113,7 @@
           <div class="form-check">
             <%= form.check_box :mark_brightspace_attendance,
               class: "form-check-input",
-              checked: can_mark_bright_attendance,
+              checked: @scheduled_meeting.persisted? ? @scheduled_meeting.mark_brightspace_attendance : can_mark_bright_attendance,
               disabled: !can_mark_bright_attendance %>
             <%= form.label :mark_brightspace_attendance, class: "form-check-label" do %>
               <%= t('helpers.label.scheduled_meeting.mark_brightspace_attendance') %>
@@ -130,7 +130,7 @@
           <div class="form-check">
             <%= form.check_box :mark_moodle_attendance,
               class: "form-check-input",
-              checked: can_mark_moodle_attendance,
+              checked: @scheduled_meeting.persisted? ? @scheduled_meeting.mark_moodle_attendance : can_mark_moodle_attendance,
               disabled: !can_mark_moodle_attendance %>
             <%= form.label :mark_moodle_attendance, class: "form-check-label" do %>
               <%= t('helpers.label.scheduled_meeting.mark_moodle_attendance') %>

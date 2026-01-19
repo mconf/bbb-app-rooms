@@ -112,7 +112,7 @@
         <div class="form-check">
             <%= form.check_box :mark_moodle_attendance,
                 class: "form-check-input",
-                checked: can_mark_attendance,
+                checked: @scheduled_meeting.persisted? ? @scheduled_meeting.mark_moodle_attendance : can_mark_attendance,
                 disabled: !can_mark_attendance %>
             <%= form.label :mark_moodle_attendance, class: "form-check-label" do %>
               <%= t('helpers.label.scheduled_meeting.mark_moodle_attendance') %>
