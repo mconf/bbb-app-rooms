@@ -79,6 +79,13 @@ class ScheduledMeetingsController < ApplicationController
       config = ConsumerConfig.find_by(key: @room.consumer_key)
       @scheduled_meeting.disable_external_link = true if config&.force_disable_external_link
 
+      # if attendance marking is enabled, the meeting must be initiated by a moderator
+      if (@room.can_mark_moodle_attendance && @scheduled_meeting.mark_moodle_attendance) ||
+          (@room.can_mark_brightspace_attendance? && @scheduled_meeting.mark_brightspace_attendance)
+        logger.info "Enforcing wait_moderator for scheduled meeting '#{@scheduled_meeting.name}' due to attendance marking"
+        @scheduled_meeting.wait_moderator = true
+      end
+
       if @room.moodle_group_select_enabled?
         current_group_id = Rails.cache.read("#{@app_launch.nonce}/current_group_id")
         moodle_groups = Rails.cache.read("#{@app_launch.nonce}/moodle_groups")
@@ -171,6 +178,13 @@ class ScheduledMeetingsController < ApplicationController
       if params[:scheduled_meeting]['duration'].to_i.zero?
         params[:scheduled_meeting]['duration'] =
           ScheduledMeeting.convert_time_to_duration(params[:scheduled_meeting][:custom_duration])
+      end
+
+      # if attendance marking is enabled, the meeting must be initiated by a moderator
+      if (@room.can_mark_moodle_attendance && params[:scheduled_meeting]['mark_moodle_attendance'] == '1') ||
+          (@room.can_mark_brightspace_attendance? && params[:scheduled_meeting]['mark_brightspace_attendance'] == '1')
+        logger.info "Enforcing wait_moderator for scheduled meeting '#{@scheduled_meeting.name}' due to attendance marking"
+        params[:scheduled_meeting]['wait_moderator'] = 1
       end
 
       if valid_start_at && @scheduled_meeting.update(scheduled_meeting_params(@room))
