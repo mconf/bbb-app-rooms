@@ -39,6 +39,14 @@ module ApplicationHelper
     Abilities.can?(user, :download_presentation_video, resource)
   end
 
+  def can_create_scheduled_meeting?(user, room)
+    Abilities.can?(user, :create_scheduled_meeting, room)
+  end
+
+  def can_manage_scheduled_meeting?(user, meeting)
+    Abilities.can?(user, :manage_scheduled_meeting, meeting)
+  end
+
   def show_terms_use_message?(resource)
     config = ConsumerConfig.find_by(key: resource[:consumer_key])
     config.present? && config[:message_reference_terms_use]

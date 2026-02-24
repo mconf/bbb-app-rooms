@@ -169,7 +169,7 @@ class ApplicationController < ActionController::Base
   end
 
   def find_scheduled_meeting
-    @scheduled_meeting = @room.scheduled_meetings.from_param(params[:id])
+    @scheduled_meeting = @room.scheduled_meetings.includes(:creator_launch).from_param(params[:id])
   end
 
   def validate_scheduled_meeting

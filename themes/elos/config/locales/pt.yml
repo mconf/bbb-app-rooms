@@ -124,6 +124,7 @@ pt:
       entering: "Acessando..."
       title: "Turmas"
   scheduled_meetings:
+    created_by: "Criado por %{name}"
     destroy: "Remover"
     edit:
       action: "Editar"

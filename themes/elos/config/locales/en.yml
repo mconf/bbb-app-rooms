@@ -124,6 +124,7 @@ en:
       entering: "Acessing..."
       title: "Classes"
   scheduled_meetings:
+    created_by: "Created by %{name}"
     destroy: "Remove"
     edit:
       action: "Edit"

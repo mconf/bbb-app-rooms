@@ -124,6 +124,7 @@ es:
       entering: "Accediendo..."
       title: "Clases"
   scheduled_meetings:
+    created_by: "Creado por %{name}"
     destroy: "Eliminar"
     edit:
       action: "Editar"

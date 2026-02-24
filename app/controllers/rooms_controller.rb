@@ -40,7 +40,7 @@ class RoomsController < ApplicationController
   def show
     respond_to do |format|
       @room.update_recurring_meetings
-      @scheduled_meetings = @room.scheduled_meetings.active
+      @scheduled_meetings = @room.scheduled_meetings.active.includes(:creator_launch)
 
       if @room.moodle_group_select_enabled?
         @scheduled_meetings = @scheduled_meetings.where(moodle_group_id: Rails.cache.read("#{@app_launch.nonce}/current_group_id"))

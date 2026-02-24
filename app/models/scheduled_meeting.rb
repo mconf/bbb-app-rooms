@@ -9,6 +9,7 @@ class ScheduledMeeting < ApplicationRecord
   }.stringify_keys.freeze
 
   belongs_to :room
+  belongs_to :creator_launch, class_name: 'AppLaunch', primary_key: 'nonce', foreign_key: 'created_by_launch_nonce', optional: true
   has_one :brightspace_calendar_event,
           primary_key: :hash_id,
           foreign_key: :scheduled_meeting_hash_id,
@@ -273,6 +274,10 @@ class ScheduledMeeting < ApplicationRecord
 
   def self.default_duration_for_helper
     return 60 * 60 # 1h
+  end
+
+  def creator_name
+    @creator_name ||= creator_launch&.params&.[]('lis_person_name_full')
   end
 
   private
