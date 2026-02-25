@@ -25,7 +25,7 @@ class Abilities
     when :create_scheduled_meeting
       user.present? && (self.full_permission?(user) || self.allow_student_scheduling?(resource))
     when :manage_scheduled_meeting
-      user.present? && (self.full_permission?(user) || self.user_created_meeting?(user, resource))
+      user.present? && (self.full_permission?(user) || (self.allow_student_scheduling?(resource) && self.user_created_meeting?(user, resource)))
     else
       false
     end
@@ -42,7 +42,11 @@ class Abilities
   def self.allow_student_scheduling?(resource)
     return false if resource.blank?
 
-    config = ConsumerConfig.select(:allow_student_scheduling).find_by(key: resource.consumer_key)
+    # Handle both Room and ScheduledMeeting resources
+    consumer_key = resource.is_a?(ScheduledMeeting) ? resource.room&.consumer_key : resource.consumer_key
+    return false if consumer_key.blank?
+
+    config = ConsumerConfig.select(:allow_student_scheduling).find_by(key: consumer_key)
     config.present? && config.allow_student_scheduling?
   end
 

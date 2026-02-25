@@ -42,7 +42,8 @@ RSpec.describe Abilities, type: :model do
         expect(Abilities.can?(user, :manage_scheduled_meeting, meeting)).to be(true)
       end
 
-      it 'allows the creator via app launch nonce' do
+      it 'allows the creator via app launch nonce when student scheduling is enabled' do
+        ConsumerConfig.create!(key: 'consumer-5', allow_student_scheduling: true)
         room = Room.create!(consumer_key: 'consumer-5')
         AppLaunch.create!(
           nonce: 'nonce-student-creator',
@@ -88,6 +89,32 @@ RSpec.describe Abilities, type: :model do
           created_by_launch_nonce: 'nonce-owner'
         )
         user = User.new(uid: 'student-other', roles: 'Student', launch_nonce: 'nonce-other')
+
+        expect(Abilities.can?(user, :manage_scheduled_meeting, meeting)).to be(false)
+      end
+
+      it 'denies creator when allow_student_scheduling is disabled' do
+        ConsumerConfig.create!(key: 'consumer-9', allow_student_scheduling: false)
+        room = Room.create!(consumer_key: 'consumer-9')
+        AppLaunch.create!(
+          nonce: 'nonce-student-creator-disabled',
+          params: {
+            'user_id' => 'student-5',
+            'context_id' => 'context-9',
+            'tool_consumer_instance_guid' => 'consumer-9',
+            'resource_link_id' => 'resource-9',
+            'custom_params' => { 'custom_enable_groups_scoping' => 'false' }
+          },
+          expires_at: Time.zone.now + 1.hour
+        )
+        meeting = ScheduledMeeting.create!(
+          room: room,
+          name: 'Student meeting',
+          start_at: Time.zone.now + 1.hour,
+          duration: 1800,
+          created_by_launch_nonce: 'nonce-student-creator-disabled'
+        )
+        user = User.new(uid: 'student-5', roles: 'Student', launch_nonce: 'nonce-student-creator-disabled')
 
         expect(Abilities.can?(user, :manage_scheduled_meeting, meeting)).to be(false)
       end
