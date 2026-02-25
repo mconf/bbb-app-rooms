@@ -47,6 +47,10 @@ module ApplicationHelper
     Abilities.can?(user, :manage_scheduled_meeting, meeting)
   end
 
+  def allow_student_scheduling?(room)
+    Abilities.allow_student_scheduling?(room)
+  end
+
   def show_terms_use_message?(resource)
     config = ConsumerConfig.find_by(key: resource[:consumer_key])
     config.present? && config[:message_reference_terms_use]

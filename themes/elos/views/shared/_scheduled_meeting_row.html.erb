@@ -4,9 +4,11 @@
     <% unless meeting.description.blank? %>
       <div class="item-description word-break"><%= meeting.description %></div>
     <% end %>
-    <% creator = meeting.creator_name %>
-    <% unless creator.blank? %>
-      <div class="item-creator"><%= t('scheduled_meetings.created_by', name: creator) %></div>
+    <% if allow_student_scheduling?(room) %>
+      <% creator = meeting.creator_name %>
+      <% unless creator.blank? %>
+        <div class="item-creator"><%= t('scheduled_meetings.created_by', name: creator) %></div>
+      <% end %>
     <% end %>
   </td>
   <td class="col-12 col-md-3 align-middle">
