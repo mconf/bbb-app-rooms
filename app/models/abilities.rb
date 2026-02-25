@@ -1,5 +1,7 @@
 class Abilities
 
+  ALLOW_STUDENT_SCHEDULING_CACHE_KEY = :abilities_allow_student_scheduling_cache
+
   # This is a simplified authorization mechanism
   # TODO: verifiy the resource as well
   def self.can?(user, action, resource)
@@ -42,8 +44,15 @@ class Abilities
   def self.allow_student_scheduling?(resource)
     return false if resource.blank?
 
-    config = ConsumerConfig.select(:allow_student_scheduling).find_by(key: resource.consumer_key)
-    config.present? && config.allow_student_scheduling?
+    consumer_key = resource.consumer_key
+    return false if consumer_key.blank?
+
+    # Keep this cache to avoid repeated queries during a single render
+    cache = ActiveSupport::IsolatedExecutionState[ALLOW_STUDENT_SCHEDULING_CACHE_KEY] ||= {}
+    return cache[consumer_key] if cache.key?(consumer_key)
+
+    config = ConsumerConfig.select(:allow_student_scheduling).find_by(key: consumer_key)
+    cache[consumer_key] = config.present? && config.allow_student_scheduling?
   end
 
   def self.user_created_meeting?(user, resource)
