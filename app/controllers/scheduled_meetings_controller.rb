@@ -27,8 +27,11 @@ class ScheduledMeetingsController < ApplicationController
   before_action only: %i[join external wait] do
     authorize_user!(:show, @scheduled_meeting) if @user.present?
   end
-  before_action only: %i[new create edit update destroy] do
-    authorize_user!(:edit, @room)
+  before_action only: %i[new create] do
+    authorize_user!(:create_scheduled_meeting, @room)
+  end
+  before_action only: %i[edit update destroy] do
+    authorize_user!(:manage_scheduled_meeting, @scheduled_meeting)
   end
 
   before_action :set_blank_repeat_as_nil, only: %i[create update]

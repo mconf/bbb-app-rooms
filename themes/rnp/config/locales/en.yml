@@ -166,6 +166,7 @@ en:
       message: "Thank you for participating and until the next time."
       title: "Your session has ended"
   scheduled_meetings:
+    created_by: "Created by %{name}"
     destroy: "Remove"
     edit:
       action: "Edit"

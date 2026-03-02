@@ -4,6 +4,12 @@
     <% unless meeting.description.blank? %>
       <div class="item-description word-break"><%= meeting.description %></div>
     <% end %>
+    <% if allow_student_scheduling?(room) %>
+      <% creator = meeting.creator_name %>
+      <% unless creator.blank? %>
+        <div class="item-creator"><%= t('scheduled_meetings.created_by', name: creator) %></div>
+      <% end %>
+    <% end %>
   </td>
   <td class="col-12 col-md-3 align-middle">
     <%= format_date(meeting.start_at) %>
@@ -31,7 +37,7 @@
     <% end %>
   </td>
   <td class="col-2 col-md-1 align-middle td-dropdown-opts">
-    <% if can_edit?(user, room) %>
+    <% if can_manage_scheduled_meeting?(user, meeting) %>
       <div class="dropdown dropdown-opts">
         <a href="#" class="dropdown-toggle d-flex text-decoration-none" id="dropdown-opts-<%= room.to_param %>" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="icon material-icons">more_vert</i>

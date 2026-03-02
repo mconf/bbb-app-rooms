@@ -40,7 +40,7 @@ class RoomsController < ApplicationController
   def show
     respond_to do |format|
       @room.update_recurring_meetings
-      @scheduled_meetings = @room.scheduled_meetings.active
+      @scheduled_meetings = @room.scheduled_meetings.active.includes(:creator_launch)
 
       if @room.moodle_group_select_enabled?
         @scheduled_meetings = @scheduled_meetings.where(moodle_group_id: Rails.cache.read("#{@app_launch.nonce}/current_group_id"))
@@ -424,7 +424,8 @@ class RoomsController < ApplicationController
       external_widget: custom_params['external_widget'],
       external_disclaimer: custom_params['external_disclaimer'],
       external_context_url: custom_params['external_context_url'],
-      institution_guid: custom_params['institution_guid']
+      institution_guid: custom_params['institution_guid'],
+      allow_student_scheduling: custom_params['allow_student_scheduling']
     )
     Rails.logger.info "[setup_consumer_configs] ConsumerConfig created/updated with key=#{@consumer_config.key}, " \
     "params=#{custom_params.except('bbb', 'moodle', 'brightspace')}"

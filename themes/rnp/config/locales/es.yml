@@ -166,6 +166,7 @@ es:
       message: "Gracias por su participación y hasta luego."
       title: "Tu sesión ha terminado"
   scheduled_meetings:
+    created_by: "Creado por %{name}"
     destroy: "Eliminar"
     edit:
       action: "Editar"
