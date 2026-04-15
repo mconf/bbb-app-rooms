@@ -141,7 +141,6 @@ module BbbAppRooms
     config.filesender_client_secret     = Mconf::Env.fetch('MCONF_FILESENDER_CLIENT_SECRET')
 
     # RNP CHAT
-    config.rnp_chat_id = Mconf::Env.fetch('RNP_CHAT_ID', '')
 
     # Moodle API
     config.moodle_api_timeout = Mconf::Env.fetch_int('MCONF_MOODLE_API_TIMEOUT', 5)
