@@ -95,6 +95,7 @@ gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'faraday'
 gem 'faraday-multipart'
+gem 'faraday-follow_redirects'
 gem 'repost', '~> 0.4.2'
 
 # BigBlueButton API
