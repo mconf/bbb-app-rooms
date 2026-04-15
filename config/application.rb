@@ -140,8 +140,6 @@ module BbbAppRooms
     config.filesender_service_url       = Mconf::Env.fetch('MCONF_FILESENDER_SERVICE_URL')
     config.filesender_client_secret     = Mconf::Env.fetch('MCONF_FILESENDER_CLIENT_SECRET')
 
-    # RNP CHAT
-
     # Moodle API
     config.moodle_api_timeout = Mconf::Env.fetch_int('MCONF_MOODLE_API_TIMEOUT', 5)
     config.moodle_recurring_events_month_period = Mconf::Env.fetch_int('MCONF_MOODLE_RECURRING_EVENTS_MONTH_PERIOD', 12)
