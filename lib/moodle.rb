@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require 'faraday'
+require 'faraday/follow_redirects'
 require 'cgi'
 
 module Moodle
@@ -588,6 +589,7 @@ module Moodle
 
           conn = Faraday.new(url: host_url, **options) do |config|
             config.response :json
+            config.response :follow_redirects, limit: 1
             config.response :raise_error
             config.adapter :net_http
           end
