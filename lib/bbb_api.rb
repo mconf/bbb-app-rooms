@@ -56,6 +56,7 @@ module BbbApi
           meeting_id,
           options
         )
+        scheduled_meeting.update_column(:last_meeting_date, Time.current.utc)
       rescue BigBlueButton::BigBlueButtonException => e
         if ['simultaneousMeetingsLimitReachedForSecret', 'simultaneousMeetingsLimitReachedForInstitution'].include? e.key.to_s
           return { can_join?: false, messageKey: e.key.to_s }
