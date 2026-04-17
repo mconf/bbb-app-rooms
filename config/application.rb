@@ -10,7 +10,7 @@ Bundler.require(*Rails.groups)
 
 module BbbAppRooms
   class Application < Rails::Application
-    VERSION = "1.2.0"
+    VERSION = "1.2.1"
 
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.0
@@ -139,9 +139,6 @@ module BbbAppRooms
     config.filesender_redirect_callback = Mconf::Env.fetch('MCONF_FILESENDER_REDIRECT_CALLBACK')
     config.filesender_service_url       = Mconf::Env.fetch('MCONF_FILESENDER_SERVICE_URL')
     config.filesender_client_secret     = Mconf::Env.fetch('MCONF_FILESENDER_CLIENT_SECRET')
-
-    # RNP CHAT
-    config.rnp_chat_id = Mconf::Env.fetch('RNP_CHAT_ID', '')
 
     # Moodle API
     config.moodle_api_timeout = Mconf::Env.fetch_int('MCONF_MOODLE_API_TIMEOUT', 5)
