@@ -185,6 +185,7 @@ es:
       footnote: "Fechas mostradas en la zona horaria: %{zone}"
     title: "Sesiones programadas"
     title_with_group: "Sesiones programadas | Grupo: %{group_name}"
+    join_tooltip: "Entrar en la sesión"
     wait:
       retry: "Entrar"
   open_app_modal:
