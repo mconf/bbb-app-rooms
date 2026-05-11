@@ -23,20 +23,20 @@
     <% can_join = !(wait_for_mod?(meeting, user)) %>
     <% if can_join && device_type? != 'desktop' %>
       <%= form_with url: join_room_scheduled_meeting_path(room, meeting), id: "join-form-#{meeting.hash_id}" do |form| %>
-        <span data-toggle="tooltip" data-placement="top" title="Entrar na sessão">
+        <span data-toggle="tooltip" data-placement="top" title="<%= t('scheduled_meetings.join_tooltip') %>">
           <button class="btn btn-primary join-room-btn" type="button" data-bs-toggle="offcanvas" data-bs-target=<%="#offcanvasBottom-#{meeting.hash_id}"%> aria-controls="offcanvasBottom">
-            <span>Entrar</span>
+            <span><%= t('scheduled_meetings.wait.retry') %></span>
           </button>
         </span>
         <%= render "shared/app_offcanvas", room: room, meeting: meeting, target_blank: !(browser.safari? || browser.safari_webapp_mode?) %>
       <% end %>
     <% elsif browser.safari? || browser.safari_webapp_mode? %>
-      <%= link_to join_room_scheduled_meeting_url(room, meeting, no_auto_join: true), class: "btn btn-primary join-room-btn", data: { 'tracking-id': 'lti-join-session', 'institution-guid': "#{@institution_guid}", toggle: 'tooltip', placement: 'top' }, title: 'Entrar na sessão' do %>
-        <span>Entrar</span>
+      <%= link_to join_room_scheduled_meeting_url(room, meeting, no_auto_join: true), class: "btn btn-primary join-room-btn", data: { 'tracking-id': 'lti-join-session', 'institution-guid': "#{@institution_guid}", toggle: 'tooltip', placement: 'top' }, title: t('scheduled_meetings.join_tooltip') do %>
+        <span><%= t('scheduled_meetings.wait.retry') %></span>
       <% end %>
     <% else %>
-      <%= link_to join_room_scheduled_meeting_url(room, meeting, no_auto_join: true), class: "btn btn-primary join-room-btn create-session-token", data: { 'tracking-id': 'lti-join-session', 'institution-guid': "#{@institution_guid}", toggle: 'tooltip', placement: 'top' }, title: 'Entrar na sessão', target: '_blank' do %>
-        <span>Entrar</span>
+      <%= link_to join_room_scheduled_meeting_url(room, meeting, no_auto_join: true), class: "btn btn-primary join-room-btn create-session-token", data: { 'tracking-id': 'lti-join-session', 'institution-guid': "#{@institution_guid}", toggle: 'tooltip', placement: 'top' }, title: t('scheduled_meetings.join_tooltip'), target: '_blank' do %>
+        <span><%= t('scheduled_meetings.wait.retry') %></span>
       <% end %>
     <% end %>
   </td>
