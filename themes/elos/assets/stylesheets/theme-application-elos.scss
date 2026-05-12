@@ -68,12 +68,13 @@ body.theme-elos {
     .item-title {
       font-size: 20px;
       font-weight: bold;
+      color: #53565a;
     }
 
     .item-description {
       font-size: var(--font-size-details);
-      margin-top: 12px;
-      color: var(--color-gray-05);
+      margin-top: 4px;
+      color: var(--color-gray-06);
     }
 
     .item-creator {
@@ -99,6 +100,25 @@ body.theme-elos {
         > * {
           align-self: flex-start;
         }
+      }
+    }
+
+    .meeting-info {
+      color: #53565a;
+      font-weight: 600;
+    }
+
+    .meeting-expire {
+      color: #53565a;
+      font-weight: 600;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+
+      i {
+        font-size: 16px;
       }
     }
 
@@ -319,18 +339,6 @@ body.theme-elos {
       tr {
         min-height: 97px; // the height when there's a name and description in the item
       }
-
-      .badge-recurring {
-        background-color: var(--color-action);
-        color: var(--color-white);
-        padding: blocks(1) blocks(1);
-        margin-top: blocks(1);
-        font-size: 95%;
-
-        .icon {
-          font-size: 85%;
-        }
-      }
     }
   }
 
@@ -361,15 +369,10 @@ body.theme-elos {
         color: var(--color-gray-06);
       }
 
-      .badge-recurring-meeting {
-        background-color: var(--color-bullet-recurring);
-        color: var(--color-black);
-        display: flex;
-        font-size: 95%;
-        justify-content: space-around;
-        padding: blocks(1) blocks(1);
-        margin-top: blocks(1);
-        width: 100%;
+      .recording-settings-label {
+        color: #7d8c99;
+        font-size: 14px;
+        padding: 8px 16px;
       }
 
       // Hide meetings without recordings
@@ -441,6 +444,114 @@ body.theme-elos {
       tr {
         min-height: 97px; // the height when there's a name and description in the item
       }
+    }
+  }
+
+  .icon-rec-row {
+    font-size: 28px;
+    &:hover {
+      color: var(--color-sec-hover);
+    }
+  }
+
+  .icon-container {
+    gap: 8px;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .dropdown-download .dropdown-toggle::after,
+  .dropdown-ai-artifacts .dropdown-toggle::after {
+    content: none;
+  }
+
+  .dropdown-icon-btn {
+    display: inline-flex;
+    position: relative;
+    cursor: pointer;
+
+    .icon {
+      font-size: 24px;
+    }
+
+    .icon-dropdown-container {
+      position: absolute;
+      right: -6px;
+      bottom: -6px;
+      width: 19px;
+      height: 19px;
+      border: 2px solid white;
+      border-radius: 50%;
+      background-color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .icon-dropdown {
+        user-select: none;
+      }
+
+      img {
+        width: 14px;
+        height: 14px;
+      }
+
+      &:hover .icon-dropdown {
+        transform: scale(1.2);
+        transition-duration: 150ms;
+      }
+    }
+  }
+
+  .dropdown-download-artifacts {
+    width: 276px;
+    padding: 8px 0;
+    border-radius: 8px;
+    box-shadow: 4px 8px 8px rgba(0, 0, 0, 0.1);
+
+    .download-artifacts-label {
+      display: block;
+      color: #7d8c99;
+      font-size: 14px;
+      padding: 4px 16px;
+      font-weight: normal;
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 16px;
+      font-size: 14px;
+      color: var(--color-gray-09);
+
+      .icon {
+        font-size: 20px;
+        color: #7d8c99;
+      }
+
+      img {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+
+  .badge-recurring-meeting {
+    background-color: var(--color-bullet-recurring);
+    color: #53565a;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--font-size-sm);
+    font-weight: bold;
+    justify-content: flex-start;
+    padding: 4px 8px;
+    border-radius: 4px;
+    width: auto;
+
+    .icon-sync {
+      font-size: 18px;
     }
   }
 
@@ -516,6 +627,42 @@ body.theme-elos {
       border: 0;
       margin-bottom: 0;
       padding: 0;
+    }
+  }
+
+  .dropdown-menu {
+    border: none;
+    box-shadow: 4px 8px 16px 0px rgba(0, 0, 0, 0.1);
+
+    .dropdown-divider {
+      margin: 0.25rem 0;
+      border-top: 1px solid var(--color-gray-02);
+    }
+
+    .dropdown-item {
+      color: var(--color-gray-09);
+      font-size: 14px;
+
+      &.rec-destroy {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: #CD545B;
+
+        img {
+          width: 20px;
+          height: 20px;
+          filter: invert(36%) sepia(64%) saturate(660%) hue-rotate(314deg) brightness(87%);
+        }
+
+        &:hover {
+          color: var(--color-gray-09);
+
+          img {
+            filter: none;
+          }
+        }
+      }
     }
   }
 

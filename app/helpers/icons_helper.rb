@@ -31,6 +31,14 @@ module IconsHelper
     image_tag 'icon-ai-summary.svg'
   end
 
+  def icon_ai_artifacts(options={})
+    image_tag 'icon_ai_artifacts.svg'
+  end
+
+  def icon_dropdown_arrow(options={})
+    image_tag("icon-dropdown.svg", class: "icon-dropdown")
+  end
+
   def icon_content_copy(options={})
     image_tag 'content_copy.svg'
   end
@@ -44,7 +52,7 @@ module IconsHelper
   end
 
   def icon_learning_dashboard(options={})
-    image_tag 'learning_dashboard.svg'
+    material_icon_constructor "chart_data", "icon material-symbols-rounded icon-chart-data", options
   end
 
   def icon_delete(options={})
@@ -53,6 +61,22 @@ module IconsHelper
 
   def icon_download(options={})
     image_tag 'download.svg'
+  end
+
+  def icon_description(options={})
+    material_icon_constructor "description", "icon material-symbols-rounded icon-description", options
+  end
+
+  def icon_groups(options={})
+    material_icon_constructor "groups", "icon material-symbols-rounded icon-groups", options
+  end
+
+  def icon_analytics(options={})
+    material_icon_constructor "analytics", "icon material-icons icon-analytics", options
+  end
+
+  def icon_video_library(options={})
+    material_icon_constructor "video_library", "icon material-symbols-rounded icon-video-library", options
   end
 
   def icon_filesender(options={})

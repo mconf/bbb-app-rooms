@@ -69,14 +69,15 @@ es:
     load: "Cargar más conferencias"
     meeting_data_download:
       dashboard: "Informe de participación"
-      download_ai_summary: "Descargar resumen de IA"
-      download_notes: "Descargar notas de la reunión"
-      download_participants: "Descargar lista de participantes"
-      download_transcription: "Descargar transcripción"
+      download_ai_summary: "Resumen de IA"
+      download_notes: "Notas de la reunión"
+      download_participants: "Lista de participantes"
+      download_transcription: "Transcripción"
       unavailable_dashboard: "Informe de participación no disponible"
       unavailable_notes: "Notas de la reunión no disponibles"
       unavailable_participants: "Lista de participantes no disponible"
     recording:
+      ai_artifacts: "Artefactos de IA"
       confirm:
         destroy: "¿Estás seguro de que deseas eliminar esta grabación?"
         publish: "¿Estás seguro de que deseas hacer esta grabación visible?"
@@ -87,11 +88,12 @@ es:
       playback_link: "Copiar enlace de reproducción"
       playbacks:
         presentation: "Reproducir"
-        presentation_video: "Download"
-        video: "Download"
+        presentation_video: "Grabación"
+        video: "Grabación (video)"
       processing: "Procesando"
       published: "Visible"
       publish: "Hacer la grabación visible"
+      settings: "Configuración"
       unpublished: "No visible"
       unpublish: "Hacer la grabación no visible"
     search:

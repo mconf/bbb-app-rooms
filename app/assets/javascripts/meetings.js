@@ -19,6 +19,7 @@ let isFetching = false;
 let hasMoreToFetch = true;
 let rendered = false;
 let loadedMeetingId = null;
+let loadedAiArtifactsMeetingId = null;
 
 // Max time to wait for ajax response
 let ajaxTimeout = 15000;
@@ -260,15 +261,15 @@ let doAjaxDownloadArtifacts = async (download_artifacts_endpoint) => {
  * In case of success, it will display the received partial.
  * In case of timeout, the timeout value will increase in 1 second.
 */
-let downloadArtifacts = async(meeting_id, download_artifacts_endpoint) => {
+let downloadArtifacts = async(meeting_id, download_artifacts_endpoint, container_prefix) => {
   if (loadedMeetingId != meeting_id) {
     try {
       let response = await doAjaxDownloadArtifacts(download_artifacts_endpoint);
       response = $(response);
-  
+
       loadedMeetingId = meeting_id;
       let buttons = response.filter('a')
-      showDropdownItems(buttons, meeting_id);
+      showDropdownItems(buttons, meeting_id, container_prefix);
     } catch(err) {
       if (err.statusText == 'timeout') {
         ajaxTimeout += 1000;
@@ -295,15 +296,42 @@ let showMeetings = (rows) => {
   });
 
   $('.dropdown-opts-link').on('click', function(e) {
-    downloadArtifacts(this.getAttribute('internal-meeting-id'), this.getAttribute('download-artifacts-endpoint'));
+    downloadArtifacts(this.getAttribute('internal-meeting-id'), this.getAttribute('download-artifacts-endpoint'), 'dropdown-opts');
+  });
+
+  $('.dropdown-download-link').on('click', function(e) {
+    downloadArtifacts(this.getAttribute('internal-meeting-id'), this.getAttribute('download-artifacts-endpoint'), 'dropdown-download');
+  });
+
+  $('.dropdown-ai-artifacts-link').on('click', function(e) {
+    downloadAiArtifacts(this.getAttribute('internal-meeting-id'), this.getAttribute('download-artifacts-endpoint'));
   });
 };
 
-let showDropdownItems = (buttons, meeting_id) => {
+let downloadAiArtifacts = async(meeting_id, download_artifacts_endpoint) => {
+  if (loadedAiArtifactsMeetingId != meeting_id) {
+    try {
+      let response = await doAjaxDownloadArtifacts(download_artifacts_endpoint);
+      response = $(response);
+      loadedAiArtifactsMeetingId = meeting_id;
+      let aiSummaryButton = response.filter('[data-tracking-id="lti-download-ai-summary"]');
+      showDropdownItems(aiSummaryButton, meeting_id, 'dropdown-ai-artifacts');
+    } catch(err) {
+      if (err.statusText == 'timeout') {
+        ajaxTimeout += 1000;
+      } else {
+        console.error(`Unexpected error: ${err}`);
+      }
+    }
+  }
+};
+
+let showDropdownItems = (buttons, meeting_id, container_prefix) => {
+  const containerSelector = `div[aria-labelledby="${container_prefix}-${meeting_id}"]`;
   // Hide the loading items animation
-  $(`div[aria-labelledby="dropdown-opts-${meeting_id}"] .dropdown-item-loading`).hide();
+  $(`${containerSelector} .dropdown-item-loading`).hide();
   // Remove only the items appended previously
-  $(`div[aria-labelledby="dropdown-opts-${meeting_id}"] .appended-item`).remove();
+  $(`${containerSelector} .appended-item`).remove();
 
   for (let button of buttons) {
     if(!$(button).find('button:disabled').length > 0)
@@ -317,7 +345,7 @@ let showDropdownItems = (buttons, meeting_id) => {
       $(button).attr("target", "_self");
     }
 
-    $(`div[aria-labelledby="dropdown-opts-${meeting_id}"]`).append(button);
+    $(containerSelector).append(button);
     $(button).removeClass('create-session-token');
   }
 };
