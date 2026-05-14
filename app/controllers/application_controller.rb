@@ -255,7 +255,6 @@ class ApplicationController < ActionController::Base
       begin
         ExceptionNotifier.notify_exception(
           exception,
-          env: request.env,
           data: {
             consumer_key: @app_launch&.consumer_key,
             launch_nonce: @app_launch&.nonce,
