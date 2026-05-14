@@ -186,6 +186,7 @@ en:
       footnote: "Dates shown in the time zone: %{zone}"
     title: "Scheduled sessions"
     title_with_group: "Scheduled sessions | Group: %{group_name}"
+    join_tooltip: "Join session"
     wait:
       retry: "Join"
   open_app_modal:

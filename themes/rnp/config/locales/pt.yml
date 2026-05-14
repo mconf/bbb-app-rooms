@@ -186,6 +186,7 @@ pt:
       footnote: "Datas exibidas no fuso horário: %{zone}"
     title: "Sessões agendadas"
     title_with_group: "Sessões agendadas | Grupo: %{group_name}"
+    join_tooltip: "Entrar na sessão"
     wait:
       retry: "Entrar"
   open_app_modal:
