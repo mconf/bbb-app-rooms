@@ -262,8 +262,8 @@ class ApplicationController < ActionController::Base
             tool_consumer: @app_launch&.params&.[]('tool_consumer_instance_name'),
             current_user: {
               id: @user&.uid,
-              name: @user&.full_name,
-              email: @user&.email,
+              name: @user&.full_name || @app_launch&.omniauth_auth.dig('bbbltibroker', 'info', 'full_name'),
+              email: @user&.email || @app_launch&.omniauth_auth.dig('bbbltibroker', 'info', 'email'),
             }
           }
         )
