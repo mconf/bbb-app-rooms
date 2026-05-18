@@ -575,6 +575,7 @@ module Moodle
     end
 
     MAX_RETRIES = 3
+    MAX_REDIRECTS = 3
 
     def self.post(host_url, params)
       retries ||= 0
@@ -586,16 +587,41 @@ module Moodle
             params: params
           }
 
-          conn = Faraday.new(url: host_url, **options) do |config|
-            config.response :json
-            config.response :raise_error
-            config.adapter :net_http
+          start_time = Time.now
+          current_url = host_url
+          redirect_count = 0
+          res = nil
+
+          loop do
+            conn = Faraday.new(url: current_url, **options) do |config|
+              config.response :json
+              config.response :raise_error
+              config.adapter :net_http
+            end
+
+            res = conn.post(current_url)
+            break unless (300...400).cover?(res.status)
+
+            redirect_count += 1
+            raise RequestError, "Too many redirects" if redirect_count > MAX_REDIRECTS
+
+            location = res.headers['location']
+            raise RequestError, "Redirect missing Location header" if location.blank?
+
+            original_uri = URI.parse(current_url)
+            redirect_uri = URI.parse(location)
+
+            raise RequestError, "Redirect to different host" \
+              unless original_uri.host == redirect_uri.host
+
+            raise RequestError, "Unsafe redirect scheme change" \
+              unless original_uri.scheme == redirect_uri.scheme ||
+                     (original_uri.scheme == 'http' && redirect_uri.scheme == 'https')
+
+            current_url = location
           end
 
-          start_time = Time.now
-          res = conn.post(host_url)
           duration = Time.now - start_time
-
           result = res.body.is_a?(Hash) ? res.body.merge({"duration" => duration}) :
                                           { "body" => res.body, "duration" => duration }
 
