@@ -7,6 +7,23 @@ $(document).on('turbolinks:load', function(){
     var datePicker = document.getElementsByName("scheduled_meeting[date]")[0];
     datePicker?.addEventListener('change', checkTime);
 
+    var nameField = document.querySelector('input[name="scheduled_meeting[name]"]');
+    if (nameField) {
+      var nameMaxLength = parseInt(nameField.getAttribute('maxlength'));
+      nameField.addEventListener('input', function() {
+        if (this.value.length >= nameMaxLength) {
+          this.setCustomValidity(I18n.t('default.scheduled_meeting.error.name_max_length', { max: nameMaxLength }));
+          this.reportValidity();
+        } else if (this.validity.customError) {
+          this.setCustomValidity('');
+        }
+      });
+      var nameForm = nameField.closest('form');
+      nameForm?.querySelector('[type="submit"]')?.addEventListener('click', function() {
+        if (nameField.value.length <= nameMaxLength) nameField.setCustomValidity('');
+      });
+    }
+
     function controlCustomDuration(e) {
       let valueSelectDuration = e.target.value;
       valueSelectDuration == 0 ? contentCustomDuration.classList.add('d-block') :
