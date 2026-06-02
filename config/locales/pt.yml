@@ -89,6 +89,7 @@ pt:
         simultaneousMeetingsLimitReachedForSecret: "Limite máximo de reuniões simultâneas atingido"
         simultaneousMeetingsLimitReachedForInstitution: "Limite máximo de reuniões simultâneas da instituição atingido"
         simultaneousParticipantsLimitReachedForSecret: "Limite máximo de participantes simultâneos atingido"
+        name_max_length: "O nome da sessão atingiu o máximo de %{max} caracteres"
       external:
         ended:        "Esta sessão já encerrou."
         first_name:   "Primeiro nome"
