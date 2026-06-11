@@ -41,4 +41,22 @@ class WebhooksController < ApplicationController
       render json: { error: 'Failed to process webhook' }, status: :internal_server_error
     end
   end
+
+  def ai_artifacts
+    json_body = request.body.read
+
+    if json_body.blank?
+      render json: { error: 'Request body is empty' }, status: :bad_request
+      return
+    end
+
+    begin
+      AiArtifactsCallbackJob.perform_later(json_body)
+      Rails.logger.info "WebhooksController: AiArtifactsCallbackJob enqueued."
+      head :accepted
+    rescue StandardError => e
+      Rails.logger.error "WebhooksController: Failed to enqueue AiArtifactsCallbackJob. Error: #{e.class} - #{e.message}"
+      render json: { error: 'Failed to process webhook' }, status: :internal_server_error
+    end
+  end
 end
