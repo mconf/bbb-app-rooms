@@ -202,7 +202,7 @@ body.theme-elos {
   }
 
   .toast-area {
-    position: absolute;
+    position: fixed;
     top: blocks(2);
     right: blocks(2);
     left: blocks(2);
@@ -533,6 +533,145 @@ body.theme-elos {
       img {
         width: 20px;
         height: 20px;
+      }
+    }
+  }
+
+  .dropdown-ai-artifacts-menu {
+    width: 283px;
+    padding: 0;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+
+    .ai-artifacts-panel {
+      font-family: 'Nunito Sans', sans-serif;
+
+      &__header {
+        padding: 16px 16px 8px;
+      }
+
+      &__title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #101828;
+        margin: 0 0 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        .ai-artifacts-error-badge {
+          font-size: 18px;
+          flex-shrink: 0;
+        }
+      }
+
+      &__subtitle {
+        font-size: 12px;
+        color: #6a7282;
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      &__divider {
+        margin: 0;
+        border-color: #e5e7eb;
+      }
+
+      &__body {
+        padding: 12px 16px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+    }
+
+    .ai-artifact-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      &__left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .icon {
+          font-size: 20px;
+          color: #6b7280;
+        }
+      }
+
+      &--card {
+        background-color: #f9fafb;
+        border: 1px solid #f3f4f6;
+        border-radius: 8px;
+        padding: 12px 16px;
+      }
+
+      &--available {
+        padding: 12px 16px;
+        text-decoration: none;
+        color: inherit;
+        transition: opacity 150ms;
+
+        &:hover {
+          opacity: 0.75;
+          text-decoration: none;
+        }
+
+        img {
+          width: 20px;
+          height: 20px;
+          opacity: 0.6;
+        }
+      }
+
+      &--error {
+        .ai-artifact-name {
+          color: #dc3545;
+        }
+      }
+    }
+
+    .ai-artifact-name {
+      font-size: 14px;
+      color: #4a5565;
+    }
+
+    .ai-artifact-spinner {
+      .icon {
+        font-size: 20px;
+        color: #008c95;
+        animation: ai-artifact-spin 1s linear infinite;
+      }
+    }
+
+    @keyframes ai-artifact-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .ai-artifacts-request-btn {
+      width: 100%;
+      padding: 10px;
+      background-color: #008c95;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+
+      &:hover {
+        background-color: #007880;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
       }
     }
   }

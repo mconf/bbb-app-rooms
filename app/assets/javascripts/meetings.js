@@ -312,10 +312,8 @@ let downloadAiArtifacts = async(meeting_id, download_artifacts_endpoint) => {
   if (loadedAiArtifactsMeetingId != meeting_id) {
     try {
       let response = await doAjaxDownloadArtifacts(download_artifacts_endpoint);
-      response = $(response);
       loadedAiArtifactsMeetingId = meeting_id;
-      let aiSummaryButton = response.filter('[data-tracking-id="lti-download-ai-summary"]');
-      showDropdownItems(aiSummaryButton, meeting_id, 'dropdown-ai-artifacts');
+      showAiArtifactItems(response, meeting_id);
     } catch(err) {
       if (err.statusText == 'timeout') {
         ajaxTimeout += 1000;
@@ -325,6 +323,50 @@ let downloadAiArtifacts = async(meeting_id, download_artifacts_endpoint) => {
     }
   }
 };
+
+let showAiArtifactItems = (html, meeting_id) => {
+  const containerSelector = `div[aria-labelledby="dropdown-ai-artifacts-${meeting_id}"]`;
+  $(`${containerSelector} .dropdown-item-loading`).hide();
+  $(`${containerSelector} .appended-item`).remove();
+  $(containerSelector).append($(html).addClass('appended-item'));
+  document.querySelectorAll(`${containerSelector} [data-bs-toggle="tooltip"]`).forEach(el => {
+    new bootstrap.Tooltip(el);
+  });
+};
+
+$(document).on('click', '.request-ai-artifacts-btn', function(e) {
+  e.stopPropagation();
+  const $btn = $(this);
+  const endpoint = $btn.data('request-endpoint');
+  const requestedTypes = $btn.data('requestedTypes');
+  const textOriginal = $btn.text().trim();
+
+  $btn.prop('disabled', true).text($btn.data('text-requesting'));
+
+  $.ajax({
+    url: endpoint,
+    method: 'POST',
+    data: { requested_artifact_types: requestedTypes },
+    headers: { 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') },
+    success: function() {
+      const $panel = $btn.closest('.ai-artifacts-panel');
+      $panel.find('.ai-artifacts-panel__title').text($btn.data('title-requesting'));
+      $panel.find('.ai-artifacts-panel__subtitle').text($btn.data('subtitle-requesting'));
+      $panel.find('.ai-artifact-spinner').each(function() {
+        $(this).show().closest('.ai-artifact-item').addClass('ai-artifact-item--requesting');
+      });
+    },
+    error: function(err) {
+      const $toastWrapper = $('#ai-artifacts-error-toast');
+      const message = err.responseJSON?.message || $toastWrapper.data('default-message');
+      $toastWrapper.find('.ai-artifacts-error-message').text(message);
+      const $toast = $toastWrapper.find('.toast');
+      $toast.toast('dispose');
+      $toast.toast('show');
+      $btn.prop('disabled', false).text(textOriginal);
+    }
+  });
+});
 
 let showDropdownItems = (buttons, meeting_id, container_prefix) => {
   const containerSelector = `div[aria-labelledby="${container_prefix}-${meeting_id}"]`;

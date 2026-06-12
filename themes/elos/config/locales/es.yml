@@ -67,7 +67,23 @@ es:
     index:
       return: "< volver"
     load: "Cargar más conferencias"
+    request_artifact:
+      error_404: "Grabación no encontrada. Es posible que aún no esté disponible."
+      error_409: "Estos artefactos ya están siendo procesados."
+      error_412: "La grabación aún no está disponible. Por favor, intenta nuevamente más tarde."
+      error_requesting_artifacts: "Ocurrió un error al generar los artefactos. Por favor, inténtalo de nuevo más tarde."
+      request_successful: "Los artefactos de tu sesión están siendo generados."
     meeting_data_download:
+      ai_artifacts_requested: "Artefactos de IA solicitados"
+      ai_artifacts_error_tooltip: "Ocurrió un error al generar los artefactos. Puedes solicitarlos nuevamente en unas horas."
+      ai_artifacts_title: "Artefactos con IA"
+      ai_artifacts_subtitle: "Resumen y transcripción generados automáticamente por Inteligencia Artificial"
+      ai_artifacts_requesting_title: "Artefactos Generados por IA"
+      ai_artifacts_requesting_subtitle: "Los artefactos se generarán automáticamente"
+      request_ai_artifacts: "Generar Artefactos"
+      request_ai_summary: "Solicitar resumen de IA"
+      request_transcription: "Solicitar transcripción"
+      requesting_ai_artifacts: "Solicitando..."
       dashboard: "Informe de participación"
       download_ai_summary: "Resumen de IA"
       download_notes: "Notas de la reunión"

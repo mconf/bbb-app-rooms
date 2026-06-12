@@ -1,0 +1,130 @@
+<% ai_summary_cache = @ai_artifact_cache_status&.dig('ai_summary') %>  
+<% transcription_cache = @ai_artifact_cache_status&.dig('transcription') %>
+<% ai_summary_available = @ai_artifact_files&.dig('ai_summary').present? %>
+<% transcription_available = @ai_artifact_files&.dig('transcription').present? %>
+
+<%# Requestable: not available and not pending (errored types can be retried) %>
+<% requestable_types = [] %>
+<% requestable_types << 'ai_summary'    unless ai_summary_available    || ai_summary_cache    == 'pending' %>
+<% requestable_types << 'transcription' unless transcription_available || transcription_cache == 'pending' %>
+
+<% any_pending = ai_summary_cache == 'pending' || transcription_cache == 'pending' %>
+<% any_error = ai_summary_cache == 'error' || transcription_cache == 'error' %>
+
+<div class="ai-artifacts-panel">
+  <div class="ai-artifacts-panel__header">
+    <p class="ai-artifacts-panel__title">
+      <%= t("meetings.meeting_data_download.#{any_pending ? 'ai_artifacts_requesting_title' : 'ai_artifacts_title'}") %>
+      <% if any_error %>
+        <span data-bs-toggle="tooltip" data-bs-placement="right"
+              title="<%= t('meetings.meeting_data_download.ai_artifacts_error_tooltip') %>">
+          <%= icon_info_circle(class: 'color-error ai-artifacts-error-badge') %>
+        </span>
+      <% end %>
+    </p>
+    <p class="ai-artifacts-panel__subtitle">
+      <%= t("meetings.meeting_data_download.#{any_pending ? 'ai_artifacts_requesting_subtitle' : 'ai_artifacts_subtitle'}") %>
+    </p>
+  </div>
+
+  <hr class="ai-artifacts-panel__divider">
+
+  <div class="ai-artifacts-panel__body">
+
+    <%# AI Summary item %>
+    <% if ai_summary_available %>
+      <%= link_to @ai_artifact_files['ai_summary'],
+        target: (browser.safari? ? '_self' : '_blank'),
+        class: "ai-artifact-item ai-artifact-item--available",
+        data: { 'tracking-id': 'lti-download-ai-summary', 'institution-guid': @institution_guid } do %>
+        <div class="ai-artifact-item__left">
+          <%= icon_description %>
+          <span class="ai-artifact-name"><%= t('meetings.meeting_data_download.download_ai_summary') %></span>
+        </div>
+        <%= icon_download %>
+      <% end %>
+    <% elsif ai_summary_cache == 'pending' %>
+      <div class="ai-artifact-item ai-artifact-item--card">
+        <div class="ai-artifact-item__left">
+          <%= icon_description %>
+          <span class="ai-artifact-name"><%= t('meetings.meeting_data_download.download_ai_summary') %></span>
+        </div>
+        <span class="ai-artifact-spinner"><%= icon_progress_activity %></span>
+      </div>
+    <% elsif ai_summary_cache == 'error' %>
+      <div class="ai-artifact-item ai-artifact-item--card ai-artifact-item--error">
+        <div class="ai-artifact-item__left">
+          <%= icon_description %>
+          <span class="ai-artifact-name"><%= t('meetings.meeting_data_download.download_ai_summary') %></span>
+        </div>
+      </div>
+    <% else %>
+      <div class="ai-artifact-item ai-artifact-item--card">
+        <div class="ai-artifact-item__left">
+          <%= icon_description %>
+          <span class="ai-artifact-name"><%= t('meetings.meeting_data_download.download_ai_summary') %></span>
+        </div>
+        <span class="ai-artifact-spinner" style="display:none"><%= icon_progress_activity %></span>
+      </div>
+    <% end %>
+
+    <%# Transcription item %>
+    <% if transcription_available %>
+      <%= link_to @ai_artifact_files['transcription'],
+        target: (browser.safari? ? '_self' : '_blank'),
+        class: "ai-artifact-item ai-artifact-item--available",
+        data: { 'tracking-id': 'lti-download-transcription', 'institution-guid': @institution_guid } do %>
+        <div class="ai-artifact-item__left">
+          <%= icon_speech_to_text %>
+          <span class="ai-artifact-name"><%= t('meetings.meeting_data_download.download_transcription') %></span>
+        </div>
+        <%= icon_download %>
+      <% end %>
+    <% elsif transcription_cache == 'pending' %>
+      <div class="ai-artifact-item ai-artifact-item--card">
+        <div class="ai-artifact-item__left">
+          <%= icon_speech_to_text %>
+          <span class="ai-artifact-name"><%= t('meetings.meeting_data_download.download_transcription') %></span>
+        </div>
+        <span class="ai-artifact-spinner"><%= icon_progress_activity %></span>
+      </div>
+    <% elsif transcription_cache == 'error' %>
+      <div class="ai-artifact-item ai-artifact-item--card ai-artifact-item--error">
+        <div class="ai-artifact-item__left">
+          <%= icon_speech_to_text %>
+          <span class="ai-artifact-name"><%= t('meetings.meeting_data_download.download_transcription') %></span>
+        </div>
+      </div>
+    <% else %>
+      <div class="ai-artifact-item ai-artifact-item--card">
+        <div class="ai-artifact-item__left">
+          <%= icon_speech_to_text %>
+          <span class="ai-artifact-name"><%= t('meetings.meeting_data_download.download_transcription') %></span>
+        </div>
+        <span class="ai-artifact-spinner" style="display:none"><%= icon_progress_activity %></span>
+      </div>
+    <% end %>
+
+    <% if requestable_types.any? %>
+      <%
+        button_label = if requestable_types == ['ai_summary']
+          t('meetings.meeting_data_download.request_ai_summary')
+        elsif requestable_types == ['transcription']
+          t('meetings.meeting_data_download.request_transcription')
+        else
+          t('meetings.meeting_data_download.request_ai_artifacts')
+        end
+      %>
+      <button class="ai-artifacts-request-btn request-ai-artifacts-btn"
+        data-request-endpoint="<%= room_scheduled_meeting_internal_request_ai_artifacts_path(@room, @meeting[:meetingID], @meeting[:internalMeetingID]) %>"
+        data-requested-types="<%= requestable_types.to_json %>"
+        data-text-requesting="<%= t('meetings.meeting_data_download.requesting_ai_artifacts') %>"
+        data-text-requested="<%= t('meetings.meeting_data_download.ai_artifacts_requested') %>"
+        data-title-requesting="<%= t('meetings.meeting_data_download.ai_artifacts_requesting_title') %>"
+        data-subtitle-requesting="<%= t('meetings.meeting_data_download.ai_artifacts_requesting_subtitle') %>">
+        <%= button_label %>
+      </button>
+    <% end %>
+
+  </div>
+</div>

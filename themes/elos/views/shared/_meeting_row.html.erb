@@ -113,18 +113,18 @@
           <div class="dropdown dropdown-ai-artifacts">
             <a href="#" class="dropdown-toggle text-decoration-none dropdown-ai-artifacts-link"
               internal-meeting-id="<%= meeting[:internalMeetingID] %>"
-              download-artifacts-endpoint="<%= room_scheduled_meeting_internal_download_artifacts_path(@room, meeting[:meetingID], meeting[:internalMeetingID]) %>"
+              download-artifacts-endpoint="<%= room_scheduled_meeting_internal_download_ai_artifacts_path(@room, meeting[:meetingID], meeting[:internalMeetingID]) %>"
               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <span class="dropdown-icon-btn">
                 <%= icon_ai_artifacts %>
                 <span class="icon-dropdown-container"><%= icon_dropdown_arrow %></span>
               </span>
             </a>
-            <div class="dropdown-menu dropdown-menu-right dropdown-download-artifacts"
+            <div class="dropdown-menu dropdown-menu-right dropdown-ai-artifacts-menu"
               aria-labelledby="dropdown-ai-artifacts-<%= meeting[:internalMeetingID] %>">
-              <span class="download-artifacts-label"><%= t('reports.download') %></span>
               <div class="dropdown-item-loading">
                 <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_ai_summary') %>
+                <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_transcription') %>
               </div>
             </div>
           </div>

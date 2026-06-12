@@ -67,6 +67,14 @@ module IconsHelper
     material_icon_constructor "description", "icon material-symbols-rounded icon-description", options
   end
 
+  def icon_speech_to_text(options={})
+    material_icon_constructor "speech_to_text", "icon material-symbols-rounded icon-speech-to-text", options
+  end
+
+  def icon_progress_activity(options={})
+    material_icon_constructor "progress_activity", "icon material-symbols-rounded icon-progress-activity", options
+  end
+
   def icon_groups(options={})
     material_icon_constructor "groups", "icon material-symbols-rounded icon-groups", options
   end
