@@ -31,8 +31,12 @@ module IconsHelper
     image_tag 'icon-ai-summary.svg'
   end
 
-  def icon_ai_artifacts(options={})
-    image_tag 'icon_ai_artifacts.svg'
+  def icon_ai_artifacts_elos(options={})
+    image_tag 'icon_ai_artifacts_elos.svg'
+  end
+  
+  def icon_ai_artifacts_rnp(options={})
+    image_tag 'icon_ai_artifacts_rnp.svg'
   end
 
   def icon_dropdown_arrow(options={})
@@ -60,7 +64,7 @@ module IconsHelper
   end
 
   def icon_download(options={})
-    image_tag 'download.svg'
+    material_icon_constructor "download", "icon material-symbols-rounded icon-download", options
   end
 
   def icon_description(options={})
