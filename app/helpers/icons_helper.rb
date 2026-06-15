@@ -32,11 +32,11 @@ module IconsHelper
   end
 
   def icon_ai_artifacts_elos(options={})
-    image_tag 'icon_ai_artifacts_elos.svg'
+    image_tag 'icon_ai_artifacts_elos.svg', width: 19
   end
   
   def icon_ai_artifacts_rnp(options={})
-    image_tag 'icon_ai_artifacts_rnp.svg'
+    image_tag 'icon_ai_artifacts_rnp.svg', width: 19
   end
 
   def icon_dropdown_arrow(options={})

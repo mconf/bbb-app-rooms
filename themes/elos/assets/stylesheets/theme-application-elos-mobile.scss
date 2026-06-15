@@ -54,13 +54,14 @@
         }
 
         .icon-container a {
-          background-color: var(--color-main);
-          color: var(--color-white);
-          border-radius: 50%;
+          .playback-icon {
+            background-color: var(--color-main);
+            color: var(--color-white);
+            border-radius: 50%;
 
-          i {
-            font-size: 24px;
-            padding: 4px;
+            i {
+              font-size: 24px;
+            }
           }
         }
 
