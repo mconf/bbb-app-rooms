@@ -576,10 +576,14 @@ body.theme-elos {
         align-items: center;
         gap: 6px;
 
-        .ai-artifacts-error-badge {
-          font-size: 18px;
-          flex-shrink: 0;
-        }
+      }
+      
+      .ai-artifacts-error-badge {
+        display: flex;
+        align-items: center;
+        font-size: 18px !important;
+        flex-shrink: 0;
+        cursor: default;
       }
 
       &__subtitle {
@@ -640,12 +644,6 @@ body.theme-elos {
           width: 20px;
           height: 20px;
           color: var(--color-sec);
-        }
-      }
-
-      &--error {
-        .ai-artifact-name {
-          color: #dc3545;
         }
       }
     }

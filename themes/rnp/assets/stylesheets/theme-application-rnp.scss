@@ -304,10 +304,14 @@ body.theme-rnp {
         align-items: center;
         gap: 6px;
 
-        .ai-artifacts-error-badge {
-          font-size: 18px;
-          flex-shrink: 0;
-        }
+      }
+      
+      .ai-artifacts-error-badge {
+        display: flex;
+        align-items: center;
+        font-size: 18px !important;
+        flex-shrink: 0;
+        cursor: default;
       }
 
       &__subtitle {
@@ -367,12 +371,6 @@ body.theme-rnp {
         .icon-download {
           font-size: 20px;
           color: var(--color-main);
-        }
-      }
-
-      &--error {
-        .ai-artifact-name {
-          color: var(--color-error);
         }
       }
     }

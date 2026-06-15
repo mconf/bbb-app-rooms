@@ -79,7 +79,7 @@ pt:
       request_successful: "Os artefatos da sua sessão estão sendo gerados."
     meeting_data_download:
       ai_artifacts_requested: "Artefatos de IA solicitados"
-      ai_artifacts_error_tooltip: "Houve um erro ao gerar os artefatos. Você poderá solicitá-los novamente em algumas horas."
+      ai_artifacts_error_tooltip: "Houve um erro ao gerar o artefato. Você poderá solicitá-lo novamente em algumas horas."
       ai_artifacts_title: "Artefatos com IA"
       ai_artifacts_subtitle: "Resumo e transcrição gerados automaticamente por Inteligência Artificial"
       ai_artifacts_requesting_title: "Artefatos Gerados por IA"
