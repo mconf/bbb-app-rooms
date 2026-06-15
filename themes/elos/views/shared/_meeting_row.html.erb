@@ -108,24 +108,26 @@
         <% if recording[:published] %>
           <% browser_safari = browser.safari? || browser.safari_webapp_mode? %>
           <%# AI Artifacts dropdown %>
-          <div class="dropdown dropdown-ai-artifacts">
-            <a href="#" class="dropdown-toggle text-decoration-none dropdown-ai-artifacts-link"
-              internal-meeting-id="<%= meeting[:internalMeetingID] %>"
-              download-artifacts-endpoint="<%= room_scheduled_meeting_internal_download_ai_artifacts_path(@room, meeting[:meetingID], meeting[:internalMeetingID]) %>"
-              data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
-              <span class="dropdown-icon-btn">
-                <%= icon_ai_artifacts_elos %>
-                <span class="icon-dropdown-container artifacts-icon"><%= icon_dropdown_arrow %></span>
-              </span>
-            </a>
-            <div class="dropdown-menu dropdown-menu-right dropdown-ai-artifacts-menu"
-              aria-labelledby="dropdown-ai-artifacts-<%= meeting[:internalMeetingID] %>">
-              <div class="dropdown-item-loading">
-                <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_ai_summary') %>
-                <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_transcription') %>
+          <% if ai_artifacts_enabled?(@room) %>
+            <div class="dropdown dropdown-ai-artifacts">
+              <a href="#" class="dropdown-toggle text-decoration-none dropdown-ai-artifacts-link"
+                internal-meeting-id="<%= meeting[:internalMeetingID] %>"
+                download-artifacts-endpoint="<%= room_scheduled_meeting_internal_download_ai_artifacts_path(@room, meeting[:meetingID], meeting[:internalMeetingID]) %>"
+                data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
+                <span class="dropdown-icon-btn">
+                  <%= icon_ai_artifacts_elos %>
+                  <span class="icon-dropdown-container artifacts-icon"><%= icon_dropdown_arrow %></span>
+                </span>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right dropdown-ai-artifacts-menu"
+                aria-labelledby="dropdown-ai-artifacts-<%= meeting[:internalMeetingID] %>">
+                <div class="dropdown-item-loading">
+                  <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_ai_summary') %>
+                  <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_transcription') %>
+                </div>
               </div>
             </div>
-          </div>
+          <% end %>
 
           <%# Meeting artifacts download dropdown %>
           <% has_non_presentation = recording[:playbacks].any? { |p| p[:type] != 'presentation' } %>

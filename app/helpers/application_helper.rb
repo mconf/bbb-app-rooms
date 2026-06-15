@@ -51,6 +51,11 @@ module ApplicationHelper
     Abilities.allow_student_scheduling?(room)
   end
 
+  def ai_artifacts_enabled?(room)
+    config = ConsumerConfig.find_by(key: room.consumer_key)
+    config.present? && config.allow_ai_artifacts?
+  end
+
   def show_terms_use_message?(resource)
     config = ConsumerConfig.find_by(key: resource[:consumer_key])
     config.present? && config[:message_reference_terms_use]
