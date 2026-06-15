@@ -349,12 +349,16 @@ $(document).on('click', '.request-ai-artifacts-btn', function(e) {
     data: { requested_artifact_types: requestedTypes },
     headers: { 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') },
     success: function() {
+      $btn.hide();
       const $panel = $btn.closest('.ai-artifacts-panel');
       $panel.find('.ai-artifacts-panel__title').text($btn.data('title-requesting'));
       $panel.find('.ai-artifacts-panel__subtitle').text($btn.data('subtitle-requesting'));
       $panel.find('.ai-artifact-spinner').each(function() {
         $(this).show().closest('.ai-artifact-item').addClass('ai-artifact-item--requesting');
       });
+      const $successToast = $('#ai-artifacts-success-toast .toast');
+      $successToast.toast('dispose');
+      $successToast.toast('show');
     },
     error: function(err) {
       const $toastWrapper = $('#ai-artifacts-error-toast');

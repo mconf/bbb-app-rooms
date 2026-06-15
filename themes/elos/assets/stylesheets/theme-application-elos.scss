@@ -20,8 +20,9 @@ body.theme-elos {
 
   line-height: var(--line-height);
   .dropdown-item:visited:not(.btn) {
-    &:hover, &:active {
-      color: $dropdown-link-hover-color;
+    &:hover, &.active {
+      background-color: var(--color-gray-01);
+      color: var(--color-gray-09) !important;
     }
   }
   .dropdown-item:focus {
@@ -127,6 +128,11 @@ body.theme-elos {
 
       > a {
         color: var(--font-color);
+
+        &:hover, &.active {
+          background-color: var(--color-gray-01);
+          color: var(--color-gray-09) !important;
+        }
       }
     }
   }
@@ -465,6 +471,10 @@ body.theme-elos {
     content: none;
   }
 
+  .dropdown-ai-artifacts, .dropdown-download {
+    margin-top: 5px;
+  }
+
   .dropdown-icon-btn {
     display: inline-flex;
     position: relative;
@@ -533,6 +543,11 @@ body.theme-elos {
       img {
         width: 20px;
         height: 20px;
+      }
+
+      &:hover, &.active {
+        background-color: var(--color-gray-01);
+        color: var(--color-gray-09) !important;
       }
     }
   }
@@ -621,10 +636,10 @@ body.theme-elos {
           text-decoration: none;
         }
 
-        img {
+        i {
           width: 20px;
           height: 20px;
-          opacity: 0.6;
+          color: var(--color-sec);
         }
       }
 
@@ -676,21 +691,32 @@ body.theme-elos {
     }
   }
 
+  .copy-to-clipboard {
+    &:hover, &.active {
+      background-color: var(--color-gray-01);
+      color: var(--color-gray-09) !important;
+    }
+  }
+
   .badge-recurring-meeting {
-    background-color: var(--color-bullet-recurring);
-    color: #53565a;
     display: inline-flex;
     align-items: center;
     gap: 4px;
     font-size: var(--font-size-sm);
-    font-weight: bold;
-    justify-content: flex-start;
-    padding: 4px 8px;
-    border-radius: 4px;
-    width: auto;
+    font-weight: 600;
+    justify-content: center;
+    padding: 8px 12px;
+    border-radius: 100px;
+    width: 132px;
 
-    .icon-sync {
-      font-size: 18px;
+    &.weekly {
+      background-color: #008c95;
+      color: white;
+    }
+
+    &.every_two_weeks {
+      background-color: #2CCCD34D;
+      color: #252E2F;
     }
   }
 
@@ -795,11 +821,8 @@ body.theme-elos {
         }
 
         &:hover {
-          color: var(--color-gray-09);
-
-          img {
-            filter: none;
-          }
+          background-color: var(--color-gray-01);
+          color: #CD545B !important;
         }
       }
     }

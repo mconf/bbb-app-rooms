@@ -14,8 +14,7 @@
   <td class="col-12 col-md-3 align-middle">
     <%= format_date(meeting.start_at) %>
     <% unless meeting.repeat.blank? %>
-      <span class="badge badge-recurring-meeting">
-        <i class="icon-sync material-icons">sync</i>
+      <span class="badge badge-recurring-meeting <%= meeting.repeat %> d-flex mt-1">
         <span><%= t("default.scheduled_meeting.repeat_options.#{meeting.repeat}") %></span>
       </span>
     <% end %>

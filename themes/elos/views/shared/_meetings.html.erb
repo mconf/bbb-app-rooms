@@ -69,6 +69,15 @@
   <i class="fas fa-angle-up"></i>
 </div>
 
+<div id="ai-artifacts-success-toast" aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center toast-area">
+  <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="7000">
+    <div class="toast-header">
+      <%= t('meetings.request_artifact.request_successful') %>
+      <button type="button" class="ms-2 my-1 btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
 <div id="ai-artifacts-error-toast"
      aria-live="polite" aria-atomic="true"
      class="d-flex justify-content-center align-items-center toast-area"
