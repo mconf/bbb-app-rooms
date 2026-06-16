@@ -52,8 +52,13 @@ module ApplicationHelper
   end
 
   def ai_artifacts_enabled?(room)
-    config = ConsumerConfig.find_by(key: room.consumer_key)
-    config.present? && config.allow_ai_artifacts?
+    @ai_artifacts_enabled_by_consumer_key ||= {}
+    consumer_key = room.consumer_key
+
+    return @ai_artifacts_enabled_by_consumer_key[consumer_key] if @ai_artifacts_enabled_by_consumer_key.key?(consumer_key)
+
+    config = ConsumerConfig.find_by(key: consumer_key)
+    @ai_artifacts_enabled_by_consumer_key[consumer_key] = config.present? && config.allow_ai_artifacts?
   end
 
   def show_terms_use_message?(resource)
