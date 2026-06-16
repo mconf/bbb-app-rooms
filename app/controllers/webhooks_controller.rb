@@ -56,7 +56,7 @@ class WebhooksController < ApplicationController
     end
 
     params = JSON.parse(json_body)
-    task_id = params['task_id']
+    task_id = params['task_id'].to_s
     cached_context = Rails.cache.read("llm_callback_#{task_id}")
 
     if cached_context.nil?
@@ -65,10 +65,10 @@ class WebhooksController < ApplicationController
       return
     end
 
-    room_handler       = cached_context[:room_handler]
+    room_handler = cached_context[:room_handler]
     internal_meeting_id = cached_context[:internal_meeting_id]
-    requested_types    = cached_context[:requested_artifact_types]
-    cache_ttl          = Rails.application.config.llm_artifact_cache_ttl.seconds
+    requested_types = cached_context[:requested_artifact_types]
+    cache_ttl = Rails.application.config.llm_artifact_cache_ttl.seconds
 
     requested_types.each do |type|
       cache_key = "meeting_ai_artifact_#{room_handler}_#{internal_meeting_id}_#{type}"
