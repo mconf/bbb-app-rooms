@@ -55,6 +55,11 @@ class MeetingsController < ApplicationController
 
     response = Mconf::LlmApi.request_ai_artifacts(@meeting[:internalMeetingID])
 
+    if response.nil?
+      render json: { status: 'error', message: t('meetings.request_artifact.error_requesting_artifacts') }, status: :bad_request
+      return
+    end
+
     if response.body["error"].present?
       error_message = case response.status
       when 404
