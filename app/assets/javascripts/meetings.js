@@ -284,28 +284,6 @@ let showMeetings = (rows) => {
   for(let row of rows) {
     $meetingsTable.append(row)
   }
-
-  $('.eduplay-login').on('click', function(e) {
-    e.preventDefault()
-    openAuthWindow($(this).data('url'), 'Eduplay');
-  });
-
-  $('.filesender-login').on('click', function(e) {
-    e.preventDefault()
-    openAuthWindow($(this).data('url'), 'Filesender');
-  });
-
-  $('.dropdown-opts-link').on('click', function(e) {
-    downloadArtifacts(this.getAttribute('internal-meeting-id'), this.getAttribute('download-artifacts-endpoint'), 'dropdown-opts');
-  });
-
-  $('.dropdown-download-link').on('click', function(e) {
-    downloadArtifacts(this.getAttribute('internal-meeting-id'), this.getAttribute('download-artifacts-endpoint'), 'dropdown-download');
-  });
-
-  $('.dropdown-ai-artifacts-link').on('click', function(e) {
-    downloadAiArtifacts(this.getAttribute('internal-meeting-id'), this.getAttribute('download-artifacts-endpoint'));
-  });
 };
 
 let downloadAiArtifacts = async(meeting_id, download_artifacts_endpoint) => {
@@ -333,6 +311,24 @@ let showAiArtifactItems = (html, meeting_id) => {
     new bootstrap.Tooltip(el);
   });
 };
+
+$DOCUMENT.on('click', '.eduplay-login', function(e) {
+  e.preventDefault();
+  openAuthWindow($(this).data('url'), 'Eduplay');
+});
+
+$DOCUMENT.on('click', '.filesender-login', function(e) {
+  e.preventDefault();
+  openAuthWindow($(this).data('url'), 'Filesender');
+});
+
+$DOCUMENT.on('click', '.dropdown-download-link', function(e) {
+  downloadArtifacts(this.getAttribute('internal-meeting-id'), this.getAttribute('download-artifacts-endpoint'), 'dropdown-download');
+});
+
+$DOCUMENT.on('click', '.dropdown-ai-artifacts-link', function(e) {
+  downloadAiArtifacts(this.getAttribute('internal-meeting-id'), this.getAttribute('download-artifacts-endpoint'));
+});
 
 $(document).on('click', '.request-ai-artifacts-btn', function(e) {
   e.stopPropagation();
