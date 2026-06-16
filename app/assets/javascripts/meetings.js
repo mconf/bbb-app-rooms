@@ -19,7 +19,6 @@ let isFetching = false;
 let hasMoreToFetch = true;
 let rendered = false;
 let loadedMeetingId = null;
-let loadedAiArtifactsMeetingId = null;
 
 // Max time to wait for ajax response
 let ajaxTimeout = 15000;
@@ -287,17 +286,15 @@ let showMeetings = (rows) => {
 };
 
 let downloadAiArtifacts = async(meeting_id, download_artifacts_endpoint) => {
-  if (loadedAiArtifactsMeetingId != meeting_id) {
-    try {
-      let response = await doAjaxDownloadArtifacts(download_artifacts_endpoint);
-      loadedAiArtifactsMeetingId = meeting_id;
-      showAiArtifactItems(response, meeting_id);
-    } catch(err) {
-      if (err.statusText == 'timeout') {
-        ajaxTimeout += 1000;
-      } else {
-        console.error(`Unexpected error: ${err}`);
-      }
+  if (!download_artifacts_endpoint) return;
+  try {
+    let response = await doAjaxDownloadArtifacts(download_artifacts_endpoint);
+    showAiArtifactItems(response, meeting_id);
+  } catch(err) {
+    if (err.statusText == 'timeout') {
+      ajaxTimeout += 1000;
+    } else {
+      console.error(`Unexpected error: ${err}`);
     }
   }
 };
