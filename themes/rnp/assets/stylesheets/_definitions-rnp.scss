@@ -41,7 +41,9 @@ $vars: (
   --line-height: 1.5,
   --border-color: #DEE2E6,
   --z-index-toast: 999,
-  --background-placeholder-loading: #ced4da
+  --background-placeholder-loading: #ced4da,
+  --join-room-btn-color: #F18700,
+  --join-room-btn-hover-color: #D76C02
 );
 // variables in this map can be used as in:
 // map-get($vars, '--color-main')

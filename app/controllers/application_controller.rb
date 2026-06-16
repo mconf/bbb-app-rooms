@@ -253,7 +253,20 @@ class ApplicationController < ActionController::Base
 
     if Mconf::Env.fetch_boolean('EXCEPTION_NOTIFICATIONS_ENABLED', true) && exception
       begin
-        ExceptionNotifier.notify_exception(exception)
+        ExceptionNotifier.notify_exception(
+          exception,
+          data: {
+            consumer_key: @app_launch&.consumer_key,
+            launch_nonce: @app_launch&.nonce,
+            moodle_url: @app_launch&.params&.[]('launch_presentation_return_url'),
+            tool_consumer: @app_launch&.params&.[]('tool_consumer_instance_name'),
+            current_user: {
+              id: @user&.uid,
+              name: @user&.full_name || @app_launch&.omniauth_auth&.dig('bbbltibroker', 'info', 'full_name'),
+              email: @user&.email || @app_launch&.omniauth_auth&.dig('bbbltibroker', 'info', 'email'),
+            }
+          }
+        )
       rescue => notify_err
         Rails.logger.warn "ExceptionNotifier failed: #{notify_err.class}: #{notify_err.message}"
       end
