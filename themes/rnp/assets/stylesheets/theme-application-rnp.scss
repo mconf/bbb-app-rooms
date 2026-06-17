@@ -68,6 +68,10 @@ body.theme-rnp {
   table {
     border-bottom: 1px solid var(--color-gray-02);
 
+    th > *, td > * {
+      position: relative;
+    }
+
     .item-title {
       font-size: 20px;
       font-weight: bold;
@@ -127,7 +131,7 @@ body.theme-rnp {
   .icon-rec-row {
     font-size: 28px;
     &:hover {
-      color: var(--color-sec-hover);
+      color: var(--color-main-hover);
     }
   }
 

@@ -66,6 +66,10 @@ body.theme-elos {
   table {
     border-bottom: 1px solid var(--color-gray-02);
 
+    th > *, td > * {
+      position: relative;
+    }
+
     .item-title {
       font-size: 20px;
       font-weight: bold;
