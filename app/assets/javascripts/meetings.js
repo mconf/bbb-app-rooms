@@ -260,15 +260,15 @@ let doAjaxDownloadArtifacts = async (download_artifacts_endpoint) => {
  * In case of success, it will display the received partial.
  * In case of timeout, the timeout value will increase in 1 second.
 */
-let downloadArtifacts = async(meeting_id, download_artifacts_endpoint) => {
+let downloadArtifacts = async(meeting_id, download_artifacts_endpoint, container_prefix) => {
   if (loadedMeetingId != meeting_id) {
     try {
       let response = await doAjaxDownloadArtifacts(download_artifacts_endpoint);
       response = $(response);
-  
+
       loadedMeetingId = meeting_id;
       let buttons = response.filter('a')
-      showDropdownItems(buttons, meeting_id);
+      showDropdownItems(buttons, meeting_id, container_prefix);
     } catch(err) {
       if (err.statusText == 'timeout') {
         ajaxTimeout += 1000;
@@ -283,27 +283,94 @@ let showMeetings = (rows) => {
   for(let row of rows) {
     $meetingsTable.append(row)
   }
+};
 
-  $('.eduplay-login').on('click', function(e) {
-    e.preventDefault()
-    openAuthWindow($(this).data('url'), 'Eduplay');
-  });
+let downloadAiArtifacts = async(meeting_id, download_artifacts_endpoint) => {
+  if (!download_artifacts_endpoint) return;
+  try {
+    let response = await doAjaxDownloadArtifacts(download_artifacts_endpoint);
+    showAiArtifactItems(response, meeting_id);
+  } catch(err) {
+    if (err.statusText == 'timeout') {
+      ajaxTimeout += 1000;
+    } else {
+      console.error(`Unexpected error: ${err}`);
+    }
+  }
+};
 
-  $('.filesender-login').on('click', function(e) {
-    e.preventDefault()
-    openAuthWindow($(this).data('url'), 'Filesender');
-  });
-
-  $('.dropdown-opts-link').on('click', function(e) {
-    downloadArtifacts(this.getAttribute('internal-meeting-id'), this.getAttribute('download-artifacts-endpoint'));
+let showAiArtifactItems = (html, meeting_id) => {
+  const containerSelector = `div[aria-labelledby="dropdown-ai-artifacts-${meeting_id}"]`;
+  $(`${containerSelector} .dropdown-item-loading`).hide();
+  $(`${containerSelector} .appended-item`).remove();
+  $(containerSelector).append($(html).addClass('appended-item'));
+  document.querySelectorAll(`${containerSelector} [data-bs-toggle="tooltip"]`).forEach(el => {
+    new bootstrap.Tooltip(el);
   });
 };
 
-let showDropdownItems = (buttons, meeting_id) => {
+$DOCUMENT.on('click', '.eduplay-login', function(e) {
+  e.preventDefault();
+  openAuthWindow($(this).data('url'), 'Eduplay');
+});
+
+$DOCUMENT.on('click', '.filesender-login', function(e) {
+  e.preventDefault();
+  openAuthWindow($(this).data('url'), 'Filesender');
+});
+
+$DOCUMENT.on('click', '.dropdown-download-link', function(e) {
+  downloadArtifacts(this.getAttribute('internal-meeting-id'), this.getAttribute('download-artifacts-endpoint'), 'dropdown-download');
+});
+
+$DOCUMENT.on('click', '.dropdown-ai-artifacts-link', function(e) {
+  downloadAiArtifacts(this.getAttribute('internal-meeting-id'), this.getAttribute('download-artifacts-endpoint'));
+});
+
+$(document).on('click', '.request-ai-artifacts-btn', function(e) {
+  e.stopPropagation();
+  const $btn = $(this);
+  const endpoint = $btn.data('request-endpoint');
+  const requestedTypes = $btn.data('requestedTypes');
+  const textOriginal = $btn.text().trim();
+
+  $btn.prop('disabled', true).text($btn.data('text-requesting'));
+
+  $.ajax({
+    url: endpoint,
+    method: 'POST',
+    data: { requested_artifact_types: requestedTypes },
+    headers: { 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') },
+    success: function() {
+      $btn.hide();
+      const $panel = $btn.closest('.ai-artifacts-panel');
+      $panel.find('.ai-artifacts-panel__title').text($btn.data('title-requesting'));
+      $panel.find('.ai-artifacts-panel__subtitle').text($btn.data('subtitle-requesting'));
+      $panel.find('.ai-artifact-spinner').each(function() {
+        $(this).show().closest('.ai-artifact-item').addClass('ai-artifact-item--requesting');
+      });
+      const $successToast = $('#ai-artifacts-success-toast .toast');
+      $successToast.toast('dispose');
+      $successToast.toast('show');
+    },
+    error: function(err) {
+      const $toastWrapper = $('#ai-artifacts-error-toast');
+      const message = err.responseJSON?.message || $toastWrapper.data('default-message');
+      $toastWrapper.find('.ai-artifacts-error-message').text(message);
+      const $toast = $toastWrapper.find('.toast');
+      $toast.toast('dispose');
+      $toast.toast('show');
+      $btn.prop('disabled', false).text(textOriginal);
+    }
+  });
+});
+
+let showDropdownItems = (buttons, meeting_id, container_prefix) => {
+  const containerSelector = `div[aria-labelledby="${container_prefix}-${meeting_id}"]`;
   // Hide the loading items animation
-  $(`div[aria-labelledby="dropdown-opts-${meeting_id}"] .dropdown-item-loading`).hide();
+  $(`${containerSelector} .dropdown-item-loading`).hide();
   // Remove only the items appended previously
-  $(`div[aria-labelledby="dropdown-opts-${meeting_id}"] .appended-item`).remove();
+  $(`${containerSelector} .appended-item`).remove();
 
   for (let button of buttons) {
     if(!$(button).find('button:disabled').length > 0)
@@ -317,7 +384,7 @@ let showDropdownItems = (buttons, meeting_id) => {
       $(button).attr("target", "_self");
     }
 
-    $(`div[aria-labelledby="dropdown-opts-${meeting_id}"]`).append(button);
+    $(containerSelector).append(button);
     $(button).removeClass('create-session-token');
   }
 };

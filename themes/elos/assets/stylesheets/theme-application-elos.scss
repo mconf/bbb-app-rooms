@@ -20,8 +20,9 @@ body.theme-elos {
 
   line-height: var(--line-height);
   .dropdown-item:visited:not(.btn) {
-    &:hover, &:active {
-      color: $dropdown-link-hover-color;
+    &:hover, &.active {
+      background-color: var(--color-gray-01);
+      color: var(--color-gray-09) !important;
     }
   }
   .dropdown-item:focus {
@@ -65,15 +66,20 @@ body.theme-elos {
   table {
     border-bottom: 1px solid var(--color-gray-02);
 
+    th > *, td > * {
+      position: relative;
+    }
+
     .item-title {
       font-size: 20px;
       font-weight: bold;
+      color: #53565a;
     }
 
     .item-description {
       font-size: var(--font-size-details);
-      margin-top: 12px;
-      color: var(--color-gray-05);
+      margin-top: 4px;
+      color: var(--color-gray-06);
     }
 
     .item-creator {
@@ -102,11 +108,35 @@ body.theme-elos {
       }
     }
 
+    .meeting-info {
+      color: #53565a;
+      font-weight: 600;
+    }
+
+    .meeting-expire {
+      color: #53565a;
+      font-weight: 600;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+
+      i {
+        font-size: 16px;
+      }
+    }
+
     .dropdown-opts {
       top: 0;
 
       > a {
         color: var(--font-color);
+
+        &:hover, &.active {
+          background-color: var(--color-gray-01);
+          color: var(--color-gray-09) !important;
+        }
       }
     }
   }
@@ -182,7 +212,7 @@ body.theme-elos {
   }
 
   .toast-area {
-    position: absolute;
+    position: fixed;
     top: blocks(2);
     right: blocks(2);
     left: blocks(2);
@@ -319,18 +349,6 @@ body.theme-elos {
       tr {
         min-height: 97px; // the height when there's a name and description in the item
       }
-
-      .badge-recurring {
-        background-color: var(--color-action);
-        color: var(--color-white);
-        padding: blocks(1) blocks(1);
-        margin-top: blocks(1);
-        font-size: 95%;
-
-        .icon {
-          font-size: 85%;
-        }
-      }
     }
   }
 
@@ -361,15 +379,10 @@ body.theme-elos {
         color: var(--color-gray-06);
       }
 
-      .badge-recurring-meeting {
-        background-color: var(--color-bullet-recurring);
-        color: var(--color-black);
-        display: flex;
-        font-size: 95%;
-        justify-content: space-around;
-        padding: blocks(1) blocks(1);
-        margin-top: blocks(1);
-        width: 100%;
+      .recording-settings-label {
+        color: #7d8c99;
+        font-size: 14px;
+        padding: 8px 16px;
       }
 
       // Hide meetings without recordings
@@ -441,6 +454,271 @@ body.theme-elos {
       tr {
         min-height: 97px; // the height when there's a name and description in the item
       }
+    }
+  }
+
+  .icon-rec-row {
+    font-size: 28px;
+    &:hover {
+      color: var(--color-sec-hover);
+    }
+  }
+
+  .icon-container {
+    gap: 8px;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .dropdown-download .dropdown-toggle::after,
+  .dropdown-ai-artifacts .dropdown-toggle::after {
+    content: none;
+  }
+
+  .dropdown-ai-artifacts, .dropdown-download {
+    margin-top: 5px;
+  }
+
+  .dropdown-icon-btn {
+    display: inline-flex;
+    position: relative;
+    cursor: pointer;
+
+    .icon {
+      font-size: 24px;
+    }
+
+    .icon-dropdown-container {
+      position: absolute;
+      right: -6px;
+      bottom: -6px;
+      width: 19px;
+      height: 19px;
+      border: 2px solid white;
+      border-radius: 50%;
+      background-color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .icon-dropdown {
+        user-select: none;
+      }
+
+      img {
+        width: 14px;
+        height: 14px;
+      }
+
+      &:hover .icon-dropdown {
+        transform: scale(1.2);
+        transition-duration: 150ms;
+      }
+    }
+  }
+
+  .dropdown-download-artifacts {
+    width: 276px;
+    padding: 8px 0;
+    border-radius: 8px;
+    box-shadow: 4px 8px 8px rgba(0, 0, 0, 0.1);
+
+    .download-artifacts-label {
+      display: block;
+      color: #7d8c99;
+      font-size: 14px;
+      padding: 4px 16px;
+      font-weight: normal;
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 16px;
+      font-size: 14px;
+      color: var(--color-gray-09);
+
+      .icon {
+        font-size: 20px;
+        color: #7d8c99;
+      }
+
+      img {
+        width: 20px;
+        height: 20px;
+      }
+
+      &:hover, &.active {
+        background-color: var(--color-gray-01);
+        color: var(--color-gray-09) !important;
+      }
+    }
+  }
+
+  .dropdown-ai-artifacts-menu {
+    width: 283px;
+    padding: 0;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+
+    .ai-artifacts-panel {
+      font-family: 'Nunito Sans', sans-serif;
+
+      &__header {
+        padding: 16px 16px 8px;
+      }
+
+      &__title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #101828;
+        margin: 0 0 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+      }
+      
+      .ai-artifacts-error-badge {
+        display: flex;
+        align-items: center;
+        font-size: 18px !important;
+        flex-shrink: 0;
+        cursor: default;
+      }
+
+      &__subtitle {
+        font-size: 12px;
+        color: #6a7282;
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      &__divider {
+        margin: 0;
+        border-color: #e5e7eb;
+      }
+
+      &__body {
+        padding: 12px 16px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+    }
+
+    .ai-artifact-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      &__left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .icon {
+          font-size: 20px;
+          color: #6b7280;
+        }
+      }
+
+      &--card {
+        background-color: #f9fafb;
+        border: 1px solid #f3f4f6;
+        border-radius: 8px;
+        padding: 12px 16px;
+      }
+
+      &--available {
+        padding: 12px 16px;
+        text-decoration: none;
+        color: inherit;
+        transition: opacity 150ms;
+
+        &:hover {
+          opacity: 0.75;
+          text-decoration: none;
+        }
+
+        i {
+          width: 20px;
+          height: 20px;
+          color: var(--color-sec);
+        }
+      }
+    }
+
+    .ai-artifact-name {
+      font-size: 14px;
+      color: #4a5565;
+    }
+
+    .ai-artifact-spinner {
+      .icon {
+        font-size: 20px;
+        color: #008c95;
+        animation: ai-artifact-spin 1s linear infinite;
+      }
+    }
+
+    @keyframes ai-artifact-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .ai-artifacts-request-btn {
+      width: 100%;
+      padding: 10px;
+      background-color: #008c95;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+
+      &:hover {
+        background-color: #007880;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .copy-to-clipboard {
+    &:hover, &.active {
+      background-color: var(--color-gray-01);
+      color: var(--color-gray-09) !important;
+    }
+  }
+
+  .badge-recurring-meeting {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    justify-content: center;
+    padding: 8px 12px;
+    border-radius: 100px;
+    width: 132px;
+
+    &.weekly {
+      background-color: #008c95;
+      color: white;
+    }
+
+    &.every_two_weeks {
+      background-color: #2CCCD34D;
+      color: #252E2F;
     }
   }
 
@@ -516,6 +794,39 @@ body.theme-elos {
       border: 0;
       margin-bottom: 0;
       padding: 0;
+    }
+  }
+
+  .dropdown-menu {
+    border: none;
+    box-shadow: 4px 8px 16px 0px rgba(0, 0, 0, 0.1);
+
+    .dropdown-divider {
+      margin: 0.25rem 0;
+      border-top: 1px solid var(--color-gray-02);
+    }
+
+    .dropdown-item {
+      color: var(--color-gray-09);
+      font-size: 14px;
+
+      &.rec-destroy {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: #CD545B;
+
+        img {
+          width: 20px;
+          height: 20px;
+          filter: invert(36%) sepia(64%) saturate(660%) hue-rotate(314deg) brightness(87%);
+        }
+
+        &:hover {
+          background-color: var(--color-gray-01);
+          color: #CD545B !important;
+        }
+      }
     }
   }
 

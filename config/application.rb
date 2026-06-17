@@ -148,6 +148,10 @@ module BbbAppRooms
     config.data_api_url = Mconf::Env.fetch('MCONF_DATA_API_URL', '')
     config.data_reports_enabled = Mconf::Env.fetch_boolean('MCONF_DATA_REPORTS_ENABLED', true)
 
+    # Mconf LLM API
+    config.llm_api_url = Mconf::Env.fetch('MCONF_LLM_API_URL', '')
+    config.llm_artifact_cache_ttl = Mconf::Env.fetch_int('MCONF_LLM_ARTIFACT_CACHE_TTL', 10800)
+
     ### Bigbluebutton API
     config.bigbluebutton_endpoint = Mconf::Env.fetch('BIGBLUEBUTTON_ENDPOINT',
     'http://test-install.blindsidenetworks.com/bigbluebutton/api')
