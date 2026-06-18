@@ -5,6 +5,11 @@ es:
       link_copied: "Link copiado al clipboard!"
     empty_list: "Esta página aún no tiene ningún contenido."
     schedule: "Agendar"
+  ai_features_banner:
+    title: "¡Nuevas funcionalidades!"
+    description: "¡Genera transcripciones y resúmenes de tus grabaciones con la nueva IA de Elos!"
+    cta: "Saber más"
+    close: "Cerrar"
   group_select:
     title: "Seleccionar grupo"
   helpers:

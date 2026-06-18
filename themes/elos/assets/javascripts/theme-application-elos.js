@@ -153,4 +153,8 @@ $(document).on('turbolinks:load', function(){
     trackingId = `lti-${prefix}-meeting-recurrence-${value ? value : 'does_not_repeat'}`;
     e.target.setAttribute("data-tracking-id", trackingId);
   });
+
+  $('#ai-features-banner .close, #ai-features-banner .btn').on('click', function() {
+    document.cookie = 'ai_features_banner_dismissed=1; path=/; SameSite=Lax';
+  });
 });

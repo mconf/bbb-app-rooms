@@ -87,6 +87,10 @@ module IconsHelper
     material_icon_constructor "analytics", "icon material-icons icon-analytics", options
   end
 
+  def icon_arrow_right(options={})
+    material_icon_constructor "chevron_right", "icon material-icons icon-chevron-right", options
+  end
+
   def icon_video_library(options={})
     material_icon_constructor "video_library", "icon material-symbols-rounded icon-video-library", options
   end
@@ -108,7 +112,7 @@ module IconsHelper
   end
 
   def icon_not_check(options={})
-    material_icon_constructor "close", "icon material-symbols-rounded icon_not_check", options
+    material_icon_constructor "close", "icon material-symbols-rounded icon-not-check", options
   end
 
   def icon_upload_image(options={})

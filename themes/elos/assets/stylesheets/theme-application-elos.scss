@@ -358,6 +358,119 @@ body.theme-elos {
       padding: blocks(2) $block;
       margin-right: blocks(2);
     }
+
+    #view-meetings {
+      position: relative;
+    }
+
+    .ai-features-banner {
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      background-color: #EAFAFB;
+      border-radius: 12px;
+      filter: drop-shadow(4px 4px 4px rgba(32, 32, 32, 0.2));
+      padding: 24px;
+      width: 324px;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-bottom: 8px solid #ebf7ff;
+      }
+
+      .content {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        p {
+          text-align: left;
+        }
+      }
+
+      .icon-title {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+
+        img {
+          filter: brightness(0) saturate(100%) invert(45%) sepia(100%) saturate(500%) hue-rotate(148deg) brightness(85%);
+        }
+      }
+
+      .icon {
+        width: 24px;
+        height: 24px;
+      }
+
+      .title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #008C95;
+        line-height: normal;
+        margin: 0;
+      }
+
+      .description {
+        font-size: 16px;
+        color: #202020;
+        margin: 0;
+        line-height: normal;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background-color: #008C95;
+        color: var(--color-white);
+        border-radius: 8px;
+        padding: 4px 16px 4px 24px;
+        font-weight: 600;
+        font-size: 16px;
+        text-decoration: none;
+        width: fit-content;
+        max-width: none;
+        margin: 0 auto;
+
+        &:hover {
+          background-color: #073d85;
+          color: var(--color-white);
+          text-decoration: none;
+        }
+
+        .icon {
+          font-size: 24px;
+        }
+      }
+
+      .close {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        line-height: 1;
+        color: var(--color-black);
+
+        .icon {
+          font-size: 16px;
+        }
+      }
+    }
   }
 
   #meetings-list {

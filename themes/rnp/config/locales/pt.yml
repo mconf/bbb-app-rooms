@@ -13,6 +13,11 @@ pt:
       searching: "Buscando"
       space_or_comma: "Aperte Espaço ou digite uma vírgula para confirmar o e-mail"
     send: "Enviar"
+  ai_features_banner:
+    title: "Novas funcionalidades!"
+    description: "Gere transcrições e resumos das suas gravações com a nova IA do ConferênciaWeb!"
+    cta: "Saiba mais"
+    close: "Fechar"
   group_select:
     title: "Selecionar grupo"
   helpers:
