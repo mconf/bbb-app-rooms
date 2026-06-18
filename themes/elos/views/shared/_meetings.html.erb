@@ -40,7 +40,7 @@
         <p class="announcement-text"><%= t('ai_artifacts_announcement.text_html') %></p>
       </div>
       <% if release_date.present? %>
-        <p class="announcement-subtitle"><%= t('ai_artifacts_announcement.subtitle_html', date: l(release_date)) %></p>
+        <p class="announcement-subtitle"><%= t('ai_artifacts_announcement.subtitle_html', date: l(release_date, format: :day_month_year)) %></p>
       <% end %>
     </div>
   <% end %>
