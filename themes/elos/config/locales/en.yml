@@ -5,6 +5,14 @@ en:
       link_copied: "Link copied to the clipboard!"
     empty_list: "This page does not have any content yet."
     schedule: "Schedule"
+  ai_artifacts_announcement:
+    text_html: "<strong>New feature:</strong> AI-generated transcriptions and summaries for your recordings!"
+    subtitle_html: "Available for recordings made after <strong>%{date}</strong>."
+  ai_features_banner:
+    title: "New features!"
+    description: "Generate transcriptions and summaries of your recordings with the new Elos AI!"
+    cta: "Learn more"
+    close: "Close"
   group_select:
     title: "Select group"
   helpers:

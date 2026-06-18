@@ -1,0 +1,16 @@
+<div id="ai-features-banner" class="ai-features-banner">
+  <div class="content">
+    <div class="icon-title">
+      <%= icon_ai_summary %>
+      <strong class="title"><%= t('ai_features_banner.title') %></strong>
+    </div>
+    <p class="description"><%= t('ai_features_banner.description') %></p>
+    <%= link_to meetings_room_path(room), class: "btn mt-2" do %>
+      <%= t('ai_features_banner.cta') %>
+      <%= icon_arrow_right %>
+    <% end %>
+  </div>
+  <button class="close mt-2" aria-label="<%= t('ai_features_banner.close') %>">
+    <%= icon_not_check %>
+  </button>
+</div>
