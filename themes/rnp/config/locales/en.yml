@@ -13,6 +13,9 @@ en:
       searching: "Searching"
       space_or_comma: "Press Space or type a comma to confirm the e-mail"
     send: "Send"
+  ai_artifacts_announcement:
+    text_html: "<strong>New feature:</strong> AI-generated transcriptions and summaries for your recordings!"
+    subtitle_html: "Available for recordings made after <strong>%{date}</strong>."
   ai_features_banner:
     title: "New features!"
     description: "Generate transcriptions and summaries of your recordings with the new ConferênciaWeb AI!"

@@ -5,6 +5,9 @@ pt:
       link_copied: "Link copiado para o clipboard!"
     empty_list: "Essa página ainda não possui nenhum conteúdo."
     schedule: "Agendar"
+  ai_artifacts_announcement:
+    text_html: "<strong>Novidade:</strong> transcrições e resumos gerados por IA para suas gravações!"
+    subtitle_html: "Disponível para gravações realizadas a partir do dia <strong>%{date}</strong>."
   ai_features_banner:
     title: "Novas funcionalidades!"
     description: "Gere transcrições e resumos das suas gravações com a nova IA do Elos!"
