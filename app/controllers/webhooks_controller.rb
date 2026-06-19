@@ -1,7 +1,7 @@
 # frozen_string_literal: true
-include ApplicationHelper
 
 class WebhooksController < ApplicationController
+  include ApplicationHelper
   AI_ARTIFACT_STATUS_KEY = {
     'ai_summary'    => 'summary_status',
     'transcription' => 'transcription_status'
