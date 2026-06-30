@@ -61,6 +61,11 @@ module ApplicationHelper
     config.present? && config[:force_disable_external_link]
   end
 
+  def hide_recordings_history?(resource)
+    config = ConsumerConfig.find_by(key: resource[:consumer_key])
+    config.present? && config[:hide_recordings_history] && !Abilities.full_permission?(@user)
+  end
+
   def show_external_widget?(resource)
     key = ConsumerConfig.find_by(key: resource[:consumer_key])
     key.present? && key[:external_widget]
