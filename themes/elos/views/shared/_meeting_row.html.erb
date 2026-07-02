@@ -88,7 +88,7 @@
   </td>
 
   <%# Meeting with recording %>
-  <% if recording.present? %>
+  <% if recording.present? && !hide_recordings_history?(room) %>
     <%# Recording visibility %>
     <td class="<%= recording[:published] ? 'col-2' : 'col-12' %> col-md-1">
       <% if recording[:published] %>

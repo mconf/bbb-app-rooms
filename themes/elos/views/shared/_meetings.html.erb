@@ -18,9 +18,11 @@
         <input type="radio" name="filters" value="no-filters" autocomplete="off" checked> <%= t('meetings.filters.no_filter') %>
       </label>
       <%# Only recorded meetings %>
-      <label class="btn btn-light d-flex align-items-center justify-content-center h-50 w-25 ms-4">
-        <input type="radio" name="filters" value="recorded-only" autocomplete="off"> <%= t('meetings.filters.recorded_only') %>
-      </label>
+      <% unless hide_recordings_history?(room) %>
+        <label class="btn btn-light d-flex align-items-center justify-content-center h-50 w-25 ms-4">
+          <input type="radio" name="filters" value="recorded-only" autocomplete="off"> <%= t('meetings.filters.recorded_only') %>
+        </label>
+      <% end %>
     </div>
   </div>
 
