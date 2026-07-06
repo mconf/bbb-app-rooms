@@ -12,18 +12,18 @@
       <h2 class="mb-0"><%= list_title %></h2>
     </div>
 
-    <div id="meetings-filters" class="col-12 col-sm-6 mb-3 mb-sm-0 d-flex align-items-center justify-content-center justify-content-sm-end btn-group-toggle" data-toggle="buttons">
-      <%# All meetings %>
-      <label class="btn btn-light d-flex align-items-center justify-content-center h-50 w-25 active">
-        <input type="radio" name="filters" value="no-filters" autocomplete="off" checked> <%= t('meetings.filters.no_filter') %>
-      </label>
-      <%# Only recorded meetings %>
-      <% unless hide_recordings_history?(room) %>
-        <label class="btn btn-light d-flex align-items-center justify-content-center h-50 w-25 ms-4">
-          <input type="radio" name="filters" value="recorded-only" autocomplete="off"> <%= t('meetings.filters.recorded_only') %>
+    <% unless hide_recordings_history?(room) %>
+      <div id="meetings-filters" class="col-12 col-sm-6 mb-3 mb-sm-0 d-flex align-items-center justify-content-center justify-content-sm-end btn-group-toggle" data-toggle="buttons">
+        <%# All meetings %>
+        <label class="btn btn-light d-flex align-items-center justify-content-center h-50 w-25 active">
+          <input type="radio" name="filters" value="no-filters" autocomplete="off" checked> <%= t('meetings.filters.no_filter') %>
         </label>
-      <% end %>
-    </div>
+        <%# Only recorded meetings %>
+          <label class="btn btn-light d-flex align-items-center justify-content-center h-50 w-25 ms-4">
+            <input type="radio" name="filters" value="recorded-only" autocomplete="off"> <%= t('meetings.filters.recorded_only') %>
+          </label>
+      </div>
+    <% end %>
   </div>
 
   <%# Disable search for now %>
