@@ -63,7 +63,7 @@ module ApplicationHelper
 
   def hide_recordings_history?(resource)
     config = ConsumerConfig.find_by(key: resource[:consumer_key])
-    config.present? && config[:hide_recordings_history] && !Abilities.full_permission?(@user)
+    config.present? && config[:hide_recordings_history] && !(@user.present? && Abilities.full_permission?(@user))
   end
 
   def show_external_widget?(resource)
