@@ -108,7 +108,9 @@
         <% if recording[:published] %>
           <% browser_safari = browser.safari? || browser.safari_webapp_mode? %>
           <%# AI Artifacts dropdown %>
-          <% if ai_artifacts_enabled?(@room) %>
+          <% ai_release_date = Rails.configuration.ai_artifacts_release_date %>
+          <% recording_date = Time.at(meeting[:startTime].to_i / 1000.0).to_date %>
+          <% if ai_artifacts_enabled?(@room) && (ai_release_date.nil? || recording_date >= ai_release_date) %>
             <div class="dropdown dropdown-ai-artifacts">
               <a href="#" class="dropdown-toggle text-decoration-none dropdown-ai-artifacts-link"
                 internal-meeting-id="<%= meeting[:internalMeetingID] %>"
