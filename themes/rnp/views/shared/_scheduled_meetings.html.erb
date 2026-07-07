@@ -23,7 +23,7 @@
     data: { 'tracking-id': 'lti-view-history', 'institution-guid': "#{@institution_guid}" },
     class: "btn btn-light"
     %>
-    <% if ai_artifacts_enabled?(room) %>
+    <% if ai_artifacts_enabled?(room) && !hide_recordings_history?(room) %>
       <%= render "shared/ai_features_banner", room: room %>
     <% end %>
   </div>

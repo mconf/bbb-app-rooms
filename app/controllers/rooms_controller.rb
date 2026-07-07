@@ -426,7 +426,8 @@ class RoomsController < ApplicationController
       external_context_url: custom_params['external_context_url'],
       institution_guid: custom_params['institution_guid'],
       allow_student_scheduling: custom_params['allow_student_scheduling'],
-      allow_ai_artifacts: custom_params['allow_ai_artifacts']
+      allow_ai_artifacts: custom_params['allow_ai_artifacts'],
+      hide_recordings_history: custom_params['hide_recordings_history']
     )
     Rails.logger.info "[setup_consumer_configs] ConsumerConfig created/updated with key=#{@consumer_config.key}, " \
     "params=#{custom_params.except('bbb', 'moodle', 'brightspace')}"
