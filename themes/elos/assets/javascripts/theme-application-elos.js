@@ -153,4 +153,13 @@ $(document).on('turbolinks:load', function(){
     trackingId = `lti-${prefix}-meeting-recurrence-${value ? value : 'does_not_repeat'}`;
     e.target.setAttribute("data-tracking-id", trackingId);
   });
+
+  if (!localStorage.getItem('ai_features_banner_dismissed')) {
+    $('#ai-features-banner').show();
+  }
+
+  $('#ai-features-banner .close, #ai-features-banner .btn').on('click', function() {
+    localStorage.setItem('ai_features_banner_dismissed', '1');
+    $('#ai-features-banner').hide();
+  });
 });

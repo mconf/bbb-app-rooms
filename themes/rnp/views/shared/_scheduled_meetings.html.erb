@@ -23,6 +23,9 @@
     data: { 'tracking-id': 'lti-view-history', 'institution-guid': "#{@institution_guid}" },
     class: "btn btn-light"
     %>
+    <% if ai_artifacts_enabled?(room) %>
+      <%= render "shared/ai_features_banner", room: room %>
+    <% end %>
   </div>
 
   <% if can_create_scheduled_meeting?(user, room) %>
