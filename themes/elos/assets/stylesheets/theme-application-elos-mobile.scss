@@ -31,7 +31,6 @@
 
         .meeting-info {
           color: #75787B;
-          background-color: #F6F6F6;
           border-radius: 4px;
           padding: 8px 24px;
 
@@ -55,20 +54,21 @@
         }
 
         .icon-container a {
-          background-color: var(--color-main);
-          color: var(--color-white);
-          border-radius: 50%;
+          .playback-icon {
+            background-color: var(--color-main);
+            color: var(--color-white);
+            border-radius: 50%;
 
-          i {
-            font-size: 24px;
-            padding: 4px;
+            i {
+              font-size: 24px;
+            }
           }
         }
 
         .badge-recurring-meeting {
           border-radius: 50px;
           line-height: 16px;
-          padding: 2px 12px;
+          padding: 4px 12px;
         }
       }
 

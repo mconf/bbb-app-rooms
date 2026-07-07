@@ -33,18 +33,32 @@
     </div>
   <% end %>
 
+  <%# AI Artifacts announcement %>
+  <% if ai_artifacts_enabled?(room) %>
+    <% release_date = Rails.configuration.ai_artifacts_release_date %>
+    <div class="ai-artifacts-announcement">
+      <div class="announcement-main">
+        <%= icon_ai_artifacts_rnp %>
+        <p class="announcement-text"><%= t('ai_artifacts_announcement.text_html') %></p>
+      </div>
+      <% if release_date.present? %>
+        <p class="announcement-subtitle"><%= t('ai_artifacts_announcement.subtitle_html', date: l(release_date, format: :day_month_year)) %></p>
+      <% end %>
+    </div>
+  <% end %>
+
   <div class="row">
     <div class="col-12">
       <table id="meetings-table" class="table" data-search-target="1">
         <thead>
           <tr class="d-md-flex hide-on-mobile">
-            <th class="col-md-3 by-0 py-0"><%= t("meetings.table.title") %></th>
-            <th class="col-md-2 text-center by-0 py-0"><%= t("meetings.table.date") %></th>
-            <th class="col-md-1 text-center by-0 py-0"><%= t("meetings.table.time") %></th>
-            <th class="col-md-1 text-center by-0 py-0"><%= t("meetings.table.duration") %></th>
-            <th class="col-md-2 text-center by-0 py-0"><%= t("meetings.table.exp_date") %></th>
-            <th class="col-md-1 text-center by-0 py-0"><%= t("meetings.table.status") %></th>
-            <th class="col-md-1 text-center by-0 py-0"><%= t("meetings.table.recording") %></th>
+            <th class="col-md-3 by-0 py-0"><span><%= t("meetings.table.title") %></span></th>
+            <th class="col-md-2 text-center by-0 py-0"><span><%= t("meetings.table.date") %></span></th>
+            <th class="col-md-1 text-center by-0 py-0"><span><%= t("meetings.table.time") %></span></th>
+            <th class="col-md-1 text-center by-0 py-0"><span><%= t("meetings.table.duration") %></span></th>
+            <th class="col-md-2 text-center by-0 py-0"><span><%= t("meetings.table.exp_date") %></span></th>
+            <th class="col-md-1 text-center by-0 py-0"><span><%= t("meetings.table.status") %></span></th>
+            <th class="col-md-1 text-center by-0 py-0"><span><%= t("meetings.table.recording") %></span></th>
           </tr>
         </thead>
         <tbody>
@@ -69,6 +83,27 @@
 </div>
 <button class="to-top btn btn-primary">
   <i class="fas fa-angle-up"></i>
+</div>
+
+<div id="ai-artifacts-success-toast" aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center toast-area">
+  <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="7000">
+    <div class="toast-header">
+      <%= t('meetings.request_artifact.request_successful') %>
+      <button type="button" class="ms-2 mb-1 btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
+<div id="ai-artifacts-error-toast"
+     aria-live="polite" aria-atomic="true"
+     class="d-flex justify-content-center align-items-center toast-area"
+     data-default-message="<%= t('meetings.request_artifact.error_requesting_artifacts') %>">
+  <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="7000">
+    <div class="toast-header">
+      <span class="ai-artifacts-error-message"></span>
+      <button type="button" class="ms-2 mb-1 btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
 </div>
 
 <div id="playback-link-copied-toast" aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center toast-area">

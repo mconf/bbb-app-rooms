@@ -21,7 +21,24 @@ Rails.application.configure do
   config.public_file_server.headers = {
     "cache-control" => "public, max-age=#{2.days.to_i}"
   }
-  config.cache_store = :memory_store
+  # Use Redis when available so that the web process and Resque workers share the same
+  # cache. Falls back to memory_store only when Redis is not configured (e.g. plain IRB).
+  config.cache_store = begin
+    redis_host = Mconf::Env.fetch('MCONF_REDIS_HOST')
+    if redis_host.present?
+      redis_port     = Mconf::Env.fetch('MCONF_REDIS_PORT', '6379')
+      redis_db       = Mconf::Env.fetch('MCONF_REDIS_DB', '0')
+      redis_password = Mconf::Env.fetch('MCONF_REDIS_PASSWORD')
+      redis_url = if redis_password.present?
+        "redis://:#{redis_password}@#{redis_host}:#{redis_port}/#{redis_db}"
+      else
+        "redis://#{redis_host}:#{redis_port}/#{redis_db}"
+      end
+      [:redis_cache_store, { url: redis_url }]
+    else
+      :memory_store
+    end
+  end
   config.action_controller.perform_caching = true
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
