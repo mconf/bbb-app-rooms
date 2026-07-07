@@ -34,7 +34,7 @@
   <% end %>
 
   <%# AI Artifacts announcement %>
-  <% if ai_artifacts_enabled?(room) %>
+  <% if ai_artifacts_enabled?(room) && !hide_recordings_history?(room) %>
     <% release_date = Rails.configuration.ai_artifacts_release_date %>
     <div class="ai-artifacts-announcement">
       <div class="announcement-main">
