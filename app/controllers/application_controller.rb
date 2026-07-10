@@ -260,6 +260,7 @@ class ApplicationController < ActionController::Base
             launch_nonce: @app_launch&.nonce,
             moodle_url: @app_launch&.params&.[]('launch_presentation_return_url'),
             tool_consumer: @app_launch&.params&.[]('tool_consumer_instance_name'),
+            room_handler: @room&.handler,
             current_user: {
               id: @user&.uid,
               name: @user&.full_name || @app_launch&.omniauth_auth&.dig('bbbltibroker', 'info', 'full_name'),

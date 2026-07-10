@@ -10,7 +10,7 @@ Bundler.require(*Rails.groups)
 
 module BbbAppRooms
   class Application < Rails::Application
-    VERSION = "1.3.0"
+    VERSION = "1.4.1"
 
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.0
@@ -147,6 +147,16 @@ module BbbAppRooms
     # Mconf Data API
     config.data_api_url = Mconf::Env.fetch('MCONF_DATA_API_URL', '')
     config.data_reports_enabled = Mconf::Env.fetch_boolean('MCONF_DATA_REPORTS_ENABLED', true)
+
+    # Mconf LLM API
+    config.llm_api_url = Mconf::Env.fetch('MCONF_LLM_API_URL', '')
+    config.llm_artifact_cache_ttl = Mconf::Env.fetch_int('MCONF_LLM_ARTIFACT_CACHE_TTL', 10800)
+    config.ai_artifacts_release_date = begin
+      date_str = Mconf::Env.fetch('MCONF_AI_ARTIFACTS_RELEASE_DATE')
+      date_str.present? ? Date.iso8601(date_str) : ''
+    rescue ArgumentError, TypeError
+      nil
+    end
 
     ### Bigbluebutton API
     config.bigbluebutton_endpoint = Mconf::Env.fetch('BIGBLUEBUTTON_ENDPOINT',

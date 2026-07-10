@@ -23,6 +23,7 @@ Rails.application.routes.draw do
         get '/close', to: 'rooms#close', as: :autoclose
         post '/webhooks/moodle_attendance', to: 'webhooks#moodle_attendance', as: :moodle_attendance
         post '/webhooks/brightspace_attendance', to: 'webhooks#brightspace_attendance', as: :brightspace_attendance
+        post '/webhooks/ai_artifacts', to: 'webhooks#ai_artifacts', as: :ai_artifacts
 
         # Handles recording management.
         scope ':id/recording/:record_id' do
@@ -112,6 +113,8 @@ Rails.application.routes.draw do
             get :download_notes, to: 'meetings#download_notes'
             get :learning_dashboard, to: 'meetings#learning_dashboard'
             get :download_artifacts, to: 'meetings#download_artifacts'
+            get :download_ai_artifacts, to: 'meetings#download_ai_artifacts'
+            post :request_ai_artifacts, to: 'meetings#request_ai_artifacts'
           end
         end
       end

@@ -31,6 +31,18 @@ module IconsHelper
     image_tag 'icon-ai-summary.svg'
   end
 
+  def icon_ai_artifacts_elos(options={})
+    image_tag 'icon_ai_artifacts_elos.svg'
+  end
+  
+  def icon_ai_artifacts_rnp(options={})
+    image_tag 'icon_ai_artifacts_rnp.svg'
+  end
+
+  def icon_dropdown_arrow(options={})
+    image_tag("icon-dropdown.svg", class: "icon-dropdown")
+  end
+
   def icon_content_copy(options={})
     image_tag 'content_copy.svg'
   end
@@ -44,7 +56,7 @@ module IconsHelper
   end
 
   def icon_learning_dashboard(options={})
-    image_tag 'learning_dashboard.svg'
+    material_icon_constructor "chart_data", "icon material-symbols-rounded icon-chart-data", options
   end
 
   def icon_delete(options={})
@@ -52,7 +64,35 @@ module IconsHelper
   end
 
   def icon_download(options={})
-    image_tag 'download.svg'
+    material_icon_constructor "download", "icon material-symbols-rounded icon-download", options
+  end
+
+  def icon_description(options={})
+    material_icon_constructor "description", "icon material-symbols-rounded icon-description", options
+  end
+
+  def icon_speech_to_text(options={})
+    material_icon_constructor "speech_to_text", "icon material-symbols-rounded icon-speech-to-text", options
+  end
+
+  def icon_progress_activity(options={})
+    material_icon_constructor "progress_activity", "icon material-symbols-rounded icon-progress-activity", options
+  end
+
+  def icon_groups(options={})
+    material_icon_constructor "groups", "icon material-symbols-rounded icon-groups", options
+  end
+
+  def icon_analytics(options={})
+    material_icon_constructor "analytics", "icon material-icons icon-analytics", options
+  end
+
+  def icon_arrow_right(options={})
+    material_icon_constructor "chevron_right", "icon material-icons icon-chevron-right", options
+  end
+
+  def icon_video_library(options={})
+    material_icon_constructor "video_library", "icon material-symbols-rounded icon-video-library", options
   end
 
   def icon_filesender(options={})
@@ -72,7 +112,7 @@ module IconsHelper
   end
 
   def icon_not_check(options={})
-    material_icon_constructor "close", "icon material-symbols-rounded icon_not_check", options
+    material_icon_constructor "close", "icon material-symbols-rounded icon-not-check", options
   end
 
   def icon_upload_image(options={})

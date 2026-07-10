@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_16_193450) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_29_223008) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -72,6 +72,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_16_193450) do
     t.string "external_context_url"
     t.string "institution_guid"
     t.boolean "allow_student_scheduling", default: false, null: false
+    t.boolean "allow_ai_artifacts", default: true, null: false
+    t.boolean "hide_recordings_history", default: false, null: false
     t.index ["key"], name: "index_consumer_configs_on_key", unique: true
   end
 

@@ -421,6 +421,15 @@ $(document).on('turbolinks:load', function(){
       $showIcon.show();
     });
   });
+
+  if (!localStorage.getItem('ai_features_banner_dismissed')) {
+    $('#ai-features-banner').show();
+  }
+
+  $('#ai-features-banner .close, #ai-features-banner .btn').on('click', function() {
+    localStorage.setItem('ai_features_banner_dismissed', '1');
+    $('#ai-features-banner').hide();
+  });
 });
 
 $DOCUMENT.on('turbolinks:load',  () => {
