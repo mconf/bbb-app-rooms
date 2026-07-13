@@ -46,7 +46,8 @@ module BbbApi
     logout_url = opts[:logout_url] || autoclose_url
 
     unless bbb(room).is_meeting_running?(meeting_id)
-      meeting_name = opts[:meeting_name] || scheduled_meeting.meeting_name
+      meeting_name = (opts[:meeting_name] || scheduled_meeting.meeting_name)
+        .truncate(ScheduledMeeting::NAME_MAX_LENGTH)
 
       begin
         options = scheduled_meeting.create_options(user)
