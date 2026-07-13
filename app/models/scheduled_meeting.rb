@@ -2,6 +2,7 @@ class ScheduledMeeting < ApplicationRecord
   include Friendlyable
 
   paginates_per 10
+  NAME_MAX_LENGTH = 256
 
   REPEAT_OPTIONS = {
     weekly: 1.week,
@@ -16,7 +17,12 @@ class ScheduledMeeting < ApplicationRecord
           inverse_of: :scheduled_meeting
 
   validates :room, presence: true
-  validates :name, presence: true
+  validates :name, presence: true, length: {
+    maximum: ScheduledMeeting::NAME_MAX_LENGTH,
+    message: ->(object, data) {
+      I18n.t('default.scheduled_meeting.error.name_max_length', max: ScheduledMeeting::NAME_MAX_LENGTH)
+    }
+  }
   validates :start_at, presence: true
   validates :duration, presence: true
   validates :repeat, inclusion: { in: [nil] + ScheduledMeeting::REPEAT_OPTIONS.keys }
