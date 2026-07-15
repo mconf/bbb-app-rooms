@@ -317,7 +317,10 @@ class ScheduledMeetingsController < ApplicationController
           return
         end
 
-        opts[:meeting_name] = "#{@scheduled_meeting.name} - #{group_name}"
+        group_suffix = " - #{group_name}"
+        name_budget = ScheduledMeeting::NAME_MAX_LENGTH - group_suffix.length
+        truncated_name = @scheduled_meeting.name.truncate([name_budget, 0].max)
+        opts[:meeting_name] = "#{truncated_name}#{group_suffix}"
       end
 
       if @room.can_mark_moodle_attendance && @scheduled_meeting.mark_moodle_attendance
