@@ -11,7 +11,7 @@ $(document).on('turbolinks:load', function(){
     if (nameField) {
       var nameMaxLength = parseInt(nameField.getAttribute('maxlength'));
       nameField.addEventListener('input', function() {
-        if (this.value.length >= nameMaxLength) {
+        if (this.value.length > nameMaxLength) {
           this.setCustomValidity(I18n.t('default.scheduled_meeting.error.name_max_length', { max: nameMaxLength }));
           this.reportValidity();
         } else if (this.validity.customError) {
