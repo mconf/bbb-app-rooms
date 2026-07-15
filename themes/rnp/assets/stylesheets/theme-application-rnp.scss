@@ -247,6 +247,15 @@ body.theme-rnp {
           color: #CD545B !important;
         }
       }
+
+      &.disabled {
+        cursor: auto;
+        color: var(--color-gray-05) !important;
+
+        img {
+          filter: invert(70%) sepia(0%) saturate(400%) hue-rotate(175deg) brightness(100%);
+        }
+      }
     }
   }
 
