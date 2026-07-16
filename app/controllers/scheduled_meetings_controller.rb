@@ -10,6 +10,8 @@ class ScheduledMeetingsController < ApplicationController
   include BbbAppRooms
   include GuestUserModule
 
+  GROUP_NAME_MAX_LENGTH = 100
+
   # actions that can be accessed without a session, without the LTI launch
   open_actions = %i[external wait join running updateMeetingData guest_logout]
 
@@ -317,10 +319,15 @@ class ScheduledMeetingsController < ApplicationController
           return
         end
 
-        group_suffix = " - #{group_name}"
-        name_budget = ScheduledMeeting::NAME_MAX_LENGTH - group_suffix.length
-        truncated_name = @scheduled_meeting.name.truncate([name_budget, 0].max)
-        opts[:meeting_name] = "#{truncated_name}#{group_suffix}"
+        full_meeting_name = "#{@scheduled_meeting.name} - #{group_name}"
+
+        if full_meeting_name.length <= ScheduledMeeting::NAME_MAX_LENGTH
+          opts[:meeting_name] = full_meeting_name
+        else
+          group_suffix = " - #{group_name.truncate(GROUP_NAME_MAX_LENGTH)}"
+          name_budget = ScheduledMeeting::NAME_MAX_LENGTH - group_suffix.length
+          opts[:meeting_name] = "#{@scheduled_meeting.name.truncate(name_budget)}#{group_suffix}"
+        end
       end
 
       if @room.can_mark_moodle_attendance && @scheduled_meeting.mark_moodle_attendance
