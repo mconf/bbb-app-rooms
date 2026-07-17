@@ -10,7 +10,7 @@
     <div class="form-group col-12">
       <%= form.label :name %>
       <% if name_error %> <div class="field_with_errors"> <% end %>
-        <%= form.text_field :name, required: true, minlength: 2, maxlength: ScheduledMeeting::NAME_MAX_LENGTH, class: "form-control", autofocus: true %>
+        <%= form.text_field :name, required: true, minlength: 2, maxlength: ScheduledMeeting::NAME_MAX_LENGTH + 1, class: "form-control", autofocus: true %>
       <% if name_error %> </div> <% end %>
       <% if name_error %>
         <p class="error-description"><%= @scheduled_meeting.errors[:name].first %></p>

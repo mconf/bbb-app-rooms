@@ -9,7 +9,9 @@ $(document).on('turbolinks:load', function(){
 
     var nameField = document.querySelector('input[name="scheduled_meeting[name]"]');
     if (nameField) {
-      var nameMaxLength = parseInt(nameField.getAttribute('maxlength'));
+      // maxlength is the limit + 1, so the field can reach a length past the
+      // limit that trips the check below (which then blocks submitting it)
+      var nameMaxLength = parseInt(nameField.getAttribute('maxlength')) - 1;
       nameField.addEventListener('input', function() {
         if (this.value.length > nameMaxLength) {
           this.setCustomValidity(I18n.t('default.scheduled_meeting.error.name_max_length', { max: nameMaxLength }));
