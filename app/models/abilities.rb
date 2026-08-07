@@ -32,6 +32,8 @@ class Abilities
   end
 
   def self.full_permission?(user)
+    return false if user.blank?
+
     user.admin? || user.moderator?(self.moderator_roles)
   end
 
