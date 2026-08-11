@@ -18,5 +18,20 @@
     <div class="context-info text-muted fs-xxs mt-2">
       <%= @error[:context_info] %>
     </div>
+    <% if @error[:can_view_debug] %>
+      <div class="error-debug mt-4">
+        <button type="button" class="btn btn-primary btn-sm" id="toggle-error-logs"
+                aria-expanded="false" aria-controls="error-debug-info">
+          Ver mais
+        </button>
+        <button type="button" class="btn btn-light btn-sm d-inline-flex align-items-center gap-1" id="copy-error-logs">
+          <i class="icon material-icons fs-6">content_copy</i>
+          Copiar
+        </button>
+        <pre class="error-debug-info mt-2 d-none text-start border rounded p-3 mx-auto font-monospace fs-xxs overflow-auto"
+             style="max-height: 320px; max-width: 860px; background-color: #faf9f6;"
+             id="error-debug-info"><%= @error[:debug_info] %></pre>
+      </div>
+    <% end %>
   </div>
 </div>
