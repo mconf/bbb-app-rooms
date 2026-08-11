@@ -183,6 +183,8 @@ class ApplicationController < ActionController::Base
   end
 
   def set_error(model, error, status, context_info: nil)
+    debug_info = build_debug_info
+    can_view_debug = @user.present? && Abilities.full_permission?(@user)
     @user = nil
     instance_variable_set("@#{model}".to_sym, nil)
     context_info ||= [@app_launch&.consumer_key, @app_launch&.nonce].compact
@@ -193,6 +195,8 @@ class ApplicationController < ActionController::Base
       explanation: t("error.#{model}.#{error}.status_code") == '404' ? nil : t("error.#{model}.#{error}.explanation"),
       code: t("error.#{model}.#{error}.status_code"),
       context_info: context_info,
+      debug_info: debug_info,
+      can_view_debug: can_view_debug,
       status: status
     }
   end
@@ -278,6 +282,31 @@ class ApplicationController < ActionController::Base
 
   private
 
+  def build_debug_info
+    calls = Current.moodle_calls || []
+
+    fields = {
+      'consumer_key' => @app_launch&.consumer_key,
+      'moodle_url' => @app_launch&.params&.[]('launch_presentation_return_url'),
+      'tool_consumer' => @app_launch&.params&.[]('tool_consumer_instance_name'),
+      'room_handler' => @room&.handler,
+      'user' => [
+        @user&.uid,
+        @user&.full_name || @app_launch&.omniauth_auth&.dig('bbbltibroker', 'info', 'full_name'),
+        @user&.email || @app_launch&.omniauth_auth&.dig('bbbltibroker', 'info', 'email')
+      ].compact.join(' | ')
+    }
+
+    lines = fields.map { |label, value| "#{"#{label}:".ljust(16)}#{value.presence || '-'}" }
+    lines << '' << "moodle_calls (#{calls.size}):"
+    lines << '  nenhuma chamada nesta requisicao' if calls.empty?
+    lines += calls.map.with_index(1) do |call, index|
+      "  #{index}. #{call[:wsfunction]} -> #{call[:errorcode] || call[:status]} (#{call[:duration]}s)"
+    end
+
+    lines.join("\n")
+  end
+
   def render_error(status)
     model = 'generic'
     @error = {
@@ -287,6 +316,8 @@ class ApplicationController < ActionController::Base
       suggestion: t("error.#{model}.#{status}.suggestion"),
       explanation: status == 404 ? nil : t("error.#{model}.#{status}.explanation"),
       code: status,
+      debug_info: build_debug_info,
+      can_view_debug: @user.present? && Abilities.full_permission?(@user),
       status: status
     }
 
