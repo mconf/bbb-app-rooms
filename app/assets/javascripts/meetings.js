@@ -299,6 +299,30 @@ let downloadAiArtifacts = async(meeting_id, download_artifacts_endpoint) => {
   }
 };
 
+const AI_ARTIFACTS_AUTO_CLOSE_DELAY = 2 * 60 * 1000;
+
+// One timer per dropdown, since each recording has its own
+let aiArtifactsAutoCloseTimers = {};
+
+let clearAiArtifactsAutoClose = (toggle) => {
+  const meeting_id = toggle.getAttribute('internal-meeting-id');
+  if (!aiArtifactsAutoCloseTimers[meeting_id]) return;
+
+  clearTimeout(aiArtifactsAutoCloseTimers[meeting_id]);
+  delete aiArtifactsAutoCloseTimers[meeting_id];
+};
+
+let scheduleAiArtifactsAutoClose = (toggle) => {
+  // Drop the previous timer, otherwise it would close a dropdown the user just reopened
+  clearAiArtifactsAutoClose(toggle);
+
+  const meeting_id = toggle.getAttribute('internal-meeting-id');
+  aiArtifactsAutoCloseTimers[meeting_id] = setTimeout(() => {
+    delete aiArtifactsAutoCloseTimers[meeting_id];
+    bootstrap.Dropdown.getOrCreateInstance(toggle).hide();
+  }, AI_ARTIFACTS_AUTO_CLOSE_DELAY);
+};
+
 let showAiArtifactItems = (html, meeting_id) => {
   const containerSelector = `div[aria-labelledby="dropdown-ai-artifacts-${meeting_id}"]`;
   $(`${containerSelector} .dropdown-item-loading`).hide();
@@ -323,8 +347,13 @@ $DOCUMENT.on('click', '.dropdown-download-link', function(e) {
   downloadArtifacts(this.getAttribute('internal-meeting-id'), this.getAttribute('download-artifacts-endpoint'), 'dropdown-download');
 });
 
-$DOCUMENT.on('click', '.dropdown-ai-artifacts-link', function(e) {
+$DOCUMENT.on('shown.bs.dropdown', '.dropdown-ai-artifacts-link', function(e) {
   downloadAiArtifacts(this.getAttribute('internal-meeting-id'), this.getAttribute('download-artifacts-endpoint'));
+  scheduleAiArtifactsAutoClose(this);
+});
+
+$DOCUMENT.on('hidden.bs.dropdown', '.dropdown-ai-artifacts-link', function(e) {
+  clearAiArtifactsAutoClose(this);
 });
 
 $(document).on('click', '.request-ai-artifacts-btn', function(e) {
