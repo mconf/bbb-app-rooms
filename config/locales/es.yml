@@ -7,6 +7,7 @@ es:
       error:          "Error"
       error_debug_info: "Ver más"
       content_copy:    "Copiar"
+      error_debug_info_copied: "Copiado al clipboard"
     admin:
       back:           "Vuelve"
       handler:        "Handler"

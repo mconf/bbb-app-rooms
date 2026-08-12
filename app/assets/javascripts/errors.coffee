@@ -7,6 +7,16 @@ $(document).on 'click', '#toggle-error-logs', ->
   expanded = $(this).attr('aria-expanded') == 'true'
   $(this).attr('aria-expanded', !expanded)
 
-$(document).on 'click', '#copy-error-logs', ->
-  text = $('#error-debug-info').text()
-  navigator.clipboard.writeText(text)
+# has to wait for turbolinks:load so ClipboardJS is defined by the time this runs.
+$(document).on 'turbolinks:load', ->
+  return unless $('#copy-error-logs').length
+
+  clipboard = new ClipboardJS '#copy-error-logs',
+    text: -> $('#error-debug-info').text()
+
+  clipboard.on 'success', (e) ->
+    e.clearSelection()
+
+    $toast = $('.toast', '#error-logs-copied-toast')
+    $toast.toast('dispose')
+    $toast.toast('show')

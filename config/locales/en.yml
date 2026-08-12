@@ -37,6 +37,7 @@ en:
       data_api_config_error: "Data API configuration error. Please contact support."
       error:          "Error"
       error_debug_info: "See more"
+      error_debug_info_copied: "Copied to clipboard"
       content_copy:    "Copy"
     admin:
       back:           "Back"

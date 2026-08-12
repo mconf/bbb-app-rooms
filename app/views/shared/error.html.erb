@@ -31,6 +31,7 @@
         <pre class="error-debug-info mt-2 d-none text-start border rounded p-3 mx-auto font-monospace fs-xxs overflow-auto"
              style="max-height: 320px; max-width: 860px; background-color: #faf9f6;"
              id="error-debug-info"><%= @error[:debug_info] %></pre>
+        <%= render 'shared/toast', toast_id: 'error-logs-copied-toast', text: t('default.app.error_debug_info_copied') %>
       </div>
     <% end %>
   </div>

@@ -6,6 +6,7 @@ pt:
       data_api_config_error: "Erro na configuração da API de Dados. Por favor, entre em contato com o suporte."
       error:          "Erro"
       error_debug_info: "Ver mais"
+      error_debug_info_copied: "Copiado para a área de transferência"
       content_copy:    "Copiar"
     admin:
       back:           "Voltar"
