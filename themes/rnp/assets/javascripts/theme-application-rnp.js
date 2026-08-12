@@ -442,7 +442,10 @@ $DOCUMENT.on('turbolinks:load',  () => {
   const expiresAt = $("#expires_at")[0].value
   const recordID = $("#recordID")[0].value
   const service_name = $("#service_name")[0].value
+  // The source tag lets the opener tell this message apart from the ones the
+  // login provider posts from inside this same popup.
   window.opener.postMessage({
+    source: 'bbb-app-rooms',
     access_token: accessToken,
     refresh_token: refreshToken,
     expires_at: expiresAt,
