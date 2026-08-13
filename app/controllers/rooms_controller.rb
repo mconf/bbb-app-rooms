@@ -456,7 +456,10 @@ class RoomsController < ApplicationController
         url: moodle_configs['url'],
         token: moodle_configs['token'],
         group_select_enabled: moodle_configs['group_select_enabled'],
-        show_all_groups: moodle_configs['show_all_groups']
+        show_all_groups: moodle_configs['show_all_groups'],
+        presence_percentage_enabled: moodle_configs['presence_percentage_enabled'],
+        presence_threshold_percentage: moodle_configs['presence_threshold_percentage'],
+        partial_presence_threshold_percentage: moodle_configs['partial_presence_threshold_percentage']
       )
       Rails.logger.info "[setup_consumer_configs] MoodleToken created/updated, params=#{moodle_configs}"
     else

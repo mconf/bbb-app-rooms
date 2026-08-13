@@ -71,7 +71,11 @@ class MoodleAttendanceJob < ApplicationJob
     return unless session_id
 
     # 3. Get status ids
-    status_ids = get_presence_and_absence_status_ids(moodle_token, session_id)
+    status_ids = if moodle_token.presence_percentage_enabled?
+                   resolve_attendance_status_ids(moodle_token, session_id)
+                 else
+                   get_presence_and_absence_status_ids(moodle_token, session_id)
+                 end
     presence_status_id = status_ids[:presence_status_id]
     absence_status_id = status_ids[:absence_status_id]
 
@@ -85,7 +89,11 @@ class MoodleAttendanceJob < ApplicationJob
     end
 
     # 4. Mark Attendance for Users
-    mark_attendance_for_users(moodle_token, session_id, presence_status_id, absence_status_id, conference_data, course_id)
+    if moodle_token.presence_percentage_enabled?
+      mark_attendance_for_users_by_percentage(moodle_token, session_id, status_ids, conference_data, course_id)
+    else
+      mark_attendance_for_users(moodle_token, session_id, presence_status_id, absence_status_id, conference_data, course_id)
+    end
 
     Resque.logger.info "[MoodleAttendanceJob] Finished processing for scheduled_meeting #{scheduled_meeting.id}."
   end
@@ -139,6 +147,22 @@ class MoodleAttendanceJob < ApplicationJob
   end
 
   def create_moodle_session(moodle_token, attendance_id, scheduled_meeting, conference_data, app_launch, group_select_enabled, theme, locale)
+    # Use internal_meeting_id (not scheduled_meeting_id) to detect if this is a retry of the same occurrence or a new one
+    incoming_internal_meeting_id = conference_data['internal_meeting_id']
+    existing_session_id = scheduled_meeting.moodle_attendance_session_id
+    same_occurrence = existing_session_id.present? &&
+                       incoming_internal_meeting_id.present? &&
+                       scheduled_meeting.moodle_attendance_internal_meeting_id == incoming_internal_meeting_id
+
+    if same_occurrence
+      existing_session = Moodle::API.get_session(moodle_token, existing_session_id)
+      if existing_session.present?
+        Resque.logger.info "[MoodleAttendanceJob] Reusing existing Moodle session ID #{existing_session_id} for scheduled_meeting #{scheduled_meeting.id} (internal_meeting_id=#{incoming_internal_meeting_id})."
+        return existing_session_id
+      end
+      Resque.logger.warn "[MoodleAttendanceJob] Stored moodle_attendance_session_id #{existing_session_id} for scheduled_meeting #{scheduled_meeting.id} is no longer valid on Moodle. Creating a new session."
+    end
+
     current_consumer_config = moodle_token.consumer_config
     theme_display_name = case theme
                          when 'rnp'
@@ -186,6 +210,10 @@ class MoodleAttendanceJob < ApplicationJob
       return nil
     end
     Resque.logger.info "[MoodleAttendanceJob] Created Moodle session with ID: #{session_id} ---- #{session_id.inspect}."
+    scheduled_meeting.update!(
+      moodle_attendance_session_id: session_id,
+      moodle_attendance_internal_meeting_id: incoming_internal_meeting_id
+    )
     session_id
   end
 
@@ -220,6 +248,37 @@ class MoodleAttendanceJob < ApplicationJob
     end
     
     { presence_status_id: presence_status_id, absence_status_id: absence_status_id }
+  end
+
+  def resolve_attendance_status_ids(moodle_token, session_id)
+    session_statuses = Moodle::API.get_session_statuses(moodle_token, session_id)
+
+    unless session_statuses.is_a?(Array) && session_statuses.any?
+      Resque.logger.error "[MoodleAttendanceJob] Failed to retrieve session statuses for session ID #{session_id}."
+      return { presence_status_id: nil, absence_status_id: nil, partial_status_id: nil }
+    end
+
+    valid_statuses = session_statuses.select { |s| s.is_a?(Hash) && s.key?(:id) && s.key?(:grade) }
+                                     .map { |s| s.merge(grade: s[:grade].to_f) }
+
+    if valid_statuses.empty?
+      Resque.logger.error "[MoodleAttendanceJob] No valid statuses with ID/grade for session ID #{session_id}."
+      return { presence_status_id: nil, absence_status_id: nil, partial_status_id: nil }
+    end
+
+    # one entry per distinct grade, sorted from highest to lowest
+    by_grade_desc = valid_statuses.uniq { |s| s[:grade] }.sort_by { |s| -s[:grade] }
+
+    presence_status_id = by_grade_desc.first[:id]
+    absence_status_id  = by_grade_desc.last[:id]
+    # partial status only exists if there are at least 3 distinct grades
+    partial_status_id  = by_grade_desc.length >= 3 ? by_grade_desc[1][:id] : nil
+
+    Resque.logger.info "[MoodleAttendanceJob] session=#{session_id} presence=#{presence_status_id} " \
+                        "partial=#{partial_status_id.inspect} absence=#{absence_status_id} " \
+                        "(#{by_grade_desc.length} distinct grades found)"
+
+    { presence_status_id: presence_status_id, absence_status_id: absence_status_id, partial_status_id: partial_status_id }
   end
 
   def mark_attendance_for_users(moodle_token, session_id, presence_status_id, absence_status_id, conference_data, course_id)
@@ -285,5 +344,100 @@ class MoodleAttendanceJob < ApplicationJob
     end
 
     Resque.logger.info "[MoodleAttendanceJob] Attendance marking summary for session ID #{session_id} - Present (Success: #{present_marked_count}, Failed: #{present_failed_count}), Absent (Success: #{absent_marked_count}, Failed: #{absent_failed_count})."
+  end
+
+  def mark_attendance_for_users_by_percentage(moodle_token, session_id, status_ids, conference_data, course_id)
+    conference_attendees_data = conference_data.dig('data', 'attendees')
+    unless conference_attendees_data.is_a?(Array)
+      Resque.logger.error "[MoodleAttendanceJob] Conference attendees data is missing or not an array."
+      return
+    end
+
+    meeting_duration = conference_data.dig('data', 'duration').to_i
+    threshold = moodle_token.presence_threshold_percentage.to_f
+    partial_threshold = moodle_token.partial_presence_threshold_percentage.to_f
+
+    first_moderator = conference_attendees_data.find { |att| att['moderator'] == true }
+    unless first_moderator && first_moderator['ext_user_id'].present?
+      Resque.logger.error "[MoodleAttendanceJob] Could not find a moderator with ext_user_id to use as 'takenbyid'."
+      return
+    end
+    taken_by_id = first_moderator['ext_user_id']
+    status_set_param = 0
+
+    # ext_user_id => { status_id:, percentage: }
+    result_by_user = {}
+
+    conference_attendees_data.each do |att|
+      student_id = att['ext_user_id']&.to_i
+      next unless student_id
+
+      percentage = attendee_percentage(att, meeting_duration)
+
+      status_id =
+        if percentage.nil?
+          # duration missing/invalid in payload: binary fallback -- present, since they are in the attendees list
+          Resque.logger.warn "[MoodleAttendanceJob] `duration` missing/invalid in payload for ext_user_id=#{student_id}, session=#{session_id}. Applying fallback binary (Present)."
+          status_ids[:presence_status_id]
+        elsif percentage <= 0
+          status_ids[:absence_status_id]
+        elsif percentage >= threshold
+          status_ids[:presence_status_id]
+        elsif percentage >= partial_threshold
+          # partial_threshold <= percentage < threshold: eligible for partial presence
+          status_ids[:partial_status_id] || status_ids[:absence_status_id]
+        else
+          # 0 < percentage < partial_threshold: attended, but not enough to be eligible for partial presence
+          status_ids[:absence_status_id]
+        end
+
+      result_by_user[student_id] = { status_id: status_id, percentage: percentage }
+    end
+
+    # users enrolled but not appearing in the attendees list are considered absent (0% attendance)
+    all_moodle_user_ids = Moodle::API.get_enrolled_user_ids(moodle_token, course_id)
+    if all_moodle_user_ids.nil?
+      Resque.logger.error "[MoodleAttendanceJob] Failed to retrieve enrolled users for course ID #{course_id}."
+    else
+      (all_moodle_user_ids - result_by_user.keys).each do |student_id|
+        result_by_user[student_id] = { status_id: status_ids[:absence_status_id], percentage: 0 }
+      end
+    end
+
+    # every user in result_by_user must be recorded (no enrolled student can remain without a status)
+    result_by_user.each do |student_id, result|
+      status_id = result[:status_id]
+      success = Moodle::API.update_user_status(moodle_token, session_id, student_id, taken_by_id, status_id, status_set_param)
+      log_percentage_attendance_result(session_id, student_id, status_id, status_ids, result[:percentage], success)
+    end
+  end
+
+  def log_percentage_attendance_result(session_id, student_id, status_id, status_ids, percentage, success)
+    label =
+      if status_id == status_ids[:presence_status_id]
+        'PRESENT'
+      elsif status_ids[:partial_status_id] && status_id == status_ids[:partial_status_id]
+        'PARTIAL PRESENT'
+      else
+        'ABSENT'
+      end
+
+    percentage_label = percentage.nil? ? 'unknown' : "#{percentage}%"
+    action = success ? 'Successfully marked' : 'Failed to mark'
+
+    Resque.logger.public_send(success ? :info : :error,
+      "[MoodleAttendanceJob] #{action} #{label} (percentage #{percentage_label}) for student ID #{student_id} in session ID #{session_id}.")
+  end
+
+  def attendee_percentage(attendee, meeting_duration)
+    return nil unless meeting_duration.positive?
+
+    raw_duration = attendee['duration']
+    return nil if raw_duration.nil?
+
+    duration = raw_duration.to_f
+    return nil if duration.negative?
+
+    [((duration / meeting_duration) * 100).round(2), 100.0].min
   end
 end
