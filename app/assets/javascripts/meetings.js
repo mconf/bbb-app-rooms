@@ -287,6 +287,9 @@ let showMeetings = (rows) => {
 
 let downloadAiArtifacts = async(meeting_id, download_artifacts_endpoint) => {
   if (!download_artifacts_endpoint) return;
+
+  showAiArtifactsLoading(meeting_id);
+
   try {
     let response = await doAjaxDownloadArtifacts(download_artifacts_endpoint);
     showAiArtifactItems(response, meeting_id);
@@ -321,6 +324,15 @@ let scheduleAiArtifactsAutoClose = (toggle) => {
     delete aiArtifactsAutoCloseTimers[meeting_id];
     bootstrap.Dropdown.getOrCreateInstance(toggle).hide();
   }, AI_ARTIFACTS_AUTO_CLOSE_DELAY);
+};
+
+/* Every open refetches, so the contents rendered on the previous open are dropped
+   and the placeholder comes back while the new request is in flight. Otherwise the
+   old contents would stay on screen as if they were the current ones. */
+let showAiArtifactsLoading = (meeting_id) => {
+  const containerSelector = `div[aria-labelledby="dropdown-ai-artifacts-${meeting_id}"]`;
+  $(`${containerSelector} .appended-item`).remove();
+  $(`${containerSelector} .dropdown-item-loading`).show();
 };
 
 let showAiArtifactItems = (html, meeting_id) => {
