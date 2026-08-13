@@ -229,21 +229,45 @@ let hideAll = () => {
 };
 
 var authWindow;
+// Origin the callback page is served from, read from the redirect_uri of the
+// authorization URL instead of being assumed to be ours, since the callback can
+// be configured on a different host than the one serving this page.
+var authWindowOrigin;
 function openAuthWindow(url, service) {
   authWindow = window.open(url, service, 'width=800,height=600');
+  const redirectUri = new URL(url, window.location.href).searchParams.get('redirect_uri');
+  authWindowOrigin = redirectUri ? new URL(redirectUri, window.location.href).origin : window.location.origin;
 }
 
-window.addEventListener('message', function(event) {
-  // Verify the origin of the message
-  if (event.source === authWindow) {
-    authWindow.close()
-    const room_path = $("#room_path")[0].value
-    $.ajax({
-      url: room_path + '/recording/' + event.data['record_id'] + '/' + event.data['service_name'],
-      type: "POST",
-      data: { access_token: event.data['access_token'], refresh_token: event.data['refresh_token'], expires_at: event.data['expires_at']  }
-    });
+/* Check whether a message is the one posted by our own OAuth callback page.
+ *
+ * The login pages loaded inside the popup also post messages to the opener, and
+ * they share the same event.source as our callback, so checking the source
+ * alone would close the popup in the middle of the login flow.
+*/
+let isAuthCallbackMessage = (event) => {
+  if (event.source !== authWindow) return false;
+  if (event.data === null || typeof event.data !== 'object') return false;
+  if (event.data.source !== 'bbb-app-rooms') return false;
+
+  if (event.origin !== authWindowOrigin) {
+    console.warn(`Ignored a callback message from ${event.origin}, expected ${authWindowOrigin}`);
+    return false;
   }
+
+  return true;
+};
+
+window.addEventListener('message', function(event) {
+  if (!isAuthCallbackMessage(event)) return;
+
+  authWindow.close()
+  const room_path = $("#room_path")[0].value
+  $.ajax({
+    url: room_path + '/recording/' + event.data['record_id'] + '/' + event.data['service_name'],
+    type: "POST",
+    data: { access_token: event.data['access_token'], refresh_token: event.data['refresh_token'], expires_at: event.data['expires_at']  }
+  });
 });
 /* Request the meeting artifacts to Data API.
 */
