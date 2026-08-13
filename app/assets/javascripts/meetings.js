@@ -309,10 +309,24 @@ let showMeetings = (rows) => {
   }
 };
 
+// The request in flight for each dropdown, so a response is only rendered while
+// it is still the latest one asked for
+let aiArtifactsLatestRequest = {};
+
 let downloadAiArtifacts = async(meeting_id, download_artifacts_endpoint) => {
   if (!download_artifacts_endpoint) return;
+
+  showAiArtifactsLoading(meeting_id);
+
+  /* Opening and closing the dropdown quickly leaves more than one request in
+     flight, and they can come back out of order */
+  const request = doAjaxDownloadArtifacts(download_artifacts_endpoint);
+  aiArtifactsLatestRequest[meeting_id] = request;
+
   try {
-    let response = await doAjaxDownloadArtifacts(download_artifacts_endpoint);
+    let response = await request;
+    if (aiArtifactsLatestRequest[meeting_id] !== request) return;
+
     showAiArtifactItems(response, meeting_id);
   } catch(err) {
     if (err.statusText == 'timeout') {
@@ -321,6 +335,39 @@ let downloadAiArtifacts = async(meeting_id, download_artifacts_endpoint) => {
       console.error(`Unexpected error: ${err}`);
     }
   }
+};
+
+const AI_ARTIFACTS_AUTO_CLOSE_DELAY = 2 * 60 * 1000;
+
+// One timer per dropdown, since each recording has its own
+let aiArtifactsAutoCloseTimers = {};
+
+let clearAiArtifactsAutoClose = (toggle) => {
+  const meeting_id = toggle.getAttribute('internal-meeting-id');
+  if (!aiArtifactsAutoCloseTimers[meeting_id]) return;
+
+  clearTimeout(aiArtifactsAutoCloseTimers[meeting_id]);
+  delete aiArtifactsAutoCloseTimers[meeting_id];
+};
+
+let scheduleAiArtifactsAutoClose = (toggle) => {
+  // Drop the previous timer, otherwise it would close a dropdown the user just reopened
+  clearAiArtifactsAutoClose(toggle);
+
+  const meeting_id = toggle.getAttribute('internal-meeting-id');
+  aiArtifactsAutoCloseTimers[meeting_id] = setTimeout(() => {
+    delete aiArtifactsAutoCloseTimers[meeting_id];
+    bootstrap.Dropdown.getOrCreateInstance(toggle).hide();
+  }, AI_ARTIFACTS_AUTO_CLOSE_DELAY);
+};
+
+/* Every open refetches, so the contents rendered on the previous open are dropped
+   and the placeholder comes back while the new request is in flight. Otherwise the
+   old contents would stay on screen as if they were the current ones. */
+let showAiArtifactsLoading = (meeting_id) => {
+  const containerSelector = `div[aria-labelledby="dropdown-ai-artifacts-${meeting_id}"]`;
+  $(`${containerSelector} .appended-item`).remove();
+  $(`${containerSelector} .dropdown-item-loading`).show();
 };
 
 let showAiArtifactItems = (html, meeting_id) => {
@@ -347,8 +394,13 @@ $DOCUMENT.on('click', '.dropdown-download-link', function(e) {
   downloadArtifacts(this.getAttribute('internal-meeting-id'), this.getAttribute('download-artifacts-endpoint'), 'dropdown-download');
 });
 
-$DOCUMENT.on('click', '.dropdown-ai-artifacts-link', function(e) {
+$DOCUMENT.on('shown.bs.dropdown', '.dropdown-ai-artifacts-link', function(e) {
   downloadAiArtifacts(this.getAttribute('internal-meeting-id'), this.getAttribute('download-artifacts-endpoint'));
+  scheduleAiArtifactsAutoClose(this);
+});
+
+$DOCUMENT.on('hidden.bs.dropdown', '.dropdown-ai-artifacts-link', function(e) {
+  clearAiArtifactsAutoClose(this);
 });
 
 $(document).on('click', '.request-ai-artifacts-btn', function(e) {
