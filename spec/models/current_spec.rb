@@ -50,6 +50,19 @@ RSpec.describe Current, type: :model do
     end
   end
 
+  describe '#moodle_calls_count_label' do
+    it 'returns zero when no call was recorded' do
+      expect(Current.moodle_calls).to be_nil
+      expect(Current.moodle_calls_count_label).to eq('0')
+    end
+
+    it 'returns just the size when nothing was truncated' do
+      Current.record_moodle_call(wsfunction: 'core_webservice_get_site_info', status: 'ok', duration: 0.1)
+
+      expect(Current.moodle_calls_count_label).to eq('1')
+    end
+  end
+
   describe '#log_moodle_calls' do
     it 'logs a single consolidated line on reset' do
       Current.record_moodle_call(wsfunction: 'core_webservice_get_site_info', status: 'ok', duration: 0.211)

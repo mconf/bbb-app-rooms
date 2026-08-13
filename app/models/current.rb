@@ -23,9 +23,10 @@ class Current < ActiveSupport::CurrentAttributes
   end
 
   def moodle_calls_count_label
-    return moodle_calls.size.to_s if moodle_calls_total.to_i <= moodle_calls.size
+    size = moodle_calls.to_a.size
+    return size.to_s if moodle_calls_total.to_i <= size
 
-    "#{moodle_calls.size}/#{moodle_calls_total} (truncated)"
+    "#{size}/#{moodle_calls_total} (truncated)"
   end
 
   def log_moodle_calls
