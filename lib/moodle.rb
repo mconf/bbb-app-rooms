@@ -603,18 +603,18 @@ module Moodle
             break unless (300...400).cover?(res.status)
 
             redirect_count += 1
-            raise RequestError, "Too many redirects" if redirect_count > MAX_REDIRECTS
+            raise RequestError.new("Too many redirects", status: 'too_many_redirects') if redirect_count > MAX_REDIRECTS
 
             location = res.headers['location']
-            raise RequestError, "Redirect missing Location header" if location.blank?
+            raise RequestError.new("Redirect missing Location header", status: 'redirect_missing_location') if location.blank?
 
             original_uri = URI.parse(current_url)
             redirect_uri = URI.parse(location)
 
-            raise RequestError, "Redirect to different host" \
+            raise RequestError.new("Redirect to different host", status: 'redirect_different_host') \
               unless original_uri.host == redirect_uri.host
 
-            raise RequestError, "Unsafe redirect scheme change" \
+            raise RequestError.new("Unsafe redirect scheme change", status: 'redirect_unsafe_scheme') \
               unless original_uri.scheme == redirect_uri.scheme ||
                      (original_uri.scheme == 'http' && redirect_uri.scheme == 'https')
 
@@ -661,6 +661,15 @@ module Moodle
                             )
           record_call(params, Time.now - start_time, 'request_error')
           raise RequestError, e
+        rescue Moodle::RequestError => e
+          Rails.logger.error( "[MOODLE API] url=#{host_url} " \
+                              "duration=#{(Time.now - start_time).round(3)}s " \
+                              "wsfunction=#{params[:wsfunction]} " \
+                              "caller=#{caller(2..3)} " \
+                              "message=\"#{e.message}\""
+                            )
+          record_call(params, Time.now - start_time, e.status)
+          raise
         end
       rescue Moodle::UrlNotFoundError, Moodle::TimeoutError, Moodle::RequestError => e
         if (retries += 1) < MAX_RETRIES
@@ -691,5 +700,13 @@ module Moodle
 
   class UrlNotFoundError < StandardError; end
   class TimeoutError < StandardError; end
-  class RequestError < StandardError; end
+
+  class RequestError < StandardError
+    attr_reader :status
+
+    def initialize(message = nil, status: 'redirect_error')
+      super(message)
+      @status = status
+    end
+  end
 end
