@@ -32,12 +32,14 @@ RSpec.describe Current, type: :model do
       expect(Current.moodle_calls.first).not_to have_key(:errorcode)
     end
 
-    it 'stops recording after the limit' do
+    it 'stops recording after the limit, but keeps counting the total' do
       (Current::MAX_MOODLE_CALLS + 5).times do
         Current.record_moodle_call(wsfunction: 'core_webservice_get_site_info', status: 'ok', duration: 0.1)
       end
 
       expect(Current.moodle_calls.size).to eq(Current::MAX_MOODLE_CALLS)
+      expect(Current.moodle_calls_total).to eq(Current::MAX_MOODLE_CALLS + 5)
+      expect(Current.moodle_calls_count_label).to eq("#{Current::MAX_MOODLE_CALLS}/#{Current::MAX_MOODLE_CALLS + 5} (truncated)")
     end
 
     it 'does not leak between resets' do

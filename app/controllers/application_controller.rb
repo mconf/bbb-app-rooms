@@ -298,7 +298,7 @@ class ApplicationController < ActionController::Base
     }
 
     lines = fields.map { |label, value| "#{"#{label}:".ljust(16)}#{value.presence || '-'}" }
-    lines << '' << "moodle_calls (#{calls.size}):"
+    lines << '' << "moodle_calls (#{Current.moodle_calls_count_label}):"
     lines << '  nenhuma chamada nesta requisicao' if calls.empty?
     lines += calls.map.with_index(1) do |call, index|
       "  #{index}. #{call[:wsfunction]} -> #{call[:errorcode] || call[:status]} (#{call[:duration]}s)"
