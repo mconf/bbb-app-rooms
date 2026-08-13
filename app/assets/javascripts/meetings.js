@@ -285,13 +285,24 @@ let showMeetings = (rows) => {
   }
 };
 
+// The request in flight for each dropdown, so a response is only rendered while
+// it is still the latest one asked for
+let aiArtifactsLatestRequest = {};
+
 let downloadAiArtifacts = async(meeting_id, download_artifacts_endpoint) => {
   if (!download_artifacts_endpoint) return;
 
   showAiArtifactsLoading(meeting_id);
 
+  /* Opening and closing the dropdown quickly leaves more than one request in
+     flight, and they can come back out of order */
+  const request = doAjaxDownloadArtifacts(download_artifacts_endpoint);
+  aiArtifactsLatestRequest[meeting_id] = request;
+
   try {
-    let response = await doAjaxDownloadArtifacts(download_artifacts_endpoint);
+    let response = await request;
+    if (aiArtifactsLatestRequest[meeting_id] !== request) return;
+
     showAiArtifactItems(response, meeting_id);
   } catch(err) {
     if (err.statusText == 'timeout') {
