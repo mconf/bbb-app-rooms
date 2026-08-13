@@ -5,6 +5,9 @@ es:
       data_api_error:   "Error de comunicación con la API de Datos. Vuelva a intentarlo o póngase en contacto con el servicio de asistencia."
       data_api_config_error: "Error de configuración de la API de Datos. Póngase en contacto con el servicio de asistencia."
       error:          "Error"
+      error_debug_info: "Ver más"
+      content_copy:    "Copiar"
+      error_debug_info_copied: "Copiado al clipboard"
     admin:
       back:           "Vuelve"
       handler:        "Handler"

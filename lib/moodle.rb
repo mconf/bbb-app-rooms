@@ -603,18 +603,18 @@ module Moodle
             break unless (300...400).cover?(res.status)
 
             redirect_count += 1
-            raise RequestError, "Too many redirects" if redirect_count > MAX_REDIRECTS
+            raise RequestError.new("Too many redirects", status: 'too_many_redirects') if redirect_count > MAX_REDIRECTS
 
             location = res.headers['location']
-            raise RequestError, "Redirect missing Location header" if location.blank?
+            raise RequestError.new("Redirect missing Location header", status: 'redirect_missing_location') if location.blank?
 
             original_uri = URI.parse(current_url)
             redirect_uri = URI.parse(location)
 
-            raise RequestError, "Redirect to different host" \
+            raise RequestError.new("Redirect to different host", status: 'redirect_different_host') \
               unless original_uri.host == redirect_uri.host
 
-            raise RequestError, "Unsafe redirect scheme change" \
+            raise RequestError.new("Unsafe redirect scheme change", status: 'redirect_unsafe_scheme') \
               unless original_uri.scheme == redirect_uri.scheme ||
                      (original_uri.scheme == 'http' && redirect_uri.scheme == 'https')
 
@@ -624,6 +624,11 @@ module Moodle
           duration = Time.now - start_time
           result = res.body.is_a?(Hash) ? res.body.merge({"duration" => duration}) :
                                           { "body" => res.body, "duration" => duration }
+
+          # Moodle answers with 200 even for its own errors, reporting them in
+          # the body, which is why every caller checks result["exception"].
+          failed = res.body.is_a?(Hash) && res.body['exception'].present?
+          record_call(params, duration, failed ? 'error' : 'ok', (res.body['errorcode'] if failed))
 
           Rails.logger.debug("[MOODLE API] Calling URL: #{host_url}?#{params.to_a.map { |k, v| "#{k}=#{CGI.escape(v.to_s)}" }.join('&')} | Moodle response: #{res.inspect}")
           return result
@@ -636,6 +641,7 @@ module Moodle
                               "message=\"Request failed (Faraday::ResourceNotFound): #{e}\" " \
                               "response_body=\"#{e.response_body&.gsub(/\n/, '')}\""
                             )
+          record_call(params, Time.now - start_time, 'url_not_found')
           raise UrlNotFoundError, e
         rescue Faraday::TimeoutError => e
           Rails.logger.error( "[MOODLE API] url=#{host_url} " \
@@ -643,6 +649,7 @@ module Moodle
                               "wsfunction=#{params[:wsfunction]} " \
                               "caller=#{caller(2..3)} " \
                               "message=\"Request failed (Faraday::TimeoutError): #{e}\"")
+          record_call(params, Time.now - start_time, 'timeout')
           raise TimeoutError, e
         rescue Faraday::Error => e
           Rails.logger.error( "[MOODLE API] url=#{host_url} " \
@@ -652,7 +659,17 @@ module Moodle
                               "message=\"Request failed (Faraday::Error): #{e}\" " \
                               "response_body=\"#{e.response_body&.gsub(/\n/, '')}\""
                             )
+          record_call(params, Time.now - start_time, 'request_error')
           raise RequestError, e
+        rescue Moodle::RequestError => e
+          Rails.logger.error( "[MOODLE API] url=#{host_url} " \
+                              "duration=#{(Time.now - start_time).round(3)}s " \
+                              "wsfunction=#{params[:wsfunction]} " \
+                              "caller=#{caller(2..3)} " \
+                              "message=\"#{e.message}\""
+                            )
+          record_call(params, Time.now - start_time, e.status)
+          raise
         end
       rescue Moodle::UrlNotFoundError, Moodle::TimeoutError, Moodle::RequestError => e
         if (retries += 1) < MAX_RETRIES
@@ -667,9 +684,29 @@ module Moodle
         end
       end
     end
+
+    # Records one entry in the sequence of Moodle calls of the current request.
+    def self.record_call(params, duration, status, errorcode = nil)
+      Current.record_moodle_call(
+        wsfunction: params[:wsfunction],
+        status: status,
+        duration: duration,
+        errorcode: errorcode
+      )
+    rescue StandardError => e
+      Rails.logger.warn "[MOODLE API] Failed to record the call: #{e.class}: #{e.message}"
+    end
   end
 
   class UrlNotFoundError < StandardError; end
   class TimeoutError < StandardError; end
-  class RequestError < StandardError; end
+
+  class RequestError < StandardError
+    attr_reader :status
+
+    def initialize(message = nil, status: 'redirect_error')
+      super(message)
+      @status = status
+    end
+  end
 end
