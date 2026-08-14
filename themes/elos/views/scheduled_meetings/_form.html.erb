@@ -140,7 +140,7 @@
               disabled: !can_mark_moodle_attendance %>
             <%= form.label :mark_moodle_attendance, class: "form-check-label" do %>
               <%= t('helpers.label.scheduled_meeting.mark_moodle_attendance') %>
-              <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= can_mark_moodle_attendance ? t('default.scheduled_meeting.tooltip.mark_moodle_attendance') : t('default.scheduled_meeting.tooltip.mark_moodle_attendance_disabled') %>">help</i>
+              <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= t("default.scheduled_meeting.tooltip.#{@room.moodle_attendance_tooltip_key}") %>">help</i>
             <% end %>
           </div>
         </div>
