@@ -266,8 +266,11 @@ class MoodleAttendanceJob < ApplicationJob
       return { presence_status_id: nil, absence_status_id: nil, partial_status_id: nil }
     end
 
-    # one entry per distinct grade, sorted from highest to lowest
-    by_grade_desc = valid_statuses.uniq { |s| s[:grade] }.sort_by { |s| -s[:grade] }
+    # One entry per distinct grade, sorted from highest to lowest. Statuses sharing a grade are
+    # broken by id, so the oldest one wins: Moodle creates the default set in the order Present,
+    # Absent, Late, Excused, and Late and Excused share the same grade. Sorting before uniq also
+    # keeps the choice from depending on the order the API happened to return.
+    by_grade_desc = valid_statuses.sort_by { |s| [-s[:grade], s[:id].to_i] }.uniq { |s| s[:grade] }
 
     presence_status_id = by_grade_desc.first[:id]
     absence_status_id  = by_grade_desc.last[:id]

@@ -222,6 +222,44 @@ RSpec.describe MoodleAttendanceJob, type: :job do
       end
     end
 
+    context 'when Late and Excused share the same grade (Moodle default status set)' do
+      # Moodle creates the default set in the order Present, Absent, Late, Excused, so Late always
+      # has the lower id, but both have grade 1 and the API may list them in any order. Only Late
+      # is meant to be used as partial presence: Excused means the teacher justified the absence.
+      let(:statuses_with_excused_first) do
+        [
+          { id: 10, description: 'Present', grade: 2 },
+          { id: 11, description: 'Absent',  grade: 0 },
+          { id: 13, description: 'Excused', grade: 1 },
+          { id: 12, description: 'Late',    grade: 1 }
+        ]
+      end
+
+      before do
+        allow(Moodle::API).to receive(:get_session_statuses).and_return(statuses_with_excused_first)
+      end
+
+      it 'records partial presence as Late even when Excused comes first in the response' do
+        # 200 -> 50%, between the partial and the full threshold
+        expect(Moodle::API).to receive(:update_user_status).with(
+          moodle_token, session_id, 200, '999', 12, 0
+        )
+
+        described_class.perform_now(conference_data_json, theme, locale)
+      end
+
+      it 'still resolves Present and Absent from the highest and lowest grades' do
+        expect(Moodle::API).to receive(:update_user_status).with(
+          moodle_token, session_id, 100, '999', 10, 0
+        )
+        expect(Moodle::API).to receive(:update_user_status).with(
+          moodle_token, session_id, 300, '999', 11, 0
+        )
+
+        described_class.perform_now(conference_data_json, theme, locale)
+      end
+    end
+
     context 'when the total meeting duration is zero/missing' do
       let(:meeting_duration_seconds) { 0 }
 
