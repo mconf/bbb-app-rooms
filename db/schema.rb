@@ -122,7 +122,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_10_201611) do
     t.boolean "show_all_groups", default: true
     t.boolean "presence_percentage_enabled", default: false, null: false
     t.integer "presence_threshold_percentage", default: 75, null: false
-    t.integer "presence_partial_threshold_percentage", default: 10, null: false
+    t.integer "partial_presence_threshold_percentage", default: 10, null: false
     t.index ["consumer_config_id"], name: "index_moodle_tokens_on_consumer_config_id"
   end
 
