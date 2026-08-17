@@ -28,7 +28,11 @@ class Room < ApplicationRecord
     Moodle::API.token_functions_configured?(moodle_token, ['core_calendar_delete_calendar_events'])
   end
 
+  # Memoized because it hits the Moodle API, and it is asked more than once per request
+  # (the scheduled meeting form needs it for both the checkbox and its tooltip)
   def can_mark_moodle_attendance
+    return @can_mark_moodle_attendance unless @can_mark_moodle_attendance.nil?
+
     moodle_token = self.consumer_config&.moodle_token
     required_functions = [
       'core_course_get_contents',
@@ -38,7 +42,13 @@ class Room < ApplicationRecord
       'mod_attendance_get_session',
       'mod_attendance_update_user_status'
     ]
-    Moodle::API.token_functions_configured?(moodle_token, required_functions)
+    @can_mark_moodle_attendance = Moodle::API.token_functions_configured?(moodle_token, required_functions)
+  end
+
+  def moodle_attendance_tooltip_key
+    return :mark_moodle_attendance_disabled unless can_mark_moodle_attendance
+
+    moodle_token&.presence_percentage_enabled? ? :mark_moodle_attendance_percentage : :mark_moodle_attendance
   end
 
   def brightspace_oauth?

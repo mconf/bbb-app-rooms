@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_29_223008) do
+ActiveRecord::Schema[8.0].define(version: 2026_08_10_201611) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -120,6 +120,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_29_223008) do
     t.datetime "updated_at", null: false
     t.boolean "group_select_enabled", default: false
     t.boolean "show_all_groups", default: true
+    t.boolean "presence_percentage_enabled", default: false, null: false
+    t.integer "presence_threshold_percentage", default: 75, null: false
+    t.integer "partial_presence_threshold_percentage", default: 10, null: false
     t.index ["consumer_config_id"], name: "index_moodle_tokens_on_consumer_config_id"
   end
 
@@ -164,6 +167,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_29_223008) do
     t.boolean "mark_moodle_attendance"
     t.boolean "mark_brightspace_attendance", default: false, null: false
     t.datetime "last_meeting_date"
+    t.bigint "moodle_attendance_session_id"
+    t.string "moodle_attendance_internal_meeting_id"
     t.index ["created_by_launch_nonce"], name: "index_scheduled_meetings_on_created_by_launch_nonce"
     t.index ["hash_id"], name: "index_scheduled_meetings_on_hash_id", unique: true
     t.index ["repeat"], name: "index_scheduled_meetings_on_repeat"
