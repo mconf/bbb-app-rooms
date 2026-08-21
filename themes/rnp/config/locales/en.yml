@@ -62,6 +62,7 @@ en:
         start_time_time: "Start time"
         wait_moderator: "Wait for a moderator to join"
         welcome: "Welcome message (optional)"
+        auto_start_recording: "Automatically start recording"
   jobs:
     moodle_attendance:
       attendance_name: "Attendance Activity"

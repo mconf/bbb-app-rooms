@@ -108,6 +108,8 @@ pt:
         every_two_weeks: "Quinzenal"
       tooltip:
         recording:    "A sessão poderá ser gravada"
+        auto_start_recording: "A sessão começará a ser gravada automaticamente quando o primeiro participante entrar"
+        auto_start_recording_disabled: "Sua instituição não habilitou o início automático da gravação. Para usar esse recurso, entre em contato com o administrador da sua instituição."
         waitmoderator: "Participantes não podem entrar até que um moderador entre"
         allmoderators: "Todos usuários serão moderadores"
         create_moodle_calendar_event: "Cria um evento correspondente no Calendário do Moodle para esta sessão agendada."

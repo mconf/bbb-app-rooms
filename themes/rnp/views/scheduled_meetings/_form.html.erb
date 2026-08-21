@@ -112,6 +112,24 @@
         </div>
       </div>
 
+      <% can_auto_start_recording = @room.auto_start_recording %>
+      <div class="form-group">
+        <div class="form-check">
+          <%= form.check_box :auto_start_recording,
+              class: "form-check-input",
+              checked: can_auto_start_recording && (@scheduled_meeting.persisted? ? @scheduled_meeting.auto_start_recording : true),
+              disabled: !can_auto_start_recording,
+              data: { 'tracking-id': 'lti-check-auto-start-recording', 'institution-guid': "#{@institution_guid}",
+                      'can-auto-start': can_auto_start_recording } %>
+          <%= form.label :auto_start_recording, class: "form-check-label" do %>
+            <%= t('helpers.label.scheduled_meeting.auto_start_recording') %>
+            <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip"
+              title="<%= can_auto_start_recording ?
+              t('default.scheduled_meeting.tooltip.auto_start_recording') :
+              t('default.scheduled_meeting.tooltip.auto_start_recording_disabled') %>">help</i>
+          <% end %>
+        </div>
+      </div>
 
       <% can_mark_attendance = @room.can_mark_moodle_attendance %>
       <div class="form-group">
