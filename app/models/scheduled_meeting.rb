@@ -149,6 +149,7 @@ class ScheduledMeeting < ApplicationRecord
       attendeePW: self.room.viewer,
       welcome: self.welcome,
       record: self.recording,
+      autoStartRecording: self.recording && self.auto_start_recording && self.room.auto_start_recording,
       lockSettingsDisablePrivateChat: self.disable_private_chat,
       lockSettingsDisableNote: self.disable_note
     }
