@@ -141,6 +141,7 @@ en:
         recording:    "The session may be recorded"
         auto_start_recording: "The session will start recording automatically when the first participant joins"
         auto_start_recording_disabled: "Your institution has not enabled automatic recording start. To use this feature, contact your institution's administrator."
+        auto_start_recording_requires_recording: "To start recording automatically, the session must allow recording."
         waitmoderator: "Viewers are unable to join until a moderator joins"
         allmoderators: "All users will join as moderators"
         create_moodle_calendar_event: "Create a corresponding event in the Moodle Calendar for this scheduled meeting."

@@ -73,6 +73,40 @@ $(document).on('turbolinks:load', function(){
       }
     }
 
+
+    const recordingCheckbox = $('input[name="scheduled_meeting[recording]"].form-check-input');
+    const autoStartCheckbox = $('input[name="scheduled_meeting[auto_start_recording]"].form-check-input');
+    if (recordingCheckbox.length && autoStartCheckbox.length) {
+      const canAutoStart = autoStartCheckbox[0].dataset.canAutoStart === 'true';
+      const autoStartHint = autoStartCheckbox.closest('.form-check').find('.icon-label-hint');
+
+      function refreshAutoStartHint(text) {
+        if (!autoStartHint.length || !autoStartHint[0]) return;
+        const hintEl = autoStartHint[0];
+        const tooltipInstance = bootstrap.Tooltip.getInstance(hintEl);
+        if (tooltipInstance) tooltipInstance.dispose();
+        autoStartHint.attr('title', text);
+        autoStartHint.removeAttr('data-bs-original-title');
+        if (tooltipInstance) new bootstrap.Tooltip(hintEl);
+      }
+
+      function syncAutoStartRecording() {
+        if (!canAutoStart) return; // consumer disabled it, ERB already handled the state
+
+        if (recordingCheckbox.prop('checked')) {
+          autoStartCheckbox.prop('disabled', false);
+          refreshAutoStartHint(I18n.t('default.scheduled_meeting.tooltip.auto_start_recording'));
+        } else {
+          autoStartCheckbox.prop('checked', false);
+          autoStartCheckbox.prop('disabled', true);
+          refreshAutoStartHint(I18n.t('default.scheduled_meeting.tooltip.auto_start_recording_requires_recording'));
+        }
+      }
+
+      recordingCheckbox.on('change', syncAutoStartRecording);
+      syncAutoStartRecording();
+    }
+
     if(window.location.href.includes('/edit')){
       var duration = document.getElementsByName("scheduled_meeting[custom_duration]")[0].value,
           durationSeconds = (duration.split(':')[0] * 60 * 60 ) + ( duration.split(':')[1] * 60 ),
