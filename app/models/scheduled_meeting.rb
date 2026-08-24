@@ -122,6 +122,10 @@ class ScheduledMeeting < ApplicationRecord
     recurring? && repeat == "every_two_weeks"
   end
 
+  def will_auto_start_recording?(room = self.room)
+    self.recording && self.auto_start_recording && room.auto_start_recording
+  end
+
   def replicated_in_moodle?
     MoodleCalendarEvent.where(scheduled_meeting_hash_id: self.hash_id).any?
   end
@@ -149,7 +153,7 @@ class ScheduledMeeting < ApplicationRecord
       attendeePW: self.room.viewer,
       welcome: self.welcome,
       record: self.recording,
-      autoStartRecording: self.recording && self.auto_start_recording && self.room.auto_start_recording,
+      autoStartRecording: self.will_auto_start_recording?,
       lockSettingsDisablePrivateChat: self.disable_private_chat,
       lockSettingsDisableNote: self.disable_note
     }
