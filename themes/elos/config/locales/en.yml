@@ -151,6 +151,7 @@ en:
       entering: "Acessing..."
       title: "Classes"
   scheduled_meetings:
+    auto_start_recording_notice: "The session will be recorded from the start"
     created_by: "Created by %{name}"
     destroy: "Remove"
     edit:

@@ -151,6 +151,7 @@ es:
       entering: "Accediendo..."
       title: "Clases"
   scheduled_meetings:
+    auto_start_recording_notice: "La sesión se grabará desde el inicio"
     created_by: "Creado por %{name}"
     destroy: "Eliminar"
     edit:

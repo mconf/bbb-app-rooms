@@ -193,6 +193,7 @@ pt:
       message: "Obrigado pela sua participação e até a próxima."
       title: "Sua sessão acabou"
   scheduled_meetings:
+    auto_start_recording_notice: "A sessão será gravada desde o início"
     created_by: "Criado por %{name}"
     destroy: "Remover"
     edit:

@@ -10,6 +10,12 @@
         <div class="item-creator"><%= t('scheduled_meetings.created_by', name: creator) %></div>
       <% end %>
     <% end %>
+    <% if meeting.will_auto_start_recording?(room) %>
+      <span class="badge badge-auto-start-recording mt-1">
+        <i class="icon material-icons">radio_button_checked</i>
+        <span><%= t('scheduled_meetings.auto_start_recording_notice') %></span>
+      </span>
+    <% end %>
   </td>
   <td class="col-12 col-md-3 align-middle">
     <%= format_date(meeting.start_at) %>
