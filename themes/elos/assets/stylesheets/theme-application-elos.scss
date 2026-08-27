@@ -877,6 +877,20 @@ body.theme-elos {
     }
   }
 
+  .badge-auto-start-recording {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background-color: var(--color-sec);
+    color: var(--color-white);
+    white-space: normal;
+    text-align: left;
+
+    .material-icons {
+      font-size: 1rem;
+    }
+  }
+
   .to-top {
     position: fixed;
     bottom: 5%;

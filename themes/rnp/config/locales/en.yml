@@ -62,6 +62,7 @@ en:
         start_time_time: "Start time"
         wait_moderator: "Wait for a moderator to join"
         welcome: "Welcome message (optional)"
+        auto_start_recording: "Automatically start recording"
   jobs:
     moodle_attendance:
       attendance_name: "Attendance Activity"
@@ -192,6 +193,7 @@ en:
       message: "Thank you for participating and until the next time."
       title: "Your session has ended"
   scheduled_meetings:
+    auto_start_recording_notice: "The session will be recorded from the start"
     created_by: "Created by %{name}"
     destroy: "Remove"
     edit:

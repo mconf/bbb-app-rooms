@@ -62,6 +62,7 @@ es:
         start_time_time: "Hora de inicio"
         wait_moderator: "Espere a que ingrese el moderador para entrar"
         welcome: "Mensaje de bienvenida (opcional)"
+        auto_start_recording: "Iniciar grabación automáticamente"
   jobs:
     moodle_attendance:
       attendance_name: "Actividad de Asistencia"
@@ -192,6 +193,7 @@ es:
       message: "Gracias por su participación y hasta luego."
       title: "Tu sesión ha terminado"
   scheduled_meetings:
+    auto_start_recording_notice: "La sesión se grabará desde el inicio"
     created_by: "Creado por %{name}"
     destroy: "Eliminar"
     edit:

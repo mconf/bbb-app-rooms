@@ -556,6 +556,7 @@ class ScheduledMeetingsController < ApplicationController
     ]
     attrs << [:wait_moderator] if room.allow_wait_moderator
     attrs << [:all_moderators] if room.allow_all_moderators
+    attrs << [:auto_start_recording] if room.auto_start_recording
     params.require(:scheduled_meeting).permit(*attrs)
   end
 

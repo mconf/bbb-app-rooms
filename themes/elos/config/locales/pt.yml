@@ -55,6 +55,7 @@ pt:
         start_time_time: "Hora de início"
         wait_moderator: "Aguardar moderador para entrar"
         welcome: "Mensagem de boas vindas (opcional)"
+        auto_start_recording: "Iniciar gravação automaticamente"
   jobs:
     moodle_attendance:
       attendance_name: "Atividade de Presença"
@@ -150,6 +151,7 @@ pt:
       entering: "Acessando..."
       title: "Turmas"
   scheduled_meetings:
+    auto_start_recording_notice: "A sessão será gravada desde o início"
     created_by: "Criado por %{name}"
     destroy: "Remover"
     edit:

@@ -70,6 +70,10 @@ class Room < ApplicationRecord
     ConsumerConfig.find_by(key: self.consumer_key)
   end
 
+  def auto_start_recording
+    self.consumer_config&.auto_start_recording || false
+  end
+
   def moodle_token
     consumer_config&.moodle_token
   end
@@ -102,7 +106,8 @@ class Room < ApplicationRecord
     {
       recording: self.recording,
       all_moderators: self.all_moderators,
-      wait_moderator: self.wait_moderator
+      wait_moderator: self.wait_moderator,
+      auto_start_recording: self.auto_start_recording
     }
   end
 
