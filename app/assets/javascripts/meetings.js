@@ -160,11 +160,13 @@ async function fetchMeetings() {
  * @limit is the max number of meetings we want.
 */
 let doAjax = async () => {
+  let filter = (new URL(window.location.href)).searchParams.get("filter");
   return $.ajax({
     url: fetchMeetingsEndpoint,
     data: {
       "offset": currentMeetingsCount,
-      "limit": maxFetchMeetings
+      "limit": maxFetchMeetings,
+      "filter": filter
     },
     type: "GET",
     timeout: ajaxTimeout

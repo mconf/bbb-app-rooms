@@ -66,6 +66,7 @@ class RoomsController < ApplicationController
       offset: offset,
       includeRecordings: true
     }
+    options[:onlyRecorded] = true if params[:filter] == 'recorded-only'
     # with groups configured, non-moderators only see meetings that belong to the current
     # selected group
     if @room.moodle_group_select_enabled?
