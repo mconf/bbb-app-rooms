@@ -1007,10 +1007,6 @@ body.theme-rnp {
         color: var(--color-gray-06);
       }
 
-      // Hide meetings without recordings
-      &.filter-recorded-only .rec-false {
-        display: none !important;
-      }
     }
 
     #meetings-filters .btn.active {
