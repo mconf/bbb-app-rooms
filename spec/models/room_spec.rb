@@ -52,4 +52,12 @@ RSpec.describe Room, type: :model do
     end
   end
 
+  describe '#params_for_get_all_meetings' do
+    let(:room) { FactoryBot.create(:room) }
+
+    it 'returns the correct parameters for getting all meetings' do
+      expect(room.params_for_get_all_meetings).to eq({roomHandlerID: room.handler})
+    end
+  end
+
 end
