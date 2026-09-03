@@ -357,14 +357,20 @@ body.theme-rnp {
       }
     }
 
-    // A bare line, the list spaces the rows apart instead of each row padding itself
+    // A bare line, the list spaces the rows apart instead of each row padding itself.
+    // The padding is cancelled out by the negative margin, so it gives the hover
+    // background room to breathe without moving any of the rows
     .document-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
       min-height: 20px;
+      padding: 4px 8px;
+      margin: -4px -8px;
       text-decoration: none;
+      border-radius: 6px;
+      transition: background-color 150ms;
 
       .document-label {
         display: flex;
@@ -418,9 +424,11 @@ body.theme-rnp {
         animation: documents-spin 1s linear infinite;
       }
 
-      // The design has no hover state, so the row only dims to show it can be clicked
+      // The list it sits on is only a shade of grey away from white, so the row is
+      // lifted off it rather than just filled in
       &.downloadable:hover {
-        opacity: 0.7;
+        background-color: white;
+        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
       }
     }
 
