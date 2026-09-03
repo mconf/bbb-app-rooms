@@ -1,0 +1,39 @@
+<%# The documents dropdown of a meeting: the toggle and the menu, whose contents are
+  loaded via XHR every time it is opened, see 'shared/meeting_documents'.
+
+  Locals:
+    user, room, meeting (Hash), recording (Hash): the recording, nil when there is none
+
+  Nothing about the recording is put in the endpoint below: the contents fetch it when
+  they are rendered, so reopening the dropdown shows the recording as it is by then
+%>
+<% recording = local_assigns.fetch(:recording, nil) %>
+<% internal_meeting_id = meeting[:internalMeetingID] %>
+
+<%# Only to size the menu while the contents load, so the placeholder comes up as big as
+    the dropdown will be. What is actually listed is decided by the contents themselves %>
+<% expects_text_documents = can_edit?(user, room) %>
+<% expects_recording_documents = recording.present? && recording[:state] != 'deleted' && !hide_recordings_history?(room) %>
+<% expected_columns = [expects_text_documents, expects_recording_documents].count(true) %>
+
+<div class="dropdown dropdown-documents">
+  <a href="#" class="dropdown-toggle text-decoration-none dropdown-documents-link"
+    internal-meeting-id="<%= internal_meeting_id %>"
+    download-documents-endpoint="<%= room_scheduled_meeting_internal_download_documents_path(room, meeting[:meetingID], internal_meeting_id) %>"
+    data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
+    <span class="dropdown-icon-btn">
+      <%= icon_ai_artifacts_rnp(title: t('meetings.meeting_data_download.session_documents')) %>
+      <span class="icon-dropdown-container artifacts-icon"><%= icon_dropdown_arrow %></span>
+    </span>
+  </a>
+  <div class="dropdown-menu dropdown-menu-end dropdown-documents-menu <%= 'expects-both-columns' if expected_columns == 2 %>"
+    aria-labelledby="dropdown-documents-<%= internal_meeting_id %>">
+    <div class="documents-header">
+      <div class="title"><%= t('meetings.meeting_data_download.session_documents') %></div>
+      <div class="subtitle"><%= t('meetings.meeting_data_download.session_documents_info') %></div>
+    </div>
+    <div class="dropdown-item-loading">
+      <%= render "shared/documents_placeholder", columns: expected_columns %>
+    </div>
+  </div>
+</div>

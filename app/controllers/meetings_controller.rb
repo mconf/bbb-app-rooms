@@ -8,41 +8,41 @@ class MeetingsController < ApplicationController
 
   before_action :find_room
   before_action :get_scheduled_meeting_info
-  before_action :check_data_api_config, only: [:download_artifacts, :download_ai_artifacts]
+  before_action :check_data_api_config, only: :download_documents
   before_action :find_app_launch
-  before_action :find_user, only: [:download_artifacts, :download_ai_artifacts, :request_ai_artifacts]
+  before_action :find_user, only: [:download_documents, :request_ai_artifacts]
   before_action :set_institution_guid
-  before_action only: :download_artifacts do
-    authorize_user!(:download_artifacts, @room)
-  end
-  before_action only: :download_ai_artifacts do
-    authorize_user!(:download_artifacts, @room)
+  before_action only: :download_documents do
+    # The dropdown also lists the recording, which a user who cannot download the
+    # documents may still be allowed to download. What each one sees is decided by the
+    # partial, this only keeps out whoever can see neither
+    authorize_user!(:download_artifacts, @room) unless Abilities.can?(@user, :download_presentation_video, @room)
   end
   before_action only: :request_ai_artifacts do
     authorize_user!(:download_artifacts, @room)
   end
 
-  # GET /rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/meetings/:internal_id/download_artifacts
-  def download_artifacts
-    @artifact_files = Mconf::DataApi.get_meeting_artifacts_files(
+  # GET /rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/meetings/:internal_id/download_documents
+  def download_documents
+    documents = Mconf::DataApi.get_meeting_documents(
       @institution_guid,
       @meeting[:internalMeetingID],
       I18n.locale.to_s
-    )
+    ) || {}
 
-    render partial: "shared/meeting_data_download"
-  end
+    @meeting_documents = documents['meeting'] || {}
+    @session_documents = documents['session'] || {}
+    @recording_documents = documents['recording'] || {}
 
-  # GET /rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/meetings/:internal_id/download_ai_artifacts
-  def download_ai_artifacts
-    @ai_artifact_files = Mconf::DataApi.get_meeting_artifacts_files(
-      @institution_guid,
-      @meeting[:internalMeetingID],
-      I18n.locale.to_s
-    )
+    # The recording is fetched on every render, like the documents are, so one that was
+    # still being processed when the page loaded turns into a download once it is ready.
+    # In BBB the record id of a meeting is its internal meeting id, and 'state' has to be
+    # asked for explicitly: the API only answers with the published ones by default,
+    # which would leave a recording still being processed out
+    @recording = get_recordings(@room, recordID: @meeting[:internalMeetingID], state: 'any').first.first
     @ai_artifact_cache_status = read_artifact_cache_status
 
-    render partial: "shared/meeting_ai_artifacts"
+    render partial: "shared/meeting_documents"
   end
 
   ALLOWED_ARTIFACT_TYPES = %w[ai_summary transcription].freeze

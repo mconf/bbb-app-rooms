@@ -1,0 +1,99 @@
+<%# Contents of the documents dropdown of a meeting, loaded via XHR
+
+  The documents are split in two groups: the ones of the session, which exist even when
+  the meeting was not recorded, and the ones made from the recording.
+%>
+<% ai_document_types = %w[ai_summary transcription] %>
+<%# Display order of the documents of the meeting, all of them listed as text documents %>
+<% text_document_types = %w[shared_notes engagement_report participants_list] %>
+
+<% internal_meeting_id = @meeting[:internalMeetingID] %>
+
+<%# What the user is allowed to see is decided here and never taken from the request,
+    otherwise whoever calls the endpoint could turn a feature on for themselves %>
+<% can_download_documents = can_edit?(@user, @room) %>
+<% ai_documents_enabled = ai_documents_enabled?(@user, @room, internal_meeting_date(internal_meeting_id)) %>
+
+<% recording_deleted = @recording.present? && @recording[:state] == 'deleted' %>
+<% recording_ready = @recording.present? && @recording[:playbacks].present? %>
+<% has_recording = @recording.present? && !recording_deleted && !hide_recordings_history?(@room) %>
+<% recording_processing = has_recording && !recording_ready %>
+<% has_insufficient_audio = @recording.present? && @recording[:metadata].present? && @recording[:metadata][:'insufficient-audio'] == 'true' %>
+
+<%# Only a published recording can be downloaded %>
+<% playback_download = recording_ready && @recording[:published] ? download_format(@recording) : nil %>
+<% recording_download_url = playback_download.present? && can_download_recording?(@user, @room) ? playback_url(@room, @recording[:recordID], playback_download) : nil %>
+
+<%# Status of the last request for the documents of the recording %>
+<% cached_statuses = ai_document_types.map { |type| @ai_artifact_cache_status&.dig(type) }.compact %>
+<% has_pending = cached_statuses.include?('pending') %>
+<% has_error = cached_statuses.include?('error') %>
+<% all_recording_documents_available = ai_document_types.all? { |type| @recording_documents[type].present? } %>
+
+<% recording_ai_status = has_pending ? :pending : ((has_error || has_insufficient_audio) ? :error : nil) %>
+<% recording_ai_error = t("meetings.meeting_data_download.#{has_insufficient_audio ? 'ai_artifacts_insufficient_audio_error' : 'ai_artifacts_error_tooltip'}") %>
+
+<%# The header comes with the menu, see 'shared/documents_dropdown', so only the columns
+    are replaced when these contents arrive %>
+<div class="documents-columns">
+  <%# Whoever cannot download the documents can only be here for the recording %>
+  <% if can_download_documents %>
+    <div class="documents-column" id="text-documents">
+      <div class="column-header">
+        <%= icon_text_documents %>
+        <div class="label"><%= t('meetings.meeting_data_download.text_documents') %></div>
+      </div>
+
+      <div class="documents-list">
+        <% if ai_documents_enabled %>
+          <% ai_document_types.each do |type| %>
+            <%= render 'shared/document_item', type: type, href: @session_documents[type], ai: true %>
+          <% end %>
+        <% end %>
+
+        <% text_document_types.each do |type| %>
+          <%= render 'shared/document_item', type: type, href: @meeting_documents[type] %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if has_recording %>
+    <div class="documents-column" id="recording-documents">
+      <div class="column-header">
+        <%= icon_recording_documents %>
+        <div class="label"><%= t('meetings.meeting_data_download.recording_documents') %></div>
+      </div>
+
+      <div class="documents-list">
+        <% if ai_documents_enabled %>
+          <% ai_document_types.each do |type| %>
+            <%= render 'shared/document_item', type: type, href: @recording_documents[type], ai: true,
+              status: recording_ai_status, status_tooltip: recording_ai_error %>
+          <% end %>
+        <% end %>
+
+        <%# The hourglass tells the recording is on its way, it is not ready to download yet %>
+        <%= render 'shared/document_item', type: 'recording', href: recording_download_url,
+          status: recording_processing ? :processing : nil, status_tooltip: t('meetings.recording.processing') %>
+
+        <%# The documents of the recording are the ones generated on demand %>
+        <% if ai_documents_enabled && !(all_recording_documents_available || has_insufficient_audio) %>
+          <% requestable_types = ai_document_types.reject { |type| @recording_documents[type].present? } %>
+          <%# While they are being generated the button stays, disabled, saying so %>
+          <button class="request-ai-artifacts-btn"
+            data-request-endpoint="<%= room_scheduled_meeting_internal_request_ai_artifacts_path(@room, @meeting[:meetingID], internal_meeting_id) %>"
+            data-requested-types="<%= requestable_types.to_json %>"
+            data-text-requesting="<%= t('meetings.meeting_data_download.requesting_ai_artifacts') %>"
+            <%= 'disabled' if has_pending || has_error %>>
+            <% if has_pending %>
+              <%= t('meetings.meeting_data_download.requesting_ai_artifacts') %>
+            <% else %>
+              <%= t('meetings.meeting_data_download.request_ai_artifacts') %>
+            <% end %>
+          </button>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
