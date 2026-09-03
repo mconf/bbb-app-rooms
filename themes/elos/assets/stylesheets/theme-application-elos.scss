@@ -625,12 +625,11 @@ body.theme-elos {
     justify-content: center;
   }
 
-  .dropdown-download .dropdown-toggle::after,
-  .dropdown-ai-artifacts .dropdown-toggle::after {
+  .dropdown-documents .dropdown-toggle::after {
     content: none;
   }
 
-  .dropdown-ai-artifacts, .dropdown-download {
+  .dropdown-documents {
     margin-top: 5px;
   }
 
@@ -672,177 +671,232 @@ body.theme-elos {
     }
   }
 
-  .dropdown-download-artifacts {
-    width: 276px;
-    padding: 8px 0;
-    border-radius: 8px;
-    box-shadow: 4px 8px 8px rgba(0, 0, 0, 0.1);
-
-    .download-artifacts-label {
-      display: block;
-      color: #7d8c99;
-      font-size: 14px;
-      padding: 4px 16px;
-      font-weight: normal;
-    }
-
-    .dropdown-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 4px 16px;
-      font-size: 14px;
-      color: var(--color-gray-09);
-
-      .icon {
-        font-size: 20px;
-        color: #7d8c99;
-      }
-
-      img {
-        width: 20px;
-        height: 20px;
-      }
-
-      &:hover, &.active {
-        background-color: var(--color-gray-01);
-        color: var(--color-gray-09) !important;
-      }
-    }
-  }
-
-  .dropdown-ai-artifacts-menu {
-    width: 283px;
-    padding: 0;
+  // Sizes and spacing come from the design: the panel is 517px wide with both columns,
+  // 280px with only one, see the 'Documentos da sessão' component in Figma
+  .dropdown-documents-menu {
+    width: 286px;
+    padding: 16px 0;
     border: 1px solid #e5e7eb;
     border-radius: 10px;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.12);
-    overflow: hidden;
 
-    .ai-artifacts-panel {
-      font-family: 'Nunito Sans', sans-serif;
+    // The contents arrive after the menu, so while the placeholder is up the width
+    // follows what the page expected, and afterwards what was actually rendered. Only
+    // the rendered columns carry an id, which is what tells the two apart
+    &.expects-both-columns:not(:has(.documents-column[id])),
+    &:has(#text-documents):has(#recording-documents) {
+      width: 517px;
+    }
 
-      &__header {
-        padding: 16px 16px 8px;
-      }
-
-      &__title {
-        font-size: 16px;
-        font-weight: 600;
-        color: #101828;
-        margin: 0 0 4px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-
-      }
-      
-      .ai-artifacts-error-badge {
-        display: flex;
-        align-items: center;
-        font-size: 18px !important;
-        flex-shrink: 0;
-        cursor: default;
-      }
-
-      &__subtitle {
-        font-size: 12px;
-        color: #6a7282;
-        margin: 0;
-        line-height: 1.4;
-      }
-
-      &__divider {
-        margin: 0;
-        border-color: #e5e7eb;
-      }
-
-      &__body {
-        padding: 12px 16px 16px;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
+    // Stacked in a single column, so it only needs the room one of them takes, and never
+    // more than the viewport has. Repeated for the selectors above, which would
+    // otherwise win on specificity
+    @media (max-width: map-get($grid-breakpoints, 'md')) {
+      &,
+      &.expects-both-columns:not(:has(.documents-column[id])),
+      &:has(#text-documents):has(#recording-documents) {
+        width: calc(100vw - 32px);
+        max-width: 320px;
       }
     }
 
-    .ai-artifact-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    .documents-header {
+      padding: 0 16px 16px;
+      border-bottom: 1px solid #e5e7eb;
 
-      &__left {
+      .title {
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1.375;
+        color: #101828;
+      }
+
+      .subtitle {
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1.334;
+        color: #6a7282;
+      }
+    }
+
+    .documents-columns {
+      display: flex;
+      align-items: stretch;
+      gap: 16px;
+      padding: 16px;
+
+      @media (max-width: map-get($grid-breakpoints, 'md')) {
+        flex-direction: column;
+      }
+    }
+
+    .documents-column {
+      display: flex;
+      flex: 1 1 0;
+      flex-direction: column;
+      gap: 12px;
+      min-width: 0;
+
+      .column-header {
         display: flex;
         align-items: center;
         gap: 8px;
 
+        .label {
+          flex: 1 1 auto;
+          font-size: 14px;
+          font-weight: 600;
+          line-height: 1.165;
+          color: #101828;
+        }
+
+        // Kept square, otherwise the round badge of the column comes out an oval
         .icon {
+          flex: 0 0 32px;
+          width: 32px;
+          height: 32px;
           font-size: 20px;
+          line-height: 32px;
+          text-align: center;
+          color: white;
+          background-color: var(--color-sec);
+          border-radius: 50%;
+        }
+      }
+
+      .documents-list {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        gap: 16px;
+        padding: 12px;
+        background-color: #f9fafb;
+        border: 1px solid #f0f2f4;
+        border-radius: 10px;
+      }
+    }
+
+    // A bare line, the list spaces the rows apart instead of each row padding itself
+    .document-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      min-height: 20px;
+      text-decoration: none;
+
+      .document-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        font-size: 12px;
+        color: #4a5565;
+
+        .label {
+          flex: 0 1 auto;
+          line-height: 1.334;
+        }
+
+        .icon {
+          flex: 0 0 16px;
+          font-size: 16px;
           color: #6b7280;
         }
-      }
 
-      &--card {
-        background-color: #f9fafb;
-        border: 1px solid #f3f4f6;
-        border-radius: 8px;
-        padding: 12px 16px;
-      }
-
-      &--available {
-        padding: 12px 16px;
-        text-decoration: none;
-        color: inherit;
-        transition: opacity 150ms;
-
-        &:hover {
-          opacity: 0.75;
-          text-decoration: none;
-        }
-
-        i {
-          width: 20px;
-          height: 20px;
+        .icon-ai-generated {
+          flex: 0 0 16px;
+          font-size: 16px;
           color: var(--color-sec);
         }
       }
-    }
 
-    .ai-artifact-name {
-      font-size: 14px;
-      color: #4a5565;
-    }
-
-    .ai-artifact-spinner {
-      .icon {
+      .icon-download {
+        flex: 0 0 20px;
         font-size: 20px;
-        color: #008c95;
-        animation: ai-artifact-spin 1s linear infinite;
+        color: var(--color-sec);
+      }
+
+      .document-status {
+        flex: 0 0 20px;
+        font-size: 20px;
+      }
+
+      .document-spinner .icon {
+        font-size: 20px;
+        color: var(--color-sec);
+        animation: documents-spin 1s linear infinite;
+      }
+
+      // The design has no hover state, so the row only dims to show it can be clicked
+      &.downloadable:hover {
+        opacity: 0.7;
       }
     }
 
-    @keyframes ai-artifact-spin {
+    @keyframes documents-spin {
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
 
-    .ai-artifacts-request-btn {
+    // The skeleton reuses the layout above, so it only has to fill the shapes in
+    .placeholder-badge,
+    .placeholder-bar {
+      background-color: #e5e7eb;
+      border-radius: 4px;
+      animation: documents-placeholder-pulse 1.2s ease-in-out infinite;
+    }
+
+    .placeholder-badge {
+      flex: 0 0 32px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+
+    .column-header .placeholder-bar {
+      flex: 0 1 auto;
+      width: 60%;
+      height: 12px;
+    }
+
+    // Uneven widths, so the skeleton reads as a list of labels and not as a block
+    .document-item .placeholder-bar {
+      flex: 0 1 auto;
+      width: 75%;
+      height: 10px;
+    }
+
+    .document-item:nth-child(2n) .placeholder-bar {
+      width: 55%;
+    }
+
+    @keyframes documents-placeholder-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    // At the end of the list so it lines up with the bottom of the other column
+    .request-ai-artifacts-btn {
       width: 100%;
-      padding: 10px;
-      background-color: #008c95;
+      height: 40px;
+      margin: auto 0 0;
+      padding: 8px 12px;
       color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 600;
+      background-color: var(--color-sec);
+      border: none;
+      border-radius: 16px;
       cursor: pointer;
-      text-align: center;
 
       &:hover {
-        background-color: #007880;
+        background-color: var(--color-sec-hover);
       }
 
       &:disabled {
-        opacity: 0.6;
+        color: #6a7282;
+        background-color: #e5e7eb;
         cursor: not-allowed;
       }
     }
