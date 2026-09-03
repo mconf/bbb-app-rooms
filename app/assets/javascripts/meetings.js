@@ -18,7 +18,6 @@ const $DOCUMENT = $(document);
 let isFetching = false;
 let hasMoreToFetch = true;
 let rendered = false;
-let loadedMeetingId = null;
 
 // Max time to wait for ajax response
 let ajaxTimeout = 15000;
@@ -269,39 +268,15 @@ window.addEventListener('message', function(event) {
     data: { access_token: event.data['access_token'], refresh_token: event.data['refresh_token'], expires_at: event.data['expires_at']  }
   });
 });
-/* Request the meeting artifacts to Data API.
+/* Request the documents of a meeting to the server.
 */
-let doAjaxDownloadArtifacts = async (download_artifacts_endpoint) => {
+let doAjaxDownloadDocuments = async (download_documents_endpoint) => {
   return $.ajax({
-    url: download_artifacts_endpoint,
+    url: download_documents_endpoint,
     type: "GET",
     timeout: ajaxTimeout
   });
 }
-
-/* Fetch the files from Data API and process the response
- *
- * In case of success, it will display the received partial.
- * In case of timeout, the timeout value will increase in 1 second.
-*/
-let downloadArtifacts = async(meeting_id, download_artifacts_endpoint, container_prefix) => {
-  if (loadedMeetingId != meeting_id) {
-    try {
-      let response = await doAjaxDownloadArtifacts(download_artifacts_endpoint);
-      response = $(response);
-
-      loadedMeetingId = meeting_id;
-      let buttons = response.filter('a')
-      showDropdownItems(buttons, meeting_id, container_prefix);
-    } catch(err) {
-      if (err.statusText == 'timeout') {
-        ajaxTimeout += 1000;
-      } else {
-        console.error(`Unexpected error: ${err}`);
-      }
-    }
-  }
-};
 
 let showMeetings = (rows) => {
   for(let row of rows) {
@@ -311,23 +286,25 @@ let showMeetings = (rows) => {
 
 // The request in flight for each dropdown, so a response is only rendered while
 // it is still the latest one asked for
-let aiArtifactsLatestRequest = {};
+let documentsLatestRequest = {};
 
-let downloadAiArtifacts = async(meeting_id, download_artifacts_endpoint) => {
-  if (!download_artifacts_endpoint) return;
+/* showLoading is false when the contents on screen are still the right ones and only
+   need to be brought up to date, so the placeholder does not flash over them */
+let downloadDocuments = async(meeting_id, download_documents_endpoint, showLoading = true) => {
+  if (!download_documents_endpoint) return;
 
-  showAiArtifactsLoading(meeting_id);
+  if (showLoading) showDocumentsLoading(meeting_id);
 
   /* Opening and closing the dropdown quickly leaves more than one request in
      flight, and they can come back out of order */
-  const request = doAjaxDownloadArtifacts(download_artifacts_endpoint);
-  aiArtifactsLatestRequest[meeting_id] = request;
+  const request = doAjaxDownloadDocuments(download_documents_endpoint);
+  documentsLatestRequest[meeting_id] = request;
 
   try {
     let response = await request;
-    if (aiArtifactsLatestRequest[meeting_id] !== request) return;
+    if (documentsLatestRequest[meeting_id] !== request) return;
 
-    showAiArtifactItems(response, meeting_id);
+    showDocumentItems(response, meeting_id);
   } catch(err) {
     if (err.statusText == 'timeout') {
       ajaxTimeout += 1000;
@@ -337,41 +314,45 @@ let downloadAiArtifacts = async(meeting_id, download_artifacts_endpoint) => {
   }
 };
 
-const AI_ARTIFACTS_AUTO_CLOSE_DELAY = 2 * 60 * 1000;
+const DOCUMENTS_AUTO_CLOSE_DELAY = 2 * 60 * 1000;
 
-// One timer per dropdown, since each recording has its own
-let aiArtifactsAutoCloseTimers = {};
+// One timer per dropdown, since each meeting has its own
+let documentsAutoCloseTimers = {};
 
-let clearAiArtifactsAutoClose = (toggle) => {
+let clearDocumentsAutoClose = (toggle) => {
   const meeting_id = toggle.getAttribute('internal-meeting-id');
-  if (!aiArtifactsAutoCloseTimers[meeting_id]) return;
+  if (!documentsAutoCloseTimers[meeting_id]) return;
 
-  clearTimeout(aiArtifactsAutoCloseTimers[meeting_id]);
-  delete aiArtifactsAutoCloseTimers[meeting_id];
+  clearTimeout(documentsAutoCloseTimers[meeting_id]);
+  delete documentsAutoCloseTimers[meeting_id];
 };
 
-let scheduleAiArtifactsAutoClose = (toggle) => {
+let scheduleDocumentsAutoClose = (toggle) => {
   // Drop the previous timer, otherwise it would close a dropdown the user just reopened
-  clearAiArtifactsAutoClose(toggle);
+  clearDocumentsAutoClose(toggle);
 
   const meeting_id = toggle.getAttribute('internal-meeting-id');
-  aiArtifactsAutoCloseTimers[meeting_id] = setTimeout(() => {
-    delete aiArtifactsAutoCloseTimers[meeting_id];
+  documentsAutoCloseTimers[meeting_id] = setTimeout(() => {
+    delete documentsAutoCloseTimers[meeting_id];
     bootstrap.Dropdown.getOrCreateInstance(toggle).hide();
-  }, AI_ARTIFACTS_AUTO_CLOSE_DELAY);
+  }, DOCUMENTS_AUTO_CLOSE_DELAY);
+};
+
+let documentsContainerSelector = (meeting_id) => {
+  return `div[aria-labelledby="dropdown-documents-${meeting_id}"]`;
 };
 
 /* Every open refetches, so the contents rendered on the previous open are dropped
    and the placeholder comes back while the new request is in flight. Otherwise the
    old contents would stay on screen as if they were the current ones. */
-let showAiArtifactsLoading = (meeting_id) => {
-  const containerSelector = `div[aria-labelledby="dropdown-ai-artifacts-${meeting_id}"]`;
+let showDocumentsLoading = (meeting_id) => {
+  const containerSelector = documentsContainerSelector(meeting_id);
   $(`${containerSelector} .appended-item`).remove();
   $(`${containerSelector} .dropdown-item-loading`).show();
 };
 
-let showAiArtifactItems = (html, meeting_id) => {
-  const containerSelector = `div[aria-labelledby="dropdown-ai-artifacts-${meeting_id}"]`;
+let showDocumentItems = (html, meeting_id) => {
+  const containerSelector = documentsContainerSelector(meeting_id);
   $(`${containerSelector} .dropdown-item-loading`).hide();
   $(`${containerSelector} .appended-item`).remove();
   $(containerSelector).append($(html).addClass('appended-item'));
@@ -390,17 +371,15 @@ $DOCUMENT.on('click', '.filesender-login', function(e) {
   openAuthWindow($(this).data('url'), 'Filesender');
 });
 
-$DOCUMENT.on('click', '.dropdown-download-link', function(e) {
-  downloadArtifacts(this.getAttribute('internal-meeting-id'), this.getAttribute('download-artifacts-endpoint'), 'dropdown-download');
+/* Fetching on 'shown' (instead of 'click') refreshes the dropdown contents on every
+   open, which is how the user sees documents that became ready meanwhile */
+$DOCUMENT.on('shown.bs.dropdown', '.dropdown-documents-link', function(e) {
+  downloadDocuments(this.getAttribute('internal-meeting-id'), this.getAttribute('download-documents-endpoint'));
+  scheduleDocumentsAutoClose(this);
 });
 
-$DOCUMENT.on('shown.bs.dropdown', '.dropdown-ai-artifacts-link', function(e) {
-  downloadAiArtifacts(this.getAttribute('internal-meeting-id'), this.getAttribute('download-artifacts-endpoint'));
-  scheduleAiArtifactsAutoClose(this);
-});
-
-$DOCUMENT.on('hidden.bs.dropdown', '.dropdown-ai-artifacts-link', function(e) {
-  clearAiArtifactsAutoClose(this);
+$DOCUMENT.on('hidden.bs.dropdown', '.dropdown-documents-link', function(e) {
+  clearDocumentsAutoClose(this);
 });
 
 $(document).on('click', '.request-ai-artifacts-btn', function(e) {
@@ -418,13 +397,15 @@ $(document).on('click', '.request-ai-artifacts-btn', function(e) {
     data: { requested_artifact_types: requestedTypes },
     headers: { 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') },
     success: function() {
-      $btn.hide();
-      const $panel = $btn.closest('.ai-artifacts-panel');
-      $panel.find('.ai-artifacts-panel__title').text($btn.data('title-requesting'));
-      $panel.find('.ai-artifacts-panel__subtitle').text($btn.data('subtitle-requesting'));
-      $panel.find('.ai-artifact-spinner').each(function() {
-        $(this).show().closest('.ai-artifact-item').addClass('ai-artifact-item--requesting');
-      });
+      /* The request left the documents pending in the cache, and rendering that state is
+         the server's job: a row waiting for its file drops the 'unavailable' icon, gets
+         its spinner and takes the AI mark back. Patching all of that here would be a
+         second, drifting copy of those rules, so the contents are fetched again instead */
+      const toggle = $btn.closest('.dropdown').find('.dropdown-documents-link')[0];
+      if (toggle) {
+        downloadDocuments(toggle.getAttribute('internal-meeting-id'),
+          toggle.getAttribute('download-documents-endpoint'), false);
+      }
       const $successToast = $('#ai-artifacts-success-toast .toast');
       $successToast.toast('dispose');
       $successToast.toast('show');
@@ -440,30 +421,6 @@ $(document).on('click', '.request-ai-artifacts-btn', function(e) {
     }
   });
 });
-
-let showDropdownItems = (buttons, meeting_id, container_prefix) => {
-  const containerSelector = `div[aria-labelledby="${container_prefix}-${meeting_id}"]`;
-  // Hide the loading items animation
-  $(`${containerSelector} .dropdown-item-loading`).hide();
-  // Remove only the items appended previously
-  $(`${containerSelector} .appended-item`).remove();
-
-  for (let button of buttons) {
-    if(!$(button).find('button:disabled').length > 0)
-      $(button).addClass('create-session-token');
-
-    $(button).addClass('appended-item rec-edit');
-
-    // Safari blocks all links opened in new tabs (popups), so we need to open them in the same tab
-    if (!!$("body").data('browser-is-safari')) {
-      $(button).removeClass('create-session-token');
-      $(button).attr("target", "_self");
-    }
-
-    $(containerSelector).append(button);
-    $(button).removeClass('create-session-token');
-  }
-};
 
 let appendScripts = (scripts) => {
   for(let script of scripts) {

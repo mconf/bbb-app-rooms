@@ -99,88 +99,28 @@
       <% end %>
     </td>
 
-    <%# Recording artifacts %>
+    <%# Documents and recording %>
     <td class="col-5 col-md-1 justify-content-md-center icon-container ms-auto">
-      <% if recording[:state] == 'processing' %>
-        <%= icon_recording_load(title: t("meetings.recording.processing"), class: 'color-primary fa-2x') %>
-      <% else %>
-        <% if recording[:published] %>
-          <% browser_safari = browser.safari? || browser.safari_webapp_mode? %>
-          <%# AI Artifacts dropdown %>
-          <% ai_release_date = Rails.configuration.ai_artifacts_release_date %>
-          <% recording_date = Time.at(meeting[:startTime].to_i / 1000.0).to_date %>
-          <% if Abilities.full_permission?(user) && ai_artifacts_enabled?(@room) && (ai_release_date.nil? || recording_date >= ai_release_date) %>
-            <div class="dropdown dropdown-ai-artifacts">
-              <a href="#" class="dropdown-toggle text-decoration-none dropdown-ai-artifacts-link"
-                internal-meeting-id="<%= meeting[:internalMeetingID] %>"
-                download-artifacts-endpoint="<%= room_scheduled_meeting_internal_download_ai_artifacts_path(@room, meeting[:meetingID], meeting[:internalMeetingID]) %>"
-                data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
-                <span class="dropdown-icon-btn">
-                  <%= icon_ai_artifacts_rnp %>
-                  <span class="icon-dropdown-container artifacts-icon"><%= icon_dropdown_arrow %></span>
-                </span>
-              </a>
-              <div class="dropdown-menu dropdown-menu-right dropdown-ai-artifacts-menu"
-                aria-labelledby="dropdown-ai-artifacts-<%= meeting[:internalMeetingID] %>">
-                <div class="dropdown-item-loading">
-                  <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_ai_summary') %>
-                  <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_transcription') %>
-                </div>
-              </div>
-            </div>
-          <% end %>
+      <% browser_safari = browser.safari? || browser.safari_webapp_mode? %>
 
-          <%# Meeting artifacts download dropdown %>
-          <% has_non_presentation = recording[:playbacks].any? { |p| p[:type] != 'presentation' } %>
-          <% if can_edit?(user, room) || (can_download_recording?(user, room) && has_non_presentation) %>
-            <div class="dropdown dropdown-download">
-              <a href="#" class="dropdown-toggle text-decoration-none dropdown-download-link"
-                internal-meeting-id="<%= meeting[:internalMeetingID] %>"
-                download-artifacts-endpoint="<%= room_scheduled_meeting_internal_download_artifacts_path(@room, meeting[:meetingID], meeting[:internalMeetingID]) %>"
-                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="dropdown-icon-btn">
-                  <i class="icon material-icons color-primary artifacts-icon">file_download</i>
-                  <span class="icon-dropdown-container">
-                    <%= icon_dropdown_arrow %>
-                  </span>
-                </span>
-              </a>
-              <div class="dropdown-menu dropdown-menu-right dropdown-download-artifacts" aria-labelledby="dropdown-download-<%= meeting[:internalMeetingID] %>">
-                <span class="download-artifacts-label"><%= t('reports.download') %></span>
-                <% if can_edit?(user, room) %>
-                  <div class="dropdown-item-loading">
-                    <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_notes') %>
-                    <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_participants') %>
-                    <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.dashboard') %>
-                  </div>
-                <% end %>
-                <% if can_download_recording?(user, room) %>
-                  <% recording[:playbacks].each do |p| %>
-                    <% next if p[:type] == 'presentation' %>
-                    <% url = playback_url(room, recording[:recordID], p) %>
-                    <%=
-                    link_to url, class: 'dropdown-item rec-edit',
-                    target: browser_safari ? '_self' : '_blank',
-                    data: { 'tracking-id': 'lti-download-recording', 'institution-guid': "#{@institution_guid}" } do %>
-                      <%= icon_video_library %>
-                      <%= t("meetings.recording.playbacks.#{p[:type]}") %>
-                    <% end %>
-                  <% end %>
-                <% end %>
-              </div>
-            </div>
-          <% end %>
+      <%# Documents of the session and of the recording, in a single dropdown. A
+          recording still being processed is shown by the hourglass of the 'Gravação'
+          document, inside the dropdown %>
+      <% has_non_presentation = recording[:playbacks].any? { |p| p[:type] != 'presentation' } %>
+      <% if can_edit?(user, room) || (can_download_recording?(user, room) && has_non_presentation) %>
+        <%= render "shared/documents_dropdown", user: user, room: room, meeting: meeting, recording: recording %>
+      <% end %>
 
-          <%# Playback (presentation) %>
-          <% playback_pres = recording[:playbacks].find { |p| p[:type] == 'presentation' } %>
-          <% if playback_pres %>
-            <% url = playback_url(room, recording[:recordID], playback_pres) %>
-            <%=
-            link_to icon_conference_play(title: t("meetings.recording.playbacks.presentation"), class: 'fa-2x'), url,
-            data: { 'tracking-id': 'lti-play-record', 'institution-guid': "#{@institution_guid}" },
-            class: "d-flex text-decoration-none color-primary #{'create-session-token' unless browser_safari} playback-icon", target: browser_safari ? '_self' : '_blank'
-            %>
-          <% end %>
+      <%# Playback (presentation) %>
+      <% if recording[:published] %>
+        <% playback_pres = recording[:playbacks].find { |p| p[:type] == 'presentation' } %>
+        <% if playback_pres %>
+          <% url = playback_url(room, recording[:recordID], playback_pres) %>
+          <%=
+          link_to icon_conference_play(title: t("meetings.recording.playbacks.presentation"), class: 'fa-2x'), url,
+          data: { 'tracking-id': 'lti-play-record', 'institution-guid': "#{@institution_guid}" },
+          class: "d-flex text-decoration-none color-primary #{'create-session-token' unless browser_safari} playback-icon", target: browser_safari ? '_self' : '_blank'
+          %>
         <% end %>
       <% end %>
     </td>
@@ -188,6 +128,8 @@
     <%# Options dropdown %>
     <td class="col-2 col-md-1 td-dropdown-opts">
       <% if recording[:state] != 'processing' && (recording[:published] || can_edit?(user, room)) %>
+        <%# Copying the playback link needs a published presentation to point at, while
+            Eduplay and Filesender need permission to edit: either one fills the menu %>
         <% show_opts = (recording[:published] && recording[:playbacks].any? { |p| p[:type] == 'presentation' }) || (can_edit?(user, room) && recording[:state] != 'deleted') %>
         <% if show_opts %>
           <div class="dropdown dropdown-opts">
@@ -275,15 +217,6 @@
                         <%= t("meetings.recording.filesender.share_via_filesender") %>
                       <% end %>
                     <% end %>
-                    <div class="dropdown-divider"></div>
-                  <% end %>
-                  <%# Delete recording %>
-                  <%= link_to recording_delete_path(room, record_id: recording[:recordID]),
-                  method: :post,
-                  data: { confirm: t('meetings.recording.confirm.destroy'), 'tracking-id': 'lti-delete-recording', 'institution-guid': "#{@institution_guid}" },
-                  class: "dropdown-item rec-edit rec-destroy" do %>
-                    <%= icon_delete %>
-                    <%= t("meetings.recording.destroy") %>
                   <% end %>
                 <% end %>
               <% end %>
@@ -296,30 +229,10 @@
   <%# Meeting without recording, leave 'Status' and 'Recording' columns empty %>
   <% else %>
     <td class="col-md-1"></td>
-    <%# Meeting artifacts download dropdown %>
+    <%# Documents of the session, this meeting was not recorded %>
     <td class="col-5 col-md-1 justify-content-md-center icon-container">
       <% if can_edit?(user, room) %>
-        <div class="dropdown dropdown-download">
-          <a href="#" class="dropdown-toggle text-decoration-none dropdown-download-link"
-            internal-meeting-id="<%= meeting[:internalMeetingID] %>"
-            download-artifacts-endpoint="<%= room_scheduled_meeting_internal_download_artifacts_path(room, meeting[:meetingID], meeting[:internalMeetingID]) %>"
-            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="dropdown-icon-btn artifacts-icon">
-              <i class="icon material-icons color-primary">file_download</i>
-              <span class="icon-dropdown-container">
-                <%= icon_dropdown_arrow %>
-              </span>
-            </span>
-          </a>
-          <div class="dropdown-menu dropdown-menu-right dropdown-download-artifacts" aria-labelledby="dropdown-download-<%= meeting[:internalMeetingID] %>">
-            <span class="download-artifacts-label"><%= t('reports.download') %></span>
-            <div class="dropdown-item-loading">
-              <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_notes') %>
-              <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.download_participants') %>
-              <%= render "shared/placeholder-loading", text: t('meetings.meeting_data_download.dashboard') %>
-            </div>
-          </div>
-        </div>
+        <%= render "shared/documents_dropdown", user: user, room: room, meeting: meeting %>
       <% end %>
     </td>
     <%# Options dropdown %>
