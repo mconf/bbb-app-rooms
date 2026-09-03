@@ -61,6 +61,35 @@ module ApplicationHelper
     @ai_artifacts_enabled_by_consumer_key[consumer_key] = config.present? && config.allow_ai_artifacts?
   end
 
+  # Whether the AI documents of a meeting can be offered, from the permission of the
+  # user, the configuration of the consumer and the date the feature was released
+  #
+  # @param date [Date] when the meeting happened, nil when it is not known
+  def ai_documents_enabled?(user, room, date)
+    return false unless Abilities.full_permission?(user) && ai_artifacts_enabled?(room)
+
+    release_date = Rails.configuration.ai_artifacts_release_date
+    return true if release_date.nil?
+    # A meeting whose date we don't know stays out, as the check this replaced did
+    return false if date.nil?
+
+    date >= release_date
+  end
+
+  # The internal meeting id of BBB ends with the timestamp, in milliseconds, of when the
+  # meeting was created, which is the only source for its date when it has no recording
+  def internal_meeting_date(internal_meeting_id)
+    timestamp = internal_meeting_id.to_s.split('-').last
+    return nil unless timestamp&.match?(/\A\d{13}\z/)
+
+    Time.at(timestamp.to_i / 1000.0).to_date
+  end
+
+  # The playback of a recording that can be downloaded as a file
+  def download_format(recording)
+    recording[:playbacks].find { |p| p[:type] == 'video' || p[:type] == 'presentation_video' }
+  end
+
   def show_terms_use_message?(resource)
     config = ConsumerConfig.find_by(key: resource[:consumer_key])
     config.present? && config[:message_reference_terms_use]
