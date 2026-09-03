@@ -13,11 +13,16 @@
 <% status = local_assigns.fetch(:status, nil) %>
 <% status_tooltip = local_assigns.fetch(:status_tooltip, nil) %>
 
+<%# Nothing on its way and nothing to download %>
+<% unavailable = href.blank? && status.nil? %>
+
 <% label = capture do %>
   <span class="document-label">
     <%= document_icon(type) %>
     <span class="label"><%= t("meetings.meeting_data_download.documents.#{type}") %></span>
-    <%= icon_ai_generated if ai %>
+    <%# The AI mark comes off a document that does not exist: there is nothing it made,
+        and it would be the one thing left with a color on a row that reads as unavailable %>
+    <%= icon_ai_generated if ai && !unavailable %>
   </span>
 <% end %>
 
@@ -32,7 +37,8 @@
     <%= icon_download %>
   <% end %>
 <% else %>
-  <div class="<%= item_class %>" data-document-type="<%= type %>">
+  <%# The row is dimmed and says so %>
+  <div class="<%= item_class %><%= ' unavailable' if unavailable %>" data-document-type="<%= type %>">
     <%= label %>
     <% if status == :pending %>
       <span class="document-spinner"><%= icon_progress_activity %></span>
@@ -42,6 +48,9 @@
       <span data-bs-toggle="tooltip" data-bs-placement="left" title="<%= status_tooltip %>">
         <%= icon_info_circle(class: 'color-error document-status') %>
       </span>
+    <% else %>
+      <%= icon_document_unavailable(title: t('meetings.meeting_data_download.document_unavailable'),
+        class: 'document-status') %>
     <% end %>
   </div>
 <% end %>

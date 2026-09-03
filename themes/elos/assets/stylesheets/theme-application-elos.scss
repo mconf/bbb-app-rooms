@@ -822,6 +822,15 @@ body.theme-elos {
         font-size: 20px;
       }
 
+      // A document that never existed is muted, unlike one whose generation failed
+      .icon-document-unavailable {
+        color: #7d8c99;
+      }
+
+      &.unavailable .document-label {
+        opacity: 0.5;
+      }
+
       .document-spinner .icon {
         font-size: 20px;
         color: var(--color-sec);

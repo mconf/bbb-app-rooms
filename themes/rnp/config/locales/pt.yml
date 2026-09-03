@@ -89,6 +89,7 @@ pt:
     meeting_data_download:
       ai_artifacts_error_tooltip: "Houve um erro ao gerar o documento. Você poderá solicitá-lo novamente em algumas horas."
       ai_artifacts_insufficient_audio_error: "A gravação não possui áudio suficiente para gerar documentos de IA."
+      document_unavailable: "Documento da sessão indisponível"
       documents:
         ai_summary: "Resumo"
         engagement_report: "Relatório de engajamento"
