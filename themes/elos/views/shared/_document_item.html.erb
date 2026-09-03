@@ -22,8 +22,8 @@
   <span class="document-label">
     <%= document_icon(type) %>
     <span class="label"><%= t("meetings.meeting_data_download.documents.#{type}") %></span>
-    <%# The AI mark comes off a document that does not exist: there is nothing it made,
-        and it would be the one thing left with a color on a row that reads as unavailable %>
+    <%# A document that does not exist carries no AI mark: there is nothing for the AI to
+        have made, and it would be the only colour left on a row that reads as unavailable %>
     <%= icon_ai_generated if ai && !unavailable %>
   </span>
 <% end %>

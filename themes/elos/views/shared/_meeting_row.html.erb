@@ -129,8 +129,8 @@
     <%# Options dropdown %>
     <td class="col-2 col-md-1 td-dropdown-opts">
       <% if recording[:state] != 'processing' && (recording[:published] || can_edit?(user, room)) %>
-        <%# Deleting the recording moved to its own row inside the documents dropdown, so
-            copying the playback link is all this menu is left with %>
+        <%# Copying the playback link is the only item, and it needs a published
+            recording with a presentation to point at %>
         <% show_opts = recording[:published] && recording[:playbacks].any? { |p| p[:type] == 'presentation' } %>
         <% if show_opts %>
           <div class="dropdown dropdown-opts">

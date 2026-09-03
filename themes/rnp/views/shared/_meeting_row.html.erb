@@ -128,7 +128,8 @@
     <%# Options dropdown %>
     <td class="col-2 col-md-1 td-dropdown-opts">
       <% if recording[:state] != 'processing' && (recording[:published] || can_edit?(user, room)) %>
-        <%# Deleting the recording moved to its own row inside the documents dropdown %>
+        <%# Copying the playback link needs a published presentation to point at, while
+            Eduplay and Filesender need permission to edit: either one fills the menu %>
         <% show_opts = (recording[:published] && recording[:playbacks].any? { |p| p[:type] == 'presentation' }) || (can_edit?(user, room) && recording[:state] != 'deleted') %>
         <% if show_opts %>
           <div class="dropdown dropdown-opts">

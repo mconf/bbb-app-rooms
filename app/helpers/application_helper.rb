@@ -70,7 +70,7 @@ module ApplicationHelper
 
     release_date = Rails.configuration.ai_artifacts_release_date
     return true if release_date.nil?
-    # A meeting whose date we don't know stays out, as the check this replaced did
+    # A meeting whose date we don't know stays out
     return false if date.nil?
 
     date >= release_date
