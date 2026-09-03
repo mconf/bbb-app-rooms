@@ -33,6 +33,7 @@ class MeetingsController < ApplicationController
     @meeting_documents = documents['meeting'] || {}
     @session_documents = documents['session'] || {}
     @recording_documents = documents['recording'] || {}
+    @has_session_objects = documents['has_session_objects']
 
     # The recording is fetched on every render, like the documents are, so one that was
     # still being processed when the page loaded turns into a download once it is ready.
@@ -111,6 +112,10 @@ class MeetingsController < ApplicationController
     @meeting[:meetingID] = params[:scheduled_meeting_id]
     @meeting[:internalMeetingID] = params[:internal_id]
     @meeting[:room] = @room
+    # endTime never changes after the meeting ends, so unlike the recording it is passed
+    # along by the page instead of being fetched again
+    @meeting[:endTime] = params[:end_time]
+    @meeting[:running] = params[:running]
   end
 
   def check_data_api_config

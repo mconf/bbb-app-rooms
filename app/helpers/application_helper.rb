@@ -76,13 +76,35 @@ module ApplicationHelper
     date >= release_date
   end
 
+  # Nothing reports when the documents of a session are generated, so a missing one is
+  # presumed to be on its way for this long after the meeting ends
+  SESSION_DOCUMENTS_GENERATING_WINDOW = 30.minutes
+
+  # Takes the endTime and the running of the meeting as the API gives them
+  def session_documents_generating?(end_timestamp, meeting_running = nil)
+    return false if meeting_running.to_s == 'true' || end_timestamp.blank?
+
+    ended_at = timestamp_to_time(end_timestamp)
+    return false if ended_at.nil?
+
+    ended_at > SESSION_DOCUMENTS_GENERATING_WINDOW.ago
+  end
+
+  # The timestamps of meetings and recordings come both in seconds and in milliseconds
+  def timestamp_to_time(timestamp)
+    return nil if timestamp.blank?
+
+    timestamp = timestamp.to_i
+    timestamp.to_s.length == 13 ? Time.at(timestamp / 1000.0) : Time.at(timestamp)
+  end
+
   # The internal meeting id of BBB ends with the timestamp, in milliseconds, of when the
   # meeting was created, which is the only source for its date when it has no recording
   def internal_meeting_date(internal_meeting_id)
     timestamp = internal_meeting_id.to_s.split('-').last
     return nil unless timestamp&.match?(/\A\d{13}\z/)
 
-    Time.at(timestamp.to_i / 1000.0).to_date
+    timestamp_to_time(timestamp)&.to_date
   end
 
   # The playback of a recording that can be downloaded as a file

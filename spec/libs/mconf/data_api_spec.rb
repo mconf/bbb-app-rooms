@@ -42,6 +42,7 @@ RSpec.describe Mconf::DataApi do
         'ai_summary' => 'https://files/session-summary',
         'transcription' => 'https://files/session-transcription'
       )
+      expect(documents['has_session_objects']).to be true
     end
 
     it 'keeps the groups apart when the meeting was not recorded' do
@@ -73,7 +74,26 @@ RSpec.describe Mconf::DataApi do
       stub_objects(nil)
 
       expect(described_class.get_meeting_documents(guid, internal_meeting_id))
-        .to eq('meeting' => {}, 'session' => {}, 'recording' => {})
+        .to eq('meeting' => {}, 'session' => {}, 'recording' => {}, 'has_session_objects' => false)
+    end
+
+    it 'reports the objects of the session even when none of them is a document yet' do
+      stub_objects([
+        { 'file_name' => 'no_record/audio.ogg', 'link' => 'https://files/session-audio' }
+      ])
+
+      documents = described_class.get_meeting_documents(guid, internal_meeting_id)
+
+      expect(documents['has_session_objects']).to be true
+      expect(documents['session']).to be_empty
+    end
+
+    it 'reports no objects of the session when nothing is stored under its prefix' do
+      stub_objects([
+        { 'file_name' => 'summary.txt', 'link' => 'https://files/recording-summary' }
+      ])
+
+      expect(described_class.get_meeting_documents(guid, internal_meeting_id)['has_session_objects']).to be false
     end
 
     it 'adds the engagement report to the documents of the meeting' do

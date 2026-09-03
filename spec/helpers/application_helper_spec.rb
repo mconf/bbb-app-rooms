@@ -1,6 +1,45 @@
 require 'rails_helper'
 
 RSpec.describe ApplicationHelper, type: :helper do
+  describe '#session_documents_generating?' do
+    let(:window) { ApplicationHelper::SESSION_DOCUMENTS_GENERATING_WINDOW }
+
+    # The API gives the timestamps of meetings in milliseconds
+    def ms(time)
+      (time.to_f * 1000).to_i
+    end
+
+    it 'presumes the documents are coming right after the meeting ends' do
+      expect(helper.session_documents_generating?(ms(1.minute.ago))).to be true
+    end
+
+    it 'still presumes it just before the window closes' do
+      expect(helper.session_documents_generating?(ms((window - 1.minute).ago))).to be true
+    end
+
+    it 'gives up once the window has passed' do
+      expect(helper.session_documents_generating?(ms((window + 1.minute).ago))).to be false
+    end
+
+    it 'gives up on a meeting from another day' do
+      expect(helper.session_documents_generating?(ms(2.days.ago))).to be false
+    end
+
+    it 'presumes nothing while the meeting is still running' do
+      expect(helper.session_documents_generating?(ms(1.minute.ago), 'true')).to be false
+    end
+
+    it 'presumes nothing without an end time' do
+      expect(helper.session_documents_generating?(nil)).to be false
+      expect(helper.session_documents_generating?('')).to be false
+    end
+
+    it 'reads a timestamp in seconds too' do
+      expect(helper.session_documents_generating?(1.minute.ago.to_i)).to be true
+      expect(helper.session_documents_generating?(2.days.ago.to_i)).to be false
+    end
+  end
+
   describe '#internal_meeting_date' do
     it 'reads the date from the timestamp the id ends with' do
       expect(helper.internal_meeting_date('abc123-1786727361386'))

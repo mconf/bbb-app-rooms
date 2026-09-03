@@ -102,15 +102,22 @@ module Mconf
     #   'meeting'   => participants_list, shared_notes, engagement_report
     #   'session'   => ai_summary, transcription
     #   'recording' => ai_summary, transcription
+    #
+    #   plus 'has_session_objects' (a boolean, not a group): whether anything is stored
+    #   under the session's prefix, the sources the pipeline reads included
     def self.get_meeting_documents(guid, internal_meeting_id, locale = 'pt-BR')
       check_api_url
 
       return nil if guid.blank?
 
-      documents = { 'meeting' => {}, 'session' => {}, 'recording' => {} }
+      documents = { 'meeting' => {}, 'session' => {}, 'recording' => {}, 'has_session_objects' => false }
 
       list_objects(guid, internal_meeting_id)&.each do |object|
-        group, document_type = classify_document(object['file_name'])
+        file_name = object['file_name']
+        # From the file name, not the group below: the sources are not documents
+        documents['has_session_objects'] ||= file_name.to_s.start_with?(SESSION_DOCUMENTS_PREFIX)
+
+        group, document_type = classify_document(file_name)
         next if document_type.blank?
 
         documents[group][document_type] = object['link']

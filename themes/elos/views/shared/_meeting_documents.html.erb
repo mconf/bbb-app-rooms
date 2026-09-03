@@ -30,6 +30,9 @@
 <% has_error = cached_statuses.include?('error') %>
 <% all_recording_documents_available = ai_document_types.all? { |type| @recording_documents[type].present? } %>
 
+<%# Only on its way when the pipeline was given something to make it from %>
+<% session_ai_status = @has_session_objects && session_documents_generating?(@meeting[:endTime], @meeting[:running]) ? :pending : nil %>
+
 <% recording_ai_status = has_pending ? :pending : ((has_error || has_insufficient_audio) ? :error : nil) %>
 <% recording_ai_error = t("meetings.meeting_data_download.#{has_insufficient_audio ? 'ai_artifacts_insufficient_audio_error' : 'ai_artifacts_error_tooltip'}") %>
 
@@ -47,7 +50,8 @@
       <div class="documents-list">
         <% if ai_documents_enabled %>
           <% ai_document_types.each do |type| %>
-            <%= render 'shared/document_item', type: type, href: @session_documents[type], ai: true %>
+            <%= render 'shared/document_item', type: type, href: @session_documents[type], ai: true,
+              status: session_ai_status %>
           <% end %>
         <% end %>
 
