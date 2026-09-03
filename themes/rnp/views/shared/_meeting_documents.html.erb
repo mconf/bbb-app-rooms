@@ -24,6 +24,11 @@
 <% playback_download = recording_ready && @recording[:published] ? download_format(@recording) : nil %>
 <% recording_download_url = playback_download.present? && can_download_recording?(@user, @room) ? playback_url(@room, @recording[:recordID], playback_download) : nil %>
 
+<%# Deleting the recording is offered on its own row, with the same permission the
+    options menu of the meeting used before it moved here %>
+<% can_delete_recording = recording_ready && can_edit?(@user, @room) %>
+<% recording_delete_url = can_delete_recording ? recording_delete_path(@room, record_id: @recording[:recordID]) : nil %>
+
 <%# Status of the last request for the documents of the recording %>
 <% cached_statuses = ai_document_types.map { |type| @ai_artifact_cache_status&.dig(type) }.compact %>
 <% has_pending = cached_statuses.include?('pending') %>
@@ -79,7 +84,8 @@
 
         <%# The hourglass tells the recording is on its way, it is not ready to download yet %>
         <%= render 'shared/document_item', type: 'recording', href: recording_download_url,
-          status: recording_processing ? :processing : nil, status_tooltip: t('meetings.recording.processing') %>
+          status: recording_processing ? :processing : nil, status_tooltip: t('meetings.recording.processing'),
+          delete_path: recording_delete_url %>
 
         <%# The documents of the recording are the ones generated on demand %>
         <% if ai_documents_enabled && !(all_recording_documents_available || has_insufficient_audio) %>

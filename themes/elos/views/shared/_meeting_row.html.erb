@@ -129,7 +129,9 @@
     <%# Options dropdown %>
     <td class="col-2 col-md-1 td-dropdown-opts">
       <% if recording[:state] != 'processing' && (recording[:published] || can_edit?(user, room)) %>
-        <% show_opts = (recording[:published] && recording[:playbacks].any? { |p| p[:type] == 'presentation' }) || (can_edit?(user, room) && recording[:state] != 'deleted') %>
+        <%# Deleting the recording moved to its own row inside the documents dropdown, so
+            copying the playback link is all this menu is left with %>
+        <% show_opts = recording[:published] && recording[:playbacks].any? { |p| p[:type] == 'presentation' } %>
         <% if show_opts %>
           <div class="dropdown dropdown-opts">
             <a href="#" class="dropdown-toggle d-flex text-decoration-none dropdown-opts-link"
@@ -160,19 +162,6 @@
                   <% end %>
                 <% end %>
                 <div class="dropdown-divider"></div>
-              <% end %>
-
-              <% if can_edit?(user, room) %>
-                <% unless recording[:state] == 'deleted' %>
-                  <%# Delete recording %>
-                  <%= link_to recording_delete_path(room, record_id: recording[:recordID]),
-                  method: :post,
-                  data: { confirm: t('meetings.recording.confirm.destroy'), 'tracking-id': 'lti-delete-recording', 'institution-guid': "#{@institution_guid}" },
-                  class: "dropdown-item rec-edit rec-destroy" do %>
-                    <%= icon_delete %>
-                    <%= t("meetings.recording.destroy") %>
-                  <% end %>
-                <% end %>
               <% end %>
             </div>
           </div>

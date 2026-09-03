@@ -128,6 +128,7 @@
     <%# Options dropdown %>
     <td class="col-2 col-md-1 td-dropdown-opts">
       <% if recording[:state] != 'processing' && (recording[:published] || can_edit?(user, room)) %>
+        <%# Deleting the recording moved to its own row inside the documents dropdown %>
         <% show_opts = (recording[:published] && recording[:playbacks].any? { |p| p[:type] == 'presentation' }) || (can_edit?(user, room) && recording[:state] != 'deleted') %>
         <% if show_opts %>
           <div class="dropdown dropdown-opts">
@@ -215,15 +216,6 @@
                         <%= t("meetings.recording.filesender.share_via_filesender") %>
                       <% end %>
                     <% end %>
-                    <div class="dropdown-divider"></div>
-                  <% end %>
-                  <%# Delete recording %>
-                  <%= link_to recording_delete_path(room, record_id: recording[:recordID]),
-                  method: :post,
-                  data: { confirm: t('meetings.recording.confirm.destroy'), 'tracking-id': 'lti-delete-recording', 'institution-guid': "#{@institution_guid}" },
-                  class: "dropdown-item rec-edit rec-destroy" do %>
-                    <%= icon_delete %>
-                    <%= t("meetings.recording.destroy") %>
                   <% end %>
                 <% end %>
               <% end %>

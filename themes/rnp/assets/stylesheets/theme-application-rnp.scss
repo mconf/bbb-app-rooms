@@ -409,6 +409,31 @@ body.theme-rnp {
         font-size: 20px;
       }
 
+      // A row with more than one action holds the download in a link of its own, so the
+      // label still takes all the space left over
+      .document-action {
+        display: flex;
+        flex: 1 1 auto;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        min-width: 0;
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .document-delete {
+        display: flex;
+        flex: 0 0 auto;
+        align-items: center;
+        text-decoration: none;
+
+        .icon {
+          font-size: 20px;
+          color: var(--color-error);
+        }
+      }
+
       // A document that never existed is muted, unlike one whose generation failed
       .icon-document-unavailable {
         color: #7d8c99;

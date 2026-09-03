@@ -141,6 +141,12 @@ module IconsHelper
     material_icon_constructor "sticky_note_2", "icon material-symbols-rounded icon-shared-notes", options
   end
 
+  # Deleting the recording is offered on its own document row, so it needs an icon that
+  # takes a colour, unlike icon_delete which is a fixed svg
+  def icon_document_delete(options={})
+    material_icon_constructor "delete", "icon material-symbols-rounded icon-document-delete", options
+  end
+
   # Shown on a document row that has no file to offer
   def icon_document_unavailable(options={})
     material_icon_constructor "error", "icon material-symbols-rounded icon-document-unavailable", options
