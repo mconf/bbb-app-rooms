@@ -2,6 +2,22 @@ module Mconf
   class DataApi
     class ApiUrlMissingError < StandardError; end
 
+    # Documents generated for the session, without depending on a recording, are stored
+    # under this prefix. The ones at the root of the meeting are made from the recording.
+    SESSION_DOCUMENTS_PREFIX = 'no_record/'.freeze
+
+    # Documents made by the LLM, available for the session and for the recording
+    AI_DOCUMENT_FILE_NAMES = {
+      'summary.txt' => 'ai_summary',
+      'transcription.txt' => 'transcription'
+    }.freeze
+
+    # Documents of the meeting itself, which exist regardless of a recording
+    MEETING_DOCUMENT_FILE_NAMES = {
+      'activities.txt' => 'participants_list',
+      'notes.txt' => 'shared_notes'
+    }.freeze
+
     # Calls the API to get the link for artifacts of given month
     # Returns a hash with the links from the API's response
     #
@@ -75,39 +91,36 @@ module Mconf
       response.body
     end
 
-    # Calls the method `list_objects` to get the link for artifacts of meeting
-    # Returns a hash with the links from the response
+    # Calls the API to get the download links for every document of a meeting, grouped by
+    # what they were made from: the meeting itself, the session or the recording.
     #
-    # @return [Hash] with 3 keys: participants_list, shared_notes, engagement_report
-    def self.get_meeting_artifacts_files(guid, internal_meeting_id, locale = 'pt-BR')
+    # The AI documents of the session are made from what was transcribed live, so they
+    # exist even when the meeting was not recorded. The ones of the recording are made
+    # from it after it is processed.
+    #
+    # @return [Hash] with 3 keys, each one a hash of document type to link:
+    #   'meeting'   => participants_list, shared_notes, engagement_report
+    #   'session'   => ai_summary, transcription
+    #   'recording' => ai_summary, transcription
+    def self.get_meeting_documents(guid, internal_meeting_id, locale = 'pt-BR')
       check_api_url
 
       return nil if guid.blank?
 
-      key_mapping = {
-        "activities.txt" => "participants_list",
-        "notes.txt" => "shared_notes",
-        "transcription.txt" => "transcription",
-        "summary.txt" => "ai_summary",
-      }
+      documents = { 'meeting' => {}, 'session' => {}, 'recording' => {} }
 
-      artifact_download_links = {}
+      list_objects(guid, internal_meeting_id)&.each do |object|
+        group, document_type = classify_document(object['file_name'])
+        next if document_type.blank?
 
-      meeting_objects = list_objects(guid, internal_meeting_id)
-
-      if meeting_objects.present?
-        artifact_download_links = meeting_objects.each_with_object({}) do |artifact, result|
-          if key_mapping.key?(artifact["file_name"])
-            artifact_file = key_mapping[artifact["file_name"]]
-            result[artifact_file] = artifact["link"]
-          end
-        end
+        documents[group][document_type] = object['link']
       end
 
+      # engagement_report is not listed with the objects, it has an endpoint of its own
       engagement_report = get_engagement_report(guid, internal_meeting_id, locale)
-      artifact_download_links['engagement_report'] = engagement_report if engagement_report.present?
+      documents['meeting']['engagement_report'] = engagement_report if engagement_report.present?
 
-      artifact_download_links
+      documents
     end
 
     # Calls the API to get the objects of a meeting
@@ -170,6 +183,22 @@ module Mconf
     end
 
     private
+
+    # Tells which group a document listed for the meeting belongs to, from its file name
+    #
+    # @return [Array] the group ('meeting', 'session' or 'recording') and the document
+    #   type, or nils when the file is not one of the documents shown to the user
+    private_class_method def self.classify_document(file_name)
+      return [nil, nil] if file_name.blank?
+
+      if file_name.start_with?(SESSION_DOCUMENTS_PREFIX)
+        ['session', AI_DOCUMENT_FILE_NAMES[file_name.delete_prefix(SESSION_DOCUMENTS_PREFIX)]]
+      elsif AI_DOCUMENT_FILE_NAMES.key?(file_name)
+        ['recording', AI_DOCUMENT_FILE_NAMES[file_name]]
+      else
+        ['meeting', MEETING_DOCUMENT_FILE_NAMES[file_name]]
+      end
+    end
 
     # Raises ApiUrlMissingError if the API URL is missing from the application config
     private_class_method def self.check_api_url
