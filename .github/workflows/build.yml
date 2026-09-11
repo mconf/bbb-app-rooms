@@ -1,0 +1,33 @@
+name: Build and Push Harbor Images
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build-and-scan:
+    uses: mconf/mconf-ci-jobs/.github/workflows/all-build-push-scan-harbor.yml@main
+    with:
+      image_name: bbb-app-rooms
+      organization: portal
+      trivy-scanners: "vuln,config"
+      build-args: |
+        APP_THEME=elos
+    secrets: inherit
+
+  # The rnp theme is baked in at assets:precompile time, so it needs its own
+  # image, published as <tag>-rnp. Mirrors what hooks/build does on Docker Hub.
+  build-and-scan-rnp:
+    uses: mconf/mconf-ci-jobs/.github/workflows/all-build-push-scan-harbor.yml@main
+    with:
+      image_name: bbb-app-rooms
+      organization: portal
+      trivy-scanners: "vuln,config"
+      tag-suffix: "-rnp"
+      build-args: |
+        APP_THEME=rnp
+      # APP_THEME is declared early in the Dockerfile, so the two variants share
+      # no cacheable layers; let the default build own the registry buildcache.
+      registry_cache: false
+    secrets: inherit
