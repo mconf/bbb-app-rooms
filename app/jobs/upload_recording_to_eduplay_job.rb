@@ -45,7 +45,7 @@ class UploadRecordingToEduplayJob < ApplicationJob
       data = api.get_upload_link(video_data[:title], File.extname(file))
 
       Resque.logger.info "[UploadRecordingToEduplayJob] Uploading file..."
-      up_file_res = api.upload_file(data['url'], file.path)
+      api.upload_file(data['url'], file.path)
 
       Resque.logger.info "[UploadRecordingToEduplayJob] Creating video #{@eduplay_token.user_uid}, #{data['identifier']}, #{data['filename']}..."
 

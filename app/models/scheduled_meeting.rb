@@ -19,7 +19,7 @@ class ScheduledMeeting < ApplicationRecord
   validates :room, presence: true
   validates :name, presence: true, length: {
     maximum: ScheduledMeeting::NAME_MAX_LENGTH,
-    message: ->(object, data) {
+    message: ->(_object, _data) {
       I18n.t('default.scheduled_meeting.error.name_max_length', max: ScheduledMeeting::NAME_MAX_LENGTH)
     }
   }
@@ -272,7 +272,7 @@ class ScheduledMeeting < ApplicationRecord
   end
 
   def self.convert_time_to_duration(time)
-    return duration = Time.parse(time).seconds_since_midnight.to_i
+    return Time.parse(time).seconds_since_midnight.to_i
   end
 
   def self.convert_duration_to_time(duration)

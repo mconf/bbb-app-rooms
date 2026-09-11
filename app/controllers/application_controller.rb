@@ -395,7 +395,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def remove_from_room_session(room, key)
+  def remove_from_room_session(_room, key)
     if session.dig(COOKIE_ROOMS_SCOPE, key)
       session[COOKIE_ROOMS_SCOPE].delete(key)
     end

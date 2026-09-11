@@ -12,7 +12,7 @@ module Mconf
       # $mode authentication mode, "application" or "user"
       # $application_or_uid the application name or user uid
       # $secret signing secret
-      def initialize(base_url, mode, application_or_uid, secret)
+      def initialize(base_url, mode, application_or_uid, _secret)
         raise ArgumentError, 'Missing application id' unless
           base_url.present? &&
           mode.present? &&
@@ -73,7 +73,7 @@ module Mconf
         JSON.parse(response.body)
       end
 
-      def _response_header(o, h)
+      def _response_header(_o, h)
         Rails.logger.info("RESPONSE_HEADER pass")
         name, value = h.split(':').map(&:strip)
         headers[name] = value if name.present?
@@ -295,7 +295,7 @@ module Mconf
         end
 
         Rails.logger.info "[SEND_FILES] files: #{files}"
-        Rails.logger.info files.values.map { |file| { name: file[:name], size: file[:size] } }
+        Rails.logger.info(files.values.map { |file| { name: file[:name], size: file[:size] } })
 
         recipients = Array(recipients)
 
@@ -340,21 +340,20 @@ module Mconf
 
       def headers
         Rails.logger.info("[HEADERS] pass")
-        headers = {
+        {
           "Accept" => "application/json",
           "Authorization" => "Bearer #{@token}",
           "clientkey" => @application_or_uid
         }
       end
 
-      def send_file(token, fpath, data, user)
+      def send_file(_token, fpath, data, user)
         data.stringify_keys!
         Rails.logger.info("[SEND_FILE] pass")
-        client_secret = Rails.application.config.filesender_client_secret
+        Rails.application.config.filesender_client_secret
         begin
-          access_token = token
           c = self
-          info = c.get_info()
+          c.get_info()
           user_id = nil
           from = user[:email]
           filepath = fpath
