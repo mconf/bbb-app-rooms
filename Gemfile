@@ -47,6 +47,7 @@ gem 'i18n-js', '~> 3.9'
 gem 'awesome_print', require: 'ap'
 
 group :development, :test do
+  gem 'brakeman', require: false
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'dotenv-rails'

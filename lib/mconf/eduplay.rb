@@ -173,7 +173,7 @@ module Mconf
 
       private
       def headers
-        headers = {
+        {
           "Accept" => "*/*",
           "Authorization" => "Bearer #{@token}"
         }

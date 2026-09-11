@@ -37,7 +37,7 @@ class RemoveOldAppLaunchJob < ApplicationJob
       )
     SQL
 
-    deleted_launches = ActiveRecord::Base.connection.execute(launches_to_delete).cmd_tuples
+    ActiveRecord::Base.connection.execute(launches_to_delete).cmd_tuples
   end
 
   def qty_expired_launches(date_limit)
@@ -50,6 +50,6 @@ class RemoveOldAppLaunchJob < ApplicationJob
       AND expires_at < '#{date_limit}'
     SQL
 
-    quantity = ActiveRecord::Base.connection.execute(expired_launches).cmd_tuples
+    ActiveRecord::Base.connection.execute(expired_launches).cmd_tuples
   end
 end

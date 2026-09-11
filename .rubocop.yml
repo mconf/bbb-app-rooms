@@ -1,7 +1,7 @@
 inherit_mode:
   merge:
     - Exclude
-require:
+plugins:
   - rubocop-rails
 AllCops:
   Exclude:
@@ -14,7 +14,10 @@ AllCops:
     - bin/update
     - bin/yarn
     - vendor/bundle/**/*
-  TargetRubyVersion: 2.6
+  TargetRubyVersion: 3.4
+  # Cops added after this config was written stay pending: enabling them all
+  # reports 97 further offenses, worth a pass of its own.
+  NewCops: pending
 Layout/HashAlignment:
   EnforcedHashRocketStyle: [ key, table ]
   EnforcedColonStyle: [ key, table ]
@@ -25,7 +28,7 @@ Metrics:
 Naming/AccessorMethodName:
   Exclude:
     - app/controllers/bigbluebutton_api_controller.rb
-Naming/PredicateName:
+Naming/PredicatePrefix:
   Exclude:
     - app/controllers/bigbluebutton_api_controller.rb
 Rails:
@@ -41,7 +44,7 @@ Style/DoubleNegation:
   Enabled: false
 Style/MethodCallWithArgsParentheses:
   Enabled: true
-  IgnoredMethods:
+  AllowedMethods:
     - desc
     - gem
     - include

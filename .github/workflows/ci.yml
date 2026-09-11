@@ -1,0 +1,113 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# This repository is public, so it cannot use the organization's self-hosted
+# runners and the shared portal-ruby-* jobs, which target them, are not used
+# here. Only all-trufflehog.yml takes a runs-on input.
+jobs:
+  lint:
+    name: RuboCop
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+
+      - name: Lint Ruby code for syntax errors and bugs
+        # -l runs a lint check only, -f github annotates the diff
+        run: bundle exec rubocop -l -f github --config .rubocop.yml
+
+  scan_ruby:
+    name: Brakeman Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+
+      - name: Scan for common Rails security vulnerabilities using static analysis
+        run: bundle exec brakeman -q
+
+  scan_secrets:
+    uses: mconf/mconf-ci-jobs/.github/workflows/all-trufflehog.yml@main
+    with:
+      runs-on: '["ubuntu-latest"]'
+    secrets: inherit
+
+  test:
+    name: RSpec
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:14-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=5
+
+    env:
+      RAILS_ENV: test
+      # Locale files such as time.formats.short_custom only exist under themes/,
+      # and are loaded from config.theme.
+      APP_THEME: elos
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/bbb_app_rooms_test
+      MCONF_REDIS_HOST: localhost
+      MCONF_REDIS_PORT: "6379"
+      MCONF_REDIS_DB: "0"
+      MCONF_REDIS_PASSWORD: ""
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
+      # config/initializers/assets.rb puts node_modules on the sprockets load
+      # path, and the theme javascript requires flatpickr from there, so the
+      # specs that render the layout need the packages installed.
+      - name: Install JavaScript packages
+        run: yarn install --frozen-lockfile
+
+      - name: Prepare the test database
+        run: bin/rails db:test:prepare
+
+      - name: Run tests
+        run: bundle exec rspec

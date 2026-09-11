@@ -32,7 +32,7 @@ module BrightspaceHelper
         if scheduled_meeting.brightspace_calendar_event.present?
           begin
             send_update_calendar_entry(app, scheduled_meeting, lti_quicklink_data)
-          rescue SendEventError => e
+          rescue SendEventError
             # Create it the update fails.
             # The update might fail if the calendar event was deleted on the
             # brightspace side but not on our servers.

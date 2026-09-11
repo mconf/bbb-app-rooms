@@ -146,7 +146,7 @@ class MoodleAttendanceJob < ApplicationJob
     end
   end
 
-  def create_moodle_session(moodle_token, attendance_id, scheduled_meeting, conference_data, app_launch, group_select_enabled, theme, locale)
+  def create_moodle_session(moodle_token, attendance_id, scheduled_meeting, conference_data, _app_launch, group_select_enabled, theme, locale)
     # Use internal_meeting_id (not scheduled_meeting_id) to detect if this is a retry of the same occurrence or a new one
     incoming_internal_meeting_id = conference_data['internal_meeting_id']
     existing_session_id = scheduled_meeting.moodle_attendance_session_id
@@ -163,7 +163,7 @@ class MoodleAttendanceJob < ApplicationJob
       Resque.logger.warn "[MoodleAttendanceJob] Stored moodle_attendance_session_id #{existing_session_id} for scheduled_meeting #{scheduled_meeting.id} is no longer valid on Moodle. Creating a new session."
     end
 
-    current_consumer_config = moodle_token.consumer_config
+    moodle_token.consumer_config
     theme_display_name = case theme
                          when 'rnp'
                            'ConferênciaWeb'

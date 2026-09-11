@@ -167,7 +167,7 @@ class RoomsController < ApplicationController
   def eduplay
     @recording = get_recordings(@room, recordID: params['record_id']).first.first
     eduplay_token = EduplayToken.find_by(user_uid: @user.uid)
-    return_to = meetings_room_path(@room, filter: params[:filter])
+    meetings_room_path(@room, filter: params[:filter])
 
     if eduplay_token.token.present? && eduplay_token.expires_at > Time.now + 30.minutes
       Rails.logger.info "EduplayToken #{eduplay_token}"
@@ -273,7 +273,7 @@ class RoomsController < ApplicationController
                               expires_at: Time.now - 24.hours + new_token['expires_in'].to_i)
     end
 
-    recording = get_recordings(@room, recordID: params[:record_id]).first
+    get_recordings(@room, recordID: params[:record_id]).first
 
     render "rooms/filesender"
   end
@@ -333,7 +333,8 @@ class RoomsController < ApplicationController
       end
     end
 
-    redirect_to params[:redir_url]
+    # redir_url comes from a query parameter, so keep the redirect internal
+    redirect_to params[:redir_url], allow_other_host: false
   end
 
   helper_method :meetings, :recording_date, :recording_length
@@ -374,7 +375,7 @@ class RoomsController < ApplicationController
 
     bbbltibroker_url = omniauth_bbbltibroker_url("/api/v1/sessions/#{launch_nonce}/invalidate")
     Rails.logger.info "Making a session request to #{bbbltibroker_url}"
-    session_params = JSON.parse(
+    JSON.parse(
       RestClient.get(
         bbbltibroker_url,
         'Authorization' => "Bearer #{omniauth_client_token(omniauth_bbbltibroker_url)}"
@@ -612,17 +613,17 @@ class RoomsController < ApplicationController
 
       Rails.cache.write("#{@app_launch.nonce}/current_group_id", current_group_id)
     end
-  rescue Moodle::UrlNotFoundError => e
+  rescue Moodle::UrlNotFoundError
     set_error('room', 'moodle_url_not_found', 500)
     respond_with_error(@error)
     return
-  rescue Moodle::TimeoutError => e
+  rescue Moodle::TimeoutError
     uri = @room.moodle_token ? URI.parse(@room.moodle_token.url).host : ''
     set_error('room', 'moodle_timeout_error', 500)
     @error[:explanation] = t("error.room.moodle_timeout_error.explanation", server_url: uri)
     respond_with_error(@error)
     return
-  rescue Moodle::RequestError => e
+  rescue Moodle::RequestError
     set_error('room', 'moodle_request_error', 500)
     respond_with_error(@error)
     return
@@ -700,7 +701,7 @@ class RoomsController < ApplicationController
       # ]
       handlers = JSON.parse(response.body)
       Rails.logger.warn "Got the following contexts from the API: #{handlers.inspect}"
-    rescue JSON::ParserError => error
+    rescue JSON::ParserError
       Rails.logger.warn "Error parsing the external context API's response"
       set_error('room', 'external_context_parse_error', 500)
       respond_with_error(@error)
