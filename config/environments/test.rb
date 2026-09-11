@@ -54,4 +54,9 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions.
   # config.action_controller.raise_on_missing_callback_actions = true
+
+  # config/application.rb adds URL_HOST to config.hosts for every environment,
+  # which turns host authorization on in tests as well and answers 403 to the
+  # www.example.com requests the specs make.
+  config.hosts.clear
 end

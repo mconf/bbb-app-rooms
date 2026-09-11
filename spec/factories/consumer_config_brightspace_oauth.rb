@@ -5,5 +5,6 @@ FactoryBot.define do
     bo.client_secret  { Faker::Lorem.paragraph }
     bo.scope          { Faker::Lorem.paragraph }
 
+    bo.association :consumer_config
   end
 end
