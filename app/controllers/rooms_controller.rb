@@ -333,7 +333,8 @@ class RoomsController < ApplicationController
       end
     end
 
-    redirect_to params[:redir_url]
+    # redir_url comes from a query parameter, so keep the redirect internal
+    redirect_to params[:redir_url], allow_other_host: false
   end
 
   helper_method :meetings, :recording_date, :recording_length

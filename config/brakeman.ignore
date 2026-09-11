@@ -1,0 +1,30 @@
+{
+  "ignored_warnings": [
+    {
+      "fingerprint": "21ab0fe00fdd5899ffc405cff75aadb91b805ee996a614f7e27b08a287e9062d",
+      "note": "Informational: Rails 8.0.2.1 support ends 2026-11-07. Upgrading is its own work and cannot be done from here."
+    },
+    {
+      "fingerprint": "4ae6189ad57cb7e17a3286e26a3715c22e8d58cfaba577ac62acff643ed761a1",
+      "note": "Same query in the counting variant: date_limit is a TimeWithZone derived from Rails.configuration, never request data."
+    },
+    {
+      "fingerprint": "4fc1e88dfec9e1bfb68ad40085e7388368f1fe2f25ca8b6e58f01b1da5ee2121",
+      "note": "redirect_to(@room) takes a Room record, not a URL from the request, so Rails builds an internal path for it."
+    },
+    {
+      "fingerprint": "54fa498547876212a473d99ffaf4a5bddbc6481ac204f0865faa3e62e8a5aef3",
+      "note": "Same query in AppLaunch.remove_old_app_launches: TimeWithZone plus an Integer from Mconf::Env.fetch_int."
+    },
+    {
+      "fingerprint": "6b3a38008925e3246b1e92ea4a96906e02e9767af7e9b9de73d039caf8d2b4d0",
+      "note": "date_limit is a TimeWithZone and limit_for_delete comes from Mconf::Env.fetch_int, which rejects anything but /^\\d+$/ and returns an Integer, so neither can carry SQL. No request data reaches this query. Still worth rewriting with bind parameters."
+    },
+    {
+      "fingerprint": "6f5239fb87c64764d0c209014deb5cf504c2c10ee424bd33590f0a4f22e01d8f",
+      "note": "Deferred, not accepted as safe: config.load_defaults 5.0 leaves default_protect_from_forgery off and no controller calls it, so there is no CSRF protection. Turning it on needs its own analysis, since LTI launches arrive as cross-site POSTs from the LMS and would start failing."
+    }
+  ],
+  "updated": "2026-09-11 19:16:29 +0000",
+  "brakeman_version": "8.0.6"
+}
