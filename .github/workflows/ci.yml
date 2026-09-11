@@ -94,6 +94,18 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
+      # config/initializers/assets.rb puts node_modules on the sprockets load
+      # path, and the theme javascript requires flatpickr from there, so the
+      # specs that render the layout need the packages installed.
+      - name: Install JavaScript packages
+        run: yarn install --frozen-lockfile
+
       - name: Prepare the test database
         run: bin/rails db:test:prepare
 
