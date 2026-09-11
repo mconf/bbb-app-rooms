@@ -84,10 +84,10 @@ module Mconf
       def call(method, path, args = {}, content = nil, options = {})
         args.stringify_keys!
         Rails.logger.info("[CALL] pass")
-        raise Exception.new('Method is not allowed') unless %w(get post put delete).include? method
+        raise StandardError.new('Method is not allowed') unless %w(get post put delete).include? method
 
         path = "/#{path}" unless path.start_with?('/')
-        raise Exception.new('Endpoint is missing') if path == '/'
+        raise StandardError.new('Endpoint is missing') if path == '/'
 
         content_type = 'application/json'
         content_type = options['Content-Type'] if options.key?('Content-Type')
@@ -145,11 +145,11 @@ module Mconf
 
         if response.status != 200
           if method != 'post' || response.status != 201
-            raise Exception.new("Http error #{response.status} : #{response.body}")
+            raise StandardError.new("Http error #{response.status} : #{response.body}")
           end
         end
 
-        raise Exception.new('Empty response') if response.body.blank?
+        raise StandardError.new('Empty response') if response.body.blank?
 
         response = JSON.parse(response.body)
         Rails.logger.info("[CALL] response: #{response}")
@@ -282,7 +282,7 @@ module Mconf
         files = {}
         Array(filespath).each do |path|
           unless File.file?(path)
-            raise Exception.new("Not a file path: #{path.inspect}")
+            raise StandardError.new("Not a file path: #{path.inspect}")
           end
 
           name = File.basename(path)
@@ -320,7 +320,11 @@ module Mconf
           end
 
           transfer_complete(transfer)
+        # rubocop:disable Lint/RescueException
+        # Deliberate: the partial transfer has to be deleted even when the
+        # worker is being shut down, and the exception is re-raised anyway.
         rescue Exception => e
+          # rubocop:enable Lint/RescueException
           delete_transfer(transfer)
           raise e
         end
@@ -363,9 +367,9 @@ module Mconf
           expires = Time.now + 10 * 24 * 3600
           options = ["aup_checked"]
           result = c.send_files(user_id, from, filepath, recipients, subject, message, expires, options)
-          return { 'result': result }.to_json
           Rails.logger.info("[SEND_FILE] result: #{result}")
-        rescue Exception => e
+          return { 'result': result }.to_json
+        rescue StandardError => e
           Rails.logger.error("[+++] FILESENDER EXCEPTION [+++] #{e.message}")
           Rails.logger.error("EXCEPTION #{e.backtrace.join("\n")}")
         end

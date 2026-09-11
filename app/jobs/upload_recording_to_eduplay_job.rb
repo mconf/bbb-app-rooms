@@ -55,7 +55,7 @@ class UploadRecordingToEduplayJob < ApplicationJob
       if eduplay_upload_id.is_a?(Integer)
         eduplay_upload = EduplayUpload.find_by(id: eduplay_upload_id)
 
-        if eduplay_upload&.thumbnail_data&.present?
+        if eduplay_upload&.thumbnail_data.present?
           begin
             Resque.logger.info "[UploadRecordingToEduplayJob] Loading thumbnail from database (EduplayUpload ID: #{eduplay_upload_id})"
 
@@ -109,7 +109,7 @@ class UploadRecordingToEduplayJob < ApplicationJob
       # Clean up thumbnail data from database
       if eduplay_upload_id.is_a?(Integer)
         eduplay_upload = EduplayUpload.find_by(id: eduplay_upload_id)
-        if eduplay_upload&.thumbnail_data&.present?
+        if eduplay_upload&.thumbnail_data.present?
           begin
             eduplay_upload.update!(thumbnail_data: nil, thumbnail_content_type: nil)
             Resque.logger.info "[UploadRecordingToEduplayJob] Cleaned up thumbnail data from database (EduplayUpload ID: #{eduplay_upload_id})"

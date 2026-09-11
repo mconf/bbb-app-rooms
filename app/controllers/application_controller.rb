@@ -406,7 +406,7 @@ class ApplicationController < ActionController::Base
     keys = session[COOKIE_ROOMS_SCOPE].keys
     if keys.count > COOKIE_ROOMS_MAX_KEYS - 1
       sorted = keys.sort_by do |k|
-        session[COOKIE_ROOMS_SCOPE][k]['ts']&.to_i || 0
+        session[COOKIE_ROOMS_SCOPE][k]['ts'].to_i
       end
       sorted.first(keys.count - COOKIE_ROOMS_MAX_KEYS + 1).each do |k|
         session[COOKIE_ROOMS_SCOPE].delete(k)

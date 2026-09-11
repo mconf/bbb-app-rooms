@@ -13,7 +13,8 @@ class SimpleJsonFormatter < ActiveSupport::Logger::SimpleFormatter
     begin
       # so that lograge's logs aren't double quoted
       msg = JSON.parse(msg)
-    rescue
+    rescue JSON::ParserError, TypeError
+      # not JSON, log the message as it came
     end
 
     log[:message] = msg
