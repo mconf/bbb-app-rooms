@@ -1,0 +1,101 @@
+require 'rails_helper'
+
+RSpec.describe ApplicationHelper, type: :helper do
+  describe '#session_documents_generating?' do
+    let(:window) { ApplicationHelper::SESSION_DOCUMENTS_GENERATING_WINDOW }
+
+    # The API gives the timestamps of meetings in milliseconds
+    def ms(time)
+      (time.to_f * 1000).to_i
+    end
+
+    it 'presumes the documents are coming right after the meeting ends' do
+      expect(helper.session_documents_generating?(ms(1.minute.ago))).to be true
+    end
+
+    it 'still presumes it just before the window closes' do
+      expect(helper.session_documents_generating?(ms((window - 1.minute).ago))).to be true
+    end
+
+    it 'gives up once the window has passed' do
+      expect(helper.session_documents_generating?(ms((window + 1.minute).ago))).to be false
+    end
+
+    it 'gives up on a meeting from another day' do
+      expect(helper.session_documents_generating?(ms(2.days.ago))).to be false
+    end
+
+    it 'presumes nothing while the meeting is still running' do
+      expect(helper.session_documents_generating?(ms(1.minute.ago), 'true')).to be false
+    end
+
+    it 'presumes nothing without an end time' do
+      expect(helper.session_documents_generating?(nil)).to be false
+      expect(helper.session_documents_generating?('')).to be false
+    end
+
+    it 'reads a timestamp in seconds too' do
+      expect(helper.session_documents_generating?(1.minute.ago.to_i)).to be true
+      expect(helper.session_documents_generating?(2.days.ago.to_i)).to be false
+    end
+  end
+
+  describe '#internal_meeting_date' do
+    it 'reads the date from the timestamp the id ends with' do
+      expect(helper.internal_meeting_date('abc123-1786727361386'))
+        .to eq(Time.at(1786727361.386).to_date)
+    end
+
+    it 'has no date for an id that does not end with one' do
+      expect(helper.internal_meeting_date('abc123')).to be_nil
+      expect(helper.internal_meeting_date('abc123-notatimestamp')).to be_nil
+      expect(helper.internal_meeting_date(nil)).to be_nil
+    end
+  end
+
+  describe '#ai_documents_enabled?' do
+    let(:user) { double('user') }
+    let(:room) { double('room') }
+
+    before do
+      allow(Abilities).to receive(:full_permission?).with(user).and_return(true)
+      allow(helper).to receive(:ai_artifacts_enabled?).with(room).and_return(true)
+      allow(Rails.configuration).to receive(:ai_artifacts_release_date).and_return(Date.new(2026, 6, 11))
+    end
+
+    it 'offers the documents of a meeting held after the release' do
+      expect(helper.ai_documents_enabled?(user, room, Date.new(2026, 6, 12))).to be true
+    end
+
+    it 'offers them on the day of the release' do
+      expect(helper.ai_documents_enabled?(user, room, Date.new(2026, 6, 11))).to be true
+    end
+
+    it 'keeps them off a meeting held before the release' do
+      expect(helper.ai_documents_enabled?(user, room, Date.new(2026, 6, 10))).to be false
+    end
+
+    it 'keeps them off a meeting whose date is unknown' do
+      expect(helper.ai_documents_enabled?(user, room, nil)).to be false
+    end
+
+    it 'offers them for any date when no release date is set' do
+      allow(Rails.configuration).to receive(:ai_artifacts_release_date).and_return(nil)
+
+      expect(helper.ai_documents_enabled?(user, room, Date.new(2020, 1, 1))).to be true
+      expect(helper.ai_documents_enabled?(user, room, nil)).to be true
+    end
+
+    it 'keeps them off a user without full permission' do
+      allow(Abilities).to receive(:full_permission?).with(user).and_return(false)
+
+      expect(helper.ai_documents_enabled?(user, room, Date.new(2026, 6, 12))).to be false
+    end
+
+    it 'keeps them off a consumer that does not allow them' do
+      allow(helper).to receive(:ai_artifacts_enabled?).with(room).and_return(false)
+
+      expect(helper.ai_documents_enabled?(user, room, Date.new(2026, 6, 12))).to be false
+    end
+  end
+end

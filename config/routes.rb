@@ -112,8 +112,7 @@ Rails.application.routes.draw do
             get :download_participants, to: 'meetings#download_participants'
             get :download_notes, to: 'meetings#download_notes'
             get :learning_dashboard, to: 'meetings#learning_dashboard'
-            get :download_artifacts, to: 'meetings#download_artifacts'
-            get :download_ai_artifacts, to: 'meetings#download_ai_artifacts'
+            get :download_documents, to: 'meetings#download_documents'
             post :request_ai_artifacts, to: 'meetings#request_ai_artifacts'
           end
         end

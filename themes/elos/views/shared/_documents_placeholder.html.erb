@@ -1,0 +1,27 @@
+<%# Skeleton of the documents dropdown. It repeats the structure of the contents, see
+  'shared/meeting_documents', so the menu keeps its size when they arrive
+
+  Locals:
+    columns (integer): how many columns of documents to draw
+%>
+<%# The longest column has five documents, and it is the one giving the menu its height %>
+<% placeholder_rows = 5 %>
+
+<div class="documents-columns">
+  <% columns.times do %>
+    <div class="documents-column">
+      <div class="column-header">
+        <span class="placeholder-badge"></span>
+        <span class="placeholder-bar"></span>
+      </div>
+
+      <div class="documents-list">
+        <% placeholder_rows.times do %>
+          <div class="document-item">
+            <span class="placeholder-bar"></span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

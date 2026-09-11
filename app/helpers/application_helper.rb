@@ -61,6 +61,57 @@ module ApplicationHelper
     @ai_artifacts_enabled_by_consumer_key[consumer_key] = config.present? && config.allow_ai_artifacts?
   end
 
+  # Whether the AI documents of a meeting can be offered, from the permission of the
+  # user, the configuration of the consumer and the date the feature was released
+  #
+  # @param date [Date] when the meeting happened, nil when it is not known
+  def ai_documents_enabled?(user, room, date)
+    return false unless Abilities.full_permission?(user) && ai_artifacts_enabled?(room)
+
+    release_date = Rails.configuration.ai_artifacts_release_date
+    return true if release_date.nil?
+    # A meeting whose date we don't know stays out
+    return false if date.nil?
+
+    date >= release_date
+  end
+
+  # Nothing reports when the documents of a session are generated, so a missing one is
+  # presumed to be on its way for this long after the meeting ends
+  SESSION_DOCUMENTS_GENERATING_WINDOW = 30.minutes
+
+  # Takes the endTime and the running of the meeting as the API gives them
+  def session_documents_generating?(end_timestamp, meeting_running = nil)
+    return false if meeting_running.to_s == 'true' || end_timestamp.blank?
+
+    ended_at = timestamp_to_time(end_timestamp)
+    return false if ended_at.nil?
+
+    ended_at > SESSION_DOCUMENTS_GENERATING_WINDOW.ago
+  end
+
+  # The timestamps of meetings and recordings come both in seconds and in milliseconds
+  def timestamp_to_time(timestamp)
+    return nil if timestamp.blank?
+
+    timestamp = timestamp.to_i
+    timestamp.to_s.length == 13 ? Time.at(timestamp / 1000.0) : Time.at(timestamp)
+  end
+
+  # The internal meeting id of BBB ends with the timestamp, in milliseconds, of when the
+  # meeting was created, which is the only source for its date when it has no recording
+  def internal_meeting_date(internal_meeting_id)
+    timestamp = internal_meeting_id.to_s.split('-').last
+    return nil unless timestamp&.match?(/\A\d{13}\z/)
+
+    timestamp_to_time(timestamp)&.to_date
+  end
+
+  # The playback of a recording that can be downloaded as a file
+  def download_format(recording)
+    recording[:playbacks].find { |p| p[:type] == 'video' || p[:type] == 'presentation_video' }
+  end
+
   def show_terms_use_message?(resource)
     config = ConsumerConfig.find_by(key: resource[:consumer_key])
     config.present? && config[:message_reference_terms_use]
