@@ -12,6 +12,9 @@ jobs:
       image_name: bbb-app-rooms
       organization: portal
       trivy-scanners: "vuln,config"
+      # This repository is public, so it cannot use the self-hosted runners the
+      # shared workflow defaults to.
+      runs-on: '["ubuntu-latest"]'
       build-args: |
         APP_THEME=elos
     secrets: inherit
@@ -24,6 +27,7 @@ jobs:
       image_name: bbb-app-rooms
       organization: portal
       trivy-scanners: "vuln,config"
+      runs-on: '["ubuntu-latest"]'
       tag-suffix: "-rnp"
       build-args: |
         APP_THEME=rnp
