@@ -75,6 +75,9 @@ jobs:
 
     env:
       RAILS_ENV: test
+      # Locale files such as time.formats.short_custom only exist under themes/,
+      # and are loaded from config.theme.
+      APP_THEME: elos
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/bbb_app_rooms_test
       MCONF_REDIS_HOST: localhost
       MCONF_REDIS_PORT: "6379"
