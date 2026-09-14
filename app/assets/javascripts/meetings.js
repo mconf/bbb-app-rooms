@@ -220,6 +220,7 @@ let resetElements = () => {
   hideAll();
 
   $meetingsTable.empty();
+  hasMoreToFetch = true;
 };
 
 let hideAll = () => {

@@ -137,9 +137,7 @@ module BbbApi
 
   def get_all_meetings(room, options = {})
     res = bbb(room).get_all_meetings(options.merge(room.params_for_get_all_meetings))
-
-    no_more_meetings = res[:nextpage] == 'false'
-
+    no_more_meetings = res[:nextPage] == 'false' || res[:messageKey] == 'noMeetings'
     # Format playbacks in a more pleasant way.
     res[:meetings].each do |m|
       next if m.key?(:error)
@@ -167,7 +165,7 @@ module BbbApi
     # Use this for tests only
     # res = TestsHelper.gen_fake_res(options)
 
-    no_more_recordings = res[:nextpage] == 'false'
+    no_more_recordings = res[:nextPage] == 'false' || res[:messageKey] == 'noRecordings'
 
     # Format playbacks in a more pleasant way.
     res[:recordings].each do |r|
