@@ -123,6 +123,9 @@ $(document).on('turbolinks:load', function(){
         $('#meetings-filters input[value=recorded-only]').closest('label').removeClass('active');
         window.history.replaceState(null, null, 'meetings');
     };
+    // Discard any request from the previous filter and unblock the next fetch.
+    currentFetchGeneration++;
+    isFetching = false;
     currentMeetingsCount = 0;
     resetElements();
     tryToFetchMeetings();

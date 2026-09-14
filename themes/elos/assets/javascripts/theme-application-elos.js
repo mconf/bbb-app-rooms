@@ -122,14 +122,16 @@ $(document).on('turbolinks:load', function(){
         $('#meetings-filters input[value=recorded-only]').closest('label').removeClass('active');
         window.history.replaceState(null, null, 'meetings');
     };
+    // Discard any request from the previous filter and unblock the next fetch.
+    currentFetchGeneration++;
+    isFetching = false;
     currentMeetingsCount = 0;
     resetElements();
     tryToFetchMeetings();
     return true;
   });
 
-  // On page load, if the URL contains a 'recorded-only' filter, checks the radio input
-  // and hides non-recorded meetings.
+  // On page load, if the URL contains a 'recorded-only' filter, checks the radio input.
   if ((new URL(window.location.href)).searchParams.get("filter") == 'recorded-only' ) {
     $("#meetings-filters input[value=recorded-only]").attr("checked", true);
     $('#meetings-filters input[value=recorded-only]').closest('label').addClass('active');
