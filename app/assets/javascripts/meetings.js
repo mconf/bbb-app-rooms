@@ -20,6 +20,9 @@ let hasMoreToFetch = true;
 let rendered = false;
 let loadedMeetingId = null;
 
+// Bumped on filter change, to detect and discard stale in-flight responses.
+let currentFetchGeneration = 0;
+
 // Max time to wait for ajax response
 let ajaxTimeout = 15000;
 
@@ -114,10 +117,13 @@ let tryToFetchMeetings = () => {
  *
 */
 async function fetchMeetings() {
+  const requestGeneration = currentFetchGeneration;
   isFetching = true;
   try {
     setLoadingState();
     let response = await doAjax();
+    // Stale: the filter changed since this request started.
+    if (requestGeneration !== currentFetchGeneration) return;
     response = $(response)
 
     let rows = response.filter('.meeting-row')
@@ -144,6 +150,7 @@ async function fetchMeetings() {
       appendScripts(scripts)
     }
   } catch(err) {
+    if (requestGeneration !== currentFetchGeneration) return;
     hasMoreToFetch = true;
     if (err.statusText == 'timeout') {
       ajaxTimeout += 1000;
@@ -160,12 +167,16 @@ async function fetchMeetings() {
  * @limit is the max number of meetings we want.
 */
 let doAjax = async () => {
+  let filter = (new URL(window.location.href)).searchParams.get("filter");
+  let data = {
+    "offset": currentMeetingsCount,
+    "limit": maxFetchMeetings
+  };
+  if (filter) data.filter = filter;
+
   return $.ajax({
     url: fetchMeetingsEndpoint,
-    data: {
-      "offset": currentMeetingsCount,
-      "limit": maxFetchMeetings
-    },
+    data: data,
     type: "GET",
     timeout: ajaxTimeout
   });
@@ -218,6 +229,7 @@ let resetElements = () => {
   hideAll();
 
   $meetingsTable.empty();
+  hasMoreToFetch = true;
 };
 
 let hideAll = () => {

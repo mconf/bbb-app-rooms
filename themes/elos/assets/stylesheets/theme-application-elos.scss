@@ -498,10 +498,6 @@ body.theme-elos {
         padding: 8px 16px;
       }
 
-      // Hide meetings without recordings
-      &.filter-recorded-only .rec-false {
-        display: none !important;
-      }
     }
 
     #meetings-filters .btn.active {
