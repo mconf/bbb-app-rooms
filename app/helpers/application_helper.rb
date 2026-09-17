@@ -92,6 +92,10 @@ module ApplicationHelper
     key[:shared_secret_guid]
   end
 
+  def session_token_url
+    create_session_token_url if respond_to?(:create_session_token_url)
+  end
+
   def theme_defined?
     !Rails.configuration.theme.blank?
   end
