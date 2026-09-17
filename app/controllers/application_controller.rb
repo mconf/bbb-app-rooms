@@ -12,6 +12,12 @@ class ApplicationController < ActionController::Base
   COOKIE_ROOMS_SCOPE = 'rooms'
   COOKIE_ROOMS_MAX_KEYS = 3
 
+  # wait before notifying again that a session was lost, so a single user
+  # retrying a launch doesn't flood the inbox. Configurable so it can be dropped to a few
+  # seconds when testing the notification locally
+  SESSION_LOST_NOTIFICATION_INTERVAL =
+    Mconf::Env.fetch_int('SESSION_LOST_NOTIFICATION_INTERVAL', 1800).seconds
+
   unless Rails.application.config.consider_all_requests_local
     rescue_from StandardError do |e|
       on_500(e)
@@ -50,10 +56,13 @@ class ApplicationController < ActionController::Base
       return true
     end
 
+    log_session_cookie_state('authenticate_with_oauth')
+
     # If we got here even after the session was set and we couldn't find it, the browser
     # is probably blocking cookies, so abort and got to the retry page
     if params[:session_set]
       Rails.logger.info "Session should be set but found no user, going to the retry page"
+      notify_session_lost('session_set')
       return redirect_to(
         omniauth_retry_path(provider: provider, launch_nonce: params['launch_nonce'], error_detail: 'session_set')
       )
@@ -281,6 +290,56 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  # Logs how many times the session cookie key shows up in headers and sizes.
+  # Two entries with the same name mean the browser is sending a stale cookie
+  # that Rack silently picks over the fresh one.
+  def log_session_cookie_state(stage)
+    values = session_cookie_values
+    Rails.logger.info "[session-debug] stage=#{stage} " \
+                      "session_id=#{session.id&.public_id} " \
+                      "cookies_with_the_key=#{values.count} " \
+                      "sizes=#{values.map(&:bytesize).inspect}"
+  rescue StandardError => e
+    Rails.logger.warn "[session-debug] failed: #{e.class}: #{e.message}"
+  end
+
+  # Notify report via email.
+  def notify_session_lost(detail)
+    return unless Mconf::Env.fetch_boolean('EXCEPTION_NOTIFICATIONS_ENABLED', false)
+
+    first_in_window = Rails.cache.write(
+      'session_lost/notified', true,
+      expires_in: SESSION_LOST_NOTIFICATION_INTERVAL, unless_exist: true
+    )
+    return unless first_in_window
+
+    sizes = session_cookie_values.map(&:bytesize)
+
+    ExceptionNotifier.notify_exception(
+      SessionNotPersistedError.new(detail),
+      # Not pass env: here. The Cookie header is not filtered by
+      # filter_parameter_logging.rb, so the session cookie value would go out in the e-mail
+      # -- session hijacking material. Same reason why only counts and sizes go below.
+      data: {
+        error_detail: detail,
+        launch_nonce: params['launch_nonce'],
+        session_id: session.id&.public_id,
+        cookies_with_the_key: sizes.count,
+        sizes: sizes,
+        session_keys: session.keys.sort,
+        user_agent: request.user_agent
+      }
+    )
+  rescue StandardError => e
+    Rails.logger.warn "ExceptionNotifier failed: #{e.class}: #{e.message}"
+  end
+
+  def session_cookie_values
+    key = Rails.application.config.session_options[:key]
+    request.headers['Cookie'].to_s
+           .scan(/(?:\A|;\s*)#{Regexp.escape(key)}=([^;]*)/).flatten
+  end
 
   def build_debug_info
     calls = Current.moodle_calls || []
