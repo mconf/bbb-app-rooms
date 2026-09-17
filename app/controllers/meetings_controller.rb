@@ -39,8 +39,11 @@ class MeetingsController < ApplicationController
     # still being processed when the page loaded turns into a download once it is ready.
     # In BBB the record id of a meeting is its internal meeting id, and 'state' has to be
     # asked for explicitly: the API only answers with the published ones by default,
-    # which would leave a recording still being processed out
-    @recording = get_recordings(@room, recordID: @meeting[:internalMeetingID], state: 'any').first.first
+    # which would leave a recording still being processed out. Asking for a single
+    # recording is cheap enough to be worth taking out of the cache, and the panel is
+    # opened precisely to see where the recording stands right now
+    @recording = get_recordings(@room, recordID: @meeting[:internalMeetingID], state: 'any',
+                                       fresh: true).first.first
     @ai_artifact_cache_status = read_artifact_cache_status
 
     render partial: "shared/meeting_documents"

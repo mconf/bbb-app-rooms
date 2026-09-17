@@ -158,9 +158,14 @@ module BbbApi
     [meetings, no_more_meetings]
   end
 
-  # Fetches all recordings for a room.
+  # Fetches all recordings for a room. Pass `fresh: true` to skip the cache in front of
+  # the API, see `no_cache_headers`.
   def get_recordings(room, options = {})
-    res = bbb(room).get_recordings(options.merge(room.params_for_get_recordings))
+    options = options.dup
+    api = bbb(room)
+    api.request_headers = no_cache_headers if options.delete(:fresh)
+
+    res = api.get_recordings(options.merge(room.params_for_get_recordings))
 
     # Use this for tests only
     # res = TestsHelper.gen_fake_res(options)
@@ -237,6 +242,14 @@ module BbbApi
   end
 
   private
+
+  # There is a cache in front of the API answering getRecordings with what it got up to a
+  # minute ago, and it is spread over more than one instance, each with its own copy: for
+  # that minute the same recording is described as deleted or as published depending on
+  # which instance takes the request. These headers ask for the answer of the moment
+  def no_cache_headers
+    { 'Cache-Control' => 'no-cache', 'Pragma' => 'no-cache' }
+  end
 
   # Sets a BigBlueButtonApi object for interacting with the API.
   def bbb(room, internal = true)
