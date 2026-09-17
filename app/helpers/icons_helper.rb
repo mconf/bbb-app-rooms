@@ -37,23 +37,23 @@ module IconsHelper
     material_icon_constructor "more_vert", "icon material-icons icon icon-options-dots", options
   end
 
-  def icon_ai_summary(options={})
+  def icon_ai_summary(_options={})
     image_tag 'icon-ai-summary.svg'
   end
 
   def icon_ai_artifacts_elos(options={})
     image_tag 'icon_ai_artifacts_elos.svg', options
   end
-  
+
   def icon_ai_artifacts_rnp(options={})
     image_tag 'icon_ai_artifacts_rnp.svg', options
   end
 
-  def icon_dropdown_arrow(options={})
+  def icon_dropdown_arrow(_options={})
     image_tag("icon-dropdown.svg", class: "icon-dropdown")
   end
 
-  def icon_content_copy(options={})
+  def icon_content_copy(_options={})
     image_tag 'content_copy.svg'
   end
 
@@ -69,7 +69,7 @@ module IconsHelper
     material_icon_constructor "chart_data", "icon material-symbols-rounded icon-chart-data", options
   end
 
-  def icon_delete(options={})
+  def icon_delete(_options={})
     image_tag 'delete.svg'
   end
 
@@ -105,11 +105,11 @@ module IconsHelper
     material_icon_constructor "video_library", "icon material-symbols-rounded icon-video-library", options
   end
 
-  def icon_filesender(options={})
+  def icon_filesender(_options={})
     image_tag 'icon_filesender.svg'
   end
 
-  def icon_eduplay(options={})
+  def icon_eduplay(_options={})
     image_tag 'icon_eduplay.svg'
   end
 

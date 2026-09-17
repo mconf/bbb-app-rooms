@@ -19,7 +19,7 @@
 
     <%= image_tag 'guest-wait.svg' %>
 
-    <p><%= t('default.scheduled_meeting.wait.name_preview', name: @full_name).html_safe %></p>
+    <p><%= t('default.scheduled_meeting.wait.name_preview', name: @full_name) %></p>
     <h2><strong><%= @full_name%></strong></h2>
 
     <% if @user.nil? %>

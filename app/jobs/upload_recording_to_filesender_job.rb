@@ -22,7 +22,7 @@ class UploadRecordingToFilesenderJob < ApplicationJob
     client_host = Rails.application.config.filesender_service_url + '/rest.php'
     client_secret = Rails.application.config.filesender_client_secret
     mode = 'oauth' # always oauth (for now)
-    appid = Rails.application.config.filesender_client_id # mconf id
+    Rails.application.config.filesender_client_id # mconf id
 
     # If the recordings server uses token authentication, we must get an authenticated
     rec_url = URI.parse(@playback[:url])

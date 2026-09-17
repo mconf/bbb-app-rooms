@@ -511,7 +511,6 @@ class ScheduledMeetingsController < ApplicationController
         format.json { head :no_content }
       end
     end
-    moodle_calendar_events_ids = {}
     moodle_calendar_events_ids = MoodleCalendarEvent.where(scheduled_meeting_hash_id: @scheduled_meeting.hash_id).pluck(:event_id)
     if @room.can_delete_moodle_calendar_event && moodle_calendar_events_ids.any?
       moodle_token = @room.consumer_config.moodle_token

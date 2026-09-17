@@ -4,6 +4,6 @@ FactoryBot.define do
     cs.internal_endpoint  { Faker::Movie.quote }
     cs.secret             { Faker::Movie.quote }
 
-    cs.association :consumer_config_id, factory: :consumer_config
+    cs.association :consumer_config
   end
 end

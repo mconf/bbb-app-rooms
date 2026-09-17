@@ -27,7 +27,6 @@ module Mconf
       response
     end
 
-    private
 
     def self.connection
       Faraday.new(url: Rails.application.config.llm_api_url) do |f|

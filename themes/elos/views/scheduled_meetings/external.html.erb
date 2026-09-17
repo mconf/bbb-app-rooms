@@ -12,7 +12,7 @@
       <%= format_date(@scheduled_meeting.start_at) %> -
       <% if @is_running %>
         <span id="status-meeting">
-          <%= t('default.scheduled_meeting.external.running', duration: @started_ago).html_safe %>
+          <%= t('default.scheduled_meeting.external.running', duration: @started_ago) %>
         </span>
       <% elsif @ended %>
         <span id="status-meeting">
@@ -32,7 +32,7 @@
         </p>
       <% else %>
         <p id="participants_count">
-          <%= t('default.scheduled_meeting.distance_in_words.x_participants.other', count: @participants_count).html_safe %>
+          <%= t('default.scheduled_meeting.distance_in_words.x_participants.other', count: @participants_count) %>
         </p>
       <% end %>
 
