@@ -13,7 +13,8 @@
 <%# Only to size the menu while the contents load, so the placeholder comes up as big as
     the dropdown will be. What is actually listed is decided by the contents themselves %>
 <% expects_text_documents = can_edit?(user, room) %>
-<% expects_recording_documents = recording.present? && recording[:state] != 'deleted' && !hide_recordings_history?(room) %>
+<% expects_recording_documents = recording.present? && recording[:state] != 'deleted' && !hide_recordings_history?(room) &&
+     (can_edit?(user, room) || recording_offers_download?(recording)) %>
 <% expected_columns = [expects_text_documents, expects_recording_documents].count(true) %>
 
 <div class="dropdown dropdown-documents">

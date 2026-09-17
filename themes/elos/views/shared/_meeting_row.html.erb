@@ -107,8 +107,11 @@
       <%# Documents of the session and of the recording, in a single dropdown. A
           recording still being processed is shown by the hourglass of the 'Gravação'
           document, inside the dropdown %>
-      <% has_non_presentation = recording[:playbacks].any? { |p| p[:type] != 'presentation' } %>
-      <% if can_edit?(user, room) || (can_download_recording?(user, room) && has_non_presentation) %>
+      <%# Whoever may edit the meeting always has the text documents to open; for everyone
+          else the panel is worth opening only when the recording offers a download, or
+          has one on its way %>
+      <% recording_offers_download = recording_offers_download?(recording) %>
+      <% if can_edit?(user, room) || (can_download_recording?(user, room) && recording_offers_download) %>
         <%= render "shared/documents_dropdown", user: user, room: room, meeting: meeting, recording: recording %>
       <% end %>
 

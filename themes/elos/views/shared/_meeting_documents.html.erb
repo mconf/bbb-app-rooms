@@ -15,18 +15,25 @@
 <% ai_documents_enabled = ai_documents_enabled?(@user, @room, internal_meeting_date(internal_meeting_id)) %>
 
 <% recording_deleted = @recording.present? && @recording[:state] == 'deleted' %>
-<% recording_ready = @recording.present? && @recording[:playbacks].present? %>
 <% has_recording = @recording.present? && !recording_deleted && !hide_recordings_history?(@room) %>
-<% recording_processing = has_recording && !recording_ready %>
+<%# BBB answers with no playbacks both while it is still working on the recording and
+    when the recording is hidden, so only the state tells the two apart %>
+<% recording_processing = has_recording && @recording[:state] == 'processing' %>
 <% has_insufficient_audio = @recording.present? && @recording[:metadata].present? && @recording[:metadata][:'insufficient-audio'] == 'true' %>
 
 <%# Only a published recording can be downloaded %>
-<% playback_download = recording_ready && @recording[:published] ? download_format(@recording) : nil %>
+<% playback_download = has_recording && @recording[:published] ? download_format(@recording) : nil %>
 <% recording_download_url = playback_download.present? && can_download_recording?(@user, @room) ? playback_url(@room, @recording[:recordID], playback_download) : nil %>
 
-<%# Deleting the recording is offered on its own row, to whoever may edit the meeting %>
-<% can_delete_recording = recording_ready && can_edit?(@user, @room) %>
+<%# Deleting the recording is offered on its own row, to whoever may edit the meeting,
+    once BBB is done with it %>
+<% can_delete_recording = has_recording && !recording_processing && can_edit?(@user, @room) %>
 <% recording_delete_url = can_delete_recording ? recording_delete_path(@room, record_id: @recording[:recordID]) : nil %>
+
+<%# The column earns its place only when it holds something for this user: whoever may
+    edit the meeting always has the recording itself to act on, everyone else only when
+    there is a download, or one on its way %>
+<% has_recording_column = has_recording && (can_download_documents || recording_download_url.present? || recording_processing) %>
 
 <%# Status of the last request for the documents of the recording %>
 <% cached_statuses = ai_document_types.map { |type| @ai_artifact_cache_status&.dig(type) }.compact %>
@@ -66,7 +73,7 @@
     </div>
   <% end %>
 
-  <% if has_recording %>
+  <% if has_recording_column %>
     <div class="documents-column" id="recording-documents">
       <div class="column-header">
         <%= icon_recording_documents %>

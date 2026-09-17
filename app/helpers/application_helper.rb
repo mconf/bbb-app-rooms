@@ -112,6 +112,16 @@ module ApplicationHelper
     recording[:playbacks].find { |p| p[:type] == 'video' || p[:type] == 'presentation_video' }
   end
 
+  # Whether the recording has a file to offer, or will have one shortly. A hidden
+  # recording has none, and BBB answers with no playbacks for it just as it does while
+  # the recording is still being worked on, so the state is what tells them apart
+  def recording_offers_download?(recording)
+    return false if recording.blank? || recording[:state] == 'deleted'
+    return true if recording[:state] == 'processing'
+
+    recording[:published].present? && download_format(recording).present?
+  end
+
   def show_terms_use_message?(resource)
     config = ConsumerConfig.find_by(key: resource[:consumer_key])
     config.present? && config[:message_reference_terms_use]
