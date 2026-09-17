@@ -149,6 +149,7 @@ class RoomsController < ApplicationController
   # POST /rooms/:id/recording/:record_id/delete
   def recording_delete
     delete_recording(@room, params[:record_id])
+    helpers.remember_recording_deleted(params[:record_id])
     redirect_to(meetings_room_path(@room, filter: params[:filter]))
   end
 

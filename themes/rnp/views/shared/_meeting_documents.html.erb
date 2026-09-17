@@ -14,7 +14,7 @@
 <% can_download_documents = can_edit?(@user, @room) %>
 <% ai_documents_enabled = ai_documents_enabled?(@user, @room, internal_meeting_date(internal_meeting_id)) %>
 
-<% recording_deleted = @recording.present? && @recording[:state] == 'deleted' %>
+<% recording_deleted = recording_deleted?(@recording) %>
 <% has_recording = @recording.present? && !recording_deleted && !hide_recordings_history?(@room) %>
 <%# BBB answers with no playbacks both while it is still working on the recording and
     when the recording is hidden, so only the state tells the two apart %>
