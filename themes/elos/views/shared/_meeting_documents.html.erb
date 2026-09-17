@@ -10,7 +10,9 @@
 <% internal_meeting_id = @meeting[:internalMeetingID] %>
 
 <%# What the user is allowed to see is decided here and never taken from the request,
-    otherwise whoever calls the endpoint could turn a feature on for themselves %>
+    otherwise whoever calls the endpoint could turn a feature on for themselves. When the
+    meeting ended is the one thing the request is trusted for, and it decides nothing
+    beyond whether a spinner is shown %>
 <% can_download_documents = can_edit?(@user, @room) %>
 <% ai_documents_enabled = ai_documents_enabled?(@user, @room, internal_meeting_date(internal_meeting_id)) %>
 
@@ -93,8 +95,9 @@
           status: recording_processing ? :processing : nil, status_tooltip: t('meetings.recording.processing'),
           delete_path: recording_delete_url %>
 
-        <%# The documents of the recording are the ones generated on demand %>
-        <% if ai_documents_enabled && !(all_recording_documents_available || has_insufficient_audio) %>
+        <%# The documents of the recording are the ones generated on demand, and there is
+            nothing to generate them from until BBB is done with it %>
+        <% if ai_documents_enabled && !recording_processing && !(all_recording_documents_available || has_insufficient_audio) %>
           <% requestable_types = ai_document_types.reject { |type| @recording_documents[type].present? } %>
           <%# While they are being generated the button stays, disabled, saying so %>
           <button class="request-ai-artifacts-btn"

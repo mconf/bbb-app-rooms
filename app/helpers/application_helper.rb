@@ -68,8 +68,9 @@ module ApplicationHelper
   def ai_documents_enabled?(user, room, date)
     return false unless Abilities.full_permission?(user) && ai_artifacts_enabled?(room)
 
+    # the config falls back to an empty string, not to nil, when the env is not set
     release_date = Rails.configuration.ai_artifacts_release_date
-    return true if release_date.nil?
+    return true if release_date.blank?
     # A meeting whose date we don't know stays out
     return false if date.nil?
 

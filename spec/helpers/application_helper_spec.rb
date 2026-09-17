@@ -117,6 +117,14 @@ RSpec.describe ApplicationHelper, type: :helper do
       expect(helper.ai_documents_enabled?(user, room, nil)).to be true
     end
 
+    # the config falls back to an empty string, not to nil, when the env is not set
+    it 'offers them for any date when the release date is empty' do
+      allow(Rails.configuration).to receive(:ai_artifacts_release_date).and_return('')
+
+      expect(helper.ai_documents_enabled?(user, room, Date.new(2020, 1, 1))).to be true
+      expect(helper.ai_documents_enabled?(user, room, nil)).to be true
+    end
+
     it 'keeps them off a user without full permission' do
       allow(Abilities).to receive(:full_permission?).with(user).and_return(false)
 

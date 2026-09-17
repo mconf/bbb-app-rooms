@@ -143,8 +143,8 @@
               <%= icon_options_dots %>
             </a>
             <div class="dropdown-menu dropdown-menu-right dropdown-items" aria-labelledby="dropdown-opts-<%= meeting[:internalMeetingID] %>">
-              <%# Eduplay and Filesender are the only items under the divider, so without
-                  either of them it would hang at the bottom of the menu %>
+              <%# Eduplay and Filesender are the only items under the divider, and copying the
+                  link the only one above it, so it needs both sides to be worth drawing %>
               <% has_sharing_options = can_edit?(user, room) && recording[:state] != 'deleted' &&
                    user.moderator?(Abilities.moderator_roles) &&
                    (Rails.application.config.eduplay_enabled || Rails.application.config.filesender_enabled) %>
@@ -167,9 +167,9 @@
                     <%= icon_content_copy %>
                     <%= t('meetings.recording.playback_link') %>
                   <% end %>
-                <% end %>
-                <% if has_sharing_options %>
-                  <div class="dropdown-divider"></div>
+                  <% if has_sharing_options %>
+                    <div class="dropdown-divider"></div>
+                  <% end %>
                 <% end %>
               <% end %>
 
