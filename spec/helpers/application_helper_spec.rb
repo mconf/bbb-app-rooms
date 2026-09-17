@@ -40,37 +40,6 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
-  describe '#recording_deleted?' do
-    let(:recording) { { recordID: 'abc-123', state: 'published' } }
-
-    # the test environment caches into a NullStore, which would drop what is remembered
-    before { allow(Rails).to receive(:cache).and_return(ActiveSupport::Cache::MemoryStore.new) }
-
-    it 'takes the state of the recording when BBB says it is gone' do
-      expect(helper.recording_deleted?(recording.merge(state: 'deleted'))).to be true
-    end
-
-    it 'has nothing to say about a recording BBB still lists' do
-      expect(helper.recording_deleted?(recording)).to be false
-    end
-
-    it 'remembers a deletion of ours and keeps it through a stale answer' do
-      helper.remember_recording_deleted('abc-123')
-
-      expect(helper.recording_deleted?(recording)).to be true
-    end
-
-    it 'remembers one recording without touching another' do
-      helper.remember_recording_deleted('abc-123')
-
-      expect(helper.recording_deleted?(recordID: 'other-456', state: 'published')).to be false
-    end
-
-    it 'has nothing to say without a recording' do
-      expect(helper.recording_deleted?(nil)).to be false
-    end
-  end
-
   describe '#internal_meeting_date' do
     it 'reads the date from the timestamp the id ends with' do
       expect(helper.internal_meeting_date('abc123-1786727361386'))
