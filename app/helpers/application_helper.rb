@@ -108,19 +108,18 @@ module ApplicationHelper
     timestamp_to_time(timestamp)&.to_date
   end
 
-  # The playback of a recording that can be downloaded as a file
+  # The playback of a recording that can be downloaded as a file, when the API gave any
   def download_format(recording)
-    recording[:playbacks].find { |p| p[:type] == 'video' || p[:type] == 'presentation_video' }
+    recording[:playbacks].to_a.find { |p| p[:type] == 'video' || p[:type] == 'presentation_video' }
   end
 
   # Whether the recording has a file to offer, or will have one shortly. A hidden
   # recording has none, and BBB answers with no playbacks for it just as it does while
   # the recording is still being worked on, so the state is what tells them apart
   def recording_offers_download?(recording)
-    return false if recording.blank? || recording[:state] == 'deleted'
-    return true if recording[:state] == 'processing'
+    return false if recording.blank? || %w[deleted unpublished].include?(recording[:state])
 
-    recording[:published].present? && download_format(recording).present?
+    download_format(recording).blank? || recording[:published].present?
   end
 
   def show_terms_use_message?(resource)

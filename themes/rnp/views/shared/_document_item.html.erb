@@ -44,7 +44,11 @@
         <%= icon_download %>
       <% end %>
     <% else %>
-      <div class="document-action"><%= label %></div>
+      <%# Only the recording is deletable, and the hourglass is its one status %>
+      <div class="document-action">
+        <%= label %>
+        <%= icon_recording_load(title: status_tooltip, class: 'document-status') if status == :processing %>
+      </div>
     <% end %>
     <%= link_to delete_path, class: 'document-delete', method: :post,
       data: { confirm: t('meetings.recording.confirm.destroy'), 'tracking-id': 'lti-delete-recording',
