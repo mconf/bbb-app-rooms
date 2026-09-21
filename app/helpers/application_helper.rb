@@ -108,6 +108,28 @@ module ApplicationHelper
     timestamp_to_time(timestamp)&.to_date
   end
 
+  # For a while after a recording is deleted the cache in front of the API keeps
+  # answering with it, alternating between saying it is gone and saying it is still
+  # published depending on which of its instances takes the request, so a deletion of
+  # ours is remembered and wins over an answer that still lists the recording. Deleting
+  # is one-way, so a recording never legitimately comes back
+  RECORDING_DELETED_TTL = 5.minutes
+
+  def remember_recording_deleted(record_id)
+    Rails.cache.write(recording_deleted_key(record_id), true, expires_in: RECORDING_DELETED_TTL)
+  end
+
+  def recording_deleted?(recording)
+    return false if recording.blank?
+
+    recording[:state] == 'deleted' ||
+      Rails.cache.read(recording_deleted_key(recording[:recordID])).present?
+  end
+
+  def recording_deleted_key(record_id)
+    "recording_deleted_#{record_id}"
+  end
+
   # The playback of a recording that can be downloaded as a file, when the API gave any
   def download_format(recording)
     recording[:playbacks].to_a.find { |p| p[:type] == 'video' || p[:type] == 'presentation_video' }

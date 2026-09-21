@@ -16,7 +16,7 @@
 <% can_download_documents = can_edit?(@user, @room) %>
 <% ai_documents_enabled = ai_documents_enabled?(@user, @room, internal_meeting_date(internal_meeting_id)) %>
 
-<% recording_deleted = @recording.present? && @recording[:state] == 'deleted' %>
+<% recording_deleted = recording_deleted?(@recording) %>
 <% has_recording = @recording.present? && !recording_deleted && !hide_recordings_history?(@room) %>
 <%# A hidden recording comes back without playbacks just like one still being made, so
     it is the state that tells the two apart %>
