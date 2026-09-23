@@ -105,4 +105,66 @@ RSpec.describe Mconf::DataApi do
       expect(documents['meeting']).to eq('engagement_report' => 'https://files/engagement')
     end
   end
+
+  describe '.get_meeting_naming_suggestions' do
+    let(:link) { 'https://storage.example.com/meeting_naming.json?signature=abc' }
+    let(:naming) { { 'name' => 'Título sugerido', 'description' => 'Descrição sugerida' } }
+
+    before do
+      allow(Rails.application.config).to receive(:data_api_url).and_return('https://data-api.example.com')
+    end
+
+    def stub_link(value)
+      allow(described_class).to receive(:naming_suggestions_link).and_return(value)
+    end
+
+    it 'returns the suggestions of the file the API points to' do
+      stub_link(link)
+      allow(described_class).to receive(:download_json).with(link).and_return(naming)
+
+      expect(described_class.get_meeting_naming_suggestions(guid, internal_meeting_id)).to eq(naming)
+    end
+
+    it 'returns nil when the guid is missing' do
+      expect(described_class.get_meeting_naming_suggestions('', internal_meeting_id)).to be_nil
+    end
+
+    it 'returns nil when the meeting is missing' do
+      expect(described_class.get_meeting_naming_suggestions(guid, '')).to be_nil
+    end
+
+    it 'asks the API for nothing when it has no meeting to ask about' do
+      expect(described_class).not_to receive(:naming_suggestions_link)
+
+      described_class.get_meeting_naming_suggestions('', '')
+    end
+
+    it 'downloads nothing when the meeting has no suggestion' do
+      stub_link(nil)
+      expect(described_class).not_to receive(:download_json)
+
+      expect(described_class.get_meeting_naming_suggestions(guid, internal_meeting_id)).to be_nil
+    end
+
+    it 'downloads nothing when the API answers with a blank link' do
+      stub_link('')
+      expect(described_class).not_to receive(:download_json)
+
+      expect(described_class.get_meeting_naming_suggestions(guid, internal_meeting_id)).to be_nil
+    end
+
+    it 'returns nil when the file could not be read' do
+      stub_link(link)
+      allow(described_class).to receive(:download_json).and_return(nil)
+
+      expect(described_class.get_meeting_naming_suggestions(guid, internal_meeting_id)).to be_nil
+    end
+
+    it 'raises when the API url is missing from the config' do
+      allow(Rails.application.config).to receive(:data_api_url).and_return('')
+
+      expect { described_class.get_meeting_naming_suggestions(guid, internal_meeting_id) }
+        .to raise_error(Mconf::DataApi::ApiUrlMissingError)
+    end
+  end
 end

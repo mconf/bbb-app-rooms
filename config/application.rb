@@ -147,6 +147,7 @@ module BbbAppRooms
     # Mconf Data API
     config.data_api_url = Mconf::Env.fetch('MCONF_DATA_API_URL', '')
     config.data_reports_enabled = Mconf::Env.fetch_boolean('MCONF_DATA_REPORTS_ENABLED', true)
+    config.data_api_timeout = Mconf::Env.fetch_int('MCONF_DATA_API_TIMEOUT', 5)
 
     # Mconf LLM API
     config.llm_api_url = Mconf::Env.fetch('MCONF_LLM_API_URL', '')

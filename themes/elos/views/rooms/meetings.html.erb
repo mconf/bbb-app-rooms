@@ -11,3 +11,7 @@ link_to t('meetings.index.return'),
 <% end %>
 
 <%= render "shared/meetings", user: @user, room: @room, meetings: @meetings, only_public: false %>
+
+<%# The AI naming suggestion modal is loaded in here by XHR when its icon is clicked, so
+    there is a single modal on the page instead of one per row %>
+<div id="ai-suggestion-modal-container"></div>

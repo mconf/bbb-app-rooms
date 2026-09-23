@@ -236,6 +236,10 @@ module BbbApi
     bbb(room).send_api_request('updateRecordings', meta)
   end
 
+  def update_meeting(room, internal_meeting_id, meta)
+    bbb(room).send_api_request('updateMeeting', meta.merge(meetingID: internal_meeting_id))
+  end
+
   private
 
   # Sets a BigBlueButtonApi object for interacting with the API.
