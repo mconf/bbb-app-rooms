@@ -80,6 +80,14 @@ module ApplicationHelper
     metadata_text(meeting_metadata(meeting, :'ai-naming-suggested-title')).present?
   end
 
+  # Returns the applied AI description, or falls back to the scheduled one
+  def meeting_description(meeting, recording = nil)
+    applied = metadata_text(meeting_metadata(meeting, :description))
+    return applied if applied.present?
+
+    metadata_text(recording&.dig(:metadata, :'bbb-recording-description'))
+  end
+
   def meeting_metadata(meeting, key)
     meeting[:metadata].present? ? meeting[:metadata][key] : nil
   end

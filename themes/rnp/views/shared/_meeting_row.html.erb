@@ -19,9 +19,11 @@
     </div>
     <% if recording.present? %>
       <div class="item-description" data-search-field="1">
-        <% meeting_description = recording[:metadata][:'bbb-recording-description'] ? recording[:metadata][:'bbb-recording-description'] : nil %>
-        <div id='recording-description-text' class="word-break" title="<%= meeting_description %>">
-          <span class="<%= deleted_class %>"><%= meeting_description&.truncate(100) %></span>
+        <%# The description applied from the AI suggestion, or the one the session was
+            scheduled with while there is none %>
+        <% description_text = meeting_description(meeting, recording) %>
+        <div id='recording-description-text' class="word-break" title="<%= description_text %>">
+          <span class="<%= deleted_class %>"><%= description_text&.truncate(100) %></span>
         </div>
       </div>
     <% end %>
