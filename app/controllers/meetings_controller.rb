@@ -137,6 +137,9 @@ class MeetingsController < ApplicationController
       return
     end
 
+    # Every request generates the summary too, whatever the panel asked for
+    mark_ai_artifacts_requested
+
     cache_ttl = Rails.application.config.llm_artifact_cache_ttl.seconds
 
     task_id = response.body['task_id']
@@ -163,6 +166,14 @@ class MeetingsController < ApplicationController
   end
 
   protected
+
+  # The flag lets the listing skip the meetings that cannot possibly have a suggestion
+  def mark_ai_artifacts_requested
+    update_meeting(@room, @meeting[:internalMeetingID], { 'meta_ai-artifacts-requested': true })
+  rescue StandardError => e
+    Rails.logger.error "[MeetingsController##{__method__}] Failed to mark the AI artifacts as" \
+      " requested for internal_meeting_id='#{@meeting[:internalMeetingID]}': #{e.message}"
+  end
 
   # Keeps the suggestion on the metadata of the meeting, so the listing has it on the next
   # load without asking the Data API again
