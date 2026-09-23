@@ -9,6 +9,12 @@
   <td class="col-10 col-md-3 td-titles" data-search-field="1">
     <% meeting_name = meeting[:meetingName] ? meeting[:meetingName] : recording[:metadata][:name] %>
     <div class="item-title word-break" title="<%= meeting_name %>">
+      <%# The mark tells the title was written by the AI and applied from the suggestion %>
+      <% if ai_naming_applied?(meeting) %>
+        <span class="ai-naming-mark">
+          <%= icon_ai_suggestion_filled(class: 'icon-ai-naming', title: t('meetings.ai_naming_suggestion.applied')) %>
+        </span>
+      <% end %>
       <span class="<%= deleted_class %>"><%= meeting_name.truncate(50) %></span>
     </div>
     <% if recording.present? %>
