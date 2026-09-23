@@ -134,10 +134,119 @@ body.theme-rnp {
     }
   }
 
+  .ai-suggestion-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    height: 24px;
+    width: 24px;
+
+    img {
+      height: 24px;
+      width: 24px;
+    }
+  }
+
+  .ai-naming-mark {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    height: 1.4em;
+    margin-right: 4px;
+
+    img {
+      height: 20px;
+      width: 20px;
+    }
+  }
+
+  .item-title {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  #ai-suggestion {
+    padding: 48px 42px;
+    border-radius: 8px;
+    background-color: #EAFAFB;
+
+    .modal-header {
+      padding: 0 0 24px;
+      margin-bottom: 0;
+      border-bottom: none;
+
+      .modal-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 20px;
+        font-weight: bold;
+        color: var(--color-sec);
+
+        .icon {
+          height: 24px;
+          width: 24px;
+        }
+      }
+    }
+
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding: 0;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .suggestion-field {
+      margin: 0;
+
+      strong {
+        margin-right: 4px;
+      }
+    }
+
+    .modal-footer {
+      justify-content: flex-start;
+      gap: 16px;
+      padding: 0;
+      margin: 0;
+      border-top: none;
+
+      > * {
+        margin: 0;
+      }
+
+      .decline-link {
+        padding: 0;
+        background: none;
+        border: none;
+        box-shadow: none;
+        text-decoration: underline;
+        color: var(--color-gray-06);
+      }
+    }
+
+    @media (max-width: 991px) {
+      .modal-footer {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+      }
+    }
+  }
+
   .icon-container {
     gap: 8px;
     flex-direction: row;
     justify-content: center;
+    padding-left: 24px;
   }
 
   .meeting-info {
