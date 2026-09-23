@@ -103,6 +103,20 @@ class MeetingsController < ApplicationController
     redirect_to(naming_suggestion_redirect_url)
   end
 
+  # GET /rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/meetings/:internal_id/ai_naming_suggestion_status
+  def ai_naming_suggestion_status
+    # An empty answer says nothing: it is also what a meeting still generating its
+    # artifacts gets. Clearing the flag is the callback's job
+    suggestion = fetch_and_cache_naming_suggestion
+
+    # The suggestion goes back with the answer, sparing the modal a second trip
+    render json: {
+      suggestion_available: suggestion.present?,
+      title: suggestion && suggestion['title'],
+      description: suggestion && suggestion['description']
+    }
+  end
+
   ALLOWED_ARTIFACT_TYPES = %w[ai_summary transcription].freeze
 
   # POST /rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/meetings/:internal_id/request_ai_artifacts

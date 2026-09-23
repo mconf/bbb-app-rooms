@@ -147,6 +147,7 @@ async function fetchMeetings() {
       }
       showMeetings(rows);
       appendScripts(scripts)
+      checkAiNamingSuggestions();
     }
   } catch(err) {
     if (requestGeneration !== currentFetchGeneration) return;
@@ -305,6 +306,50 @@ $DOCUMENT.on('click', '.open-ai-suggestion-modal', function(event) {
     aiSuggestionRequest = null;
   });
 });
+
+// Each check costs the server two calls to the Data API, so the rows are asked for
+// in small batches instead of all at once
+const AI_NAMING_CHECKS_IN_PARALLEL = 2;
+
+function checkAiNamingSuggestion(icon) {
+  return $.ajax({
+    url: icon.attr('data-ai-naming-check-endpoint'),
+    dataType: 'json',
+    timeout: ajaxTimeout
+  }).done((response) => {
+    if (!response.suggestion_available) return;
+
+    // Carried on the link so the modal doesn't have to ask the Data API again
+    const link = icon.find('a');
+    const url = new URL(link.attr('href'), window.location.origin);
+    url.searchParams.set('suggested_title', response.title);
+    if (response.description) {
+      url.searchParams.set('suggested_description', response.description);
+    }
+    link.attr('href', url.pathname + url.search);
+
+    icon.removeClass('d-none');
+  }).fail(() => {
+    console.debug('Failed to check the AI naming suggestion status.');
+  });
+}
+
+// Reveals icons for rows whose callback never arrived by asking the Data API for each
+function checkAiNamingSuggestions() {
+  const pending = $('.ai-suggestion-icon[data-ai-naming-check-endpoint]:not(.checked)')
+    .addClass('checked')
+    .toArray();
+
+  const checkNext = () => {
+    const next = pending.shift();
+    if (!next) return;
+
+    // `always` and not `done`: one row that fails must not stop the ones behind it
+    checkAiNamingSuggestion($(next)).always(checkNext);
+  };
+
+  for (let i = 0; i < AI_NAMING_CHECKS_IN_PARALLEL; i++) checkNext();
+}
 
 /* Request the documents of a meeting to the server.
 */
