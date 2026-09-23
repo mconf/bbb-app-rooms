@@ -61,6 +61,34 @@ module ApplicationHelper
     @ai_artifacts_enabled_by_consumer_key[consumer_key] = config.present? && config.allow_ai_artifacts?
   end
 
+  # Icon shows if: user can edit, AI enabled, suggestion not applied/declined, and
+  # artifacts were requested at some point
+  def ai_naming_suggestion_offered?(user, room, meeting)
+    return false unless ai_documents_enabled?(user, room, internal_meeting_date(meeting[:internalMeetingID]))
+    return false if ai_naming_applied?(meeting) || meeting_metadata(meeting, :'ai-naming-declined') == 'true'
+
+    ai_naming_suggestion_cached?(meeting) ||
+      meeting_metadata(meeting, :'ai-artifacts-requested') == 'true'
+  end
+
+  def ai_naming_applied?(meeting)
+    meeting_metadata(meeting, :'ai-naming-applied') == 'true'
+  end
+
+  # Whether a suggestion is cached in the meeting metadata
+  def ai_naming_suggestion_cached?(meeting)
+    metadata_text(meeting_metadata(meeting, :'ai-naming-suggested-title')).present?
+  end
+
+  def meeting_metadata(meeting, key)
+    meeting[:metadata].present? ? meeting[:metadata][key] : nil
+  end
+
+  # The API answers an empty metadata with an empty hash, not with an empty string
+  def metadata_text(value)
+    value.is_a?(String) ? value.presence : nil
+  end
+
   # Whether the AI documents of a meeting can be offered, from the permission of the
   # user, the configuration of the consumer and the date the feature was released
   #

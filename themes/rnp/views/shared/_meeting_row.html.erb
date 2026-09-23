@@ -103,6 +103,25 @@
     <td class="col-5 col-md-1 justify-content-md-center icon-container ms-auto">
       <% browser_safari = browser.safari? || browser.safari_webapp_mode? %>
 
+      <%# Offers the title and the description the AI suggested for this session. The row
+          starts hidden, with the endpoint that reveals it, when the suggestion is not on
+          the metadata of the meeting yet -- see checkAiNamingSuggestions in meetings.js %>
+      <% if ai_naming_suggestion_offered?(user, room, meeting) %>
+        <% suggestion_cached = ai_naming_suggestion_cached?(meeting) %>
+        <%= tag.div class: "ai-suggestion-icon#{' d-none' unless suggestion_cached}",
+              data: (suggestion_cached ? {} : { 'ai-naming-check-endpoint': room_scheduled_meeting_internal_ai_naming_suggestion_status_path(room, meeting[:meetingID], meeting[:internalMeetingID]) }) do %>
+          <%# The suggestion is carried over so the modal doesn't have to ask for what
+              this row already has %>
+          <%= link_to room_scheduled_meeting_internal_ai_naming_suggestion_path(room, meeting[:meetingID], meeting[:internalMeetingID],
+                suggested_title: meeting_metadata(meeting, :'ai-naming-suggested-title'),
+                suggested_description: meeting_metadata(meeting, :'ai-naming-suggested-description'),
+                redir_url: meetings_room_path(room, filter: params[:filter])),
+              class: 'open-ai-suggestion-modal d-flex text-decoration-none' do %>
+            <%= icon_ai_suggestion(title: t('meetings.ai_naming_suggestion.offer'), class: 'icon-rec-row') %>
+          <% end %>
+        <% end %>
+      <% end %>
+
       <%# Documents of the session and of the recording, in a single dropdown. A
           recording still being processed is shown by the hourglass of the 'Gravação'
           document, inside the dropdown %>
