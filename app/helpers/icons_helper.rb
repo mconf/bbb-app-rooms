@@ -49,6 +49,14 @@ module IconsHelper
     image_tag 'icon_ai_artifacts_rnp.svg', options
   end
 
+  def icon_ai_suggestion(options={})
+    image_tag "icon_ai_suggestion_#{app_theme}.svg", options
+  end
+
+  def icon_ai_suggestion_filled(options={})
+    image_tag 'icon_ai_suggestion_filled.svg', options
+  end
+
   def icon_dropdown_arrow(_options={})
     image_tag("icon-dropdown.svg", class: "icon-dropdown")
   end
