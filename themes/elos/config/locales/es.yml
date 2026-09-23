@@ -64,6 +64,11 @@ es:
       attendance_name: "Asistencia"
       grade_comment: "Asistencia registrada automáticamente vía Elos LTI"
   meetings:
+    ai_naming_suggestion:
+      applied: "Título y descripción generados por IA"
+      error: "Error: no se pudo aplicar la sugerencia. Por favor, inténtelo de nuevo más tarde."
+      invalid_decision: "Error: no se pudo aplicar la sugerencia"
+      offer: "Generar título y descripción con IA"
     all_loaded: "Se han cargado todas las conferencias"
     duration:
       less_than_a_minute: "< 1min"

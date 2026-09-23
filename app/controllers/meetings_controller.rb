@@ -73,6 +73,36 @@ class MeetingsController < ApplicationController
     }
   end
 
+  # POST /rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/meetings/:internal_id/ai_naming_suggestion
+  def resolve_ai_naming_suggestion
+    internal_meeting_id = @meeting[:internalMeetingID]
+
+    case params[:decision]
+    when 'apply'
+      # A blank title means the suggestion never loaded: applying it would erase the
+      # name the meeting has
+      if params[:title].blank?
+        flash[:error] = t('meetings.ai_naming_suggestion.error')
+      else
+        meta = { 'meta_ai-naming-applied': true, name: params[:title] }
+        meta[:'meta_description'] = params[:description] if params[:description].present?
+
+        update_meeting(@room, internal_meeting_id, meta)
+      end
+    when 'decline'
+      update_meeting(@room, internal_meeting_id, { 'meta_ai-naming-declined': true })
+    else
+      flash[:error] = t('meetings.ai_naming_suggestion.invalid_decision')
+    end
+
+    redirect_to(naming_suggestion_redirect_url)
+  rescue StandardError => e
+    Rails.logger.error "[MeetingsController##{__method__}] Failed to resolve the suggestion of" \
+      " internal_meeting_id='#{internal_meeting_id}': #{e.message}"
+    flash[:error] = t('meetings.ai_naming_suggestion.error')
+    redirect_to(naming_suggestion_redirect_url)
+  end
+
   ALLOWED_ARTIFACT_TYPES = %w[ai_summary transcription].freeze
 
   # POST /rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/meetings/:internal_id/request_ai_artifacts

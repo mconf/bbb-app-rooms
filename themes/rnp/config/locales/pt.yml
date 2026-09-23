@@ -68,6 +68,11 @@ pt:
       attendance_name: "Atividade de Presença"
       session_description_footer: "Registrado automaticamente via %{app_theme}."
   meetings:
+    ai_naming_suggestion:
+      applied: "Título e descrição gerados por IA"
+      error: "Erro: não foi possível aplicar a sugestão. Por favor, tente novamente mais tarde."
+      invalid_decision: "Erro: não foi possível aplicar a sugestão"
+      offer: "Gerar título e descrição por IA"
     all_loaded: "Todas as conferências foram carregadas"
     duration:
       less_than_a_minute: "< 1min"
