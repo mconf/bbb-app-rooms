@@ -280,6 +280,32 @@ window.addEventListener('message', function(event) {
     data: { access_token: event.data['access_token'], refresh_token: event.data['refresh_token'], expires_at: event.data['expires_at']  }
   });
 });
+// Loads the AI naming suggestion modal from the server and opens it
+let aiSuggestionRequest = null;
+
+$DOCUMENT.on('click', '.open-ai-suggestion-modal', function(event) {
+  event.preventDefault();
+
+  // A second click would leave the backdrop of the replaced modal over the page
+  if (aiSuggestionRequest) return;
+
+  aiSuggestionRequest = $.ajax({
+    url: $(this).attr('href'),
+    timeout: ajaxTimeout
+  }).done((html) => {
+    const previous = document.getElementById('ai-suggestion-modal');
+    if (previous) bootstrap.Modal.getInstance(previous)?.dispose();
+
+    $('#ai-suggestion-modal-container').html(html);
+    const modal = document.getElementById('ai-suggestion-modal');
+    if (modal) bootstrap.Modal.getOrCreateInstance(modal).show();
+  }).fail(() => {
+    console.debug('Failed to load the AI naming suggestion modal.');
+  }).always(() => {
+    aiSuggestionRequest = null;
+  });
+});
+
 /* Request the documents of a meeting to the server.
 */
 let doAjaxDownloadDocuments = async (download_documents_endpoint) => {

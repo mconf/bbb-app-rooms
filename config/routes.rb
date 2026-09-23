@@ -114,6 +114,8 @@ Rails.application.routes.draw do
             get :learning_dashboard, to: 'meetings#learning_dashboard'
             get :download_documents, to: 'meetings#download_documents'
             post :request_ai_artifacts, to: 'meetings#request_ai_artifacts'
+            get :ai_naming_suggestion, to: 'meetings#ai_naming_suggestion'
+            post :ai_naming_suggestion, to: 'meetings#resolve_ai_naming_suggestion', as: :resolve_ai_naming_suggestion
           end
         end
       end

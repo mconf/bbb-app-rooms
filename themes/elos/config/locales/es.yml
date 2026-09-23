@@ -191,6 +191,15 @@ es:
   date:
     formats:
       day_month_year: '%d/%m/%Y'
+  shared:
+    ai_suggestion_modal:
+      apply: "Aplicar"
+      close: "Cerrar"
+      decline: "Rechazar"
+      suggested_description: "Descripción:"
+      suggested_title: "Título:"
+      title: "Título y descripción sugeridos por IA"
+      unavailable: "No se pudo cargar la sugerencia. Inténtelo de nuevo más tarde."
   terms:
     message: "Al hacer clic en <em>%{enter_room}</em>, acepta nuestros <a href='%{link}' target='_blank'>términos y condiciones</a>."
     enter_room: "Acceder"

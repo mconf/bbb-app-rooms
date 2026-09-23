@@ -1,0 +1,61 @@
+<%#
+  Locals:
+    suggestion (Hash): the AI generated 'title' and 'description' for the meeting
+    resolve_url (String): where to POST the user's decision (decision: 'apply'/'decline')
+    redir_url (String): where to redirect back to after resolving
+
+  A plain bootstrap modal, fetched by the listing when the icon is clicked and opened
+  from the javascript that put it on the page
+%>
+<div class="modal fade" id="ai-suggestion-modal" tabindex="-1" aria-hidden="true" aria-labelledby="ai-suggestion-title">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content" id="ai-suggestion">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="ai-suggestion-title">
+          <%# The partial is shared by both themes, so the icon is picked by theme here %>
+          <%= image_tag "icon_ai_artifacts_#{app_theme}.svg", class: 'icon', 'aria-hidden': 'true' %>
+          <%= t('.title') %>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<%= t('.close') %>"></button>
+      </div>
+
+      <%# No title means the suggestion could not be recovered, so there is nothing
+          to apply %>
+      <% if suggestion['title'].blank? %>
+        <div class="modal-body">
+          <p class="suggestion-field"><%= t('.unavailable') %></p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal"><%= t('.close') %></button>
+        </div>
+      <% else %>
+        <%= form_with url: resolve_url, method: :post, local: true, html: { class: 'single-column' } do |f| %>
+          <%= hidden_field_tag :redir_url, redir_url %>
+          <%# Only shown here: editing them is left for a later version %>
+          <%= f.hidden_field :title, value: suggestion['title'] %>
+          <%= f.hidden_field :description, value: suggestion['description'] %>
+
+          <div class="modal-body">
+            <p class="suggestion-field">
+              <strong><%= t('.suggested_title') %></strong>
+              <span class="suggestion-text"><%= suggestion['title'] %></span>
+            </p>
+
+            <p class="suggestion-field">
+              <strong><%= t('.suggested_description') %></strong>
+              <span class="suggestion-text"><%= suggestion['description'] %></span>
+            </p>
+          </div>
+
+          <div class="modal-footer">
+            <%= f.button t('.apply'), name: 'decision', value: 'apply', type: 'submit', class: 'btn btn-primary' %>
+            <%= f.button t('.decline'), name: 'decision', value: 'decline', type: 'submit', class: 'btn btn-link decline-link' %>
+          </div>
+        <% end %>
+      <% end %>
+
+    </div>
+  </div>
+</div>
