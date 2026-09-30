@@ -169,7 +169,7 @@ body.theme-rnp {
   #ai-suggestion {
     padding: 48px 42px;
     border-radius: 8px;
-    background-color: #EAFAFB;
+    background-color: #F4F4F4;
 
     .modal-header {
       padding: 0 0 24px;
@@ -221,6 +221,10 @@ body.theme-rnp {
 
       > * {
         margin: 0;
+      }
+
+      .btn {
+        padding: 8px 36px;
       }
 
       .decline-link {
