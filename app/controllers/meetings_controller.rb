@@ -26,6 +26,8 @@ class MeetingsController < ApplicationController
     authorize_user!(:download_artifacts, @room)
     head :forbidden unless performed? || helpers.ai_artifacts_enabled?(@room)
   end
+  before_action :ensure_meeting_belongs_to_room, only: %i[request_ai_artifacts ai_naming_suggestion
+    resolve_ai_naming_suggestion ai_naming_suggestion_status]
 
   # GET /rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/meetings/:internal_id/download_documents
   def download_documents
@@ -208,12 +210,47 @@ class MeetingsController < ApplicationController
   end
 
   # The param comes from the request, so it is only trusted as a path of this app --
-  # an absolute url would be an open redirect
+  # an absolute url would be an open redirect. The path is rebuilt from what URI parsed
+  # instead of being handed over as it came, and the backslashes are turned into slashes
+  # first because that is what the browser does with them: '/\evil.com' is a host, not
+  # a path of ours
   def naming_suggestion_redirect_url
-    redir_url = params[:redir_url].to_s
-    return redir_url if redir_url.start_with?('/') && !redir_url.start_with?('//')
+    uri = begin
+      URI.parse(params[:redir_url].to_s.tr('\\', '/'))
+    rescue URI::InvalidURIError
+      nil
+    end
 
-    meetings_room_path(@room)
+    if uri && uri.scheme.nil? && uri.host.nil? &&
+       uri.path.start_with?('/') && !uri.path.start_with?('//')
+      [uri.path, uri.query.presence].compact.join('?')
+    else
+      meetings_room_path(@room)
+    end
+  end
+
+  # A meeting is only reachable through the room it belongs to: BBB derives the internal
+  # meeting id from the external one, so the pair can be checked without asking the API.
+  # Without this, a moderator of one room could name, decline or request the artifacts of
+  # a meeting of any other room on the same server
+  def ensure_meeting_belongs_to_room
+    return if meeting_belongs_to_room?
+
+    Rails.logger.warn "[MeetingsController##{action_name}] Refused internal_meeting_id=" \
+      "'#{@meeting[:internalMeetingID]}' of meeting_id='#{@meeting[:meetingID]}' on the" \
+      " room handler='#{@room.handler}'"
+    head :not_found
+  end
+
+  def meeting_belongs_to_room?
+    external_id = @meeting[:meetingID].to_s
+    internal_id = @meeting[:internalMeetingID].to_s
+    # Every meeting of a room is created from a scheduled meeting of it, and those carry
+    # the id of the room on their own id
+    return false unless external_id.start_with?("#{@room.meeting_id}-")
+
+    # sha1(externalMeetingID) + '-' + createTime, see ParamsProcessorUtil of BBB
+    internal_id.start_with?("#{Digest::SHA1.hexdigest(external_id)}-")
   end
 
   def get_scheduled_meeting_info

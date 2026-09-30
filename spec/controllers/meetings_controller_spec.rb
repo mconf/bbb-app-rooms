@@ -5,9 +5,13 @@ require 'rails_helper'
 describe MeetingsController, type: :controller do
   let(:room) { FactoryBot.create(:room) }
   let(:user) { User.new(uid: 'uid', full_name: 'Moderadora', roles: 'Instructor') }
-  let(:scheduled_meeting_id) { 'scheduled-meeting-id' }
+  # BBB builds the internal id out of the external one, and the controller checks the
+  # pair to keep a meeting of another room out
+  let(:scheduled_meeting_id) { "#{room.meeting_id}-1" }
   let(:started_at) { Time.zone.now }
-  let(:internal_meeting_id) { "internal-meeting-#{(started_at.to_f * 1000).to_i}" }
+  let(:internal_meeting_id) do
+    "#{Digest::SHA1.hexdigest(scheduled_meeting_id)}-#{(started_at.to_f * 1000).to_i}"
+  end
 
   def base_params(extra = {})
     { room_id: room.handler, scheduled_meeting_id: scheduled_meeting_id,
@@ -81,6 +85,74 @@ describe MeetingsController, type: :controller do
       post :resolve_ai_naming_suggestion, params: base_params(decision: 'decline', redir_url: 'https://elsewhere.example.com')
 
       expect(response).to redirect_to(meetings_room_path(room))
+    end
+
+    # The browser reads the backslash as a slash, so this is '//elsewhere.example.com'
+    it 'ignores a redirect that leaves the app through a backslash' do
+      post :resolve_ai_naming_suggestion, params: base_params(decision: 'decline', redir_url: '/\\elsewhere.example.com')
+
+      expect(response).to redirect_to(meetings_room_path(room))
+    end
+
+    it 'ignores a protocol relative redirect' do
+      post :resolve_ai_naming_suggestion, params: base_params(decision: 'decline', redir_url: '//elsewhere.example.com')
+
+      expect(response).to redirect_to(meetings_room_path(room))
+    end
+
+    it 'keeps the query string of the listing it goes back to' do
+      post :resolve_ai_naming_suggestion, params: base_params(
+        decision: 'decline', redir_url: '/rooms/handler/meetings?filter=recorded-only'
+      )
+
+      expect(response).to redirect_to('/rooms/handler/meetings?filter=recorded-only')
+    end
+  end
+
+  describe 'a meeting of another room' do
+    let(:other_room) { FactoryBot.create(:room) }
+    let(:other_scheduled_meeting_id) { "#{other_room.meeting_id}-1" }
+    let(:other_internal_meeting_id) do
+      "#{Digest::SHA1.hexdigest(other_scheduled_meeting_id)}-#{(started_at.to_f * 1000).to_i}"
+    end
+
+    it 'is not renamed through a room the user moderates' do
+      expect(controller).not_to receive(:update_meeting)
+
+      post :resolve_ai_naming_suggestion, params: base_params(
+        internal_id: other_internal_meeting_id, decision: 'apply', title: 'Título sugerido'
+      )
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    # The external id is the one the internal id is derived from, so passing both is the
+    # way around a check made on the internal id alone
+    it 'is not renamed when its own external id comes along' do
+      expect(controller).not_to receive(:update_meeting)
+
+      post :resolve_ai_naming_suggestion, params: base_params(
+        scheduled_meeting_id: other_scheduled_meeting_id, internal_id: other_internal_meeting_id,
+        decision: 'apply', title: 'Título sugerido'
+      )
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'has no suggestion fetched for it' do
+      expect(Mconf::DataApi).not_to receive(:get_meeting_naming_suggestions)
+
+      get :ai_naming_suggestion_status, params: base_params(internal_id: other_internal_meeting_id)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it 'has no artifacts requested for it' do
+      expect(Mconf::LlmApi).not_to receive(:request_ai_artifacts)
+
+      post :request_ai_artifacts, params: base_params(internal_id: other_internal_meeting_id)
+
+      expect(response).to have_http_status(:not_found)
     end
   end
 
