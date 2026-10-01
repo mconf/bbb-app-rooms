@@ -322,7 +322,7 @@ GEM
     omniauth-oauth2 (1.8.0)
       oauth2 (>= 1.4, < 3)
       omniauth (~> 2.0)
-    omniauth-rails_csrf_protection (1.0.1)
+    omniauth-rails_csrf_protection (2.0.1)
       actionpack (>= 4.2)
       omniauth (~> 2.0)
     ostruct (0.6.3)
@@ -612,7 +612,7 @@ DEPENDENCIES
   omniauth-bbbltibroker!
   omniauth-brightspace!
   omniauth-oauth2 (~> 1.8.0)
-  omniauth-rails_csrf_protection (~> 1.0.1)
+  omniauth-rails_csrf_protection (~> 2.0.1)
   ostruct
   pg
   prometheus_exporter (~> 2.3)

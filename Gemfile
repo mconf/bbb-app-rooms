@@ -105,7 +105,7 @@ gem 'bigbluebutton-api-ruby', git: 'https://github.com/mconf/bigbluebutton-api-r
 gem 'rest-client'
 gem 'omniauth', '~> 2.1.2'
 gem 'omniauth-oauth2', '~> 1.8.0'
-gem 'omniauth-rails_csrf_protection', '~> 1.0.1'
+gem 'omniauth-rails_csrf_protection', '~> 2.0.1'
 gem 'omniauth-bbbltibroker', git: 'https://github.com/bigbluebutton/omniauth-bbbltibroker.git', tag: '0.1.4'
 gem 'omniauth-brightspace', git: 'https://github.com/mconf/omniauth-brightspace.git'
 
