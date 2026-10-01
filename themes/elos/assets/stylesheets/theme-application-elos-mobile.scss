@@ -124,6 +124,18 @@
         min-height: blocks(6) !important;
       }
     }
+
+    #ai-suggestion {
+      .modal-header .modal-title {
+        display: flex;
+        align-items: flex-start !important;
+      }
+
+      .icon {
+        height: 28px !important;
+        width: 28px !important;
+      }
+    }
   }
 }
 

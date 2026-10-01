@@ -61,6 +61,59 @@ module ApplicationHelper
     @ai_artifacts_enabled_by_consumer_key[consumer_key] = config.present? && config.allow_ai_artifacts?
   end
 
+  # Icon shows if: user can edit, AI enabled, suggestion not applied/declined, and
+  # artifacts were requested at some point
+  def ai_naming_suggestion_offered?(user, room, meeting)
+    return false unless ai_documents_enabled?(user, room, internal_meeting_date(meeting[:internalMeetingID]))
+    return false if ai_naming_applied?(meeting) || meeting_metadata(meeting, :'ai-naming-declined') == 'true'
+
+    ai_naming_suggestion_cached?(meeting) || waiting_for_ai_naming_suggestion?(meeting)
+  end
+
+  # Decides whether the suggestion of a meeting that asked for its artifacts is still
+  # worth waiting for. The waiting deadline is the lifetime of the context the callback
+  # is matched by: past it no callback could clear the mark any more either, so 
+  # there would be nothing left to wait for
+  def waiting_for_ai_naming_suggestion?(meeting)
+    requested_at = metadata_text(meeting_metadata(meeting, :'ai-artifacts-requested'))
+    return false if requested_at.nil?
+
+    requested_at = begin
+      Time.zone.parse(requested_at)
+    rescue ArgumentError
+      nil
+    end
+    return false if requested_at.nil?
+
+    requested_at > Rails.application.config.llm_artifact_cache_ttl.seconds.ago
+  end
+
+  def ai_naming_applied?(meeting)
+    meeting_metadata(meeting, :'ai-naming-applied') == 'true'
+  end
+
+  # Whether a suggestion is cached in the meeting metadata
+  def ai_naming_suggestion_cached?(meeting)
+    metadata_text(meeting_metadata(meeting, :'ai-naming-suggested-title')).present?
+  end
+
+  # Returns the applied AI description, or falls back to the scheduled one
+  def meeting_description(meeting, recording = nil)
+    applied = metadata_text(meeting_metadata(meeting, :description))
+    return applied if applied.present?
+
+    metadata_text(recording&.dig(:metadata, :'bbb-recording-description'))
+  end
+
+  def meeting_metadata(meeting, key)
+    meeting[:metadata].present? ? meeting[:metadata][key] : nil
+  end
+
+  # The API answers an empty metadata with an empty hash, not with an empty string
+  def metadata_text(value)
+    value.is_a?(String) ? value.presence : nil
+  end
+
   # Whether the AI documents of a meeting can be offered, from the permission of the
   # user, the configuration of the consumer and the date the feature was released
   #

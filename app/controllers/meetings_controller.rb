@@ -8,9 +8,10 @@ class MeetingsController < ApplicationController
 
   before_action :find_room
   before_action :get_scheduled_meeting_info
-  before_action :check_data_api_config, only: :download_documents
+  before_action :check_data_api_config, only: %i[download_documents ai_naming_suggestion ai_naming_suggestion_status]
   before_action :find_app_launch
-  before_action :find_user, only: [:download_documents, :request_ai_artifacts]
+  before_action :find_user, only: %i[download_documents request_ai_artifacts ai_naming_suggestion resolve_ai_naming_suggestion
+    ai_naming_suggestion_status]
   before_action :set_institution_guid
   before_action only: :download_documents do
     # The dropdown also lists the recording, which a user who cannot download the
@@ -21,6 +22,12 @@ class MeetingsController < ApplicationController
   before_action only: :request_ai_artifacts do
     authorize_user!(:download_artifacts, @room)
   end
+  before_action only: %i[ai_naming_suggestion resolve_ai_naming_suggestion ai_naming_suggestion_status] do
+    authorize_user!(:download_artifacts, @room)
+    head :forbidden unless performed? || helpers.ai_artifacts_enabled?(@room)
+  end
+  before_action :ensure_meeting_belongs_to_room, only: %i[request_ai_artifacts ai_naming_suggestion
+    resolve_ai_naming_suggestion ai_naming_suggestion_status]
 
   # GET /rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/meetings/:internal_id/download_documents
   def download_documents
@@ -44,6 +51,69 @@ class MeetingsController < ApplicationController
     @ai_artifact_cache_status = read_artifact_cache_status
 
     render partial: "shared/meeting_documents"
+  end
+
+  # GET /rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/meetings/:internal_id/ai_naming_suggestion
+  def ai_naming_suggestion
+    # The Data API is only asked when the listing had nothing on the metadata, as after a
+    # lost callback
+    suggestion = if params[:suggested_title].present?
+      { 'title' => params[:suggested_title], 'description' => params[:suggested_description] }
+    else
+      fetch_and_cache_naming_suggestion
+    end
+
+    render partial: 'shared/ai_suggestion_modal', layout: false, locals: {
+      suggestion: suggestion || { 'title' => nil, 'description' => nil },
+      resolve_url: room_scheduled_meeting_internal_resolve_ai_naming_suggestion_path(
+        @room, @meeting[:meetingID], @meeting[:internalMeetingID]
+      ),
+      redir_url: naming_suggestion_redirect_url
+    }
+  end
+
+  # POST /rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/meetings/:internal_id/ai_naming_suggestion
+  def resolve_ai_naming_suggestion
+    internal_meeting_id = @meeting[:internalMeetingID]
+
+    case params[:decision]
+    when 'apply'
+      # A blank title means the suggestion never loaded: applying it would erase the
+      # name the meeting has
+      if params[:title].blank?
+        flash[:error] = t('meetings.ai_naming_suggestion.error')
+      else
+        meta = { 'meta_ai-naming-applied': true, name: params[:title] }
+        meta[:'meta_description'] = params[:description] if params[:description].present?
+
+        update_meeting(@room, internal_meeting_id, meta)
+      end
+    when 'decline'
+      update_meeting(@room, internal_meeting_id, { 'meta_ai-naming-declined': true })
+    else
+      flash[:error] = t('meetings.ai_naming_suggestion.invalid_decision')
+    end
+
+    redirect_to(naming_suggestion_redirect_url)
+  rescue StandardError => e
+    Rails.logger.error "[MeetingsController##{__method__}] Failed to resolve the suggestion of" \
+      " internal_meeting_id='#{internal_meeting_id}': #{e.message}"
+    flash[:error] = t('meetings.ai_naming_suggestion.error')
+    redirect_to(naming_suggestion_redirect_url)
+  end
+
+  # GET /rooms/:room_id/scheduled_meetings/:scheduled_meeting_id/meetings/:internal_id/ai_naming_suggestion_status
+  def ai_naming_suggestion_status
+    # An empty answer says nothing: it is also what a meeting still generating its
+    # artifacts gets. Clearing the flag is the callback's job
+    suggestion = fetch_and_cache_naming_suggestion
+
+    # The suggestion goes back with the answer, sparing the modal a second trip
+    render json: {
+      suggestion_available: suggestion.present?,
+      title: suggestion && suggestion['title'],
+      description: suggestion && suggestion['description']
+    }
   end
 
   ALLOWED_ARTIFACT_TYPES = %w[ai_summary transcription].freeze
@@ -80,6 +150,9 @@ class MeetingsController < ApplicationController
       return
     end
 
+    # Every request generates the summary too, whatever the panel asked for
+    mark_ai_artifacts_requested
+
     cache_ttl = Rails.application.config.llm_artifact_cache_ttl.seconds
 
     task_id = response.body['task_id']
@@ -107,6 +180,79 @@ class MeetingsController < ApplicationController
 
   protected
 
+  # The mark lets the listing skip the meetings that cannot possibly have a suggestion.
+  # It carries the moment of the request, which is what bounds the wait for a callback
+  # that may never arrive (see `waiting_for_ai_naming_suggestion?`` of the helper)
+  def mark_ai_artifacts_requested
+    update_meeting(@room, @meeting[:internalMeetingID],
+                   { 'meta_ai-artifacts-requested': Time.now.utc.iso8601 })
+  rescue StandardError => e
+    Rails.logger.error "[MeetingsController##{__method__}] Failed to mark the AI artifacts as" \
+      " requested for internal_meeting_id='#{@meeting[:internalMeetingID]}': #{e.message}"
+  end
+
+  # Keeps the suggestion on the metadata of the meeting, so the listing has it on the next
+  # load without asking the Data API again
+  def fetch_and_cache_naming_suggestion
+    naming = Mconf::DataApi.get_meeting_naming_suggestions(@institution_guid, @meeting[:internalMeetingID])
+    return nil if naming.blank? || naming['name'].blank?
+
+    update_meeting(@room, @meeting[:internalMeetingID], {
+      'meta_ai-naming-suggested-title': naming['name'],
+      'meta_ai-naming-suggested-description': naming['description']
+    })
+
+    { 'title' => naming['name'], 'description' => naming['description'] }
+  rescue StandardError => e
+    Rails.logger.error "[MeetingsController##{__method__}] Failed to fetch the naming suggestion of" \
+      " internal_meeting_id='#{@meeting[:internalMeetingID]}': #{e.message}"
+    nil
+  end
+
+  # The param comes from the request, so it is only trusted as a path of this app --
+  # an absolute url would be an open redirect. The path is rebuilt from what URI parsed
+  # instead of being handed over as it came, and the backslashes are turned into slashes
+  # first because that is what the browser does with them: '/\evil.com' is a host, not
+  # a path of ours
+  def naming_suggestion_redirect_url
+    uri = begin
+      URI.parse(params[:redir_url].to_s.tr('\\', '/'))
+    rescue URI::InvalidURIError
+      nil
+    end
+
+    if uri && uri.scheme.nil? && uri.host.nil? &&
+       uri.path.start_with?('/') && !uri.path.start_with?('//')
+      [uri.path, uri.query.presence].compact.join('?')
+    else
+      meetings_room_path(@room)
+    end
+  end
+
+  # A meeting is only reachable through the room it belongs to: BBB derives the internal
+  # meeting id from the external one, so the pair can be checked without asking the API.
+  # Without this, a moderator of one room could name, decline or request the artifacts of
+  # a meeting of any other room on the same server
+  def ensure_meeting_belongs_to_room
+    return if meeting_belongs_to_room?
+
+    Rails.logger.warn "[MeetingsController##{action_name}] Refused internal_meeting_id=" \
+      "'#{@meeting[:internalMeetingID]}' of meeting_id='#{@meeting[:meetingID]}' on the" \
+      " room handler='#{@room.handler}'"
+    head :not_found
+  end
+
+  def meeting_belongs_to_room?
+    external_id = @meeting[:meetingID].to_s
+    internal_id = @meeting[:internalMeetingID].to_s
+    # Every meeting of a room is created from a scheduled meeting of it, and those carry
+    # the id of the room on their own id
+    return false unless external_id.start_with?("#{@room.meeting_id}-")
+
+    # sha1(externalMeetingID) + '-' + createTime, see ParamsProcessorUtil of BBB
+    internal_id.start_with?("#{Digest::SHA1.hexdigest(external_id)}-")
+  end
+
   def get_scheduled_meeting_info
     @meeting = {}
     @meeting[:meetingID] = params[:scheduled_meeting_id]
@@ -118,12 +264,16 @@ class MeetingsController < ApplicationController
     @meeting[:running] = params[:running]
   end
 
+  # The listing asks for these over ajax, where redirecting is worse than useless: the
+  # browser follows the redirect on its own and hands the caller the whole page as the
+  # answer to its request. The error itself goes back instead
   def check_data_api_config
-    if Rails.application.config.data_api_url.blank?
-      Rails.logger.error "Data API url is missing from the .env file"
-      redirect_back(fallback_location: room_path(@room),
-                      notice: t('default.app.data_api_config_error'))
-    end
+    # The modal has all it needs when the listing carried the suggestion on the link
+    return if action_name == 'ai_naming_suggestion' && params[:suggested_title].present?
+    return if Rails.application.config.data_api_url.present?
+
+    Rails.logger.error "Data API url is missing from the .env file"
+    render json: { message: t('default.app.data_api_config_error') }, status: :service_unavailable
   end
 
   def artifact_cache_key(artifact_type)

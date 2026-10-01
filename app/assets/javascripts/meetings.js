@@ -147,6 +147,7 @@ async function fetchMeetings() {
       }
       showMeetings(rows);
       appendScripts(scripts)
+      checkAiNamingSuggestions();
     }
   } catch(err) {
     if (requestGeneration !== currentFetchGeneration) return;
@@ -280,6 +281,101 @@ window.addEventListener('message', function(event) {
     data: { access_token: event.data['access_token'], refresh_token: event.data['refresh_token'], expires_at: event.data['expires_at']  }
   });
 });
+// The listing has a single error toast. The caller says what to show on it, and the
+// message it carries is the fallback
+let showErrorToast = (message) => {
+  const $wrapper = $('#ai-artifacts-error-toast');
+  $wrapper.find('.ai-artifacts-error-message').text(message || $wrapper.data('default-message'));
+  const $toast = $wrapper.find('.toast');
+  $toast.toast('dispose');
+  $toast.toast('show');
+};
+
+// Loads the AI naming suggestion modal from the server and opens it
+let aiSuggestionRequest = null;
+
+$DOCUMENT.on('click', '.open-ai-suggestion-modal', function(event) {
+  event.preventDefault();
+
+  const $link = $(this);
+
+  // A click on another row supersedes the one still in flight instead of being dropped:
+  // aborting it keeps its answer from replacing the modal that is about to open, which
+  // is what would leave the backdrop of the replaced one over the page
+  if (aiSuggestionRequest) aiSuggestionRequest.abort();
+
+  // Up to ajaxTimeout can go by before the modal shows up, so the row says it is busy
+  $link.addClass('pe-none opacity-50');
+
+  const request = $.ajax({
+    url: $link.attr('href'),
+    timeout: ajaxTimeout
+  }).done((html) => {
+    const previous = document.getElementById('ai-suggestion-modal');
+    if (previous) bootstrap.Modal.getInstance(previous)?.dispose();
+
+    $('#ai-suggestion-modal-container').html(html);
+    const modal = document.getElementById('ai-suggestion-modal');
+    if (modal) bootstrap.Modal.getOrCreateInstance(modal).show();
+  }).fail((err, textStatus) => {
+    // The click that superseded this one is already taking care of the feedback
+    if (textStatus === 'abort') return;
+
+    showErrorToast(err.responseJSON?.message ||
+      $('#ai-suggestion-modal-container').data('error-message'));
+  }).always(() => {
+    $link.removeClass('pe-none opacity-50');
+    // A newer click owns the slot by now, and clearing it would lose its request
+    if (aiSuggestionRequest === request) aiSuggestionRequest = null;
+  });
+
+  aiSuggestionRequest = request;
+});
+
+// Each check costs the server two calls to the Data API, so the rows are asked for
+// in small batches instead of all at once
+const AI_NAMING_CHECKS_IN_PARALLEL = 2;
+
+function checkAiNamingSuggestion(icon) {
+  return $.ajax({
+    url: icon.attr('data-ai-naming-check-endpoint'),
+    dataType: 'json',
+    timeout: ajaxTimeout
+  }).done((response) => {
+    if (!response.suggestion_available) return;
+
+    // Carried on the link so the modal doesn't have to ask the Data API again
+    const link = icon.find('a');
+    const url = new URL(link.attr('href'), window.location.origin);
+    url.searchParams.set('suggested_title', response.title);
+    if (response.description) {
+      url.searchParams.set('suggested_description', response.description);
+    }
+    link.attr('href', url.pathname + url.search);
+
+    icon.removeClass('d-none');
+  }).fail(() => {
+    console.debug('Failed to check the AI naming suggestion status.');
+  });
+}
+
+// Reveals icons for rows whose callback never arrived by asking the Data API for each
+function checkAiNamingSuggestions() {
+  const pending = $('.ai-suggestion-icon[data-ai-naming-check-endpoint]:not(.checked)')
+    .addClass('checked')
+    .toArray();
+
+  const checkNext = () => {
+    const next = pending.shift();
+    if (!next) return;
+
+    // `always` and not `done`: one row that fails must not stop the ones behind it
+    checkAiNamingSuggestion($(next)).always(checkNext);
+  };
+
+  for (let i = 0; i < AI_NAMING_CHECKS_IN_PARALLEL; i++) checkNext();
+}
+
 /* Request the documents of a meeting to the server.
 */
 let doAjaxDownloadDocuments = async (download_documents_endpoint) => {
@@ -423,12 +519,7 @@ $(document).on('click', '.request-ai-artifacts-btn', function(e) {
       $successToast.toast('show');
     },
     error: function(err) {
-      const $toastWrapper = $('#ai-artifacts-error-toast');
-      const message = err.responseJSON?.message || $toastWrapper.data('default-message');
-      $toastWrapper.find('.ai-artifacts-error-message').text(message);
-      const $toast = $toastWrapper.find('.toast');
-      $toast.toast('dispose');
-      $toast.toast('show');
+      showErrorToast(err.responseJSON?.message);
       $btn.prop('disabled', false).text(textOriginal);
     }
   });
