@@ -68,6 +68,7 @@ es:
       applied: "Título y descripción generados por IA"
       error: "Error: no se pudo aplicar la sugerencia. Por favor, inténtelo de nuevo más tarde."
       invalid_decision: "Error: no se pudo aplicar la sugerencia"
+      load_error: "Error: no se pudo cargar la sugerencia. Por favor, inténtelo de nuevo más tarde."
       offer: "Generar título y descripción con IA"
     all_loaded: "Se han cargado todas las conferencias"
     duration:

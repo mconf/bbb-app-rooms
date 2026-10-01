@@ -14,4 +14,4 @@ link_to t('meetings.index.return'),
 
 <%# The AI naming suggestion modal is loaded in here by XHR when its icon is clicked, so
     there is a single modal on the page instead of one per row %>
-<div id="ai-suggestion-modal-container"></div>
+<div id="ai-suggestion-modal-container" data-error-message="<%= t('meetings.ai_naming_suggestion.load_error') %>"></div>

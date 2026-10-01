@@ -281,17 +281,34 @@ window.addEventListener('message', function(event) {
     data: { access_token: event.data['access_token'], refresh_token: event.data['refresh_token'], expires_at: event.data['expires_at']  }
   });
 });
+// The listing has a single error toast. The caller says what to show on it, and the
+// message it carries is the fallback
+let showErrorToast = (message) => {
+  const $wrapper = $('#ai-artifacts-error-toast');
+  $wrapper.find('.ai-artifacts-error-message').text(message || $wrapper.data('default-message'));
+  const $toast = $wrapper.find('.toast');
+  $toast.toast('dispose');
+  $toast.toast('show');
+};
+
 // Loads the AI naming suggestion modal from the server and opens it
 let aiSuggestionRequest = null;
 
 $DOCUMENT.on('click', '.open-ai-suggestion-modal', function(event) {
   event.preventDefault();
 
-  // A second click would leave the backdrop of the replaced modal over the page
-  if (aiSuggestionRequest) return;
+  const $link = $(this);
 
-  aiSuggestionRequest = $.ajax({
-    url: $(this).attr('href'),
+  // A click on another row supersedes the one still in flight instead of being dropped:
+  // aborting it keeps its answer from replacing the modal that is about to open, which
+  // is what would leave the backdrop of the replaced one over the page
+  if (aiSuggestionRequest) aiSuggestionRequest.abort();
+
+  // Up to ajaxTimeout can go by before the modal shows up, so the row says it is busy
+  $link.addClass('pe-none opacity-50');
+
+  const request = $.ajax({
+    url: $link.attr('href'),
     timeout: ajaxTimeout
   }).done((html) => {
     const previous = document.getElementById('ai-suggestion-modal');
@@ -300,11 +317,19 @@ $DOCUMENT.on('click', '.open-ai-suggestion-modal', function(event) {
     $('#ai-suggestion-modal-container').html(html);
     const modal = document.getElementById('ai-suggestion-modal');
     if (modal) bootstrap.Modal.getOrCreateInstance(modal).show();
-  }).fail(() => {
-    console.debug('Failed to load the AI naming suggestion modal.');
+  }).fail((err, textStatus) => {
+    // The click that superseded this one is already taking care of the feedback
+    if (textStatus === 'abort') return;
+
+    showErrorToast(err.responseJSON?.message ||
+      $('#ai-suggestion-modal-container').data('error-message'));
   }).always(() => {
-    aiSuggestionRequest = null;
+    $link.removeClass('pe-none opacity-50');
+    // A newer click owns the slot by now, and clearing it would lose its request
+    if (aiSuggestionRequest === request) aiSuggestionRequest = null;
   });
+
+  aiSuggestionRequest = request;
 });
 
 // Each check costs the server two calls to the Data API, so the rows are asked for
@@ -494,12 +519,7 @@ $(document).on('click', '.request-ai-artifacts-btn', function(e) {
       $successToast.toast('show');
     },
     error: function(err) {
-      const $toastWrapper = $('#ai-artifacts-error-toast');
-      const message = err.responseJSON?.message || $toastWrapper.data('default-message');
-      $toastWrapper.find('.ai-artifacts-error-message').text(message);
-      const $toast = $toastWrapper.find('.toast');
-      $toast.toast('dispose');
-      $toast.toast('show');
+      showErrorToast(err.responseJSON?.message);
       $btn.prop('disabled', false).text(textOriginal);
     }
   });
