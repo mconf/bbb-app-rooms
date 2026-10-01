@@ -126,8 +126,42 @@ RSpec.describe ApplicationHelper, type: :helper do
 
     # The icon shows while the suggestion is still being generated
     it 'offers it to a meeting that asked for its artifacts' do
-      expect(helper.ai_naming_suggestion_offered?(user, room, meeting({ 'ai-artifacts-requested': 'true' })))
+      expect(helper.ai_naming_suggestion_offered?(user, room, meeting({ 'ai-artifacts-requested': 1.minute.ago.utc.iso8601 })))
         .to be true
+    end
+
+    # The callback that would clear the mark can be lost, and without a deadline the
+    # listing would ask the Data API about this meeting on every load, forever
+    it 'gives up waiting once no callback could arrive any more' do
+      past = (Rails.application.config.llm_artifact_cache_ttl + 60).seconds.ago
+
+      expect(helper.ai_naming_suggestion_offered?(user, room, meeting({ 'ai-artifacts-requested': past.utc.iso8601 })))
+        .to be false
+    end
+
+    it 'waits until the last moment before that' do
+      recent = (Rails.application.config.llm_artifact_cache_ttl - 60).seconds.ago
+
+      expect(helper.ai_naming_suggestion_offered?(user, room, meeting({ 'ai-artifacts-requested': recent.utc.iso8601 })))
+        .to be true
+    end
+
+    # Giving up on the wait says nothing about a suggestion that did arrive
+    it 'keeps offering a suggestion it already has, however old the request' do
+      past = (Rails.application.config.llm_artifact_cache_ttl + 60).seconds.ago
+
+      expect(helper.ai_naming_suggestion_offered?(user, room, meeting({
+        'ai-naming-suggested-title': 'Título', 'ai-artifacts-requested': past.utc.iso8601
+      }))).to be true
+    end
+
+    it 'offers nothing for a mark it cannot read' do
+      expect(helper.ai_naming_suggestion_offered?(user, room, meeting({ 'ai-artifacts-requested': 'true' })))
+        .to be false
+      expect(helper.ai_naming_suggestion_offered?(user, room, meeting({ 'ai-artifacts-requested': '' })))
+        .to be false
+      expect(helper.ai_naming_suggestion_offered?(user, room, meeting({ 'ai-artifacts-requested': {} })))
+        .to be false
     end
 
     it 'offers nothing to a meeting that never asked for them' do
@@ -158,7 +192,7 @@ RSpec.describe ApplicationHelper, type: :helper do
       expect(helper).to receive(:ai_documents_enabled?)
         .with(user, room, Time.at(1786727361.386).to_date).and_return(true)
 
-      helper.ai_naming_suggestion_offered?(user, room, meeting({ 'ai-artifacts-requested': 'true' }))
+      helper.ai_naming_suggestion_offered?(user, room, meeting({ 'ai-artifacts-requested': 1.minute.ago.utc.iso8601 }))
     end
   end
 

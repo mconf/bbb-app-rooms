@@ -183,9 +183,12 @@ class MeetingsController < ApplicationController
 
   protected
 
-  # The flag lets the listing skip the meetings that cannot possibly have a suggestion
+  # The mark lets the listing skip the meetings that cannot possibly have a suggestion.
+  # It carries the moment of the request, which is what bounds the wait for a callback
+  # that may never arrive (see `waiting_for_ai_naming_suggestion?`` of the helper)
   def mark_ai_artifacts_requested
-    update_meeting(@room, @meeting[:internalMeetingID], { 'meta_ai-artifacts-requested': true })
+    update_meeting(@room, @meeting[:internalMeetingID],
+                   { 'meta_ai-artifacts-requested': Time.now.utc.iso8601 })
   rescue StandardError => e
     Rails.logger.error "[MeetingsController##{__method__}] Failed to mark the AI artifacts as" \
       " requested for internal_meeting_id='#{@meeting[:internalMeetingID]}': #{e.message}"

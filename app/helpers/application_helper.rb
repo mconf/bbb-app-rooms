@@ -67,8 +67,25 @@ module ApplicationHelper
     return false unless ai_documents_enabled?(user, room, internal_meeting_date(meeting[:internalMeetingID]))
     return false if ai_naming_applied?(meeting) || meeting_metadata(meeting, :'ai-naming-declined') == 'true'
 
-    ai_naming_suggestion_cached?(meeting) ||
-      meeting_metadata(meeting, :'ai-artifacts-requested') == 'true'
+    ai_naming_suggestion_cached?(meeting) || waiting_for_ai_naming_suggestion?(meeting)
+  end
+
+  # Decides whether the suggestion of a meeting that asked for its artifacts is still
+  # worth waiting for. The waiting deadline is the lifetime of the context the callback
+  # is matched by: past it no callback could clear the mark any more either, so 
+  # there would be nothing left to wait for
+  def waiting_for_ai_naming_suggestion?(meeting)
+    requested_at = metadata_text(meeting_metadata(meeting, :'ai-artifacts-requested'))
+    return false if requested_at.nil?
+
+    requested_at = begin
+      Time.zone.parse(requested_at)
+    rescue ArgumentError
+      nil
+    end
+    return false if requested_at.nil?
+
+    requested_at > Rails.application.config.llm_artifact_cache_ttl.seconds.ago
   end
 
   def ai_naming_applied?(meeting)

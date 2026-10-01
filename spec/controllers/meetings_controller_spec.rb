@@ -109,6 +109,26 @@ describe MeetingsController, type: :controller do
     end
   end
 
+  describe '#request_ai_artifacts' do
+    before do
+      allow(Mconf::LlmApi).to receive(:request_ai_artifacts)
+        .and_return(double('response', body: { 'task_id' => 'task-1' }, status: 200))
+    end
+
+    # The mark carries when the request was made, and that is what ends the wait for a
+    # callback that may never arrive
+    it 'marks the meeting with the moment of the request' do
+      expect(controller).to receive(:update_meeting) do |room_arg, internal_id, meta|
+        expect(room_arg).to eq(room)
+        expect(internal_id).to eq(internal_meeting_id)
+        expect(Time.zone.parse(meta[:'meta_ai-artifacts-requested']))
+          .to be_within(1.minute).of(Time.zone.now)
+      end
+
+      post :request_ai_artifacts, params: base_params
+    end
+  end
+
   # The listing asks for these over ajax, and a redirect would come back as the whole
   # page: the modal would inject it into its own container and the status check would
   # choke on html where it wanted json
