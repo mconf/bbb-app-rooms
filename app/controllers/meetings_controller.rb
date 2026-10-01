@@ -264,12 +264,16 @@ class MeetingsController < ApplicationController
     @meeting[:running] = params[:running]
   end
 
+  # The listing asks for these over ajax, where redirecting is worse than useless: the
+  # browser follows the redirect on its own and hands the caller the whole page as the
+  # answer to its request. The error itself goes back instead
   def check_data_api_config
-    if Rails.application.config.data_api_url.blank?
-      Rails.logger.error "Data API url is missing from the .env file"
-      redirect_back(fallback_location: room_path(@room),
-                      notice: t('default.app.data_api_config_error'))
-    end
+    # The modal has all it needs when the listing carried the suggestion on the link
+    return if action_name == 'ai_naming_suggestion' && params[:suggested_title].present?
+    return if Rails.application.config.data_api_url.present?
+
+    Rails.logger.error "Data API url is missing from the .env file"
+    render json: { message: t('default.app.data_api_config_error') }, status: :service_unavailable
   end
 
   def artifact_cache_key(artifact_type)
