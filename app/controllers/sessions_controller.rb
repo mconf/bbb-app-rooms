@@ -13,6 +13,8 @@ class SessionsController < ApplicationController
   def new; end
 
   def create
+    log_session_cookie_state('sessions_create')
+
     omniauth_auth = request.env['omniauth.auth']
     Rails.logger.info "Omniauth authentication information auth=#{omniauth_auth.inspect} " # \
 
