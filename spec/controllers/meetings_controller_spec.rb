@@ -109,9 +109,41 @@ describe MeetingsController, type: :controller do
     end
   end
 
+  # The listing asks for these over ajax, and a redirect would come back as the whole
+  # page: the modal would inject it into its own container and the status check would
+  # choke on html where it wanted json
+  describe 'without the Data API configured' do
+    before do
+      allow(controller).to receive(:check_data_api_config).and_call_original
+      allow(Rails.configuration).to receive(:data_api_url).and_return('')
+    end
+
+    it 'answers the status check with the error' do
+      get :ai_naming_suggestion_status, params: base_params
+
+      expect(response).to have_http_status(:service_unavailable)
+      expect(JSON.parse(response.body)['message']).to eq(I18n.t('default.app.data_api_config_error'))
+    end
+
+    it 'answers the modal with the error when it would have to ask the Data API' do
+      get :ai_naming_suggestion, params: base_params
+
+      expect(response).to have_http_status(:service_unavailable)
+    end
+
+    # The Data API is only asked when the listing had nothing on the metadata
+    it 'still opens the modal with the suggestion the listing carried' do
+      get :ai_naming_suggestion, params: base_params(suggested_title: 'Título sugerido')
+
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
   describe 'a meeting of another room' do
-    let(:other_room) { FactoryBot.create(:room) }
-    let(:other_scheduled_meeting_id) { "#{other_room.meeting_id}-1" }
+    # A room of its own is not needed, and creating one here would fight the factory of
+    # the consumer config over its key, what makes this meeting foreign is the handler
+    # its id carries, which is not the one of the room under test
+    let(:other_scheduled_meeting_id) { "#{Digest::SHA1.hexdigest('outra-sala')}-9-1" }
     let(:other_internal_meeting_id) do
       "#{Digest::SHA1.hexdigest(other_scheduled_meeting_id)}-#{(started_at.to_f * 1000).to_i}"
     end
