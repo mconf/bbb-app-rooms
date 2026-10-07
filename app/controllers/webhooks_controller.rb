@@ -2,6 +2,7 @@
 
 class WebhooksController < ApplicationController
   include ApplicationHelper
+  include BbbApi
   AI_ARTIFACT_STATUS_KEY = {
     'ai_summary'    => 'summary_status',
     'transcription' => 'transcription_status'
@@ -70,6 +71,11 @@ class WebhooksController < ApplicationController
     requested_types = cached_context[:requested_artifact_types]
     cache_ttl = Rails.application.config.llm_artifact_cache_ttl.seconds
 
+    # Only after the task_id has been matched, and against the meeting rooms itself
+    # cached: this endpoint has no authentication, so a forged POST must not be able to
+    # write metadata onto an arbitrary meeting
+    persist_naming_suggestion(room_handler, internal_meeting_id, params['suggested_name'], params['suggested_description'])
+
     requested_types.each do |type|
       cache_key = "meeting_ai_artifact_#{room_handler}_#{internal_meeting_id}_#{type}"
       if params[AI_ARTIFACT_STATUS_KEY[type]] == 'success'
@@ -84,5 +90,33 @@ class WebhooksController < ApplicationController
   rescue JSON::ParserError => e
     Rails.logger.error "[WebhooksController#ai_artifacts] Failed to parse JSON: #{e.message}"
     render json: { error: 'Invalid JSON' }, status: :bad_request
+  end
+
+  private
+
+  # Caches the naming suggestion in the meeting metadata so the listing doesn't ask the
+  # Data API on every load
+  def persist_naming_suggestion(room_handler, internal_meeting_id, suggested_name, suggested_description)
+    room = Room.find_by(handler: room_handler)
+    if room.nil?
+      Rails.logger.error "[WebhooksController##{__method__}] Room not found for handler='#{room_handler}'"
+      return
+    end
+
+    meta = if suggested_name.present?
+      { 'meta_ai-naming-suggested-title': suggested_name,
+        'meta_ai-naming-suggested-description': suggested_description }
+    else
+      # A suggestion always comes with a successful summary, so its absence here means
+      # there will never be one. Clearing the flag is what stops the listing from asking
+      # the Data API about this meeting on every load -- and a later request for the
+      # artifacts sets it again, as it should
+      { 'meta_ai-artifacts-requested': '' }
+    end
+
+    update_meeting(room, internal_meeting_id, meta)
+    Rails.logger.info "[WebhooksController##{__method__}] Stored the AI naming metadata of internal_meeting_id='#{internal_meeting_id}' (suggestion=#{suggested_name.present?})"
+  rescue StandardError => e
+    Rails.logger.error "[WebhooksController##{__method__}] Failed to store the AI naming suggestion: #{e.message}"
   end
 end

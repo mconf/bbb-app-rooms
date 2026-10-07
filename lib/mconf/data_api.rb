@@ -156,6 +156,20 @@ module Mconf
       response.body["objects"]
     end
 
+    # @return [Hash] the contents of meeting_naming.json, or nil if no suggestion exists
+    def self.get_meeting_naming_suggestions(guid, internal_meeting_id)
+      check_api_url
+
+      return nil if guid.blank? || internal_meeting_id.blank?
+
+      Rails.logger.info "[Data API] Requesting meeting naming suggestions (guid: #{guid}, internal_meeting_id: #{internal_meeting_id})"
+
+      link = naming_suggestions_link(guid, internal_meeting_id)
+      return nil if link.blank?
+
+      download_json(link)
+    end
+
     # Calls the API to get the engagement report of a meeting
     # Returns the link from the API's response
     #
@@ -190,6 +204,61 @@ module Mconf
     end
 
     private
+
+    # Asks the API where the file with the naming suggestions of a meeting is stored
+    #
+    # @return [String] the link to the file, or nil when the meeting has no suggestion
+    private_class_method def self.naming_suggestions_link(guid, internal_meeting_id)
+      url = "#{Rails.application.config.data_api_url}/institutions/#{guid}/artifacts/meetings/#{internal_meeting_id}/file?file_name=meeting_naming.json"
+
+      response = timed_connection(url) { |config| config.response :json }.get(url)
+
+      if response.status == 400
+        Rails.logger.error "[Data API] Bad request (guid: #{guid} and internal_meeting_id: #{internal_meeting_id})"
+        return nil
+      elsif response.status == 404
+        Rails.logger.error "[Data API] Meeting or file not found (guid: #{guid}, internal_meeting_id: #{internal_meeting_id}, file: meeting_naming.json)"
+        return nil
+      end
+
+      response.body['link']
+    rescue Faraday::Error => e
+      Rails.logger.error "[Data API] Failed to request the naming suggestions (guid: #{guid}, internal_meeting_id: #{internal_meeting_id}): #{e.message}"
+      nil
+    end
+
+    # Downloads a json file from the storage. The link is pre-signed, so nothing can be
+    # added to it, not even a query param: the signature covers them and the request
+    # would be denied. The body is parsed here because the storage does not always
+    # answer with a json content type, which is what the :json middleware relies on.
+    #
+    # @return [Hash] the contents of the file, or nil when it could not be read
+    private_class_method def self.download_json(link)
+      response = timed_connection(link).get(link)
+
+      unless response.success?
+        Rails.logger.error "[Data API] Failed to download a file from the storage (status: #{response.status})"
+        return nil
+      end
+
+      JSON.parse(response.body)
+    rescue JSON::ParserError => e
+      Rails.logger.error "[Data API] Failed to parse a file of the storage: #{e.message}"
+      nil
+    rescue Faraday::Error => e
+      Rails.logger.error "[Data API] Failed to download a file from the storage: #{e.message}"
+      nil
+    end
+
+    private_class_method def self.timed_connection(url)
+      timeout = Rails.application.config.data_api_timeout
+
+      Faraday.new(url: url) do |config|
+        config.options.timeout = timeout
+        config.options.open_timeout = timeout
+        yield config if block_given?
+      end
+    end
 
     # Tells which group a document listed for the meeting belongs to, from its file name
     #

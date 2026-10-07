@@ -137,4 +137,149 @@ RSpec.describe ApplicationHelper, type: :helper do
       expect(helper.ai_documents_enabled?(user, room, Date.new(2026, 6, 12))).to be false
     end
   end
+
+  describe '#ai_naming_suggestion_offered?' do
+    let(:user) { double('user') }
+    let(:room) { double('room') }
+
+    def meeting(metadata = {})
+      { internalMeetingID: 'abc123-1786727361386', metadata: metadata }
+    end
+
+    before do
+      allow(helper).to receive(:ai_documents_enabled?).and_return(true)
+    end
+
+    it 'offers the suggestion a meeting already carries' do
+      expect(helper.ai_naming_suggestion_offered?(user, room, meeting({ 'ai-naming-suggested-title': 'Título' })))
+        .to be true
+    end
+
+    # The icon shows while the suggestion is still being generated
+    it 'offers it to a meeting that asked for its artifacts' do
+      expect(helper.ai_naming_suggestion_offered?(user, room, meeting({ 'ai-artifacts-requested': 1.minute.ago.utc.iso8601 })))
+        .to be true
+    end
+
+    # The callback that would clear the mark can be lost, and without a deadline the
+    # listing would ask the Data API about this meeting on every load, forever
+    it 'gives up waiting once no callback could arrive any more' do
+      past = (Rails.application.config.llm_artifact_cache_ttl + 60).seconds.ago
+
+      expect(helper.ai_naming_suggestion_offered?(user, room, meeting({ 'ai-artifacts-requested': past.utc.iso8601 })))
+        .to be false
+    end
+
+    it 'waits until the last moment before that' do
+      recent = (Rails.application.config.llm_artifact_cache_ttl - 60).seconds.ago
+
+      expect(helper.ai_naming_suggestion_offered?(user, room, meeting({ 'ai-artifacts-requested': recent.utc.iso8601 })))
+        .to be true
+    end
+
+    # Giving up on the wait says nothing about a suggestion that did arrive
+    it 'keeps offering a suggestion it already has, however old the request' do
+      past = (Rails.application.config.llm_artifact_cache_ttl + 60).seconds.ago
+
+      expect(helper.ai_naming_suggestion_offered?(user, room, meeting({
+        'ai-naming-suggested-title': 'Título', 'ai-artifacts-requested': past.utc.iso8601
+      }))).to be true
+    end
+
+    it 'offers nothing for a mark it cannot read' do
+      expect(helper.ai_naming_suggestion_offered?(user, room, meeting({ 'ai-artifacts-requested': 'true' })))
+        .to be false
+      expect(helper.ai_naming_suggestion_offered?(user, room, meeting({ 'ai-artifacts-requested': '' })))
+        .to be false
+      expect(helper.ai_naming_suggestion_offered?(user, room, meeting({ 'ai-artifacts-requested': {} })))
+        .to be false
+    end
+
+    it 'offers nothing to a meeting that never asked for them' do
+      expect(helper.ai_naming_suggestion_offered?(user, room, meeting)).to be false
+    end
+
+    it 'offers nothing once the suggestion was applied' do
+      expect(helper.ai_naming_suggestion_offered?(user, room, meeting({
+        'ai-naming-suggested-title': 'Título', 'ai-naming-applied': 'true'
+      }))).to be false
+    end
+
+    it 'offers nothing once the suggestion was declined' do
+      expect(helper.ai_naming_suggestion_offered?(user, room, meeting({
+        'ai-naming-suggested-title': 'Título', 'ai-naming-declined': 'true'
+      }))).to be false
+    end
+
+    it 'offers nothing when the AI documents are off' do
+      allow(helper).to receive(:ai_documents_enabled?).and_return(false)
+
+      expect(helper.ai_naming_suggestion_offered?(user, room, meeting({ 'ai-naming-suggested-title': 'Título' })))
+        .to be false
+    end
+
+    # The date of the meeting is what says whether it is past the release
+    it 'takes the date of the meeting from its internal id' do
+      expect(helper).to receive(:ai_documents_enabled?)
+        .with(user, room, Time.at(1786727361.386).to_date).and_return(true)
+
+      helper.ai_naming_suggestion_offered?(user, room, meeting({ 'ai-artifacts-requested': 1.minute.ago.utc.iso8601 }))
+    end
+  end
+
+  describe '#ai_naming_suggestion_cached?' do
+    it 'finds the title the callback stored' do
+      expect(helper.ai_naming_suggestion_cached?({ metadata: { 'ai-naming-suggested-title': 'Título' } }))
+        .to be true
+    end
+
+    it 'finds none on a meeting without one' do
+      expect(helper.ai_naming_suggestion_cached?({ metadata: {} })).to be false
+      expect(helper.ai_naming_suggestion_cached?({})).to be false
+    end
+
+    # The API answers an empty metadata with an empty hash, not with an empty string
+    it 'takes an empty metadata for no title' do
+      expect(helper.ai_naming_suggestion_cached?({ metadata: { 'ai-naming-suggested-title': {} } }))
+        .to be false
+    end
+  end
+
+  describe '#meeting_description' do
+    let(:recording) { { metadata: { 'bbb-recording-description': 'Descrição agendada' } } }
+
+    it 'shows the description the suggestion applied' do
+      meeting = { metadata: { description: 'Descrição da IA' } }
+
+      expect(helper.meeting_description(meeting, recording)).to eq('Descrição da IA')
+    end
+
+    it 'falls back to the one the meeting was scheduled with' do
+      expect(helper.meeting_description({ metadata: {} }, recording)).to eq('Descrição agendada')
+    end
+
+    it 'has nothing to show without either of them' do
+      expect(helper.meeting_description({ metadata: {} }, { metadata: {} })).to be_nil
+      expect(helper.meeting_description({ metadata: {} })).to be_nil
+    end
+
+    it 'falls back when the applied description is empty' do
+      meeting = { metadata: { description: {} } }
+
+      expect(helper.meeting_description(meeting, recording)).to eq('Descrição agendada')
+    end
+  end
+
+  describe '#metadata_text' do
+    it 'takes the text of a metadata that has one' do
+      expect(helper.metadata_text('Título')).to eq('Título')
+    end
+
+    # The API answers an empty metadata with an empty hash, not with an empty string
+    it 'takes anything that is not a string for no text' do
+      expect(helper.metadata_text({})).to be_nil
+      expect(helper.metadata_text(nil)).to be_nil
+      expect(helper.metadata_text('')).to be_nil
+    end
+  end
 end
