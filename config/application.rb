@@ -22,6 +22,10 @@ module BbbAppRooms
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
+    # No model has attachments, so there are no image variants to generate.
+    # Without this Rails 8.1 asks for the image_processing gem on every boot.
+    config.active_storage.variant_processor = :disabled
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
