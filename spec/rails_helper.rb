@@ -23,6 +23,7 @@ require 'rspec/rails'
 # Dir[Rails.root.join('spec', 'support', '**', '*.rb')].sort.each { |f| require f }
 
 require 'shoulda/matchers'
+require 'webmock/rspec'
 
 Shoulda::Matchers.configure do |config|
   config.integrate do |with|
