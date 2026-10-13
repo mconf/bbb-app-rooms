@@ -37,6 +37,28 @@ module IconsHelper
     material_icon_constructor "more_vert", "icon material-icons icon icon-options-dots", options
   end
 
+  def icon_join_meeting(options={})
+    material_icon_constructor "play_arrow", "icon material-icons", options
+  end
+
+  def icon_auto_start_recording(options={})
+    material_icon_constructor "radio_button_checked", "icon material-icons", options
+  end
+
+  def icon_copy(options={})
+    material_icon_constructor "content_copy", "icon material-icons", options
+  end
+
+  def icon_person(options={})
+    material_icon_constructor "person", "icon material-icons", options
+  end
+
+  # The help icon next to form labels, showing its hint in a tooltip
+  def icon_help(title, options={})
+    options = options.merge(title: title, data: { bs_toggle: 'tooltip' }.merge(options[:data] || {}))
+    material_icon_constructor "help", "icon material-icons icon-label-hint", options
+  end
+
   def icon_ai_summary(_options={})
     image_tag 'icon-ai-summary.svg'
   end
