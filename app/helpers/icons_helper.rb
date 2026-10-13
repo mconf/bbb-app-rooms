@@ -210,7 +210,9 @@ module IconsHelper
     unless title.nil? or title.blank?
       options = options_for_tooltip(title, options)
     end
-    content_tag :i, icon, options
+    # Browser auto-translation rewrites the ligature text and breaks the icon,
+    # so only the ligature is shielded and the title stays translatable
+    content_tag :i, content_tag(:span, icon, translate: 'no'), options
   end
 
   def text_icon_constructor(title, cls=nil, text=nil, options={})
