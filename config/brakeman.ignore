@@ -1,7 +1,7 @@
 {
   "ignored_warnings": [
     {
-      "fingerprint": "21ab0fe00fdd5899ffc405cff75aadb91b805ee996a614f7e27b08a287e9062d",
+      "fingerprint": "98b26f60d776fd41ee6f088c833725145be9aac2d7c5b33780241c273622db42",
       "note": "Informational: Rails 8.0.2.1 support ends 2026-11-07. Upgrading is its own work and cannot be done from here."
     },
     {
