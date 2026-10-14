@@ -3,6 +3,7 @@ pt:
     app:
       bigbluebutton_error: "Erro de comunicação com o servidor de conferência. Por favor tente novamente ou entre em contato com o suporte. (%{status})"
       data_api_error:   "Erro de comunicação com a API de Dados. Por favor, tente novamente ou entre em contato com o suporte."
+      dash_mr_config_error: "O Dashboard não está configurado. Entre em contato com o suporte."
       data_api_config_error: "Erro na configuração da API de Dados. Por favor, entre em contato com o suporte."
       error:          "Erro"
       error_debug_info: "Ver mais"
@@ -26,9 +27,14 @@ pt:
     filesender:
       success: "Seu vídeo está sendo carregado para o Filesender"
       error:   "Um erro ocorreu. Por favor, tente novamente!"
+    dash_mr:
+      title:          "Abrindo o Dashboard"
+      redirecting:    "Abrindo o Dashboard..."
+      continue:       "Continuar"
     room:
       cancel:         "Cancelar"
       created:        "A sala foi criada com sucesso"
+      dash_mr:        "Dashboard"
       description:    "Descrição"
       destroy:        "Remover"
       destroyed:      "A sala foi removida com sucesso"

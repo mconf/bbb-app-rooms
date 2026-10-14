@@ -34,6 +34,7 @@ en:
     app:
       bigbluebutton_error: "Error contacting the conference server. Please try again later or contact support. (%{status})"
       data_api_error:   "Communication error with the Data API. Please try again or contact support."
+      dash_mr_config_error: "The Dashboard is not configured. Please contact support."
       data_api_config_error: "Data API configuration error. Please contact support."
       error:          "Error"
       error_debug_info: "See more"
@@ -57,9 +58,14 @@ en:
     filesender:
       success: "Your video is being uploaded to Filesender"
       error:   "An error has occurred. Please try again"
+    dash_mr:
+      title:          "Opening the Dashboard"
+      redirecting:    "Opening the Dashboard..."
+      continue:       "Continue"
     room:
       cancel:         "Cancel"
       created:        "Room was successfully created"
+      dash_mr:        "Dashboard"
       description:    "Description"
       destroy:        "Destroy"
       destroyed:      "Room was successfully destroyed"

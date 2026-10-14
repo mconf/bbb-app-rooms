@@ -35,6 +35,17 @@ module ApplicationHelper
     Abilities.can?(user, :edit, resource)
   end
 
+  def dash_mr_enabled?(room)
+    return false if Rails.configuration.dash_mr_launch_url.blank?
+
+    @dash_mr_enabled_by_consumer_key ||= {}
+    consumer_key = room.consumer_key
+    return @dash_mr_enabled_by_consumer_key[consumer_key] if @dash_mr_enabled_by_consumer_key.key?(consumer_key)
+
+    config = ConsumerConfig.find_by(key: consumer_key)
+    @dash_mr_enabled_by_consumer_key[consumer_key] = config.present? && config.allow_dash_mr?
+  end
+
   def can_download_recording?(user, resource)
     Abilities.can?(user, :download_presentation_video, resource)
   end

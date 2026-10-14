@@ -1,6 +1,36 @@
+<%
+  # Which buttons this row shows depends on the user's role and on what is configured,
+  # so they are resolved before the markup: the column width is a function of how many
+  # end up visible. Fixed thirds would push a fourth button onto a line of its own.
+  #
+  # can_edit? is what tells a moderator from a student. DashMrController refuses a
+  # student anyway, but a button that leads only to a refusal should not be on screen.
+  show_dash_mr = dash_mr_enabled?(room) && can_edit?(user, room)
+  show_reports = Rails.configuration.data_reports_enabled && can_edit?(user, room) &&
+                 @room.consumer_config.present? && @room.handler.present?
+  show_schedule = can_create_scheduled_meeting?(user, room)
+
+  # The history button is the one that is always there, hence the bare true.
+  visible_buttons = [show_dash_mr, show_reports, show_schedule, true].count(true)
+  button_column = visible_buttons > 3 ? 'col-12 col-sm-6 col-md-3 col-lg-3' : 'col-12 col-sm-12 col-md-4 col-lg-4'
+%>
+
 <div id="action-buttons" class="row">
-  <% if Rails.configuration.data_reports_enabled && can_edit?(user, room) && @room.consumer_config.present? && @room.handler.present? %>
-    <div id="view-reports" class="col-12 col-sm-12 col-md-4 col-lg-4">
+  <% if show_dash_mr %>
+    <div id="view-dash-mr" class="<%= button_column %>">
+      <%=
+      link_to t('default.room.dash_mr'),
+      dash_mr_room_path(room),
+      target: '_blank',
+      rel: 'noopener',
+      data: { 'tracking-id': 'lti-view-dash-mr', 'institution-guid': "#{@institution_guid}" },
+      class: "btn btn-secondary"
+      %>
+    </div>
+  <% end %>
+
+  <% if show_reports %>
+    <div id="view-reports" class="<%= button_column %>">
       <%=
       link_to t('reports.view_reports'),
       room_reports_path(room),
@@ -10,8 +40,8 @@
     </div>
   <% end %>
 
-  <% if can_create_scheduled_meeting?(user, room) %>
-    <div id="view-meetings" class="col-12 col-sm-12 col-md-4 col-lg-4">
+  <% if show_schedule %>
+    <div id="view-meetings" class="<%= button_column %>">
   <% else %>
     <div id="view-meetings" class="col-12 col-sm-6 col-md-6 col-lg-4 offset-lg-4">
   <% end %>
@@ -26,8 +56,8 @@
     <% end %>
   </div>
 
-    <% if can_create_scheduled_meeting?(user, room) %>
-    <div id="schedule-meeting" class="col-12 col-sm-12 col-md-4 col-lg-4">
+  <% if show_schedule %>
+    <div id="schedule-meeting" class="<%= button_column %>">
       <%=
       link_to t('scheduled_meetings.new.add'),
       new_room_scheduled_meeting_path(room),
