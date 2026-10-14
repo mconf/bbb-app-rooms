@@ -105,6 +105,9 @@ gem 'repost', '~> 0.4.2'
 gem 'bigbluebutton-api-ruby', git: 'https://github.com/mconf/bigbluebutton-api-ruby.git', tag: 'v2.0.0-mconf'
 
 # Authentication
+# Already present as a transitive dependency of oauth2; declared here because the
+# dashboard launch tokens are signed with it directly.
+gem 'jwt', '~> 2.8'
 gem 'rest-client'
 gem 'omniauth', '~> 2.1.2'
 gem 'omniauth-oauth2', '~> 1.8.0'
