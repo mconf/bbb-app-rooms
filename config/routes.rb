@@ -45,6 +45,9 @@ Rails.application.routes.draw do
         # Handles launches.
         match '/launch', to: 'rooms#launch', as: :room_launch, via: [:get, :post]
 
+        # Public key set the engagement dashboard verifies launch tokens against.
+        get '/dash_mr/jwks', to: 'dash_mr#jwks', as: :dash_mr_jwks, defaults: { format: :json }
+
         # Handles sessions.
         get '/sessions/create'
         get '/sessions/failure'
@@ -86,6 +89,9 @@ Rails.application.routes.draw do
           post :set_current_group_on_session
           get :safari_close
           get '/error/:code', to: 'rooms#error'
+
+          # Opens the engagement dashboard in a tab of its own.
+          get :dash_mr, to: 'dash_mr#launch'
         end
 
         if Rails.configuration.data_reports_enabled

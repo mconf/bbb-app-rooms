@@ -149,6 +149,18 @@ module BbbAppRooms
     config.data_reports_enabled = Mconf::Env.fetch_boolean('MCONF_DATA_REPORTS_ENABLED', true)
     config.data_api_timeout = Mconf::Env.fetch_int('MCONF_DATA_API_TIMEOUT', 5)
 
+    # Engagement dashboard (Dash MR)
+    #
+    # The dashboard opens in a tab of its own and has no login: it is handed a token
+    # signed here, and verifies it against the key set served by #jwks.
+    # Whether the integration is on is per consumer, in `consumer_configs.allow_dash_mr`,
+    # which the broker sends with every launch.
+    config.dash_mr_launch_url = Mconf::Env.fetch('MCONF_DASH_MR_LAUNCH_URL', '')
+    config.dash_mr_issuer = Mconf::Env.fetch('MCONF_DASH_MR_ISSUER', 'rooms')
+    config.dash_mr_audience = Mconf::Env.fetch('MCONF_DASH_MR_AUDIENCE', 'dash-mr')
+    # Seconds. Only has to cover the post to the dashboard, which accepts it once.
+    config.dash_mr_token_ttl = Mconf::Env.fetch_int('MCONF_DASH_MR_TOKEN_TTL', 60)
+
     # Mconf LLM API
     config.llm_api_url = Mconf::Env.fetch('MCONF_LLM_API_URL', '')
     config.llm_artifact_cache_ttl = Mconf::Env.fetch_int('MCONF_LLM_ARTIFACT_CACHE_TTL', 10800)

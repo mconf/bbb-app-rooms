@@ -431,7 +431,8 @@ class RoomsController < ApplicationController
       allow_student_scheduling: custom_params['allow_student_scheduling'],
       allow_ai_artifacts: custom_params['allow_ai_artifacts'],
       hide_recordings_history: custom_params['hide_recordings_history'],
-      auto_start_recording: custom_params['auto_start_recording']
+      auto_start_recording: custom_params['auto_start_recording'],
+      allow_dash_mr: custom_params['allow_dash_mr'] || false
     )
     Rails.logger.info "[setup_consumer_configs] ConsumerConfig created/updated with key=#{@consumer_config.key}, " \
     "params=#{custom_params.except('bbb', 'moodle', 'brightspace')}"
