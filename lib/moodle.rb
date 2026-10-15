@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 require 'faraday'
-require 'cgi'
 
 module Moodle
   class API
@@ -582,9 +581,7 @@ module Moodle
       begin
         begin
           options = {
-            headers: { 'Content-Type' => 'application/x-www-form-urlencoded' },
-            request: { timeout: Rails.application.config.moodle_api_timeout },
-            params: params
+            request: { timeout: Rails.application.config.moodle_api_timeout }
           }
 
           start_time = Time.now
@@ -594,12 +591,13 @@ module Moodle
 
           loop do
             conn = Faraday.new(url: current_url, **options) do |config|
+              config.request :url_encoded
               config.response :json
               config.response :raise_error
               config.adapter :net_http
             end
 
-            res = conn.post(current_url)
+            res = conn.post(current_url, params)
             break unless (300...400).cover?(res.status)
 
             redirect_count += 1
@@ -630,7 +628,10 @@ module Moodle
           failed = res.body.is_a?(Hash) && res.body['exception'].present?
           record_call(params, duration, failed ? 'error' : 'ok', (res.body['errorcode'] if failed))
 
-          Rails.logger.debug("[MOODLE API] Calling URL: #{host_url}?#{params.to_a.map { |k, v| "#{k}=#{CGI.escape(v.to_s)}" }.join('&')} | Moodle response: #{res.inspect}")
+          # Logs the request as actually sent (after redirects). Only the param
+          # names are logged, since the values may contain personal data
+          Rails.logger.debug("[MOODLE API] POST url=#{res.env.url} status=#{res.status} " \
+                             "wsfunction=#{params[:wsfunction]} body_keys=#{params.keys.inspect}")
           return result
 
         rescue Faraday::ResourceNotFound => e

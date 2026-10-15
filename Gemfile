@@ -60,6 +60,9 @@ group :development, :test do
   gem 'rubocop'
   gem 'rubocop-rails'
   gem 'shoulda-matchers', '~> 4.0'
+  # require: false so it does not block real HTTP calls in development;
+  # it is loaded by spec/rails_helper.rb
+  gem 'webmock', require: false
 end
 
 group :development do

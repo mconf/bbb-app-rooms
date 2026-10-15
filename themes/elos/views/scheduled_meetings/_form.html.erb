@@ -36,7 +36,7 @@
       <% if error %> <div class="field_with_errors"> <% end %>
         <%= form.label :time do %>
           <%= t('helpers.label.scheduled_meeting.start_time_time') %>
-          <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= t('helpers.hint.time', zone: current_formatted_time_zone) %>">help</i>
+          <%= icon_help(t('helpers.hint.time', zone: current_formatted_time_zone)) %>
         <% end %>
         <%= form.text_field :time, value: scheduled_meeting.start_at_time(I18n.locale), required: true, class: "form-control timepicker", data: { format: t('default.formats.flatpickr.time_js') } %>
       <% if error %> </div> <% end %>
@@ -55,11 +55,7 @@
         <div class="d-flex flex-column">
           <%= form.label :custom_duration do %>
             <%= t('helpers.label.scheduled_meeting.custom_duration') %>
-            <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip"
-               title="<%= t('helpers.hint.custom_duration') %>"
-            >
-              help
-            </i>
+            <%= icon_help(t('helpers.hint.custom_duration')) %>
           <% end %>
           <div class="d-flex content-timers">
             <%= form.text_field :custom_duration,
@@ -79,7 +75,7 @@
     <div class="form-group col-12">
       <%= form.label :repeat do %>
         <%= t('helpers.label.scheduled_meeting.repeat') %>
-        <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= t('helpers.hint.repeat') %>">help</i>
+        <%= icon_help(t('helpers.hint.repeat')) %>
       <% end %>
       <%= form.select :repeat,
       ScheduledMeeting.repeat_options_for_select(I18n.locale),
@@ -123,10 +119,9 @@
                     'can-auto-start': can_auto_start_recording } %>
           <%= form.label :auto_start_recording, class: "form-check-label" do %>
             <%= t('helpers.label.scheduled_meeting.auto_start_recording') %>
-            <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip"
-              title="<%= can_auto_start_recording ?
+            <%= icon_help(can_auto_start_recording ?
               t('default.scheduled_meeting.tooltip.auto_start_recording') :
-              t('default.scheduled_meeting.tooltip.auto_start_recording_disabled') %>">help</i>
+              t('default.scheduled_meeting.tooltip.auto_start_recording_disabled')) %>
           <% end %>
         </div>
       </div>
@@ -142,10 +137,9 @@
               disabled: !can_mark_bright_attendance %>
             <%= form.label :mark_brightspace_attendance, class: "form-check-label" do %>
               <%= t('helpers.label.scheduled_meeting.mark_brightspace_attendance') %>
-              <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip"
-                title="<%= can_mark_bright_attendance ?
+              <%= icon_help(can_mark_bright_attendance ?
                 t('default.scheduled_meeting.tooltip.mark_brightspace_attendance') :
-                t('default.scheduled_meeting.tooltip.mark_brightspace_attendance_disabled') %>">help</i>
+                t('default.scheduled_meeting.tooltip.mark_brightspace_attendance_disabled')) %>
             <% end %>
           </div>
         </div>
@@ -159,7 +153,7 @@
               disabled: !can_mark_moodle_attendance %>
             <%= form.label :mark_moodle_attendance, class: "form-check-label" do %>
               <%= t('helpers.label.scheduled_meeting.mark_moodle_attendance') %>
-              <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= t("default.scheduled_meeting.tooltip.#{@room.moodle_attendance_tooltip_key}") %>">help</i>
+              <%= icon_help(t("default.scheduled_meeting.tooltip.#{@room.moodle_attendance_tooltip_key}")) %>
             <% end %>
           </div>
         </div>
@@ -191,7 +185,7 @@
             <%= form.check_box :disable_external_link, class: "form-check-input", data: { 'tracking-id': 'lti-check-disable-external-link', 'institution-guid': "#{@institution_guid}" } %>
             <%= form.label :disable_external_link, class: "form-check-label" do %>
               <%= t('helpers.label.scheduled_meeting.disable_external_link') %>
-              <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= t('helpers.hint.disable_external_link') %>">help</i>
+              <%= icon_help(t('helpers.hint.disable_external_link')) %>
             <% end %>
           </div>
         </div>
@@ -208,7 +202,7 @@
                 data: { persisted: scheduled_meeting.persisted?, replicated: scheduled_meeting.replicated_in_moodle?, 'can-create': can_create_calendar } %>
             <%= form.label :create_moodle_calendar_event, class: "form-check-label" do %>
               <%= t('helpers.label.scheduled_meeting.create_moodle_calendar_event') %>
-              <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= can_create_calendar ? t('default.scheduled_meeting.tooltip.create_moodle_calendar_event') : t('default.scheduled_meeting.tooltip.create_moodle_calendar_event_disabled') %>">help</i>
+              <%= icon_help(can_create_calendar ? t('default.scheduled_meeting.tooltip.create_moodle_calendar_event') : t('default.scheduled_meeting.tooltip.create_moodle_calendar_event_disabled')) %>
             <% end %>
           </div>
         </div>
@@ -219,7 +213,7 @@
           <%= form.check_box :disable_private_chat, class: "form-check-input", data: { 'tracking-id': 'lti-check-disable-private-chat', 'institution-guid': "#{@institution_guid}" } %>
           <%= form.label :disable_private_chat, class: "form-check-label" do %>
             <%= t('helpers.label.scheduled_meeting.disable_private_chat') %>
-            <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= t('helpers.hint.disable_private_chat') %>">help</i>
+            <%= icon_help(t('helpers.hint.disable_private_chat')) %>
           <% end %>
         </div>
       </div>
@@ -229,7 +223,7 @@
           <%= form.check_box :disable_note, class: "form-check-input", data: { 'tracking-id': 'lti-check-disable-shared-notes', 'institution-guid': "#{@institution_guid}" } %>
           <%= form.label :disable_note, class: "form-check-label" do %>
             <%= t('helpers.label.scheduled_meeting.disable_note') %>
-            <i class="icon material-icons icon-label-hint" data-bs-toggle="tooltip" title="<%= t('helpers.hint.disable_note') %>">help</i>
+            <%= icon_help(t('helpers.hint.disable_note')) %>
           <% end %>
         </div>
       </div>
