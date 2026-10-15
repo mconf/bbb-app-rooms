@@ -10,7 +10,7 @@ Bundler.require(*Rails.groups)
 
 module BbbAppRooms
   class Application < Rails::Application
-    VERSION = "1.8.0"
+    VERSION = "1.8.1"
 
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.0
@@ -21,6 +21,10 @@ module BbbAppRooms
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
+
+    # No model has attachments, so there are no image variants to generate.
+    # Without this Rails 8.1 asks for the image_processing gem on every boot.
+    config.active_storage.variant_processor = :disabled
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
