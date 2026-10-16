@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_08_21_143840) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_14_230000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -75,6 +75,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_21_143840) do
     t.boolean "allow_ai_artifacts", default: true, null: false
     t.boolean "hide_recordings_history", default: false, null: false
     t.boolean "auto_start_recording", default: false, null: false
+    t.boolean "allow_dash_mr", default: false, null: false
     t.index ["key"], name: "index_consumer_configs_on_key", unique: true
   end
 
@@ -103,6 +104,17 @@ ActiveRecord::Schema[8.0].define(version: 2026_08_21_143840) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "refresh_token"
+  end
+
+  create_table "launch_signing_keys", force: :cascade do |t|
+    t.string "kid", null: false
+    t.text "private_key", null: false
+    t.text "public_key", null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_launch_signing_keys_on_active"
+    t.index ["kid"], name: "index_launch_signing_keys_on_kid", unique: true
   end
 
   create_table "moodle_calendar_events", force: :cascade do |t|

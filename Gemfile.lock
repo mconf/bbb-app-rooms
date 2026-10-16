@@ -611,6 +611,7 @@ DEPENDENCIES
   jquery-rails
   jquery-ui-rails
   json
+  jwt (~> 2.8)
   kaminari
   listen
   lograge

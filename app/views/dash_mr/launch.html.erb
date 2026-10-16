@@ -1,0 +1,23 @@
+<%#
+  Posts the launch token to the dashboard and nothing else. A plain form tag, not
+  form_with: Rails would add an authenticity token to it, and this request crosses to
+  another application that has no reason to know about ours.
+%>
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex, nofollow">
+    <title><%= t('default.dash_mr.title') %></title>
+  </head>
+  <body onload="document.forms[0].submit()">
+    <p><%= t('default.dash_mr.redirecting') %></p>
+
+    <form action="<%= @launch_url %>" method="post">
+      <input type="hidden" name="id_token" value="<%= @token %>">
+      <noscript>
+        <button type="submit"><%= t('default.dash_mr.continue') %></button>
+      </noscript>
+    </form>
+  </body>
+</html>

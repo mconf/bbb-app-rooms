@@ -49,6 +49,10 @@ RailsAdmin.config do |config|
     # history_show
   end
 
+  # included_models below narrows production only, so elsewhere RailsAdmin finds every
+  # model. Exporting this one's private key mints tokens for any consumer.
+  config.excluded_models = ['LaunchSigningKey']
+
   if Rails.env.production?
     config.included_models = [
       "ConsumerConfig",
