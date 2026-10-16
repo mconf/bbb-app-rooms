@@ -43,7 +43,7 @@ describe LaunchSigningKey, type: :model do
       keys = described_class.key_set[:keys]
 
       expect(keys.map { |key| key[:kid] }).to match_array([first.kid, second.kid])
-      expect(keys.map(&:keys).flatten.uniq).not_to include(:d, :p, :q)
+      expect(keys.map(&:keys).flatten.uniq).not_to include(:d, :p, :q, :dp, :dq, :qi)
     end
 
     it 'says what the key is for' do

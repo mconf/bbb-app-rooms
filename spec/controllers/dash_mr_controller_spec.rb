@@ -59,7 +59,15 @@ describe DashMrController, type: :controller do
 
       get :launch, params: { id: room.handler }
 
-      expect(response).not_to have_http_status(:ok)
+      expect(response).to have_http_status(:unauthorized)
+      expect(response.body).not_to include('name="id_token"')
+    end
+
+    it 'turns away a request that carries no room session' do
+      get :launch, params: { id: room.handler }
+
+      expect(response).to have_http_status(:unauthorized)
+      expect(response.body).not_to include('name="id_token"')
     end
 
     it 'sends nobody to a dashboard that was never configured' do
