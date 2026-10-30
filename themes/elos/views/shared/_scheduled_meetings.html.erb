@@ -17,13 +17,13 @@
 
 <div id="action-buttons" class="row">
   <% if show_dash_mr %>
-    <div id="view-dash-mr" class="<%= button_column %>">
+    <div id="view-elos-analytics" class="<%= button_column %>">
       <%=
       link_to t('default.room.dash_mr'),
       dash_mr_room_path(room),
       target: '_blank',
       rel: 'noopener',
-      data: { 'tracking-id': 'lti-view-dash-mr', 'institution-guid': "#{@institution_guid}" },
+      data: { 'tracking-id': 'lti-view-elos-analytics', 'institution-guid': "#{@institution_guid}" },
       class: "btn btn-secondary"
       %>
     </div>

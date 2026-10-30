@@ -3,7 +3,7 @@ es:
     app:
       bigbluebutton_error: "Error de comunicación con el servidor de conferencias. Inténtelo de nuevo o contáctenos. (%{status})"
       data_api_error:   "Error de comunicación con la API de Datos. Vuelva a intentarlo o póngase en contacto con el servicio de asistencia."
-      dash_mr_config_error: "El Dashboard no está configurado. Póngase en contacto con el servicio de asistencia."
+      dash_mr_config_error: "El Elos Analytics no está configurado. Póngase en contacto con el servicio de asistencia."
       data_api_config_error: "Error de configuración de la API de Datos. Póngase en contacto con el servicio de asistencia."
       error:          "Error"
       error_debug_info: "Ver más"
@@ -28,13 +28,13 @@ es:
       success: "Tu video está siendo subido a Filesender"
       error:   "Se ha producido un error. Inténtalo de nuevo"
     dash_mr:
-      title:          "Abriendo el Dashboard"
-      redirecting:    "Abriendo el Dashboard..."
+      title:          "Abriendo el Elos Analytics"
+      redirecting:    "Abriendo el Elos Analytics..."
       continue:       "Continuar"
     room:
       cancel:         "Cancelar"
       created:        "La sala se creó con éxito"
-      dash_mr:        "Dashboard"
+      dash_mr:        "Elos Analytics"
       description:    "Descripción"
       destroy:        "Eliminar"
       destroyed:      "La sala se ha eliminado correctamente"
