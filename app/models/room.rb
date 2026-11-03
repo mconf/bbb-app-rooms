@@ -74,6 +74,10 @@ class Room < ApplicationRecord
     self.consumer_config&.auto_start_recording || false
   end
 
+  def allow_large_meetings
+    self.consumer_config&.allow_large_meetings || false
+  end
+
   def moodle_token
     consumer_config&.moodle_token
   end
