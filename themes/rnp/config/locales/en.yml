@@ -63,6 +63,7 @@ en:
         wait_moderator: "Wait for a moderator to join"
         welcome: "Welcome message (optional)"
         auto_start_recording: "Automatically start recording"
+        large_meeting: "Large session"
   jobs:
     moodle_attendance:
       attendance_name: "Attendance Activity"
