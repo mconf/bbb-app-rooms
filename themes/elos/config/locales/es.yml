@@ -56,6 +56,7 @@ es:
         wait_moderator: "Espere a que ingrese el moderador para entrar"
         welcome: "Mensaje de bienvenida (opcional)"
         auto_start_recording: "Iniciar grabación automáticamente"
+        large_meeting: "Sesión grande"
   jobs:
     moodle_attendance:
       attendance_name: "Actividad de Asistencia"

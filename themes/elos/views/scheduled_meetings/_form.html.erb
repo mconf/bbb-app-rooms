@@ -227,6 +227,24 @@
           <% end %>
         </div>
       </div>
+
+      <% can_large_meeting = @room.allow_large_meetings %>
+      <div class="form-group">
+        <div class="form-check">
+          <%= form.check_box :large_meeting,
+            class: "form-check-input",
+            checked: can_large_meeting && @scheduled_meeting.large_meeting,
+            disabled: !can_large_meeting,
+            data: { 'tracking-id': 'lti-check-large-meeting', 'institution-guid': "#{@institution_guid}" } %>
+          <%= form.label :large_meeting, class: "form-check-label" do %>
+            <%= t('helpers.label.scheduled_meeting.large_meeting') %>
+            <%= icon_help(can_large_meeting ?
+              t('default.scheduled_meeting.tooltip.large_meeting') :
+              t('default.scheduled_meeting.tooltip.large_meeting_disabled')) %>
+          <% end %>
+        </div>
+      </div>
+
     </div>
   </div>
   <div class="form-actions">
