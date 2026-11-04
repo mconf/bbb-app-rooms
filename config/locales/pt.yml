@@ -117,7 +117,7 @@ pt:
         auto_start_recording: "A sessão começará a ser gravada automaticamente quando o primeiro participante entrar"
         auto_start_recording_disabled: "Sua instituição não habilitou o início automático da gravação. Para usar esse recurso, entre em contato com o administrador da sua instituição."
         auto_start_recording_requires_recording: "Para iniciar a gravação automaticamente, a sessão precisa permitir gravação."
-        large_meeting: "A sessão será alocada em servidores de maior capacidade, indicada para webinars e sessões com muitos participantes"
+        large_meeting: "Recomendado para sessões com mais de 150 participantes."
         large_meeting_disabled: "Sua instituição não habilitou sessões grandes. Para usar esse recurso, entre em contato com o administrador da sua instituição."
         waitmoderator: "Participantes não podem entrar até que um moderador entre"
         allmoderators: "Todos usuários serão moderadores"
