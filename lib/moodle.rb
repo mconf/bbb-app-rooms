@@ -19,11 +19,16 @@ module Moodle
         event_description = raw_string.split("\n").compact_blank.map { |line| "<p>#{line}</p>" }.join
       end
 
+      # Prefix the name with the start time (in the scheduler's time zone) so the
+      # month view of the Moodle calendar, which only shows the name, tells the time
+      local_start = scheduled_meeting.start_at.in_time_zone(opts[:time_zone].presence || Rails.configuration.default_timezone)
+      event_name = "#{local_start.strftime('%H:%M')} - #{scheduled_meeting.name}"
+
       params = {
         wstoken: moodle_token.token,
         wsfunction: 'core_calendar_create_calendar_events',
         moodlewsrestformat: 'json',
-        'events[0][name]' => scheduled_meeting.name,
+        'events[0][name]' => event_name,
         'events[0][description]' => event_description,
         'events[0][format]' => 1,
         'events[0][courseid]' => context_id,
