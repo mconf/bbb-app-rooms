@@ -6,7 +6,7 @@ module Mconf
   # The dashboard is a separate application with no login of its own, so this token is
   # the only way into it. It travels in the body of a form the browser posts, never in a
   # URL, and the dashboard refuses it after the first use.
-  class DashMr
+  class ElosAnalytics
     class ConfigurationError < StandardError; end
 
     SCOPE_TYPE = 'lti_context'
@@ -39,13 +39,13 @@ module Mconf
       now = Time.now.to_i
 
       {
-        iss: config.dash_mr_issuer,
-        aud: config.dash_mr_audience,
+        iss: config.elos_analytics_issuer,
+        aud: config.elos_analytics_audience,
         sub: subject,
         iat: now,
         # Short lived on purpose: the token only has to survive the post to the
         # dashboard, which claims it once and refuses every later use.
-        exp: now + config.dash_mr_token_ttl,
+        exp: now + config.elos_analytics_token_ttl,
         jti: SecureRandom.uuid,
         name: @user.username(@user.uid),
         email: @user.email,
@@ -103,10 +103,10 @@ module Mconf
     # token is actually minted, and minting one for an institution that was never
     # enabled is the thing that must not happen, whoever the caller is.
     def check_configuration
-      raise ConfigurationError, 'MCONF_DASH_MR_LAUNCH_URL is missing' if config.dash_mr_launch_url.blank?
+      raise ConfigurationError, 'MCONF_ELOS_ANALYTICS_LAUNCH_URL is missing' if config.elos_analytics_launch_url.blank?
       raise ConfigurationError, "room #{@room.handler} has no consumer key" if consumer_key.blank?
       raise ConfigurationError, "room #{@room.handler} has no institution guid" if institution_guid.blank?
-      return if consumer_config&.allow_dash_mr?
+      return if consumer_config&.allow_elos_analytics?
 
       raise ConfigurationError, "consumer #{consumer_key} does not have the dashboard enabled"
     end

@@ -35,15 +35,15 @@ module ApplicationHelper
     Abilities.can?(user, :edit, resource)
   end
 
-  def dash_mr_enabled?(room)
-    return false if Rails.configuration.dash_mr_launch_url.blank?
+  def elos_analytics_enabled?(room)
+    return false if Rails.configuration.elos_analytics_launch_url.blank?
 
-    @dash_mr_enabled_by_consumer_key ||= {}
+    @elos_analytics_enabled_by_consumer_key ||= {}
     consumer_key = room.consumer_key
-    return @dash_mr_enabled_by_consumer_key[consumer_key] if @dash_mr_enabled_by_consumer_key.key?(consumer_key)
+    return @elos_analytics_enabled_by_consumer_key[consumer_key] if @elos_analytics_enabled_by_consumer_key.key?(consumer_key)
 
     config = ConsumerConfig.find_by(key: consumer_key)
-    @dash_mr_enabled_by_consumer_key[consumer_key] = config.present? && config.allow_dash_mr?
+    @elos_analytics_enabled_by_consumer_key[consumer_key] = config.present? && config.allow_elos_analytics?
   end
 
   def can_download_recording?(user, resource)

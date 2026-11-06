@@ -3,24 +3,24 @@
   # so they are resolved before the markup: the column width is a function of how many
   # end up visible. Fixed thirds would push a fourth button onto a line of its own.
   #
-  # can_edit? is what tells a moderator from a student. DashMrController refuses a
+  # can_edit? is what tells a moderator from a student. ElosAnalyticsController refuses a
   # student anyway, but a button that leads only to a refusal should not be on screen.
-  show_dash_mr = dash_mr_enabled?(room) && can_edit?(user, room)
+  show_elos_analytics = elos_analytics_enabled?(room) && can_edit?(user, room)
   show_reports = Rails.configuration.data_reports_enabled && can_edit?(user, room) &&
                  @room.consumer_config.present? && @room.handler.present?
   show_schedule = can_create_scheduled_meeting?(user, room)
 
   # The history button is the one that is always there, hence the bare true.
-  visible_buttons = [show_dash_mr, show_reports, show_schedule, true].count(true)
+  visible_buttons = [show_elos_analytics, show_reports, show_schedule, true].count(true)
   button_column = visible_buttons > 3 ? 'col-12 col-sm-6 col-md-3 col-lg-3' : 'col-12 col-sm-12 col-md-4 col-lg-4'
 %>
 
 <div id="action-buttons" class="row">
-  <% if show_dash_mr %>
+  <% if show_elos_analytics %>
     <div id="view-elos-analytics" class="<%= button_column %>">
       <%=
-      link_to t('default.room.dash_mr'),
-      dash_mr_room_path(room),
+      link_to t('default.room.elos_analytics'),
+      elos_analytics_room_path(room),
       target: '_blank',
       rel: 'noopener',
       data: { 'tracking-id': 'lti-view-elos-analytics', 'institution-guid': "#{@institution_guid}" },

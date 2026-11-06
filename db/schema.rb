@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_14_230000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_05_135025) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -75,7 +75,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_14_230000) do
     t.boolean "allow_ai_artifacts", default: true, null: false
     t.boolean "hide_recordings_history", default: false, null: false
     t.boolean "auto_start_recording", default: false, null: false
-    t.boolean "allow_dash_mr", default: false, null: false
+    t.boolean "allow_elos_analytics", default: false, null: false
     t.index ["key"], name: "index_consumer_configs_on_key", unique: true
   end
 
