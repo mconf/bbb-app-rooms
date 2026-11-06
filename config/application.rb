@@ -159,19 +159,12 @@ module BbbAppRooms
     # signed here, and verifies it against the key set served by #jwks.
     # Whether the integration is on is per consumer, in `consumer_configs.allow_elos_analytics`,
     # which the broker sends with every launch.
-    #
-    # TODO: drop the MCONF_DASH_MR_* fallbacks once mconf-k8s sets the new names.
-    config.elos_analytics_launch_url = Mconf::Env.fetch('MCONF_ELOS_ANALYTICS_LAUNCH_URL',
-                                                        Mconf::Env.fetch('MCONF_DASH_MR_LAUNCH_URL', ''))
-    config.elos_analytics_issuer = Mconf::Env.fetch('MCONF_ELOS_ANALYTICS_ISSUER',
-                                                    Mconf::Env.fetch('MCONF_DASH_MR_ISSUER', 'rooms'))
-    # The audience is a contract with the dashboard, not an internal name: it stays
-    # 'dash-mr' until the dashboard's LAUNCH_AUDIENCE moves to 'elos-analytics'.
-    config.elos_analytics_audience = Mconf::Env.fetch('MCONF_ELOS_ANALYTICS_AUDIENCE',
-                                                      Mconf::Env.fetch('MCONF_DASH_MR_AUDIENCE', 'dash-mr'))
+    config.elos_analytics_launch_url = Mconf::Env.fetch('MCONF_ELOS_ANALYTICS_LAUNCH_URL', '')
+    config.elos_analytics_issuer = Mconf::Env.fetch('MCONF_ELOS_ANALYTICS_ISSUER', 'rooms')
+    # The audience is a contract with the dashboard: it must match its LAUNCH_AUDIENCE.
+    config.elos_analytics_audience = Mconf::Env.fetch('MCONF_ELOS_ANALYTICS_AUDIENCE', 'elos-analytics')
     # Seconds. Only has to cover the post to the dashboard, which accepts it once.
-    config.elos_analytics_token_ttl = Mconf::Env.fetch_int('MCONF_ELOS_ANALYTICS_TOKEN_TTL',
-                                                           Mconf::Env.fetch_int('MCONF_DASH_MR_TOKEN_TTL', 60))
+    config.elos_analytics_token_ttl = Mconf::Env.fetch_int('MCONF_ELOS_ANALYTICS_TOKEN_TTL', 60)
 
     # Mconf LLM API
     config.llm_api_url = Mconf::Env.fetch('MCONF_LLM_API_URL', '')

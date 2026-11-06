@@ -47,8 +47,6 @@ Rails.application.routes.draw do
 
         # Public key set the engagement dashboard verifies launch tokens against.
         get '/elos_analytics/jwks', to: 'elos_analytics#jwks', as: :elos_analytics_jwks, defaults: { format: :json }
-        # TODO: legacy path the dashboard's ROOMS_JWKS_URL still points to; remove once it moves.
-        get '/dash_mr/jwks', to: 'elos_analytics#jwks', defaults: { format: :json }
 
         # Handles sessions.
         get '/sessions/create'
