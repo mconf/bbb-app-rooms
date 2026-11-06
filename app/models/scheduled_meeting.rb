@@ -126,6 +126,10 @@ class ScheduledMeeting < ApplicationRecord
     self.recording && self.auto_start_recording && room.auto_start_recording
   end
 
+  def will_be_large_meeting?(room = self.room)
+    self.large_meeting && room.allow_large_meetings
+  end
+
   def replicated_in_moodle?
     MoodleCalendarEvent.where(scheduled_meeting_hash_id: self.hash_id).any?
   end
@@ -197,6 +201,9 @@ class ScheduledMeeting < ApplicationRecord
       meta_bbb['moodle-group-id'] = self.moodle_group_id if self.moodle_group_id.present?
       meta_bbb['moodle-group-name'] = self.moodle_group_name if self.moodle_group_name.present?
     end
+
+    # only sent when true
+    meta_bbb['large-meeting'] = true if self.will_be_large_meeting?
 
     meta_bbb.each { |k, v| opts["meta_bbb-#{k}"]= v }
 
