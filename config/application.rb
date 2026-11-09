@@ -96,6 +96,11 @@ module BbbAppRooms
       # see config/initializers/assets for more theme configs
     end
 
+    # Scheduled maintenance, see Mconf::Maintenance
+    config.maintenance_enabled = Mconf::Env.fetch_boolean('MCONF_MAINTENANCE_ENABLED', false)
+    config.maintenance_start = Mconf::Env.fetch('MCONF_MAINTENANCE_START', '')
+    config.maintenance_end = Mconf::Env.fetch('MCONF_MAINTENANCE_END', '')
+
     # ActionCable
     config.cable_enabled = Mconf::Env.fetch_boolean('CABLE_ENABLED', false)
     config.cable_polling_secs = Mconf::Env.fetch_int('CABLE_POLLING_SECS', 30)

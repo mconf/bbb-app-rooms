@@ -1,0 +1,7 @@
+<div class="alert alert-warning" id="maintenance-banner" role="alert">
+  <%= icon_warning %>
+  <span>
+    <strong><%= t('maintenance_banner.title') %></strong>
+    <%= t('maintenance_banner.text', period: maintenance_window_period(:long)) %>
+  </span>
+</div>

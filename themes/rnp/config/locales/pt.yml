@@ -67,6 +67,22 @@ pt:
     moodle_attendance:
       attendance_name: "Atividade de Presença"
       session_description_footer: "Registrado automaticamente via %{app_theme}."
+  maintenance_banner:
+    title: "Manutenção programada:"
+    text: "%{period}, o ConferênciaWeb ficará indisponível e não será possível entrar nas salas."
+  maintenance_conflict:
+    single: "Esse horário cai na manutenção programada do ConferênciaWeb (%{period}). A sala ficará indisponível. Escolha outro horário."
+    recurring: "Uma das ocorrências cai na manutenção programada do ConferênciaWeb (%{period}). A sala ficará indisponível nesse período."
+  maintenance_window:
+    date_format: "%d/%m"
+    hour_format: "%Hh"
+    hour_minute_format: "%Hh%M"
+    long:
+      same_day: "em %{start_date}, das %{start_at} às %{end_at}"
+      multi_day: "de %{start_date} às %{start_at} até %{end_date} às %{end_at}"
+    short:
+      same_day: "%{start_date}, %{start_at}–%{end_at}"
+      multi_day: "%{start_date}, %{start_at} – %{end_date}, %{end_at}"
   meetings:
     ai_naming_suggestion:
       applied: "Título e descrição gerados por IA"
