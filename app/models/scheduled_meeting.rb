@@ -110,6 +110,28 @@ class ScheduledMeeting < ApplicationRecord
     start_at + duration.seconds >= DateTime.now.utc - tolerance
   end
 
+  # :single or :recurring when the meeting, or one of its occurrences, overlaps
+  # the maintenance window; nil otherwise
+  def self.maintenance_overlap(start_at, duration, repeat)
+    return unless Mconf::Maintenance.active? && start_at.present?
+
+    period = REPEAT_OPTIONS[repeat]
+    occurrence = start_at
+    # Occurrences that start after the window ends can't overlap it
+    while occurrence < Mconf::Maintenance.ends_at
+      if Mconf::Maintenance.overlaps?(occurrence, occurrence + duration.to_i.seconds)
+        return period ? :recurring : :single
+      end
+      return unless period
+
+      occurrence += period
+    end
+  end
+
+  def maintenance_overlap
+    ScheduledMeeting.maintenance_overlap(start_at, duration, repeat)
+  end
+
   def recurring?
     repeat.present?
   end

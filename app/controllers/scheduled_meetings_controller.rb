@@ -133,6 +133,11 @@ class ScheduledMeetingsController < ApplicationController
         @scheduled_meeting.errors.add(:start_at, t('default.scheduled_meeting.error.invalid_start_at'))
       end
 
+      if valid_start_at && @scheduled_meeting.maintenance_overlap == :single
+        @scheduled_meeting.errors.add(:start_at, helpers.maintenance_conflict_message(:single))
+        valid_start_at = false
+      end
+
       room_session = get_room_session(@room)
       @scheduled_meeting.created_by_launch_nonce = room_session['launch'] if room_session.present?
       if valid_start_at && @scheduled_meeting.save
@@ -183,6 +188,14 @@ class ScheduledMeetingsController < ApplicationController
       if params[:scheduled_meeting]['duration'].to_i.zero?
         params[:scheduled_meeting]['duration'] =
           ScheduledMeeting.convert_time_to_duration(params[:scheduled_meeting][:custom_duration])
+      end
+
+      # Attributes are only assigned on update below, so read them from params
+      if valid_start_at && ScheduledMeeting.maintenance_overlap(
+        @scheduled_meeting.start_at, params[:scheduled_meeting]['duration'], params[:scheduled_meeting][:repeat]
+      ) == :single
+        @scheduled_meeting.errors.add(:start_at, helpers.maintenance_conflict_message(:single))
+        valid_start_at = false
       end
 
       # if attendance marking is enabled, the meeting must be initiated by a moderator
