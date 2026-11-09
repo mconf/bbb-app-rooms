@@ -70,6 +70,9 @@ en:
   maintenance_banner:
     title: "Scheduled maintenance:"
     text: "%{period}, ConferênciaWeb will be unavailable and it will not be possible to join rooms."
+  maintenance_conflict:
+    single: "This time falls within the scheduled maintenance of ConferênciaWeb (%{period}). The room will be unavailable. Please choose another time."
+    recurring: "One of the occurrences falls within the scheduled maintenance of ConferênciaWeb (%{period}). The room will be unavailable during that period."
   maintenance_window:
     date_format: "%m/%d"
     # no "08h" style in English

@@ -70,6 +70,9 @@ pt:
   maintenance_banner:
     title: "Manutenção programada:"
     text: "%{period}, o ConferênciaWeb ficará indisponível e não será possível entrar nas salas."
+  maintenance_conflict:
+    single: "Esse horário cai na manutenção programada do ConferênciaWeb (%{period}). A sala ficará indisponível. Escolha outro horário."
+    recurring: "Uma das ocorrências cai na manutenção programada do ConferênciaWeb (%{period}). A sala ficará indisponível nesse período."
   maintenance_window:
     date_format: "%d/%m"
     hour_format: "%Hh"
