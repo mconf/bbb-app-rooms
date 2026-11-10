@@ -291,6 +291,10 @@ class ApplicationController < ActionController::Base
 
   private
 
+  def filter_for_log(params)
+    Mconf::LogFilter.filter(params)
+  end
+
   # Logs how many times the session cookie key shows up in headers and sizes.
   # Two entries with the same name mean the browser is sending a stale cookie
   # that Rack silently picks over the fresh one.

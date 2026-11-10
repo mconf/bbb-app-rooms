@@ -447,7 +447,7 @@ class RoomsController < ApplicationController
         internal_endpoint: bbb_configs['internal_url'],
         secret: bbb_configs['secret']
       )
-      Rails.logger.info "[setup_consumer_configs] ConsumerConfigServer created/updated, params=#{bbb_configs}"
+      Rails.logger.info "[setup_consumer_configs] ConsumerConfigServer created/updated, params=#{filter_for_log(bbb_configs)}"
     else
       destroyed = @consumer_config.server&.destroy
       Rails.logger.info "[setup_consumer_configs] No params received for ConsumerConfigServer" \
@@ -467,7 +467,7 @@ class RoomsController < ApplicationController
         presence_threshold_percentage: moodle_configs['presence_threshold_percentage'],
         partial_presence_threshold_percentage: moodle_configs['partial_presence_threshold_percentage']
       )
-      Rails.logger.info "[setup_consumer_configs] MoodleToken created/updated, params=#{moodle_configs}"
+      Rails.logger.info "[setup_consumer_configs] MoodleToken created/updated, params=#{filter_for_log(moodle_configs)}"
     else
       destroyed = @consumer_config.moodle_token&.destroy
       Rails.logger.info '[setup_consumer_configs] No params received for MoodleToken' \
@@ -485,7 +485,7 @@ class RoomsController < ApplicationController
         scope: brightspace_configs['oauth_scopes']
       )
       Rails.logger.info "[setup_consumer_configs] ConsumerConfigBrightspaceOauth created/updated, " \
-      "params=#{brightspace_configs}"
+      "params=#{filter_for_log(brightspace_configs)}"
     else
       destroyed = @consumer_config.brightspace_oauth&.destroy
       Rails.logger.info "[setup_consumer_configs] No params received for ConsumerConfigBrightspaceOauth" \
@@ -518,7 +518,7 @@ class RoomsController < ApplicationController
   def setup_moodle_groups
     if @room.moodle_group_select_enabled?
       moodle_token = @room.moodle_token
-      Rails.logger.info "Moodle token #{moodle_token.token} found, group select is enabled"
+      Rails.logger.info "MoodleToken id=#{moodle_token.id} found, group select is enabled"
       # testing if the token is configured with the necessary functions
       wsfunctions = [
         'core_group_get_activity_groupmode',
@@ -767,8 +767,9 @@ class RoomsController < ApplicationController
       Rails.logger.info "Sending a GET request to '#{url}'"
       response = http.get(url_parsed.request_uri, @request_headers)
     else
+      log_data = filter_for_log(data).to_json
       data = data.to_json
-      Rails.logger.info "Sending a POST request to '#{url}' with data='#{data.inspect}' (size=#{data.size})"
+      Rails.logger.info "Sending a POST request to '#{url}' with data='#{log_data}' (size=#{data.size})"
       opts = { 'Content-Type' => 'application/json' }
       response = http.post(url_parsed.request_uri, data, opts)
     end
