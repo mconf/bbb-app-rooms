@@ -32,6 +32,7 @@
         class="<%= theme_class %>">
     <%= render 'layouts/gtm_body' if app_theme == 'elos' %>
     <div class="container">
+      <%= render 'shared/maintenance_banner' if maintenance_active? %>
       <%= yield %>
     </div>
   </body>

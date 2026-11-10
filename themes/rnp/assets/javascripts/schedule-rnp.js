@@ -162,6 +162,63 @@ $(document).on('turbolinks:load', function(){
       });
     }
 
+    // Maintenance window alert. Times are compared as naive "YYYY-MM-DDTHH:MM"
+    // values, all in the time zone the server rendered the window in
+    var maintenanceAlert = document.getElementById('maintenance-conflict-alert');
+    if (maintenanceAlert) {
+      var maintenanceField = function(name) {
+        return document.getElementsByName('scheduled_meeting[' + name + ']')[0];
+      };
+
+      var naiveMs = function(value) {
+        return Date.parse(value + ':00Z');
+      };
+
+      var meetingDurationMs = function() {
+        var selected = parseInt(maintenanceField('duration')?.value, 10);
+        if (selected > 0) return selected * 1000;
+
+        var custom = (maintenanceField('custom_duration')?.value || '').split(':');
+        return ((parseInt(custom[0], 10) || 0) * 3600 + (parseInt(custom[1], 10) || 0) * 60) * 1000;
+      };
+
+      var checkMaintenance = function() {
+        var date = maintenanceField('date')?._flatpickr?.selectedDates[0];
+        var time = (maintenanceField('time')?.value || '').split(':');
+        var overlap = null;
+
+        if (date && time.length === 2) {
+          var startsAt = naiveMs(maintenanceAlert.dataset.startsAt);
+          var endsAt = naiveMs(maintenanceAlert.dataset.endsAt);
+          var repeatDays = JSON.parse(maintenanceAlert.dataset.repeatDays)[maintenanceField('repeat')?.value];
+          var periodMs = repeatDays ? repeatDays * 24 * 3600 * 1000 : null;
+          var durationMs = meetingDurationMs();
+          var occurrence = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(),
+                                    parseInt(time[0], 10), parseInt(time[1], 10));
+
+          while (occurrence < endsAt) {
+            if (occurrence + durationMs > startsAt) {
+              overlap = periodMs ? 'recurring' : 'single';
+              break;
+            }
+            if (!periodMs) break;
+            occurrence += periodMs;
+          }
+        }
+
+        maintenanceAlert.classList.toggle('d-none', !overlap);
+        maintenanceAlert.querySelectorAll('[data-overlap]').forEach(function(el) {
+          el.classList.toggle('d-none', el.dataset.overlap !== overlap);
+        });
+      };
+
+      ['date', 'time', 'duration', 'custom_duration', 'repeat'].forEach(function(name) {
+        maintenanceField(name)?.addEventListener('change', checkMaintenance);
+      });
+      // Pickers are set up by other turbolinks:load handlers
+      setTimeout(checkMaintenance, 0);
+    }
+
     // Logic for disabling wait_moderator based on mark_moodle_attendance
     var markMoodleAttendanceCheckbox = $('input[name="scheduled_meeting[mark_moodle_attendance]"]');
     var waitModeratorCheckbox = $('input[name="scheduled_meeting[wait_moderator]"]');

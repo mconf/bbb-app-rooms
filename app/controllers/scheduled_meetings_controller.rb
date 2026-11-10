@@ -133,6 +133,11 @@ class ScheduledMeetingsController < ApplicationController
         @scheduled_meeting.errors.add(:start_at, t('default.scheduled_meeting.error.invalid_start_at'))
       end
 
+      if valid_start_at && @scheduled_meeting.maintenance_overlap == :single
+        @scheduled_meeting.errors.add(:start_at, helpers.maintenance_conflict_message(:single))
+        valid_start_at = false
+      end
+
       room_session = get_room_session(@room)
       @scheduled_meeting.created_by_launch_nonce = room_session['launch'] if room_session.present?
       if valid_start_at && @scheduled_meeting.save
@@ -172,13 +177,9 @@ class ScheduledMeetingsController < ApplicationController
 
   def update
     old_repeat = @scheduled_meeting.repeat
+    old_schedule = meeting_schedule(@scheduled_meeting)
     respond_to do |format|
       valid_start_at = validate_start_at(@scheduled_meeting)
-      if valid_start_at
-        @scheduled_meeting.set_dates_from_params(params[:scheduled_meeting])
-      else
-        @scheduled_meeting.errors.add(:start_at, t('default.scheduled_meeting.error.invalid_start_at'))
-      end
 
       if params[:scheduled_meeting]['duration'].to_i.zero?
         params[:scheduled_meeting]['duration'] =
@@ -192,7 +193,23 @@ class ScheduledMeetingsController < ApplicationController
         params[:scheduled_meeting]['wait_moderator'] = 1
       end
 
-      if valid_start_at && @scheduled_meeting.update(scheduled_meeting_params(@room))
+      # Assigned before the checks below so a re-rendered form keeps everything that was submitted
+      @scheduled_meeting.assign_attributes(scheduled_meeting_params(@room))
+
+      if valid_start_at
+        @scheduled_meeting.set_dates_from_params(params[:scheduled_meeting])
+      else
+        @scheduled_meeting.errors.add(:start_at, t('default.scheduled_meeting.error.invalid_start_at'))
+      end
+
+      # Only a schedule that changed is refused, so a meeting already inside the window can still be edited
+      if valid_start_at && meeting_schedule(@scheduled_meeting) != old_schedule &&
+          @scheduled_meeting.maintenance_overlap == :single
+        @scheduled_meeting.errors.add(:start_at, helpers.maintenance_conflict_message(:single))
+        valid_start_at = false
+      end
+
+      if valid_start_at && @scheduled_meeting.save
         moodle_calendar_events_ids = MoodleCalendarEvent.where(scheduled_meeting_hash_id: @scheduled_meeting.hash_id).pluck(:event_id)
         has_become_recurring = old_repeat.nil? && @scheduled_meeting.recurring?
         has_lost_recurrence = !old_repeat.nil? && @scheduled_meeting.repeat.nil?
@@ -558,6 +575,15 @@ class ScheduledMeetingsController < ApplicationController
     attrs << [:auto_start_recording] if room.auto_start_recording
     attrs << [:large_meeting] if room.allow_large_meetings
     params.require(:scheduled_meeting).permit(*attrs)
+  end
+
+  # Start, duration and recurrence, normalized so they can be compared before and after a submit
+  def meeting_schedule(scheduled_meeting)
+    [
+      scheduled_meeting.start_at&.to_i,
+      scheduled_meeting.duration.to_i,
+      scheduled_meeting.repeat.presence
+    ]
   end
 
   def validate_start_at(scheduled_meeting)

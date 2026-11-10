@@ -46,7 +46,7 @@ Rails.application.routes.draw do
         match '/launch', to: 'rooms#launch', as: :room_launch, via: [:get, :post]
 
         # Public key set the engagement dashboard verifies launch tokens against.
-        get '/dash_mr/jwks', to: 'dash_mr#jwks', as: :dash_mr_jwks, defaults: { format: :json }
+        get '/elos_analytics/jwks', to: 'elos_analytics#jwks', as: :elos_analytics_jwks, defaults: { format: :json }
 
         # Handles sessions.
         get '/sessions/create'
@@ -91,7 +91,7 @@ Rails.application.routes.draw do
           get '/error/:code', to: 'rooms#error'
 
           # Opens the engagement dashboard in a tab of its own.
-          get :dash_mr, to: 'dash_mr#launch'
+          get :elos_analytics, to: 'elos_analytics#launch'
         end
 
         if Rails.configuration.data_reports_enabled

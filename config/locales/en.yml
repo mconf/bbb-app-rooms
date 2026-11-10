@@ -34,7 +34,7 @@ en:
     app:
       bigbluebutton_error: "Error contacting the conference server. Please try again later or contact support. (%{status})"
       data_api_error:   "Communication error with the Data API. Please try again or contact support."
-      dash_mr_config_error: "The Elos Analytics is not configured. Please contact support."
+      elos_analytics_config_error: "The Elos Analytics is not configured. Please contact support."
       data_api_config_error: "Data API configuration error. Please contact support."
       error:          "Error"
       error_debug_info: "See more"
@@ -58,14 +58,14 @@ en:
     filesender:
       success: "Your video is being uploaded to Filesender"
       error:   "An error has occurred. Please try again"
-    dash_mr:
+    elos_analytics:
       title:          "Opening the Elos Analytics"
       redirecting:    "Opening the Elos Analytics..."
       continue:       "Continue"
     room:
       cancel:         "Cancel"
       created:        "Room was successfully created"
-      dash_mr:        "Elos Analytics"
+      elos_analytics: "Elos Analytics"
       description:    "Description"
       destroy:        "Destroy"
       destroyed:      "Room was successfully destroyed"
