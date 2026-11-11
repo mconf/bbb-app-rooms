@@ -82,7 +82,8 @@ RSpec.describe Moodle::API do
     let(:scheduled_meeting) do
       FactoryBot.build(:scheduled_meeting, name: 'Aula 1', description: 'Primeira aula',
                                            start_at: Time.utc(2026, 10, 5, 12, 30), duration: 3600,
-                                           created_by_launch_nonce: app_launch.nonce)
+                                           created_by_launch_nonce: app_launch.nonce,
+                                           time_zone: 'America/Sao_Paulo')
     end
 
     # This is the call reported by the client: the HTML description with the
@@ -93,8 +94,7 @@ RSpec.describe Moodle::API do
         headers: { 'Content-Type' => 'application/json' }
       )
 
-      opts = { time_zone: 'America/Sao_Paulo' }
-      expect(described_class.create_calendar_event(moodle_token, 'hash-id', scheduled_meeting, 30, opts)).to be(true)
+      expect(described_class.create_calendar_event(moodle_token, 'hash-id', scheduled_meeting, 30)).to be(true)
       expect(
         a_request(:post, url).with do |req|
           body = sent_params(req)
@@ -108,31 +108,32 @@ RSpec.describe Moodle::API do
       expect(MoodleCalendarEvent.find_by(event_id: 3580)).to be_present
     end
 
-    it 'prefixes the event name with the start time in the given time zone' do
+    it "prefixes the event name with the start time in the meeting's time zone" do
       stub_request(:post, url).to_return(
         status: 200, body: { events: [{ id: 3581 }], warnings: [] }.to_json,
         headers: { 'Content-Type' => 'application/json' }
       )
 
-      described_class.create_calendar_event(moodle_token, 'hash-id', scheduled_meeting, 30,
-                                            { time_zone: 'Asia/Tokyo' })
+      scheduled_meeting.time_zone = 'Asia/Tokyo'
+      described_class.create_calendar_event(moodle_token, 'hash-id', scheduled_meeting, 30)
 
       expect(
         a_request(:post, url).with { |req| sent_params(req)['events[0][name]'] == '21:30 - Aula 1' }
       ).to have_been_made.once
     end
 
-    it 'falls back to the default time zone when none is given' do
+    # meetings saved before the time zone was stored keep the old format
+    it 'keeps the plain name when the meeting has no time zone' do
       stub_request(:post, url).to_return(
         status: 200, body: { events: [{ id: 3582 }], warnings: [] }.to_json,
         headers: { 'Content-Type' => 'application/json' }
       )
-      allow(Rails.configuration).to receive(:default_timezone).and_return('UTC')
 
+      scheduled_meeting.time_zone = nil
       described_class.create_calendar_event(moodle_token, 'hash-id', scheduled_meeting, 30)
 
       expect(
-        a_request(:post, url).with { |req| sent_params(req)['events[0][name]'] == '12:30 - Aula 1' }
+        a_request(:post, url).with { |req| sent_params(req)['events[0][name]'] == 'Aula 1' }
       ).to have_been_made.once
     end
   end

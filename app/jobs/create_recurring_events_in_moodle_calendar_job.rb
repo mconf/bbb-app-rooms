@@ -40,6 +40,7 @@ class CreateRecurringEventsInMoodleCalendarJob < ApplicationJob
         start_at: next_start_at,
         duration: scheduled_meeting.duration,
         created_by_launch_nonce: scheduled_meeting.created_by_launch_nonce,
+        time_zone: scheduled_meeting.time_zone,
       )
     end
 

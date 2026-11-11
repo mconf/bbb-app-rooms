@@ -135,6 +135,8 @@ class ScheduledMeetingsController < ApplicationController
 
       room_session = get_room_session(@room)
       @scheduled_meeting.created_by_launch_nonce = room_session['launch'] if room_session.present?
+      # the browser's time zone, used to prefix the start time to Moodle calendar events
+      @scheduled_meeting.time_zone = Time.zone.name
       if valid_start_at && @scheduled_meeting.save
         if params[:scheduled_meeting][:create_moodle_calendar_event] == '1' &&
         @room.can_create_moodle_calendar_event
@@ -144,7 +146,7 @@ class ScheduledMeetingsController < ApplicationController
               moodle_token,
               @scheduled_meeting,
               @app_launch.context_id,
-              { nonce: @app_launch.nonce, time_zone: Time.zone.name }
+              { nonce: @app_launch.nonce }
             )
           else
             created = Moodle::API.create_calendar_event(
@@ -152,7 +154,7 @@ class ScheduledMeetingsController < ApplicationController
               @scheduled_meeting.hash_id,
               @scheduled_meeting,
               @app_launch.context_id,
-              { nonce: @app_launch.nonce, time_zone: Time.zone.name }
+              { nonce: @app_launch.nonce }
             )
             flash[:error] = t('scheduled_meetings.error.moodle_create_calendar_event') unless created
           end
@@ -192,6 +194,8 @@ class ScheduledMeetingsController < ApplicationController
         params[:scheduled_meeting]['wait_moderator'] = 1
       end
 
+      # the browser's time zone, used to prefix the start time to Moodle calendar events
+      @scheduled_meeting.time_zone = Time.zone.name
       if valid_start_at && @scheduled_meeting.update(scheduled_meeting_params(@room))
         moodle_calendar_events_ids = MoodleCalendarEvent.where(scheduled_meeting_hash_id: @scheduled_meeting.hash_id).pluck(:event_id)
         has_become_recurring = old_repeat.nil? && @scheduled_meeting.recurring?
@@ -215,7 +219,7 @@ class ScheduledMeetingsController < ApplicationController
               moodle_token,
               @scheduled_meeting,
               @app_launch.context_id,
-              { nonce: @app_launch.nonce, time_zone: Time.zone.name }
+              { nonce: @app_launch.nonce }
             )
 
           when has_lost_recurrence
@@ -230,7 +234,7 @@ class ScheduledMeetingsController < ApplicationController
               @scheduled_meeting.hash_id,
               @scheduled_meeting,
               @app_launch.context_id,
-              { nonce: @app_launch.nonce, time_zone: Time.zone.name }
+              { nonce: @app_launch.nonce }
             )
             flash[:error] = t('scheduled_meetings.error.moodle_create_calendar_event') unless created
 
@@ -246,7 +250,7 @@ class ScheduledMeetingsController < ApplicationController
                 moodle_token,
                 @scheduled_meeting,
                 @app_launch.context_id,
-                { nonce: @app_launch.nonce, time_zone: Time.zone.name, cmid: @app_launch.params['cmid'] }
+                { nonce: @app_launch.nonce, cmid: @app_launch.params['cmid'] }
               )
             else
               Moodle::API.delete_calendar_event(
@@ -261,7 +265,7 @@ class ScheduledMeetingsController < ApplicationController
                 @scheduled_meeting.hash_id,
                 @scheduled_meeting,
                 @app_launch.context_id,
-                { nonce: @app_launch.nonce, time_zone: Time.zone.name }
+                { nonce: @app_launch.nonce }
               )
               flash[:error] = t('scheduled_meetings.error.moodle_create_calendar_event') unless created
             end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_14_230000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_11_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -76,6 +76,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_14_230000) do
     t.boolean "hide_recordings_history", default: false, null: false
     t.boolean "auto_start_recording", default: false, null: false
     t.boolean "allow_dash_mr", default: false, null: false
+    t.boolean "allow_large_meetings", default: false, null: false
     t.index ["key"], name: "index_consumer_configs_on_key", unique: true
   end
 
@@ -183,6 +184,8 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_14_230000) do
     t.bigint "moodle_attendance_session_id"
     t.string "moodle_attendance_internal_meeting_id"
     t.boolean "auto_start_recording", default: false, null: false
+    t.boolean "large_meeting", default: false, null: false
+    t.string "time_zone"
     t.index ["created_by_launch_nonce"], name: "index_scheduled_meetings_on_created_by_launch_nonce"
     t.index ["hash_id"], name: "index_scheduled_meetings_on_hash_id", unique: true
     t.index ["repeat"], name: "index_scheduled_meetings_on_repeat"

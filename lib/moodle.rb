@@ -20,9 +20,13 @@ module Moodle
       end
 
       # Prefix the name with the start time (in the scheduler's time zone) so the
-      # month view of the Moodle calendar, which only shows the name, tells the time
-      local_start = scheduled_meeting.start_at.in_time_zone(opts[:time_zone].presence || Rails.configuration.default_timezone)
-      event_name = "#{local_start.strftime('%H:%M')} - #{scheduled_meeting.name}"
+      # month view of the Moodle calendar, which only shows the name, tells the time.
+      # Meetings saved before the time zone was stored keep the plain name.
+      event_name = scheduled_meeting.name
+      if scheduled_meeting.time_zone.present?
+        local_start = scheduled_meeting.start_at.in_time_zone(scheduled_meeting.time_zone)
+        event_name = "#{local_start.strftime('%H:%M')} - #{event_name}"
+      end
 
       params = {
         wstoken: moodle_token.token,
