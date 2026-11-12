@@ -81,8 +81,9 @@ RSpec.describe Moodle::API do
     end
     let(:scheduled_meeting) do
       FactoryBot.build(:scheduled_meeting, name: 'Aula 1', description: 'Primeira aula',
-                                           start_at: Time.zone.parse('2026-10-05 14:00'), duration: 3600,
-                                           created_by_launch_nonce: app_launch.nonce)
+                                           start_at: Time.utc(2026, 10, 5, 12, 30), duration: 3600,
+                                           created_by_launch_nonce: app_launch.nonce,
+                                           time_zone: 'America/Sao_Paulo')
     end
 
     # This is the call reported by the client: the HTML description with the
@@ -99,12 +100,41 @@ RSpec.describe Moodle::API do
           body = sent_params(req)
           req.uri.query.nil? &&
             body['wsfunction'] == 'core_calendar_create_calendar_events' &&
-            body['events[0][name]'] == 'Aula 1' &&
+            body['events[0][name]'] == '09:30 - Aula 1' &&
             body['events[0][courseid]'] == '30' &&
             body['events[0][description]'].include?('<a href="https://moodle.example.com/mod/lti/view.php?id=329"')
         end
       ).to have_been_made.once
       expect(MoodleCalendarEvent.find_by(event_id: 3580)).to be_present
+    end
+
+    it "prefixes the event name with the start time in the meeting's time zone" do
+      stub_request(:post, url).to_return(
+        status: 200, body: { events: [{ id: 3581 }], warnings: [] }.to_json,
+        headers: { 'Content-Type' => 'application/json' }
+      )
+
+      scheduled_meeting.time_zone = 'Asia/Tokyo'
+      described_class.create_calendar_event(moodle_token, 'hash-id', scheduled_meeting, 30)
+
+      expect(
+        a_request(:post, url).with { |req| sent_params(req)['events[0][name]'] == '21:30 - Aula 1' }
+      ).to have_been_made.once
+    end
+
+    # meetings saved before the time zone was stored keep the old format
+    it 'keeps the plain name when the meeting has no time zone' do
+      stub_request(:post, url).to_return(
+        status: 200, body: { events: [{ id: 3582 }], warnings: [] }.to_json,
+        headers: { 'Content-Type' => 'application/json' }
+      )
+
+      scheduled_meeting.time_zone = nil
+      described_class.create_calendar_event(moodle_token, 'hash-id', scheduled_meeting, 30)
+
+      expect(
+        a_request(:post, url).with { |req| sent_params(req)['events[0][name]'] == 'Aula 1' }
+      ).to have_been_made.once
     end
   end
 
