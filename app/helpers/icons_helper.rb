@@ -9,6 +9,10 @@ module IconsHelper
     'recording' => :icon_recording_documents
   }.freeze
 
+  def icon_warning(options={})
+    material_icon_constructor "warning", "icon material-symbols-rounded icon-warning", options
+  end
+
   def icon_visibility(options={})
     material_icon_constructor "visibility", "icon material-icons icon-visibility", options
   end

@@ -26,10 +26,6 @@
         <%= form.label :date, t('helpers.label.scheduled_meeting.start_time_date') %>
         <%= form.text_field :date, value: scheduled_meeting.start_at_date(I18n.locale), required: true, class: "form-control datepicker", data: { format: t('default.formats.flatpickr.date_js') } %>
       <% if error %> </div> <% end %>
-
-      <% if error %>
-        <p class="error-description d-none d-md-block"><%= @scheduled_meeting.errors[:start_at].first %></p>
-      <% end %>
     </div>
 
     <div class="form-group col-12 col-md-4">
@@ -69,6 +65,12 @@
         </div>
       </div>
     </div>
+
+    <% if error %>
+      <div class="form-group col-12 d-none d-md-block">
+        <p class="error-description"><%= @scheduled_meeting.errors[:start_at].first %></p>
+      </div>
+    <% end %>
   </div>
 
   <div class="form-row">
@@ -84,6 +86,8 @@
       data: { prefix: scheduled_meeting.new_record? ? 'set' : 'edit', 'institution-guid': "#{@institution_guid}"} } %>
     </div>
   </div>
+
+  <%= render 'scheduled_meetings/maintenance_alert' %>
 
   <div class="form-row">
     <div class="form-group col-12">
@@ -205,6 +209,24 @@
           <% end %>
         </div>
       </div>
+
+      <% can_large_meeting = @room.allow_large_meetings %>
+      <div class="form-group">
+        <div class="form-check">
+          <%= form.check_box :large_meeting,
+            class: "form-check-input",
+            checked: can_large_meeting && @scheduled_meeting.large_meeting,
+            disabled: !can_large_meeting,
+            data: { 'tracking-id': 'lti-check-large-meeting', 'institution-guid': "#{@institution_guid}" } %>
+          <%= form.label :large_meeting, class: "form-check-label" do %>
+            <%= t('helpers.label.scheduled_meeting.large_meeting') %>
+            <%= icon_help(can_large_meeting ?
+              t('default.scheduled_meeting.tooltip.large_meeting') :
+              t('default.scheduled_meeting.tooltip.large_meeting_disabled')) %>
+          <% end %>
+        </div>
+      </div>
+
     </div>
   </div>
   <div class="form-actions">

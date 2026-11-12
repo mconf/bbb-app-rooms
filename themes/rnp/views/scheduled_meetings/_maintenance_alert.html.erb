@@ -1,0 +1,8 @@
+<% if maintenance_active? %>
+  <%= content_tag :div, class: 'alert alert-warning d-none', id: 'maintenance-conflict-alert', role: 'alert',
+                        data: maintenance_window_data_attrs do %>
+    <%= icon_warning %>
+    <span data-overlap="single"><%= maintenance_conflict_message(:single) %></span>
+    <span data-overlap="recurring" class="d-none"><%= maintenance_conflict_message(:recurring) %></span>
+  <% end %>
+<% end %>

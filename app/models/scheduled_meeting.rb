@@ -110,6 +110,28 @@ class ScheduledMeeting < ApplicationRecord
     start_at + duration.seconds >= DateTime.now.utc - tolerance
   end
 
+  # :single or :recurring when the meeting, or one of its occurrences, overlaps
+  # the maintenance window; nil otherwise
+  def self.maintenance_overlap(start_at, duration, repeat)
+    return unless Mconf::Maintenance.active? && start_at.present?
+
+    period = REPEAT_OPTIONS[repeat]
+    occurrence = start_at
+    # Occurrences that start after the window ends can't overlap it
+    while occurrence < Mconf::Maintenance.ends_at
+      if Mconf::Maintenance.overlaps?(occurrence, occurrence + duration.to_i.seconds)
+        return period ? :recurring : :single
+      end
+      return unless period
+
+      occurrence += period
+    end
+  end
+
+  def maintenance_overlap
+    ScheduledMeeting.maintenance_overlap(start_at, duration, repeat)
+  end
+
   def recurring?
     repeat.present?
   end
@@ -124,6 +146,10 @@ class ScheduledMeeting < ApplicationRecord
 
   def will_auto_start_recording?(room = self.room)
     self.recording && self.auto_start_recording && room.auto_start_recording
+  end
+
+  def will_be_large_meeting?(room = self.room)
+    self.large_meeting && room.allow_large_meetings
   end
 
   def replicated_in_moodle?
@@ -197,6 +223,9 @@ class ScheduledMeeting < ApplicationRecord
       meta_bbb['moodle-group-id'] = self.moodle_group_id if self.moodle_group_id.present?
       meta_bbb['moodle-group-name'] = self.moodle_group_name if self.moodle_group_name.present?
     end
+
+    # only sent when true
+    meta_bbb['large-meeting'] = true if self.will_be_large_meeting?
 
     meta_bbb.each { |k, v| opts["meta_bbb-#{k}"]= v }
 

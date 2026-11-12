@@ -2,11 +2,11 @@
 
 require 'rails_helper'
 
-describe DashMrController, type: :controller do
+describe ElosAnalyticsController, type: :controller do
   # The form this renders is the whole point of the action
   render_views
 
-  let(:consumer_config) { FactoryBot.create(:consumer_config, institution_guid: 'guid-1', allow_dash_mr: true) }
+  let(:consumer_config) { FactoryBot.create(:consumer_config, institution_guid: 'guid-1', allow_elos_analytics: true) }
   let(:room) { FactoryBot.create(:room, handler: 'handler-1', consumer_key: consumer_config.key) }
   let(:moderator) do
     User.new(uid: 'u-42', full_name: 'Carla Menezes', email: 'carla@escola.edu', roles: 'Instructor')
@@ -20,7 +20,7 @@ describe DashMrController, type: :controller do
   end
 
   before do
-    allow(Rails.configuration).to receive(:dash_mr_launch_url).and_return('http://dash.test/launch')
+    allow(Rails.configuration).to receive(:elos_analytics_launch_url).and_return('http://dash.test/launch')
     # The key set published is whatever is stored, so a stray key from outside the
     # example would show up in the response alongside the one under test.
     LaunchSigningKey.delete_all
@@ -72,7 +72,7 @@ describe DashMrController, type: :controller do
 
     it 'sends nobody to a dashboard that was never configured' do
       sign_in_as(moderator)
-      allow(Rails.configuration).to receive(:dash_mr_launch_url).and_return('')
+      allow(Rails.configuration).to receive(:elos_analytics_launch_url).and_return('')
 
       get :launch, params: { id: room.handler }
 
@@ -81,7 +81,7 @@ describe DashMrController, type: :controller do
 
     # Hiding the button is not a check: the route answers whoever asks for it
     it 'turns away a room whose institution was not enabled' do
-      disabled = FactoryBot.create(:consumer_config, institution_guid: 'guid-2', allow_dash_mr: false)
+      disabled = FactoryBot.create(:consumer_config, institution_guid: 'guid-2', allow_elos_analytics: false)
       other_room = FactoryBot.create(:room, handler: 'handler-2', consumer_key: disabled.key)
       sign_in_as(moderator)
 

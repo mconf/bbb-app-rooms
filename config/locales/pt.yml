@@ -3,7 +3,7 @@ pt:
     app:
       bigbluebutton_error: "Erro de comunicação com o servidor de conferência. Por favor tente novamente ou entre em contato com o suporte. (%{status})"
       data_api_error:   "Erro de comunicação com a API de Dados. Por favor, tente novamente ou entre em contato com o suporte."
-      dash_mr_config_error: "O Elos Analytics não está configurado. Entre em contato com o suporte."
+      elos_analytics_config_error: "O Elos Analytics não está configurado. Entre em contato com o suporte."
       data_api_config_error: "Erro na configuração da API de Dados. Por favor, entre em contato com o suporte."
       error:          "Erro"
       error_debug_info: "Ver mais"
@@ -27,14 +27,14 @@ pt:
     filesender:
       success: "Seu vídeo está sendo carregado para o Filesender"
       error:   "Um erro ocorreu. Por favor, tente novamente!"
-    dash_mr:
+    elos_analytics:
       title:          "Abrindo o Elos Analytics"
       redirecting:    "Abrindo o Elos Analytics..."
       continue:       "Continuar"
     room:
       cancel:         "Cancelar"
       created:        "A sala foi criada com sucesso"
-      dash_mr:        "Elos Analytics"
+      elos_analytics: "Elos Analytics"
       description:    "Descrição"
       destroy:        "Remover"
       destroyed:      "A sala foi removida com sucesso"
@@ -117,6 +117,8 @@ pt:
         auto_start_recording: "A sessão começará a ser gravada automaticamente quando o primeiro participante entrar"
         auto_start_recording_disabled: "Sua instituição não habilitou o início automático da gravação. Para usar esse recurso, entre em contato com o administrador da sua instituição."
         auto_start_recording_requires_recording: "Para iniciar a gravação automaticamente, a sessão precisa permitir gravação."
+        large_meeting: "Recomendado para sessões com mais de 150 participantes."
+        large_meeting_disabled: "Sua instituição não habilitou sessões grandes. Para usar esse recurso, entre em contato com o administrador da sua instituição."
         waitmoderator: "Participantes não podem entrar até que um moderador entre"
         allmoderators: "Todos usuários serão moderadores"
         create_moodle_calendar_event: "Cria um evento correspondente no Calendário do Moodle para esta sessão agendada."

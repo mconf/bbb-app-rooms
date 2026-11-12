@@ -283,32 +283,32 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
-  describe '#dash_mr_enabled?' do
-    let(:enabled_config) { FactoryBot.create(:consumer_config, allow_dash_mr: true) }
-    let(:disabled_config) { FactoryBot.create(:consumer_config, allow_dash_mr: false) }
+  describe '#elos_analytics_enabled?' do
+    let(:enabled_config) { FactoryBot.create(:consumer_config, allow_elos_analytics: true) }
+    let(:disabled_config) { FactoryBot.create(:consumer_config, allow_elos_analytics: false) }
     let(:enabled_room) { FactoryBot.create(:room, consumer_key: enabled_config.key) }
     let(:disabled_room) { FactoryBot.create(:room, consumer_key: disabled_config.key) }
 
-    before { allow(Rails.configuration).to receive(:dash_mr_launch_url).and_return('http://dash.test/launch') }
+    before { allow(Rails.configuration).to receive(:elos_analytics_launch_url).and_return('http://dash.test/launch') }
 
     it 'is on for an institution that was enabled on the broker' do
-      expect(helper.dash_mr_enabled?(enabled_room)).to be true
+      expect(helper.elos_analytics_enabled?(enabled_room)).to be true
     end
 
     it 'is off for an institution that was not' do
-      expect(helper.dash_mr_enabled?(disabled_room)).to be false
+      expect(helper.elos_analytics_enabled?(disabled_room)).to be false
     end
 
     # Every room starts here: the column is off until a launch turns it on
     it 'is off for a room whose consumer was never configured' do
-      expect(helper.dash_mr_enabled?(FactoryBot.create(:room, consumer_key: 'never-seen'))).to be false
+      expect(helper.elos_analytics_enabled?(FactoryBot.create(:room, consumer_key: 'never-seen'))).to be false
     end
 
     # A link with nowhere to go is worse than no link
     it 'is off for everyone while there is nowhere to send people' do
-      allow(Rails.configuration).to receive(:dash_mr_launch_url).and_return('')
+      allow(Rails.configuration).to receive(:elos_analytics_launch_url).and_return('')
 
-      expect(helper.dash_mr_enabled?(enabled_room)).to be false
+      expect(helper.elos_analytics_enabled?(enabled_room)).to be false
     end
   end
 end

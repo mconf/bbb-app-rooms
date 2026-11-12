@@ -52,6 +52,38 @@ RSpec.describe Room, type: :model do
     end
   end
 
+  describe '#allow_large_meetings' do
+    let(:consumer_config) { FactoryBot.create(:consumer_config, key: 'room-spec-large-meetings') }
+    let(:room) { FactoryBot.create(:room, consumer_key: consumer_config.key) }
+
+    it 'returns true when the institution has large meetings enabled' do
+      consumer_config.update!(allow_large_meetings: true)
+
+      expect(room.allow_large_meetings).to be(true)
+    end
+
+    it 'returns false when the institution does not have large meetings enabled' do
+      consumer_config.update!(allow_large_meetings: false)
+
+      expect(room.allow_large_meetings).to be(false)
+    end
+
+    it 'returns false when the room has no consumer config' do
+      room.update!(consumer_key: 'unknown-key')
+
+      expect(room.allow_large_meetings).to be(false)
+    end
+  end
+
+  describe '#attributes_for_meeting' do
+    let(:room) { FactoryBot.create(:room) }
+
+    # The room permission must not become the default choice of a new scheduled meeting
+    it 'does not include large meeting attributes' do
+      expect(room.attributes_for_meeting.keys).not_to include(:allow_large_meetings, :large_meeting)
+    end
+  end
+
   describe '#params_for_get_all_meetings' do
     let(:room) { FactoryBot.create(:room) }
 

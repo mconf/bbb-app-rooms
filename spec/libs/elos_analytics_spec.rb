@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-require './lib/mconf/dash_mr'
+require './lib/mconf/elos_analytics'
 
-describe Mconf::DashMr do
-  let(:consumer_config) { FactoryBot.create(:consumer_config, institution_guid: 'guid-1', allow_dash_mr: true) }
+describe Mconf::ElosAnalytics do
+  let(:consumer_config) { FactoryBot.create(:consumer_config, institution_guid: 'guid-1', allow_elos_analytics: true) }
   let(:room) { FactoryBot.create(:room, handler: 'handler-1', consumer_key: consumer_config.key) }
   let(:user) do
     User.new(uid: 'u-42', full_name: 'Carla Menezes', email: 'carla@escola.edu', roles: 'Instructor')
@@ -17,10 +17,10 @@ describe Mconf::DashMr do
   end
 
   before do
-    allow(Rails.configuration).to receive(:dash_mr_launch_url).and_return('http://dash.test/launch')
-    allow(Rails.configuration).to receive(:dash_mr_issuer).and_return('rooms')
-    allow(Rails.configuration).to receive(:dash_mr_audience).and_return('dash-mr')
-    allow(Rails.configuration).to receive(:dash_mr_token_ttl).and_return(60)
+    allow(Rails.configuration).to receive(:elos_analytics_launch_url).and_return('http://elos.test/launch')
+    allow(Rails.configuration).to receive(:elos_analytics_issuer).and_return('rooms')
+    allow(Rails.configuration).to receive(:elos_analytics_audience).and_return('elos-analytics')
+    allow(Rails.configuration).to receive(:elos_analytics_token_ttl).and_return(60)
   end
 
   describe '.launch_token' do
@@ -30,7 +30,7 @@ describe Mconf::DashMr do
       payload, = decoded(token)
 
       expect(payload['iss']).to eq('rooms')
-      expect(payload['aud']).to eq('dash-mr')
+      expect(payload['aud']).to eq('elos-analytics')
       expect(payload['sub']).to eq('lti:mat101:u-42')
       expect(payload['exp'] - payload['iat']).to eq(60)
     end
@@ -81,7 +81,7 @@ describe Mconf::DashMr do
     # looks the config up by that same column, so both values have to come from the key
     # the fallback resolves, or a legacy room hands over half a context.
     it 'falls back to the last launch for the consumer key, and for the guid with it' do
-      FactoryBot.create(:consumer_config, key: 'legacy-key', institution_guid: 'legacy-guid', allow_dash_mr: true)
+      FactoryBot.create(:consumer_config, key: 'legacy-key', institution_guid: 'legacy-guid', allow_elos_analytics: true)
       room.update!(consumer_key: nil)
       FactoryBot.create(
         :app_launch, room_handler: room.handler,
@@ -101,7 +101,7 @@ describe Mconf::DashMr do
     end
 
     it 'refuses to issue a token when there is nowhere to send it' do
-      allow(Rails.configuration).to receive(:dash_mr_launch_url).and_return('')
+      allow(Rails.configuration).to receive(:elos_analytics_launch_url).and_return('')
 
       expect { token }.to raise_error(described_class::ConfigurationError, /LAUNCH_URL/)
     end
@@ -115,7 +115,7 @@ describe Mconf::DashMr do
     # This is the boundary that matters: whoever the caller is, an institution that was
     # never enabled on the broker must not get a token minted for it.
     it 'refuses to issue a token for an institution that was not enabled' do
-      consumer_config.update!(allow_dash_mr: false)
+      consumer_config.update!(allow_elos_analytics: false)
 
       expect { token }.to raise_error(described_class::ConfigurationError, /does not have the dashboard enabled/)
     end

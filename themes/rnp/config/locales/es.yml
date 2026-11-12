@@ -63,10 +63,27 @@ es:
         wait_moderator: "Espere a que ingrese el moderador para entrar"
         welcome: "Mensaje de bienvenida (opcional)"
         auto_start_recording: "Iniciar grabación automáticamente"
+        large_meeting: "Sesión grande"
   jobs:
     moodle_attendance:
       attendance_name: "Actividad de Asistencia"
       session_description_footer: "Registrado automáticamente vía %{app_theme}."
+  maintenance_banner:
+    title: "Mantenimiento programado:"
+    text: "%{period}, ConferênciaWeb no estará disponible y no será posible entrar a las salas."
+  maintenance_conflict:
+    single: "Este horario coincide con el mantenimiento programado de ConferênciaWeb (%{period}). La sala no estará disponible. Elige otro horario."
+    recurring: "Una de las repeticiones coincide con el mantenimiento programado de ConferênciaWeb (%{period}). La sala no estará disponible en ese período."
+  maintenance_window:
+    date_format: "%d/%m"
+    hour_format: "%Hh"
+    hour_minute_format: "%Hh%M"
+    long:
+      same_day: "el %{start_date}, de %{start_at} a %{end_at}"
+      multi_day: "desde el %{start_date} a las %{start_at} hasta el %{end_date} a las %{end_at}"
+    short:
+      same_day: "%{start_date}, %{start_at}–%{end_at}"
+      multi_day: "%{start_date}, %{start_at} – %{end_date}, %{end_at}"
   meetings:
     ai_naming_suggestion:
       applied: "Título y descripción generados por IA"

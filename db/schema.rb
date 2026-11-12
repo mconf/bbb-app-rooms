@@ -75,7 +75,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_11_180000) do
     t.boolean "allow_ai_artifacts", default: true, null: false
     t.boolean "hide_recordings_history", default: false, null: false
     t.boolean "auto_start_recording", default: false, null: false
-    t.boolean "allow_dash_mr", default: false, null: false
+    t.boolean "allow_elos_analytics", default: false, null: false
     t.boolean "allow_large_meetings", default: false, null: false
     t.index ["key"], name: "index_consumer_configs_on_key", unique: true
   end

@@ -8,15 +8,15 @@
   <head>
     <meta charset="utf-8">
     <meta name="robots" content="noindex, nofollow">
-    <title><%= t('default.dash_mr.title') %></title>
+    <title><%= t('default.elos_analytics.title') %></title>
   </head>
   <body onload="document.forms[0].submit()">
-    <p><%= t('default.dash_mr.redirecting') %></p>
+    <p><%= t('default.elos_analytics.redirecting') %></p>
 
     <form action="<%= @launch_url %>" method="post">
       <input type="hidden" name="id_token" value="<%= @token %>">
       <noscript>
-        <button type="submit"><%= t('default.dash_mr.continue') %></button>
+        <button type="submit"><%= t('default.elos_analytics.continue') %></button>
       </noscript>
     </form>
   </body>
