@@ -194,8 +194,6 @@ class ScheduledMeetingsController < ApplicationController
         params[:scheduled_meeting]['wait_moderator'] = 1
       end
 
-      # the browser's time zone, used to prefix the start time to Moodle calendar events
-      @scheduled_meeting.time_zone = Time.zone.name
       if valid_start_at && @scheduled_meeting.update(scheduled_meeting_params(@room))
         moodle_calendar_events_ids = MoodleCalendarEvent.where(scheduled_meeting_hash_id: @scheduled_meeting.hash_id).pluck(:event_id)
         has_become_recurring = old_repeat.nil? && @scheduled_meeting.recurring?
@@ -203,8 +201,16 @@ class ScheduledMeetingsController < ApplicationController
         has_changed_recurrence = old_repeat != @scheduled_meeting.repeat
         changes = @scheduled_meeting.previous_changes
         tracked_attrs = ['name', 'start_at', 'description']
+        recreate_events = has_changed_recurrence || (changes.keys & tracked_attrs).any?
+        sync_moodle_events = moodle_calendar_events_ids.any? &&
+                             @room.can_create_moodle_calendar_event &&
+                             @room.can_delete_moodle_calendar_event
 
-        if @room.can_create_moodle_calendar_event && @room.can_delete_moodle_calendar_event && moodle_calendar_events_ids.any?
+        if moodle_calendar_events_ids.empty? || (sync_moodle_events && recreate_events)
+          @scheduled_meeting.update_column(:time_zone, Time.zone.name)
+        end
+
+        if sync_moodle_events
           moodle_token = @room.consumer_config.moodle_token
           case
           when has_become_recurring
