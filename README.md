@@ -35,13 +35,16 @@ For architecture, conventions and pitfalls, see [AGENTS.md](AGENTS.md).
    Redis, broker key/secret). Optional integrations (Data API, Eduplay, Filesender,
    SMTP…) are documented in `.env.example`.
 
-2. Install the JavaScript packages, then start the app (Postgres and Redis come up
-   with it; `scripts/start.sh` creates or migrates the database on boot):
+2. Build the images and install the JavaScript packages, then start the app
+   (Postgres and Redis come up with it; `scripts/start.sh` creates or migrates the
+   database on boot):
 
    ```bash
-   docker compose run --rm app yarn install
-   docker compose up app
+   make install
+   make run
    ```
+
+   Run `make install` again whenever the `Gemfile` changes.
 
    The app listens on port 3001 under `/rooms` (or `/<RELATIVE_URL_ROOT>/rooms`).
 
@@ -65,24 +68,26 @@ The theme is chosen by `APP_THEME` (`elos` or `rnp`, set in `.env`).
 The same checks the CI runs (`.github/workflows/ci.yml`):
 
 ```bash
-bundle exec rubocop -l --config .rubocop.yml
-bundle exec brakeman -q
-APP_THEME=elos bin/rails db:test:prepare
-APP_THEME=elos bundle exec rspec
+make lint      # RuboCop + Brakeman
+make format    # RuboCop safe auto-corrections
+make test      # prepares the test database and runs the specs
 ```
 
-The specs need PostgreSQL and Redis reachable; the CI `test` job shows the
-`DATABASE_URL` and `MCONF_REDIS_*` values it uses. Write new tests in `spec/`; `test/`
-is legacy and not run by CI.
+All targets run inside Docker Compose (`make help` lists them). To run on the host,
+empty the wrapper: `make lint RUN=`, `make test RUN_TEST=`. On the host, set
+`DATABASE_URL` to a test database first (the CI `test` job shows the values it uses):
+with the one from `.env`, the specs would use and wipe the development database.
+
+Write new tests in `spec/`; `test/` is legacy and not run by CI.
 
 ## Build
 
 ```bash
-docker build --build-arg APP_THEME=elos -t bbb-app-rooms:local .
+make build               # elos image, tagged bbb-app-rooms:local
+make build THEME=rnp     # ConferênciaWeb image
 ```
 
-Use `APP_THEME=rnp` for the ConferênciaWeb image. Releases and deployment: see
-[AGENTS.md](AGENTS.md#deployment).
+Releases and deployment: see [AGENTS.md](AGENTS.md#deployment).
 
 ## License
 

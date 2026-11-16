@@ -28,31 +28,32 @@ scripts/start.sh     # Image default command (docker compose only)
 
 ## Development Setup
 
+Use the Makefile (`make help`). Targets run inside Docker Compose by default; to run
+on the host, empty the wrapper (`make lint RUN=`, `make test RUN_TEST=`).
+
 ```bash
-bundle install
-yarn install               # node_modules is on the Sprockets load path; layouts need it
-bin/rails db:prepare
-bin/rails s                # or: docker compose up app (plus postgres, rooms_redis)
+make install   # build the dev/test images, yarn install (node_modules is on the Sprockets load path)
+make run       # app + Postgres + Redis on port 3001; scripts/start.sh migrates on boot
 ```
 
 Shared defaults are in the committed `.env` and `.env.development`; per-machine values
 (`URL_HOST`, `OMNIAUTH_BBBLTIBROKER_SITE`, `BIGBLUEBUTTON_ENDPOINT`/`SECRET`) go in
 `.env.development.local` (not committed). `.env.example` documents the optional
-integrations. Workers: `bin/rake resque:work` and
-`bin/rake resque:scheduler`. There is no Makefile yet.
+integrations. Workers: `docker compose up rooms_worker rooms_scheduler`.
 
 ## Verifying Changes
 
 Run the same checks CI runs (`.github/workflows/ci.yml`):
 
 ```bash
-bundle exec rubocop -l --config .rubocop.yml     # CI runs lint cops only (-l)
-bundle exec brakeman -q
-APP_THEME=elos bin/rails db:test:prepare
-APP_THEME=elos bundle exec rspec
+make lint      # rubocop -l (lint cops only, as in CI) + brakeman
+make test      # db:test:prepare + rspec, in the compose `test` service
 ```
 
-- Tests need PostgreSQL and Redis reachable (see the `env` of the CI `test` job).
+- Never run the specs with the `DATABASE_URL` from `.env`: in the test env the URL
+  wins over `config/database.yml`, so `db:test:prepare` would wipe the development
+  database. `make test` swaps the database name; on the host, set `DATABASE_URL` to a
+  test database as the CI does.
 - `APP_THEME=elos` is required: some locale keys (e.g. `time.formats.short_custom`)
   only exist under `themes/`.
 - WebMock blocks real HTTP in specs. Stub every external call (BBB API, Data API,
