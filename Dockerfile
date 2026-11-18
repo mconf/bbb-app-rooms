@@ -10,7 +10,7 @@ RUN apk update \
 
 RUN gem update --system 3.4.22
 
-RUN gem install bundler --no-document
+RUN gem install bundler -v 2.6.9 --no-document
 
 ARG BUILD_NUMBER
 ENV BUILD_NUMBER=${BUILD_NUMBER}
