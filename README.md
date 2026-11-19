@@ -1,144 +1,94 @@
-<h1>  HOW TO LOCALLY DEPLOY THE ROOMS TOOL WITH THE LTI-BROKER </h1>
-This is a tutorial for a local deployment of the rooms and broker apps as well as setting it up with moodle (or any other LMS). 
+# bbb-app-rooms
 
-### Prerequisites:
-- Install [nginx](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#prebuilt_ubuntu) and [postgresql](https://computingforgeeks.com/install-postgresql-11-on-ubuntu-linux/) on your machine 
-- Install [ruby on rails](https://gorails.com/setup/ubuntu/16.04)
-- [Set up a domain](https://github.com/jfederico/bbb-lti-run#preliminary-steps)
-- [Install moodle](https://docs.moodle.org/39/en/Step-by-step_Installation_Guide_for_Ubuntu) (I did this in a separate lxc container) or any other LMS
+The LTI rooms tool of Elos and ConferênciaWeb: what teachers and students see when they
+open the conference tool from their LMS (e.g. Moodle, Brightspace). Each course
+becomes a room where users schedule meetings, join them and access recordings, reports
+and AI artifacts.
 
-### Repo Setup:
+The app does not receive LTI launches directly: they arrive through
+[bbb-lti-broker](https://github.com/mconf/bbb-lti-broker), which authenticates the LMS
+and hands the user over via OAuth2. It started as a fork of the BigBlueButton project
+but has diverged; upstream docs don't apply here.
 
-1. Clone the two repositories: [bbb-app-rooms](https://github.com/bigbluebutton/bbb-app-rooms) and [bbb-lti-broker](https://github.com/bigbluebutton/bbb-lti-broker)
+For architecture, conventions and pitfalls, see [AGENTS.md](AGENTS.md).
 
-2. Set up the environment variables for the rooms app: <br>
-`$ cd bbb-app-rooms` <br>
-`$ cp dotenv .env` <br>
-`$ sudo vi .env` <br>
-Edit the following variable values as necessary: <br>
+## Requirements
+
+- Docker and Docker Compose
+- A running [bbb-lti-broker](https://github.com/mconf/bbb-lti-broker) (needed to launch
+  the app; the specs run without it)
+- A BigBlueButton server to create meetings on
+
+## Running locally
+
+1. Create `.env.development.local` (git-ignored) with the values specific to your
+   environment:
+
+   ```bash
+   URL_HOST=                     # host where the app is reached
+   OMNIAUTH_BBBLTIBROKER_SITE=   # URL of your broker
+   BIGBLUEBUTTON_ENDPOINT=       # https://<server>/bigbluebutton/api
+   BIGBLUEBUTTON_SECRET=
+   ```
+
+   The committed `.env` and `.env.development` hold the shared defaults (database,
+   Redis, broker key/secret). Optional integrations (Data API, Eduplay, Filesender,
+   SMTP…) are documented in `.env.example`.
+
+2. Build the images and install the JavaScript packages, then start the app
+   (Postgres and Redis come up with it; `scripts/start.sh` creates or migrates the
+   database on boot):
+
+   ```bash
+   make install
+   make run
+   ```
+
+   Run `make install` again whenever the `Gemfile` changes.
+
+   The app listens on port 3001 under `/rooms` (or `/<RELATIVE_URL_ROOT>/rooms`).
+
+3. Register the app in the broker, using the key and secret set in
+   `OMNIAUTH_BBBLTIBROKER_KEY` / `OMNIAUTH_BBBLTIBROKER_SECRET` (see the broker's
+   README). The second argument is the OAuth2 callback URL, which the broker also
+   uses to derive where it sends the launches:
+
+   ```bash
+   # run in the broker
+   rake "db:apps:add[rooms,https://<host>/rooms/auth/bbbltibroker/callback,<key>,<secret>]"
+   ```
+
+Background jobs (attendance, recording uploads, recurring meetings) need the Resque
+worker and scheduler: `docker compose up rooms_worker rooms_scheduler`.
+
+The theme is chosen by `APP_THEME` (`elos` or `rnp`, set in `.env`).
+
+## Tests and lint
+
+The same checks the CI runs (`.github/workflows/ci.yml`):
+
+```bash
+make lint      # RuboCop + Brakeman
+make format    # RuboCop safe auto-corrections
+make test      # prepares the test database and runs the specs
 ```
-## App configuration
-# Generate a secret by running the command openssl rand -hex 32
-SECRET_KEY_BASE=
 
-RELATIVE_URL_ROOT=apps
+All targets run inside Docker Compose (`make help` lists them). To run on the host,
+empty the wrapper: `make lint RUN=`, `make test RUN_TEST=`. On the host, set
+`DATABASE_URL` to a test database first (the CI `test` job shows the values it uses):
+with the one from `.env`, the specs would use and wipe the development database.
 
-## Database configuration
-# DB_ADAPTER=[postgresql]
-# DB_HOST=<localhost>
-# DB_NAME=
-# DB_USERNAME=<root>
-# DB_PASSWORD=
+Write new tests in `spec/`; `test/` is legacy and not run by CI.
 
-# BigBlueButton configuration
-BIGBLUEBUTTON_ENDPOINT=https://bbb.<your-name>.blindside-dev.com/bigbluebutton/api
-BIGBLUEBUTTON_SECRET=<your server's secret>
-BIGBLUEBUTTON_MODERATOR_ROLES=Instructor,Faculty,Teacher,Mentor,Administrator,Admin
+## Build
 
-# BigBlueButton LTI Broker configuration
-OMNIAUTH_BBBLTIBROKER_SITE=https://lti.<JOHN>.blindside-dev.com
-OMNIAUTH_BBBLTIBROKER_ROOT=lti
-#  Should match the values used when adding the app to the broker.
-#    rake db:apps:add[rooms,key,secret,https://lti.<JOHN>.blindside-dev.com/apps/rooms/auth/bbbltibroker/callback]
-OMNIAUTH_BBBLTIBROKER_KEY=<choose a key>
-OMNIAUTH_BBBLTIBROKER_SECRET=<choose a secret>
-
-## Set the hostname using your own domain (Required)
-URL_HOST=lti.<JOHN>.blindside-dev.com
-
-## Use to send logs to Standard Output (Optional)
-RAILS_LOG_TO_STDOUT=true
-
-## Use to serve assets through the app (Required for now)
-RAILS_SERVE_STATIC_FILES=true
-
-## Use to enable features only available for development (Optional)
-# RAILS_ENV=production
+```bash
+make build               # elos image, tagged bbb-app-rooms:local
+make build THEME=rnp     # ConferênciaWeb image
 ```
-3. Set up the environment variables for the lti broker:
-`$ cd ~/bbb-lti-broker` <br>
-`$ cp dotenv .env` <br>
-`$ sudo vi .env` <br>
-```
-POSTGRES_PASSWORD=<password you set for the postgres database during setup>
-POSTGRES_USER=postgres
 
-# Create a Secret Key for Rails
-#
-# You can generate a secure one through the Greenlight docker image
-# with the command.
-#
-#   docker run --rm bigbluebutton/greenlight:v2 bundle exec rake secret
-#
-SECRET_KEY_BASE=
+Releases and deployment: see [AGENTS.md](AGENTS.md#deployment).
 
-# App configuration
-RELATIVE_URL_ROOT=lti
+## License
 
-# LTI tools configuration
-# DEFAULT_LTI_TOOL=rooms
-
-# DEVELOPER_MODE_ENABLED=true
-
-#WHITELIST_HOST=broker.example.com
-
-## Set the hostname using your own domain (Required)
-URL_HOST=lti.<JOHN>.blindside-dev.com
-
-## Use only with postgres instance outside the one pre-packaged with docker-compose (Optional)
-# DATABASE_URL=postgres://postgres:password@localhost
-
-## Use to send logs to Standard Output (Optional)
-RAILS_LOG_TO_STDOUT=true
-
-## Use to serve assets through the app (Required for now)
-RAILS_SERVE_STATIC_FILES=true
-
-## Use to enable features only available for development (Optional)
-#RAILS_ENV=development
-```
-4. Create, migrate and seed the databases for both the rooms and broker (`rake db:create db:migrate db:seed`) <br>
-
-5. Add the rooms app to the broker. For key and secret, use the ones you set in the rooms app env variables: \
-    `$ rake db:apps:add[rooms,https://lti.<JOHN>.blindside-dev.com/apps/rooms/auth/bbbltibroker/callback,<key>,<secret>]` <br>
-    Add the key and secret to the keyset: <br>
-    `$ rake db:keys:add[<key>:<secret>]`
-
-### NGINX Configuration
-6. Configure nginx. 
-    - Edit the conf file for nginx: <br>
-    `$ sudo vim /etc/nginx/conf.d/default.conf`
-    - Replace the contents using [this template](https://github.com/jfederico/bbb-lti-run/blob/master/nginx/.sites.template.local) <br>
-    - Run `$ sudo systemctl restart nginx`<br>
-
-### Adding the tool to an LMS
-
-7. Run both applications: 
-    - From the bbb-app-rooms directory, run `$ rails s -b 0.0.0.0 -p 3012` <br>
-    - From the bbb-lti-broker directory, run `$ rails s -b 0.0.0.0 -p 3011` <br>
-
-8. In your browser, go to lti.\<JOHN>.blindside-dev.com\lti 
-
-9. Click on 'View LTI Configuration XML'. It'll take to you a page with the following URL: https://lti.\<JOHN>.blindside-dev.com/lti/default/xml_config. Replace the 'default' with 'rooms' and refresh the page/press enter. 
-
-10. Copy the secure_launch_url. This is the url that you will use when adding the plugin in your lms. The consumer_key and shared_secret are the same as the ones set in the rooms env. variables (as OMNIAUTH_BBBLTIBROKER_KEY and OMNIAUTH_BBBLTIBROKER_SECRET)  
-
-
-#  Other
-
-## Custom parameters
-
-Custom parameters accepted in the launch:
-
-* `custom_recording`: Set to `true` to create the room with this flag checked. Don't set
-  it on the launch to use the default value.
-* `custom_all_moderators`:  Set to `true` to create the room with this flag checked. Don't set
-  it on the launch to use the default value.
-* `custom_wait_moderator`:  Set to `true` to create the room with this flag checked. Don't set
-  it on the launch to use the default value.
-* `custom_allow_all_moderators`: Set to `true` to allow meetings to have this flag turned on/off.
-  Set to any other value to hide this option from users. If this parameter is not set on launch
-  the option will be shown.
-* `custom_allow_wait_moderator`: Set to `true` to allow meetings to have this flag turned on/off.
-  Set to any other value to hide this option from users. If this parameter is not set on launch
-  the option will be shown.
+See [LICENSE](LICENSE).
