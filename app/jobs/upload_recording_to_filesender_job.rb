@@ -47,7 +47,7 @@ class UploadRecordingToFilesenderJob < ApplicationJob
     Resque.logger.info "[+] Getting rec_url..."
     fpath = file.path
 
-    Resque.logger.info "[+] Creating video #{@filesender_token.token}..."
+    Resque.logger.info "[+] Creating video with FilesenderToken id=#{@filesender_token.id}..."
     api.send_file(@filesender_token.token, fpath, data, user)
 
     Resque.logger.info "[+] Worker finished"

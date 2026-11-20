@@ -254,7 +254,7 @@ module BbbApi
     server = ConsumerConfig.find_by(key: consumer_key)&.server
 
     if server.present?
-      Rails.logger.info "Found the server:#{server.domain} secret:#{server.secret[0..7]} "\
+      Rails.logger.info "Found the server:#{server.domain} secret:#{Mconf::LogFilter.mask(server.secret)} "\
                         "for the room:#{room.to_param} " \
                         "using the consumer_key:#{consumer_key}"
 

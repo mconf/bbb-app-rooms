@@ -16,7 +16,7 @@ class SessionsController < ApplicationController
     log_session_cookie_state('sessions_create')
 
     omniauth_auth = request.env['omniauth.auth']
-    Rails.logger.info "Omniauth authentication information auth=#{omniauth_auth.inspect} " # \
+    Rails.logger.info "Omniauth authentication information auth=#{filter_for_log(omniauth_auth&.to_hash || {})}"
 
     # Return error if authentication fails
     unless omniauth_auth&.uid
